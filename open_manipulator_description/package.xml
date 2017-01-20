@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>open_manipulator_description</name>
+  <version>0.0.1</version>
+  <description>The open_manipulator_description package</description>
+  <license>Apache License 2.0</license>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <export>
+  </export>
+</package>
