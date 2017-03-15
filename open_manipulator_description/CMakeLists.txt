@@ -37,9 +37,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(open_manipulator_description_node src/open_manipulator_description_node.cpp)
-add_dependencies(open_manipulator_description_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(open_manipulator_description_node ${catkin_LIBRARIES})
+add_executable(open_manipulator_chain_rviz_pub src/open_manipulator_chain_rviz_pub.cpp)
+add_dependencies(open_manipulator_chain_rviz_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(open_manipulator_chain_rviz_pub ${catkin_LIBRARIES})
 
 ################################################################################
 # Install

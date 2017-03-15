@@ -1,0 +1,27 @@
+<package>
+  <name>ar_tools</name>
+  <version>0.0.0</version>
+
+  <description>
+  This metapackage contains tools for using ARToolkit within ROS.
+  </description>
+
+  <author>ARToolKit Team</author>
+  <author>Gautier Dumonteil</author>
+  <maintainer email="bill@neautomation.com">Bill Morris</maintainer>
+  <maintainer email="lazewatd@engr.oregonstate.edu">Dan Lazewatsky</maintainer>
+  <maintainer email="max.schwarz@online.de">Max Schwarz</maintainer>
+  <url type="website">http://ros.org/wiki/ar_tools</url>
+  <url type="bugtracker">https://github.com/ar-tools/ar_tools/issues</url>
+  <url type="repository">https://github.com/ar-tools/ar_tools</url>
+  <license>GPL</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>artoolkit</run_depend>
+  <run_depend>ar_pose</run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

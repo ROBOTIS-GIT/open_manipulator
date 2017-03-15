@@ -1,0 +1,20 @@
+<launch>
+  <node name="open_manipulator_dynamixel_controller" pkg="open_manipulator_dynamixel_ctrl" type="dynamixel_controller" required="true" output="screen">
+    <rosparam>
+      device_name: "/dev/ttyUSB0"
+      baud_rate: 3000000
+      motor_model: "XM430_W350_R"
+      protocol_version: 2.0
+      joint1:
+        id: 1
+      joint2:
+        id: 2
+      joint3:
+        id: 3
+      joint4:
+        id: 4
+      gripper:
+        id: 5
+    </rosparam>
+  </node>
+</launch>

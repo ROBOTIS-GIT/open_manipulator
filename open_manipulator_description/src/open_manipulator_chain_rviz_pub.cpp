@@ -14,7 +14,7 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Darby Lim */
+/* Authors: Taehoon Lim (Darby) */
 
 
 #include <ros/ros.h>
@@ -24,6 +24,32 @@ ros::Publisher present_joint_states_pub;
 ros::Publisher goal_joint_states_pub;
 
 void present_joint_states_callback( const sensor_msgs::JointState::ConstPtr& msg )
+{
+  sensor_msgs::JointState _present_msg;
+
+  for ( int _index = 0 ; _index < msg->name.size(); _index++ )
+  {
+    _present_msg.name.push_back( msg->name[ _index ] );
+    _present_msg.position.push_back( msg->position[ _index ] );
+  }
+  present_joint_states_pub.publish( _present_msg );
+}
+
+void goal_joint_states_callback( const sensor_msgs::JointState::ConstPtr& msg )
+{
+  sensor_msgs::JointState _goal_msg;
+
+  for ( int _index = 0 ; _index < msg->name.size(); _index++ )
+  {
+
+    _goal_msg.name.push_back( msg->name[ _index ] );
+    _goal_msg.position.push_back( msg->position[ _index ] );
+
+  }
+  goal_joint_states_pub.publish( _goal_msg );
+}
+
+void present_gripper_states_callback( const sensor_msgs::JointState::ConstPtr& msg )
 {
   sensor_msgs::JointState _present_msg;
 
@@ -45,7 +71,7 @@ void present_joint_states_callback( const sensor_msgs::JointState::ConstPtr& msg
   present_joint_states_pub.publish( _present_msg );
 }
 
-void goal_joint_states_callback( const sensor_msgs::JointState::ConstPtr& msg )
+void goal_gripper_states_callback( const sensor_msgs::JointState::ConstPtr& msg )
 {
   sensor_msgs::JointState _goal_msg;
 
@@ -69,14 +95,17 @@ void goal_joint_states_callback( const sensor_msgs::JointState::ConstPtr& msg )
 
 int main( int argc , char **argv )
 {
-  ros::init( argc , argv , "manipulator_x4_publisher" );
+  ros::init( argc , argv , "open_manipulator_description_publisher" );
   ros::NodeHandle nh("~");
 
-  present_joint_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/manipulator_x4/present_joint_states", 0);
-  goal_joint_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/manipulator_x4/goal_joint_states", 0);
+  present_joint_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/present_joint_states", 0);
+  goal_joint_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/goal_joint_states", 0);
 
-  ros::Subscriber present_joint_states_sub = nh.subscribe("/robotis/present_joint_states", 5, present_joint_states_callback);
-  ros::Subscriber goal_joint_states_sub = nh.subscribe("/robotis/goal_joint_states", 5, goal_joint_states_callback);
+  ros::Subscriber present_joint_states_sub = nh.subscribe("/robotis/dynamixel/present_joint_states", 5, present_joint_states_callback);
+  ros::Subscriber goal_joint_states_sub = nh.subscribe("/robotis/dynamixel/goal_joint_states", 5, goal_joint_states_callback);
+
+  ros::Subscriber present_gripper_states_sub = nh.subscribe("/robotis/dynamixel/present_gripper_states", 5, present_gripper_states_callback);
+  ros::Subscriber goal_gripper_states_sub = nh.subscribe("/robotis/dynamixel/goal_gripper_states", 5, goal_gripper_states_callback);
 
   ros::spin();
 

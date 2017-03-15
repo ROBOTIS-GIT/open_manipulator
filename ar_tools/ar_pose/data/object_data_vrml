@@ -1,0 +1,15 @@
+#the number of patterns to be recognized
+2
+
+#pattern 1
+#VRML	Wrl/bud_B.dat
+VRML	Wrl/snoman.dat
+Data/patt.hiro 
+80.0
+0.0 0.0
+
+#pattern 2
+VRML	Wrl/snoman.dat
+Data/patt.kanji
+80.0
+0.0 0.0

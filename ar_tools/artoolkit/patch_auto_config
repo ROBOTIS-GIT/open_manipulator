@@ -1,0 +1,42 @@
+Index: Configure
+===================================================================
+--- Configure	(revision 311)
++++ Configure	(working copy)
+@@ -56,13 +56,15 @@
+     echo "  4: Digital Video Camera through IEEE 1394 (VGA NONCOMPRESSED Image Format)"
+     echo "  5: GStreamer Media Framework"
+     echo -n "Enter : "
+-    read ANS
++    #read ANS
++    ANS=$1
+     if [ "$ANS" = "1" ]
+     then
+ 		echo
+ 		echo "Color conversion should use x86 assembly (choose 'n' for 64bit systems)?"
+ 		echo -n "Enter : "
+-		read ANS
++		#read ANS
++		ANS=$2
+ 		if [ "$ANS" = "y" ]
+ 		then
+ 			CCVT_OBJ="ccvt_i386.o"
+@@ -141,7 +143,8 @@
+ 	# Asking for debug mode (assumes gcc)
+ 	echo "Do you want to create debug symbols? (y or n)"
+     echo -n "Enter : "
+-    read ANS
++    #read ANS
++    ANS=$3
+     if [ "$ANS" = "y" ]
+     then
+         CFLAG="$CFLAG -g"
+@@ -199,7 +202,8 @@
+ echo "GL_NV_texture_rectangle is supported on most NVidia graphics cards"
+ echo "and on ATi Radeon and better graphics cards"
+ echo -n "Enter : "
+-read ANS
++#read ANS
++ANS=$4
+ if ( [ "$ANS" = "y" ] || [ "$ANS" = "Y" ] ||  [ "$ANS" = "yes" ] || [ "$ANS" = "YES" ])
+ then
+     NVEXT="y"

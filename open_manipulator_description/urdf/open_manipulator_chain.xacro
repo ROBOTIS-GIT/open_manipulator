@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- ROBOTIS Manipulator-X4 -->
+<!-- Open_Manipulator Chain -->
 <robot name="gazebo_open_manipulator_chain" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- some parameters -->
@@ -130,7 +130,7 @@
     <child link="link3"/>
     <origin xyz="0.0 0.0 0.04235" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
     <dynamics damping="0.1"/>
   </joint>
 
@@ -177,7 +177,7 @@
     <child link="link4"/>
     <origin xyz="0.024 0.0 0.12165" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
     <dynamics damping="0.1"/>
   </joint>
 
@@ -224,7 +224,7 @@
     <child link="link5"/>
     <origin xyz="0.1235 0.0 0.0" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
     <dynamics damping="0.1"/>
   </joint>
 

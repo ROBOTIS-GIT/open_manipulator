@@ -1,0 +1,295 @@
+From f42ea322b2cc3ef699ec4f4a2c6b663ed378764f Mon Sep 17 00:00:00 2001
+From: Max Schwarz <max.schwarz@online.de>
+Date: Thu, 21 Aug 2014 23:56:36 +0200
+Subject: [PATCH] use relative include paths in headers
+
+This enables us to move the headers into the artoolkit folder in the
+devel space, which is consistent with other ROS packages and avoids
+conflicts with system-wide installations of artoolkit.
+---
+ include/AR/ar.h                       |  4 ++--
+ include/AR/arMulti.h                  |  7 ++++---
+ include/AR/gsub.h                     |  6 +++---
+ include/AR/gsubUtil.h                 |  2 +-
+ include/AR/gsub_lite.h                |  7 ++++---
+ include/AR/matrix.h                   |  3 ++-
+ include/AR/param.h                    |  2 +-
+ include/AR/sys/videoGStreamer.h       |  4 ++--
+ include/AR/sys/videoLinux1394Cam.h    |  6 +++---
+ include/AR/sys/videoLinuxDV.h         |  4 ++--
+ include/AR/sys/videoLinuxV4L.h        |  6 +++---
+ include/AR/sys/videoSGI.h             |  4 ++--
+ include/AR/sys/videoWin32DirectShow.h |  4 ++--
+ include/AR/video.h                    | 18 +++++++++---------
+ 14 files changed, 40 insertions(+), 37 deletions(-)
+
+diff --git a/include/AR/ar.h b/include/AR/ar.h
+index 5a24b2b..65ab468 100755
+--- a/include/AR/ar.h
++++ b/include/AR/ar.h
+@@ -44,8 +44,8 @@ extern "C" {
+ #include <stdlib.h>
+ #endif
+ 
+-#include <AR/config.h>
+-#include <AR/param.h>
++#include "config.h"
++#include "param.h"
+ 
+ // ============================================================================
+ //	Public types and defines.
+diff --git a/include/AR/arMulti.h b/include/AR/arMulti.h
+index e5a0308..a976bf2 100755
+--- a/include/AR/arMulti.h
++++ b/include/AR/arMulti.h
+@@ -37,9 +37,10 @@ extern "C" {
+ // ============================================================================
+ 
+ #include <stdio.h>
+-#include <AR/config.h>
+-#include <AR/param.h>
+-#include <AR/ar.h>
++
++#include "config.h"
++#include "param.h"
++#include "ar.h"
+ 
+ // ============================================================================
+ //	Public types and defines.
+diff --git a/include/AR/gsub.h b/include/AR/gsub.h
+index a9702f7..130ef53 100755
+--- a/include/AR/gsub.h
++++ b/include/AR/gsub.h
+@@ -35,9 +35,9 @@ extern "C" {
+ //	Public includes.
+ // ============================================================================
+ 
+-#include <AR/config.h>
+-#include <AR/param.h>
+-#include <AR/ar.h>
++#include "config.h"
++#include "param.h"
++#include "ar.h"
+ 
+ 	// ============================================================================
+ //	Public types and defines.
+diff --git a/include/AR/gsubUtil.h b/include/AR/gsubUtil.h
+index 1812453..4074694 100755
+--- a/include/AR/gsubUtil.h
++++ b/include/AR/gsubUtil.h
+@@ -31,7 +31,7 @@ extern "C" {
+ //	Public includes.
+ // ============================================================================
+ 
+-#include <AR/param.h>
++#include "param.h"
+ 
+ // ============================================================================
+ //	Public types and defines.
+diff --git a/include/AR/gsub_lite.h b/include/AR/gsub_lite.h
+index a2a7899..0bf1aa4 100644
+--- a/include/AR/gsub_lite.h
++++ b/include/AR/gsub_lite.h
+@@ -132,9 +132,10 @@ extern "C" {
+ #  endif
+ #  include <GL/gl.h>
+ #endif
+-#include <AR/config.h>
+-#include <AR/ar.h>		// ARUint8, AR_PIXEL_FORMAT, arDebug, arImage.
+-#include <AR/param.h>	// ARParam, arParamDecompMat(), arParamObserv2Ideal()
++
++#include "config.h"
++#include "ar.h" 		// ARUint8, AR_PIXEL_FORMAT, arDebug, arImage
++#include "param.h"	// ARParam, arParamDecompMat(), arParamObserv2Ideal()
+ 
+ // ============================================================================
+ //	Public types and definitions.
+diff --git a/include/AR/matrix.h b/include/AR/matrix.h
+index abf908f..b5a0d2d 100755
+--- a/include/AR/matrix.h
++++ b/include/AR/matrix.h
+@@ -37,7 +37,8 @@ extern "C" {
+ // ============================================================================
+ 
+ #include <math.h>
+-#include <AR/config.h>
++
++#include "config.h"
+ 
+ // ============================================================================
+ //	Public types and defines.
+diff --git a/include/AR/param.h b/include/AR/param.h
+index 443e811..1bfaf8f 100755
+--- a/include/AR/param.h
++++ b/include/AR/param.h
+@@ -38,7 +38,7 @@ extern "C" {
+ //	Public includes.
+ // ============================================================================
+ 
+-#include <AR/config.h>
++#include "config.h"
+ 
+ // ============================================================================
+ //	Public types and defines.
+diff --git a/include/AR/sys/videoGStreamer.h b/include/AR/sys/videoGStreamer.h
+index 909ed46..84f408c 100644
+--- a/include/AR/sys/videoGStreamer.h
++++ b/include/AR/sys/videoGStreamer.h
+@@ -13,8 +13,8 @@
+ extern "C" {
+ #endif
+ 
+-#include <AR/config.h>
+-#include <AR/ar.h>
++#include "../config.h"
++#include "../ar.h"
+ 
+ typedef struct _AR2VideoParamT AR2VideoParamT;
+ 
+diff --git a/include/AR/sys/videoLinux1394Cam.h b/include/AR/sys/videoLinux1394Cam.h
+index 7052bc1..c762fd4 100755
+--- a/include/AR/sys/videoLinux1394Cam.h
++++ b/include/AR/sys/videoLinux1394Cam.h
+@@ -14,13 +14,13 @@
+ extern "C" {
+ #endif
+ 
+-#include <AR/config.h>
+-#include <AR/ar.h>
++#include "../config.h"
++#include "../ar.h"
+ 
+ #include <stdlib.h>
+ #include <linux/types.h>
+ 
+-#include <AR/v4l-config.h>
++#include "../v4l-config.h"
+ #ifndef HAVE_CAMV4L
+   #include <libv4l1-videodev.h>
+ #else
+diff --git a/include/AR/sys/videoLinuxDV.h b/include/AR/sys/videoLinuxDV.h
+index f48a981..7c14ee0 100755
+--- a/include/AR/sys/videoLinuxDV.h
++++ b/include/AR/sys/videoLinuxDV.h
+@@ -14,8 +14,8 @@
+ extern "C" {
+ #endif
+ 
+-#include <AR/config.h>
+-#include <AR/ar.h>
++#include "../config.h"
++#include "../ar.h"
+ 
+ #include <stdio.h>
+ #include <string.h>
+diff --git a/include/AR/sys/videoLinuxV4L.h b/include/AR/sys/videoLinuxV4L.h
+index 037c75c..4a9bff0 100755
+--- a/include/AR/sys/videoLinuxV4L.h
++++ b/include/AR/sys/videoLinuxV4L.h
+@@ -22,15 +22,15 @@ extern "C" {
+ #include <stdlib.h>
+ #include <linux/types.h>
+ 
+-#include <AR/v4l-config.h>
++#include "../v4l-config.h"
+ #ifndef HAVE_CAMV4L
+   #include <libv4l1-videodev.h>
+ #else
+   #include <linux/videodev.h>
+ #endif
+ 
+-#include <AR/config.h>
+-#include <AR/ar.h>
++#include "../config.h"
++#include "../ar.h"
+ 
+ typedef struct {
+   //device controls
+diff --git a/include/AR/sys/videoSGI.h b/include/AR/sys/videoSGI.h
+index 89f7127..f9543d6 100755
+--- a/include/AR/sys/videoSGI.h
++++ b/include/AR/sys/videoSGI.h
+@@ -15,8 +15,8 @@
+ extern "C" {
+ #endif
+ 
+-#include <AR/config.h>
+-#include <AR/ar.h>
++#include "../config.h"
++#include "../ar.h"
+ 
+ 
+ typedef enum{
+diff --git a/include/AR/sys/videoWin32DirectShow.h b/include/AR/sys/videoWin32DirectShow.h
+index 5b3823b..0b24103 100755
+--- a/include/AR/sys/videoWin32DirectShow.h
++++ b/include/AR/sys/videoWin32DirectShow.h
+@@ -38,8 +38,8 @@
+ #ifndef AR_VIDEO_WIN32_DIRECTSHOW_H
+ #define AR_VIDEO_WIN32_DIRECTSHOW_H
+ 
+-#include <AR/config.h>
+-#include <AR/ar.h>
++#include "../config.h"
++#include "../ar.h"
+ 
+ #include <stdio.h>
+ #include <string.h>
+diff --git a/include/AR/video.h b/include/AR/video.h
+index 57f05dc..7a65186 100755
+--- a/include/AR/video.h
++++ b/include/AR/video.h
+@@ -75,15 +75,15 @@ extern "C" {
+ //	Public includes.
+ // ============================================================================
+ 
+-#include <AR/config.h>
+-#include <AR/ar.h>
++#include "config.h"
++#include "ar.h"
+ 
+ // ============================================================================
+ //	Public types and defines.
+ // ============================================================================
+ 
+ #ifdef _WIN32
+-#  include <AR/sys/videoWin32DirectShow.h>
++#  include "sys/videoWin32DirectShow.h"
+ #  ifdef LIBARVIDEO_EXPORTS
+ #    define AR_DLL_API __declspec(dllexport)
+ #  else
+@@ -99,25 +99,25 @@ extern "C" {
+ 
+ #ifdef __linux
+ #  ifdef AR_INPUT_V4L
+-#    include <AR/sys/videoLinuxV4L.h>
++#    include "sys/videoLinuxV4L.h"
+ #  endif
+ #  ifdef  AR_INPUT_DV
+-#    include <AR/sys/videoLinuxDV.h>
++#    include "sys/videoLinuxDV.h"
+ #  endif
+ #  ifdef  AR_INPUT_1394CAM
+-#    include <AR/sys/videoLinux1394Cam.h>
++#    include "sys/videoLinux1394Cam.h"
+ #  endif
+ #  ifdef  AR_INPUT_GSTREAMER
+-#    include <AR/sys/videoGStreamer.h>
++#    include "sys/videoGStreamer.h"
+ #  endif
+ #endif
+ 
+ #ifdef __sgi
+-#  include <AR/sys/videoSGI.h>
++#  include "sys/videoSGI.h"
+ #endif
+ 
+ #ifdef __APPLE__
+-#  include <AR/sys/videoMacOSX.h>
++#  include "sys/videoMacOSX.h"
+ #endif
+ 
+ // ============================================================================
+-- 
+1.9.1
+

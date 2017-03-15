@@ -1,0 +1,28 @@
+#the number of patterns to be recognized
+4
+
+#pattern 1
+cube
+Data/patt.hiro 
+80.0
+
+#pattern 2
+cone
+Data/patt.sample1
+80.0
+
+#pattern 3
+sphere
+Data/patt.sample2
+80.0
+
+#pattern 4
+torus
+Data/patt.kanji
+80.0
+
+# cube
+# cone
+# torus
+# sphere
+

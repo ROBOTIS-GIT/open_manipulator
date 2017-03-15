@@ -1,0 +1,14 @@
+#!/usr/bin/python
+pattern_count = 4
+
+print "#the number of patterns to be recognized"
+print str(pattern_count)
+print ""
+
+for i in range(1,pattern_count+1):
+    print "#pattern "+str(i)
+    print "4x4_"+str(i)
+    print "data/4x4/4x4_"+str(i)+".patt"
+    print "150.0"
+    print "0.0 0.0"
+    print ""

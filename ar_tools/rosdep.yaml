@@ -1,0 +1,8 @@
+libgstreamer0.10-dev:
+  ubuntu:
+    libgstreamer0.10-dev
+glut:
+  debian: libglut3-dev
+  fedora: freeglut-devel
+  arch: freeglut
+  gentoo: freeglut

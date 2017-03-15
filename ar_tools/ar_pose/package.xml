@@ -1,0 +1,41 @@
+<package>
+  <name>ar_pose</name>
+  <version>0.0.0</version>
+
+  <description>
+  Augmented Reality Marker Pose Estimation using ARToolkit
+  </description>
+
+  <author>Ivan Dryanovsk</author>
+  <author email="bill@neautomation.com">Bill Morris</author>
+  <author>Gautier Dumonteil</author>
+  <maintainer email="bill@neautomation.com">Bill Morris</maintainer>
+  <maintainer email="lazewatd@engr.oregonstate.edu">Dan Lazewatsky</maintainer>
+  <maintainer email="max.schwarz@online.de">Max Schwarz</maintainer>
+  <maintainer email="procopiostein@gmail.com">Procópio Stein</maintainer>
+  <url type="website">http://ros.org/wiki/ar_pose</url>
+  <url type="bugtracker">https://github.com/ar-tools/ar_tools/issues</url>
+  <url type="repository">https://github.com/ar-tools/ar_tools</url>
+  <license>GPL</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>artoolkit</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>resource_retriever</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+  <run_depend>artoolkit</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>resource_retriever</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>message_runtime</run_depend>
+</package>

@@ -1,0 +1,2 @@
+#!/bin/bash
+git clone https://github.com/ar-tools/ar_data.git

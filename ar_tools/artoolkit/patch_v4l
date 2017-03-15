@@ -1,0 +1,86 @@
+Index: Configure
+===================================================================
+--- Configure	(revision 311)
++++ Configure	(working copy)
+@@ -289,4 +289,22 @@
+ echo "  create include/AR/config.h"
+ sed -f $SED <include/AR/config.h.in > include/AR/config.h
+ 
++#
++# Output step 3 - Test for v4l1
++# Figure out if linux/videodev.h
++#
++
++cat > .test.h << EOM
++#include <linux/videodev.h>
++EOM
++if gcc -E .test.h
++then
++  echo '#define HAVE_CAMV4L 1' > include/AR/v4l-config.h
++else
++  echo '#ifdef HAVE_CAMV4L' > include/AR/v4l-config.h
++  echo '  #undef HAVE_CAMV4L' >> include/AR/v4l-config.h
++  echo '#endif' >> include/AR/v4l-config.h
++fi
++rm .test.h
++
+ echo "Done."
+Index: include/AR/sys/videoLinuxV4L.h
+===================================================================
+--- include/AR/sys/videoLinuxV4L.h	(revision 311)
++++ include/AR/sys/videoLinuxV4L.h	(working copy)
+@@ -21,7 +21,13 @@
+ 
+ #include <stdlib.h>
+ #include <linux/types.h>
+-#include <linux/videodev.h>
++
++#include <AR/v4l-config.h>
++#ifndef HAVE_CAMV4L
++  #include <libv4l1-videodev.h>
++#else
++  #include <linux/videodev.h>
++#endif
+ 
+ #include <AR/config.h>
+ #include <AR/ar.h>
+Index: include/AR/sys/videoLinux1394Cam.h
+===================================================================
+--- include/AR/sys/videoLinux1394Cam.h	(revision 311)
++++ include/AR/sys/videoLinux1394Cam.h	(working copy)
+@@ -19,7 +19,14 @@
+ 
+ #include <stdlib.h>
+ #include <linux/types.h>
+-#include <linux/videodev.h>
++
++#include <AR/v4l-config.h>
++#ifndef HAVE_CAMV4L
++  #include <libv4l1-videodev.h>
++#else
++  #include <linux/videodev.h>
++#endif
++
+ #include <libraw1394/raw1394.h>
+ #include <libdc1394/dc1394_control.h>
+ 
+Index: lib/SRC/VideoLinuxV4L/video.c
+===================================================================
+--- lib/SRC/VideoLinuxV4L/video.c	(revision 311)
++++ lib/SRC/VideoLinuxV4L/video.c	(working copy)
+@@ -27,7 +27,14 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <linux/types.h>
+-#include <linux/videodev.h>
++
++#include <AR/v4l-config.h>
++#ifndef HAVE_CAMV4L
++  #include <libv4l1-videodev.h>
++#else
++  #include <linux/videodev.h>
++#endif
++
+ #include <AR/config.h>
+ #include <AR/ar.h>
+ #include <AR/video.h>
