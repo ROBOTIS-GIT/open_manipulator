@@ -1,0 +1,6 @@
+move_time : 3.0  # movement time
+target_position :
+  joint1 : 0.0	# joint 1
+  joint2 : 0.0	# joint 2
+  joint3 : 0.0	# joint 3
+  joint4 : 0.0	# joint 4

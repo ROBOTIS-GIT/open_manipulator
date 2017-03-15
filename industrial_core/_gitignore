@@ -1,0 +1,27 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Left over subversion files
+*.svn
+
+# Temp files
+*~
+
+# Other ROS stuff
+CATKIN_IGNORE*
+
+# Eclipse stuff
+.pydevproject
+.project
+.cproject
