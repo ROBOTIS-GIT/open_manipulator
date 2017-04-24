@@ -51,9 +51,9 @@ DynamixelController::DynamixelController()
 
   // ROS Subscriber
   goal_joint_position_sub_   = nh_.subscribe("/robotis/dynamixel/goal_joint_states", 10,
-                                          &DynamixelController::goalJointPosition, this);
+                                          &DynamixelController::goalJointPositionMsgCallback, this);
   goal_gripper_position_sub_ = nh_.subscribe("/robotis/dynamixel/goal_gripper_states", 10,
-                                          &DynamixelController::goalGripperPosition, this);
+                                          &DynamixelController::goalGripperPositionMsgCallback, this);
 
   // Open port
   if (portHandler_->openPort())
@@ -363,7 +363,7 @@ bool DynamixelController::subscribePosition(void)
   gripperPresentPosition();
 }
 
-void DynamixelController::goalJointPosition(const sensor_msgs::JointState::ConstPtr &msg)
+void DynamixelController::goalJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   int64_t goal_joint_position[MAX_JOINT_NUM] = {0,};
 
@@ -377,7 +377,7 @@ void DynamixelController::goalJointPosition(const sensor_msgs::JointState::Const
   moveJoints(goal_joint_position);
 }
 
-void DynamixelController::goalGripperPosition(const sensor_msgs::JointState::ConstPtr &msg)
+void DynamixelController::goalGripperPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   int64_t goal_gripper_position = 0;
 

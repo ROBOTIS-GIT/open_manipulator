@@ -50,7 +50,4 @@
 
   <!-- Gripper Pub-->
   <node name="open_manipulator_rviz_pub" pkg="open_manipulator_description" type="open_manipulator_chain_rviz_pub"/>
-
-  <!-- Planning API -->
-  <node name="open_manipulator_motion_planning" pkg="open_manipulator_motion_planning_ctrl" type="motion_planning_controller"/>
 </launch>

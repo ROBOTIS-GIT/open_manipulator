@@ -6,7 +6,7 @@
   <xacro:property name="pi" value="3.141592654" />
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
-  <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator_chain.gazebo" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator_chain.gazebo.xacro" />
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/materials.xacro" />
 
@@ -39,10 +39,11 @@
     </visual>
 
     <inertial>
-      <origin xyz="0.00025 0.00000 0.01780" rpy="0 0 0"/>
-      <mass value="0.087"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-      <inertia ixx="0.00001378" ixy="0.0" ixz="-0.00000025" iyy="0.00002381" iyz="0.0" izz="0.00002107" />
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
     </inertial>
   </link>
 
@@ -70,7 +71,7 @@
   <!--  Link 2 -->
   <link name="link2">
     <collision>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <origin xyz="0.0 0.0 0.040" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://open_manipulator_description/meshes/chain_link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -85,10 +86,11 @@
     </visual>
 
     <inertial>
-      <origin xyz="0.00002 -0.00045 0.03293" rpy="0 0 0"/>
-      <mass value="0.117"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-      <inertia ixx="0.00004110" ixy="0.0" ixz="-0.00000025" iyy="0.00002381" iyz="0.0" izz="0.00002107" />
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
     </inertial>
   </link>
 
@@ -116,7 +118,7 @@
   <!--  Link 3 -->
   <link name="link3">
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0.022 0 0.122" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://open_manipulator_description/meshes/chain_link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -131,10 +133,11 @@
     </visual>
 
     <inertial>
-      <origin xyz="0.00966 -0.00034 0.11795" rpy="0 0 0"/>
-      <mass value="0.156"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-      <inertia ixx="0.00041624" ixy="0.00000017" ixz="-0.00004492" iyy="0.00042758" iyz="0.00000159" izz="0.00005317" />
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
     </inertial>
   </link>
 
@@ -162,7 +165,7 @@
   <!--  Link 4 -->
   <link name="link4">
     <collision>
-      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <origin xyz="0.124 0 0.0" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://open_manipulator_description/meshes/chain_link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -177,10 +180,11 @@
     </visual>
 
     <inertial>
-      <origin xyz="0.11076 -0.00035 0.00050" rpy="0 0 0"/>
-      <mass value="0.149"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-      <inertia ixx="0.00003083" ixy="0.00000147" ixz="-0.00000222" iyy="0.00036703" iyz="-0.00000003" izz="0.00037667" />
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
     </inertial>
   </link>
 
@@ -208,14 +212,14 @@
   <!--  Link 5 -->
   <link name="link5">
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0.046 0 0" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://open_manipulator_description/meshes/chain_link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0.065 0 0" rpy="0 0 0"/>
+      <origin xyz="0.046 0 0" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://open_manipulator_description/meshes/chain_link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -223,10 +227,37 @@
     </visual>
 
     <inertial>
-      <origin xyz="0.03767 0.00262 -0.00043" rpy="0 0 0"/>
-      <mass value="0.124"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-      <inertia ixx="0.00004822" ixy="-0.00000148" ixz="0.00000024" iyy="0.00004342" iyz="0.00000014" izz="0.00005784" />
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+  <!--  Grip link -->
+  <link name="grip_link">
+    <collision>
+      <origin xyz="0.0 0.047 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_l.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0.047 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_l.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
     </inertial>
   </link>
 
@@ -234,7 +265,7 @@
   <joint name="grip_joint" type="prismatic">
     <parent link="link5"/>
     <child link="grip_link"/>
-    <origin xyz="0.090 0.0 0.0" rpy="0 0 0"/>
+    <origin xyz="0.071 0.0 0.0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit velocity="6.5" effort="1000" lower="-0.035" upper="0.01" />
     <dynamics damping="0.1"/>
@@ -251,28 +282,29 @@
     </actuator>
   </transmission>
 
-  <!--  Grip link -->
-  <link name="grip_link">
+  <!--  Grip link sub -->
+  <link name="grip_link_sub">
     <collision>
-      <origin xyz="0.0 0.0 0" rpy="0 0 0"/>
+      <origin xyz="0 -0.047 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_l.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_r.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0.0 0.047 0" rpy="0 0 0"/>
+      <origin xyz="0 -0.047 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_l.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_r.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
 
     <inertial>
-      <origin xyz="0.02666 -0.00910 -0.02300" rpy="0 0 0"/>
-      <mass value="0.06721"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-      <inertia ixx="0.00002875" ixy="-0.00000593" ixz="-0.00000006" iyy="0.00006646" iyz="-0.00000009" izz="0.00005474" />
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
     </inertial>
   </link>
 
@@ -280,7 +312,7 @@
   <joint name="grip_joint_sub" type="prismatic">
     <parent link="link5"/>
     <child link="grip_link_sub"/>
-    <origin xyz="0.090 0.0 0" rpy="0 0 0"/>
+    <origin xyz="0.071 0.0 0" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
     <limit velocity="6.5" effort="1000" lower="-0.035" upper="0.01" />
     <dynamics damping="0.1"/>
@@ -296,30 +328,4 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-
-  <!--  Grip link sub -->
-  <link name="grip_link_sub">
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_r.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
-    <visual>
-      <origin xyz="0 -0.047 0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_r.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-
-    <inertial>
-      <origin xyz="0.02666 0.00910 -0.02300" rpy="0 0 0"/>
-      <mass value="0.06721"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-      <inertia ixx="0.00002875" ixy="0.00000593" ixz="0.00000006" iyy="0.00006646" iyz="-0.00000009" izz="0.00005474" />
-    </inertial>
-
-  </link>
 </robot>

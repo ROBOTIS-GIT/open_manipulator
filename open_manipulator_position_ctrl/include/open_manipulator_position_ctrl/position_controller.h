@@ -38,6 +38,8 @@
 
 #include "open_manipulator_position_ctrl/motion_planning_tool.h"
 #include "moveit_msgs/DisplayTrajectory.h"
+#include "moveit_msgs/ExecuteTrajectoryActionFeedback.h"
+#include "moveit_msgs/MoveGroupActionFeedback.h"
 
 namespace open_manipulator_position_ctrl
 {
@@ -59,36 +61,23 @@ class PositionController
   // ROS Publisher
   ros::Publisher goal_joint_position_pub_;
   ros::Publisher goal_gripper_position_pub_;
-  ros::Publisher bottle_pose_msg_pub_;
-  ros::Publisher place_pose_msg_pub_;
-  ros::Publisher demo_order_pub_;
 
   // ROS Subscribers
-  ros::Subscriber demo_order_sub_;
   ros::Subscriber present_joint_position_sub_;
   ros::Subscriber present_gripper_position_sub_;
-  ros::Subscriber motion_planning_target_pose_msg_sub_;
-  ros::Subscriber execute_planned_path_msg_sub_;
   ros::Subscriber display_planned_path_sub_;
-  ros::Subscriber bottle_pose_msg_sub_;
+  ros::Subscriber move_group_feedback_sub_;
 
   // Process state variables
   bool is_moving_;
   bool enable_joint_;
   bool enable_gripper_;
   bool moveit_execution_;
-  std_msgs::String order_;
 
   // Time variables
   double move_time_;
   int all_time_steps_;
   int step_cnt_;
-
-  // Target Pose
-  open_manipulator_msgs::KinematicsPose bottle_pose_;
-
-  // Place Pose
-  open_manipulator_msgs::KinematicsPose place_pose_;
 
   // Dynamixel position Vector and Matrix
   Eigen::VectorXd present_joint_position_;
@@ -106,21 +95,14 @@ class PositionController
   motion_planning_tool::MotionPlanningTool *motionPlanningTool_;
 
   // thread
-  boost::thread* trajectory_generate_tread_;
-
-  void demoMsgCallback(const std_msgs::String::ConstPtr &msg);
+  boost::thread* trajectory_generate_thread_;
 
   void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void presentGripperPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
 
-  void motionPlanningTargetPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
-  void executePlannedPathMsgCallback(const std_msgs::String::ConstPtr &msg);
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
-  void bottlePoseMsgCallback(const geometry_msgs::Pose::ConstPtr &msg);
+  void moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg);
 
-  void parsePoseData(const std::string &path);
-  void calculateJointGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position);
-  void calculateGripperGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position);
   void moveItTragectoryGenerateThread();
   
  public:

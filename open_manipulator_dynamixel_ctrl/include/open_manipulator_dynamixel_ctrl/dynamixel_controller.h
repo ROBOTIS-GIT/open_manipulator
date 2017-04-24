@@ -98,8 +98,8 @@ class DynamixelController
   int64_t convertRadian2Value(double radian);
   double convertValue2Radian(int32_t value);
 
-  void goalJointPosition(const sensor_msgs::JointState::ConstPtr &msg);
-  void goalGripperPosition(const sensor_msgs::JointState::ConstPtr &msg);
+  void goalJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void goalGripperPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
 };
 }
 
