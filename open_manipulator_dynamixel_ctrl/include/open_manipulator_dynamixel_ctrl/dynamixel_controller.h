@@ -32,7 +32,7 @@
 
 namespace open_manipulator_dynamixel_controller
 {
-#define MAX_JOINT_NUM        (4)
+#define MAX_DXL_NUM        (5)
 #define ITERATION_FREQUENCY  (25)
 
 class DynamixelController
@@ -50,12 +50,10 @@ class DynamixelController
   bool is_debug_;
 
   // ROS Publisher
-  ros::Publisher present_joint_position_pub_;
-  ros::Publisher present_gripper_position_pub_;
+  ros::Publisher present_dynamixel_position_pub_;
 
   // ROS Subscriber
-  ros::Subscriber goal_joint_position_sub_;
-  ros::Subscriber goal_gripper_position_sub_;
+  ros::Subscriber goal_dynamixel_position_sub_;
 
   // Dynamixel Parameters
   std::string device_name_;
@@ -64,19 +62,15 @@ class DynamixelController
   int baud_rate_;
 
   // Joint states
-  int joint_id_[MAX_JOINT_NUM];
-  int gripper_id_;
+  int id_[MAX_DXL_NUM];
 
   // Parameters
   std::map<int, dynamixel_tool::DynamixelTool *> dynamixel_;
   std::map<std::string, std::vector<int64_t> *> read_data_;
 
-  dynamixel::GroupSyncWrite *jointTorqueSyncWrite_;
-  dynamixel::GroupSyncWrite *jointGoalPositionSyncWrite_;
-  dynamixel::GroupSyncWrite *gripperTorqueSyncWrite_;
-  dynamixel::GroupSyncWrite *gripperGoalPositionSyncWrite_;
-  dynamixel::GroupSyncRead  *jointPresentPositionSyncRead_;
-  dynamixel::GroupSyncRead  *gripperPresentPositionSyncRead_;
+  dynamixel::GroupSyncWrite *dynamixelTorqueSyncWrite_;
+  dynamixel::GroupSyncWrite *dynamixelGoalPositionSyncWrite_;
+  dynamixel::GroupSyncRead  *dynamixelPresentPositionSyncRead_;
 
  public:
   DynamixelController();
@@ -88,18 +82,14 @@ class DynamixelController
 
   bool initMotor(std::string motor_model, uint8_t motor_id, float protocol_version);
 
-  bool moveJoints(int64_t joint_position[MAX_JOINT_NUM]);
-  bool moveGripper(int64_t gripper_position);
-  bool jointTorque(bool onoff);
-  bool gripperTorque(bool onoff);
-  bool jointPresentPosition(void);
-  bool gripperPresentPosition(void);
+  bool dynamixelControl(int64_t dynamixel_position[MAX_DXL_NUM]);
+  bool setTorque(bool onoff);
+  bool dynamixelPresentPosition(void);
 
   int64_t convertRadian2Value(double radian);
   double convertValue2Radian(int32_t value);
 
-  void goalJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
-  void goalGripperPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void goalPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
 };
 }
 

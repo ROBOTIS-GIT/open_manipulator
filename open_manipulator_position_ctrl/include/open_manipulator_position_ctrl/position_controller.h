@@ -60,19 +60,17 @@ class PositionController
 
   // ROS Publisher
   ros::Publisher goal_joint_position_pub_;
-  ros::Publisher goal_gripper_position_pub_;
 
   // ROS Subscribers
   ros::Subscriber present_joint_position_sub_;
-  ros::Subscriber present_gripper_position_sub_;
   ros::Subscriber display_planned_path_sub_;
   ros::Subscriber move_group_feedback_sub_;
+  ros::Subscriber gripper_position_sub_;
 
   // Process state variables
   bool is_moving_;
-  bool enable_joint_;
-  bool enable_gripper_;
   bool moveit_execution_;
+  bool gripper_;
 
   // Time variables
   double move_time_;
@@ -81,7 +79,6 @@ class PositionController
 
   // Dynamixel position Vector and Matrix
   Eigen::VectorXd present_joint_position_;
-  Eigen::VectorXd present_gripper_position_;
   Eigen::VectorXd goal_joint_position_;
   Eigen::VectorXd goal_gripper_position_;
 
@@ -98,10 +95,14 @@ class PositionController
   boost::thread* trajectory_generate_thread_;
 
   void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
-  void presentGripperPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
 
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
   void moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg);
+
+  void calculateGripperGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position);
+  void gripOn(void);
+  void gripOff(void);
 
   void moveItTragectoryGenerateThread();
   

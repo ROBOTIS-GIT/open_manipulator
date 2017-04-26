@@ -26,26 +26,25 @@ PositionController::PositionController()
      move_time_(0.0),
      all_time_steps_(0.0),
      step_cnt_(0),
-     enable_joint_(false),
-     enable_gripper_(false),
-     moveit_execution_(false)
+     moveit_execution_(false),
+     gripper_(false)
 {
   // Init parameter
   nh_.param("is_debug", is_debug_, is_debug_);
 
   // ROS Publisher
-  goal_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/goal_joint_states", 10);
-  goal_gripper_position_pub_ = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/goal_gripper_states", 10);
+  goal_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/goal_joint_states", 10);
 
   // ROS Subscriber
-  present_joint_position_sub_     = nh_.subscribe("/robotis/dynamixel/present_joint_states", 10,
+  present_joint_position_sub_     = nh_.subscribe("/robotis/open_manipulator/present_joint_states", 10,
                                                     &PositionController::presentJointPositionMsgCallback, this);
-  present_gripper_position_sub_   = nh_.subscribe("/robotis/dynamixel/present_gripper_states", 10,
-                                                    &PositionController::presentGripperPositionMsgCallback, this);
   move_group_feedback_sub_        = nh_.subscribe("/move_group/feedback", 10,
                                                     &PositionController::moveGroupActionFeedbackMsgCallback, this);
   display_planned_path_sub_       = nh_.subscribe("/move_group/display_planned_path", 10,
                                                     &PositionController::displayPlannedPathMsgCallback, this);
+
+  gripper_position_sub_           = nh_.subscribe("/robotis/open_manipulator/gripper", 10,
+                                                    &PositionController::gripperPositionMsgCallback, this);
 
   // Init target name
   ROS_ASSERT(initPositionController());
@@ -63,9 +62,8 @@ bool PositionController::initPositionController(void)
   joint_id_["joint3"] = 3;
   joint_id_["joint4"] = 4;
 
-  present_joint_position_   = Eigen::VectorXd::Zero(MAX_JOINT_NUM);
+  present_joint_position_   = Eigen::VectorXd::Zero(MAX_JOINT_NUM+MAX_GRIPPER_NUM);
   goal_joint_position_      = Eigen::VectorXd::Zero(MAX_JOINT_NUM);
-  present_gripper_position_ = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
   goal_gripper_position_    = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
 
   motionPlanningTool_ = new motion_planning_tool::MotionPlanningTool();
@@ -80,6 +78,61 @@ bool PositionController::shutdownPositionController(void)
 {
   ros::shutdown();
   return true;
+}
+
+void PositionController::gripOn(void)
+{
+  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
+  initial_position(0) = present_joint_position_(4);
+
+  goal_gripper_position_(0) = -75.0 * DEGREE2RADIAN;
+  Eigen::VectorXd target_position = goal_gripper_position_;
+
+  move_time_ = 2.0;
+  calculateGripperGoalTrajectory(initial_position, target_position);
+}
+
+void PositionController::gripOff(void)
+{
+  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
+  initial_position(0) = present_joint_position_(4);
+
+  goal_gripper_position_(0) = 0.0 * DEGREE2RADIAN;
+  Eigen::VectorXd target_position = goal_gripper_position_;
+
+  move_time_ = 2.0;
+  calculateGripperGoalTrajectory(initial_position, target_position);
+}
+
+void PositionController::calculateGripperGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position)
+{
+  /* set movement time */
+  all_time_steps_ = int(floor((move_time_ / ITERATION_TIME) + 1.0));
+  move_time_ = double(all_time_steps_ - 1) * ITERATION_TIME;
+
+  goal_gripper_trajectory_.resize(all_time_steps_, MAX_GRIPPER_NUM);
+
+  /* calculate gripper trajectory */
+  for (int index = 0; index < MAX_GRIPPER_NUM; index++)
+  {
+    double init_position_value = initial_position(index);
+    double target_position_value = target_position(index);
+
+    Eigen::MatrixXd trajectory =
+        robotis_framework::calcMinimumJerkTra(init_position_value, 0.0, 0.0,
+                                              target_position_value, 0.0, 0.0,
+                                              ITERATION_TIME, move_time_);
+
+    // Block of size (p,q), starting at (i,j)
+    // block(i,j,p,q)
+    goal_gripper_trajectory_.block(0, index, all_time_steps_, 1) = trajectory;
+  }
+
+  step_cnt_   = 0;
+  is_moving_  = true;
+  gripper_    = true;
+
+  ROS_INFO("Start Gripper Trajectory");
 }
 
 void PositionController::moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg)
@@ -170,7 +223,6 @@ void PositionController::moveItTragectoryGenerateThread()
   if (moveit_execution_ == true)
   {
     is_moving_    = true;
-    enable_joint_ = true;
     step_cnt_     = 0;
 
     moveit_execution_ = false;
@@ -181,15 +233,26 @@ void PositionController::moveItTragectoryGenerateThread()
 
 void PositionController::presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  for (int index = 0; index < MAX_JOINT_NUM; index++)
+  for (int index = 0; index < MAX_JOINT_NUM + MAX_GRIPPER_NUM; index++)
   {
     present_joint_position_(index) = msg->position.at(index);
   }
 }
 
-void PositionController::presentGripperPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
+void PositionController::gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg)
 {
-  present_gripper_position_(0) = msg->position.at(0);
+  if (msg->data == "grip_on")
+  {
+    gripOn();
+  }
+  else if (msg->data == "grip_off")
+  {
+    gripOff();
+  }
+  else
+  {
+    ROS_ERROR("If you want to grip or release something, publish 'grip_on' or 'grip_off'");
+  }
 }
 
 void PositionController::process(void)
@@ -197,9 +260,16 @@ void PositionController::process(void)
   // Get Joint & Gripper State
   // present_joint_position, present_gripper_position
 
-  if (is_moving_ == true)
+  if (is_moving_)
   {
-    if (enable_joint_ == true)
+    if (gripper_)
+    {
+      for (int index = 0; index < MAX_GRIPPER_NUM; index++)
+      {
+        goal_gripper_position_(index) = goal_gripper_trajectory_(step_cnt_, index);
+      }
+    }
+    else
     {
       for (int index = 0; index < MAX_JOINT_NUM; index++)
       {
@@ -207,18 +277,10 @@ void PositionController::process(void)
       }
     }
 
-    if (enable_gripper_ == true)
-    {
-      for (int index = 0; index < MAX_GRIPPER_NUM; index++)
-      {
-        goal_gripper_position_(index) = goal_gripper_trajectory_(step_cnt_, index);
-      }
-    }
-
     step_cnt_++;
   }
 
-  sensor_msgs::JointState send_to_joint_position, send_to_gripper_position;
+  sensor_msgs::JointState send_to_joint_position;
 
   for (std::map<std::string, uint8_t>::iterator state_iter = joint_id_.begin();
        state_iter != joint_id_.end(); state_iter++)
@@ -229,27 +291,23 @@ void PositionController::process(void)
   }
 
   std::string gripper_name = "grip_joint";
-  send_to_gripper_position.name.push_back(gripper_name);
-  send_to_gripper_position.position.push_back(goal_gripper_position_(0));
+  send_to_joint_position.name.push_back(gripper_name);
+  send_to_joint_position.position.push_back(goal_gripper_position_(0));
 
-  if (is_moving_ == true)
+  if (is_moving_)
   {
-    if (enable_joint_ == true)
-      goal_joint_position_pub_.publish(send_to_joint_position);
-    else if (enable_gripper_ == true)
-      goal_gripper_position_pub_.publish(send_to_gripper_position);
+    goal_joint_position_pub_.publish(send_to_joint_position);
   }
 
-  if (is_moving_ == true)
+  if (is_moving_)
   {
     if (step_cnt_ >= all_time_steps_)
     {
-      ROS_INFO("End Trajectory");
-
       is_moving_ = false;
       step_cnt_  = 0;
-      enable_joint_ = false;
-      enable_gripper_ = false;
+      gripper_   = false;
+
+      ROS_INFO("End Trajectory");
     }
   }
 }

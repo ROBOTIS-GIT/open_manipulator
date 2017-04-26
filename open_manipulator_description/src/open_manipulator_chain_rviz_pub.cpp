@@ -18,79 +18,51 @@
 
 
 #include <ros/ros.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sstream>
 #include <sensor_msgs/JointState.h>
 
+ros::Publisher goal_dynamixel_states_pub;
 ros::Publisher present_joint_states_pub;
-ros::Publisher goal_joint_states_pub;
 
-void presentJointStatesMsgCallback( const sensor_msgs::JointState::ConstPtr& msg )
+void presentDynamixelStateMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  sensor_msgs::JointState _present_msg;
+  sensor_msgs::JointState present_joint_msg;
 
-  for ( int _index = 0 ; _index < msg->name.size(); _index++ )
+  for (int index = 0; index < msg->name.size(); index++)
   {
-    _present_msg.name.push_back( msg->name[ _index ] );
-    _present_msg.position.push_back( msg->position[ _index ] );
-  }
-  present_joint_states_pub.publish( _present_msg );
-}
-
-void goalJointStatesMsgCallback( const sensor_msgs::JointState::ConstPtr& msg )
-{
-  sensor_msgs::JointState _goal_msg;
-
-  for ( int _index = 0 ; _index < msg->name.size(); _index++ )
-  {
-
-    _goal_msg.name.push_back( msg->name[ _index ] );
-    _goal_msg.position.push_back( msg->position[ _index ] );
-
-  }
-  goal_joint_states_pub.publish( _goal_msg );
-}
-
-void presentGripperStatesMsgCallback( const sensor_msgs::JointState::ConstPtr& msg )
-{
-  sensor_msgs::JointState _present_msg;
-
-  for ( int _index = 0 ; _index < msg->name.size(); _index++ )
-  {
-    if ( msg->name[ _index ] == "grip_joint" )
+    if (msg->name[index] == "id_5")
     {
-      _present_msg.name.push_back( msg->name[ _index ] );
-      _present_msg.position.push_back( msg->position[ _index ] * 0.01);
-      _present_msg.name.push_back("grip_joint_sub");
-      _present_msg.position.push_back(_present_msg.position[ _index ]);
+      present_joint_msg.name.push_back("grip_joint");
+      present_joint_msg.position.push_back(msg->position[index] * 0.01);
+      present_joint_msg.name.push_back("grip_joint_sub");
+      present_joint_msg.position.push_back(present_joint_msg.position[index]);
     }
     else
     {
-      _present_msg.name.push_back( msg->name[ _index ] );
-      _present_msg.position.push_back( msg->position[ _index ] );
+      std::stringstream joint_num;
+      joint_num << "joint" << index+1;
+      present_joint_msg.name.push_back(joint_num.str());
+      present_joint_msg.position.push_back(msg->position[index]);
     }
   }
-  present_joint_states_pub.publish( _present_msg );
+
+  present_joint_states_pub.publish(present_joint_msg);
 }
 
-void goalGripperStatesMsgCallback( const sensor_msgs::JointState::ConstPtr& msg )
+void goalJointStatesMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  sensor_msgs::JointState _goal_msg;
+  sensor_msgs::JointState goal_joint_msg;
 
-  for ( int _index = 0 ; _index < msg->name.size(); _index++ )
+  for (int index = 0; index < msg->name.size(); index++)
   {
-    if ( msg->name[ _index ] == "grip_joint" )
-    {
-      _goal_msg.name.push_back( msg->name[ _index ] );
-      _goal_msg.position.push_back( msg->position[ _index ] * 0.01);
-      _goal_msg.name.push_back("grip_joint_sub");
-      _goal_msg.position.push_back(_goal_msg.position[ _index ]);
-    }
-    else
-    {
-      _goal_msg.name.push_back( msg->name[ _index ] );
-      _goal_msg.position.push_back( msg->position[ _index ] );
-    }
+    goal_joint_msg.name.push_back(msg->name[index]);
+    goal_joint_msg.position.push_back(msg->position[index]);
   }
-  goal_joint_states_pub.publish( _goal_msg );
+
+  goal_dynamixel_states_pub.publish(goal_joint_msg);
 }
 
 int main( int argc , char **argv )
@@ -98,14 +70,11 @@ int main( int argc , char **argv )
   ros::init( argc , argv , "open_manipulator_description_publisher" );
   ros::NodeHandle nh("~");
 
-  present_joint_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/present_joint_states", 0);
-  goal_joint_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/goal_joint_states", 0);
+  goal_dynamixel_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/dynamixel/goal_states", 10);
+  present_joint_states_pub  = nh.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/present_joint_states", 10);
 
-  ros::Subscriber present_joint_states_sub = nh.subscribe("/robotis/dynamixel/present_joint_states", 5, presentJointStatesMsgCallback);
-  ros::Subscriber goal_joint_states_sub = nh.subscribe("/robotis/dynamixel/goal_joint_states", 5, goalJointStatesMsgCallback);
-
-  ros::Subscriber present_gripper_states_sub = nh.subscribe("/robotis/dynamixel/present_gripper_states", 5, presentGripperStatesMsgCallback);
-  ros::Subscriber goal_gripper_states_sub = nh.subscribe("/robotis/dynamixel/goal_gripper_states", 5, goalGripperStatesMsgCallback);
+  ros::Subscriber present_dynamixel_states_sub = nh.subscribe("/robotis/dynamixel/present_states", 10, presentDynamixelStateMsgCallback);
+  ros::Subscriber goal_joint_states_sub = nh.subscribe("/robotis/open_manipulator/goal_joint_states", 10, goalJointStatesMsgCallback);
 
   ros::spin();
 

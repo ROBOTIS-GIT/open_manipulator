@@ -5,15 +5,15 @@
       baud_rate: 1000000
       motor_model: "XM430_W350"
       protocol_version: 2.0
-      joint1:
+      dynamixel_1:
         id: 1
-      joint2:
+      dynamixel_2:
         id: 2
-      joint3:
+      dynamixel_3:
         id: 3
-      joint4:
+      dynamixel_4:
         id: 4
-      gripper:
+      dynamixel_5:
         id: 5
     </rosparam>
   </node>

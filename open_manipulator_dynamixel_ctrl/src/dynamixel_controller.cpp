@@ -46,14 +46,11 @@ DynamixelController::DynamixelController()
   packetHandler_ = dynamixel::PacketHandler::getPacketHandler(protocol_version_);
 
   // ROS Publisher
-  present_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/present_joint_states", 10);
-  present_gripper_position_pub_ = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/present_gripper_states", 10);
+  present_dynamixel_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/present_states", 10);
 
   // ROS Subscriber
-  goal_joint_position_sub_   = nh_.subscribe("/robotis/dynamixel/goal_joint_states", 10,
-                                          &DynamixelController::goalJointPositionMsgCallback, this);
-  goal_gripper_position_sub_ = nh_.subscribe("/robotis/dynamixel/goal_gripper_states", 10,
-                                          &DynamixelController::goalGripperPositionMsgCallback, this);
+  goal_dynamixel_position_sub_   = nh_.subscribe("/robotis/dynamixel/goal_states", 10,
+                                          &DynamixelController::goalPositionMsgCallback, this);
 
   // Open port
   if (portHandler_->openPort())
@@ -89,72 +86,47 @@ DynamixelController::~DynamixelController()
 bool DynamixelController::initDynamixelController(void)
 {
   // Init dynamixel
-  nh_priv_.getParam("joint1/id", joint_id_[0]);
-  initMotor(motor_model_, joint_id_[0], protocol_version_);
+  nh_priv_.getParam("dynamixel_1/id", id_[0]);
+  initMotor(motor_model_, id_[0], protocol_version_);
 
-  nh_priv_.getParam("joint2/id", joint_id_[1]);
-  initMotor(motor_model_, joint_id_[1], protocol_version_);
+  nh_priv_.getParam("dynamixel_2/id", id_[1]);
+  initMotor(motor_model_, id_[1], protocol_version_);
 
-  nh_priv_.getParam("joint3/id", joint_id_[2]);
-  initMotor(motor_model_, joint_id_[2], protocol_version_);
+  nh_priv_.getParam("dynamixel_3/id", id_[2]);
+  initMotor(motor_model_, id_[2], protocol_version_);
 
-  nh_priv_.getParam("joint4/id", joint_id_[3]);
-  initMotor(motor_model_, joint_id_[3], protocol_version_);
+  nh_priv_.getParam("dynamixel_4/id", id_[3]);
+  initMotor(motor_model_, id_[3], protocol_version_);
 
-  nh_priv_.getParam("gripper/id", gripper_id_);
-  initMotor(motor_model_, gripper_id_, protocol_version_);
+  nh_priv_.getParam("dynamixel_5/id", id_[4]);
+  initMotor(motor_model_, id_[4], protocol_version_);
 
   // Init SyncWrite
-  dynamixel_[joint_id_[0]]->item_ = dynamixel_[joint_id_[0]]->ctrl_table_["torque_enable"];
-  jointTorqueSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
-                                                        packetHandler_,
-                                                        dynamixel_[joint_id_[0]]->item_->address,
-                                                        dynamixel_[joint_id_[0]]->item_->data_length);
-
-  dynamixel_[joint_id_[0]]->item_ = dynamixel_[joint_id_[0]]->ctrl_table_["goal_position"];
-  jointGoalPositionSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
-                                                          packetHandler_,
-                                                          dynamixel_[joint_id_[0]]->item_->address,
-                                                          dynamixel_[joint_id_[0]]->item_->data_length);
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["torque_enable"];
-  gripperTorqueSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
-                                                          packetHandler_,
-                                                          dynamixel_[gripper_id_]->item_->address,
-                                                          dynamixel_[gripper_id_]->item_->data_length);
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["goal_position"];
-  gripperGoalPositionSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
+  dynamixel_[id_[0]]->item_ = dynamixel_[id_[0]]->ctrl_table_["torque_enable"];
+  dynamixelTorqueSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
                                                             packetHandler_,
-                                                            dynamixel_[gripper_id_]->item_->address,
-                                                            dynamixel_[gripper_id_]->item_->data_length);
+                                                            dynamixel_[id_[0]]->item_->address,
+                                                            dynamixel_[id_[0]]->item_->data_length);
 
+  dynamixel_[id_[0]]->item_ = dynamixel_[id_[0]]->ctrl_table_["goal_position"];
+  dynamixelGoalPositionSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
+                                                                  packetHandler_,
+                                                                  dynamixel_[id_[0]]->item_->address,
+                                                                  dynamixel_[id_[0]]->item_->data_length);
   // Init SyncRead
-  dynamixel_[joint_id_[0]]->item_ = dynamixel_[joint_id_[0]]->ctrl_table_["present_position"];
-  jointPresentPositionSyncRead_ = new dynamixel::GroupSyncRead(portHandler_,
-                                                        packetHandler_,
-                                                        dynamixel_[joint_id_[0]]->item_->address,
-                                                        dynamixel_[joint_id_[0]]->item_->data_length);
+  dynamixel_[id_[0]]->item_ = dynamixel_[id_[0]]->ctrl_table_["present_position"];
+  dynamixelPresentPositionSyncRead_ = new dynamixel::GroupSyncRead(portHandler_,
+                                                                   packetHandler_,
+                                                                   dynamixel_[id_[0]]->item_->address,
+                                                                   dynamixel_[id_[0]]->item_->data_length);
 
-  for (int joint_index = joint_id_[0]; joint_index <= MAX_JOINT_NUM; joint_index++)
+  for (int id_index = id_[0]; id_index <= MAX_DXL_NUM; id_index++)
   {
-    if (jointPresentPositionSyncRead_->addParam(joint_index) != true)
+    if (dynamixelPresentPositionSyncRead_->addParam(id_index) != true)
     {
-      fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", joint_index);
+      fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", id_index);
       return 0;
     }
-  }
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["present_position"];
-  gripperPresentPositionSyncRead_ = new dynamixel::GroupSyncRead(portHandler_,
-                                                          packetHandler_,
-                                                          dynamixel_[gripper_id_]->item_->address,
-                                                          dynamixel_[gripper_id_]->item_->data_length);
-
-  if (gripperPresentPositionSyncRead_->addParam(gripper_id_) != true)
-  {
-    fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", gripper_id_);
-    return 0;
   }
 
   ROS_INFO("open_manipulator_dynamixel_controller : Init OK!");
@@ -163,8 +135,7 @@ bool DynamixelController::initDynamixelController(void)
 
 bool DynamixelController::shutdownDynamixelController(void)
 {
-  jointTorque(false);
-  gripperTorque(false);
+  setTorque(false);
   portHandler_->closePort();
   ros::shutdown();
   return true;
@@ -176,214 +147,124 @@ bool DynamixelController::initMotor(std::string motor_model, uint8_t motor_id, f
   dynamixel_[motor_id] = dynamixel_motor;
 }
 
-bool DynamixelController::moveJoints(int64_t joint_position[MAX_JOINT_NUM])
+bool DynamixelController::dynamixelControl(int64_t dynamixel_position[MAX_DXL_NUM])
 {
   bool dynamixel_addparam_result;
   int8_t dynamixel_comm_result;
 
   int8_t index = 0;
 
-  while(index < MAX_JOINT_NUM)
+  while(index < MAX_DXL_NUM)
   {
-    dynamixel_addparam_result = jointGoalPositionSyncWrite_->addParam(joint_id_[index], (uint8_t*)&joint_position[index]);
+    dynamixel_addparam_result = dynamixelGoalPositionSyncWrite_->addParam(id_[index], (uint8_t*)&dynamixel_position[index]);
 
     if (dynamixel_addparam_result != true)
     {
-      ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", joint_id_[index]);
+      ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", id_[index]);
       return false;
     }
 
     index++;
   }
 
-  dynamixel_comm_result = jointGoalPositionSyncWrite_->txPacket();
+  dynamixel_comm_result = dynamixelGoalPositionSyncWrite_->txPacket();
   if (dynamixel_comm_result != COMM_SUCCESS)
   {
     packetHandler_->printTxRxResult(dynamixel_comm_result);
     return false;
   }
 
-  jointGoalPositionSyncWrite_->clearParam();
+  dynamixelGoalPositionSyncWrite_->clearParam();
   return true;
 }
 
-bool DynamixelController::moveGripper(int64_t gripper_position)
-{
-  bool dynamixel_addparam_result;
-  int8_t dynamixel_comm_result;
-
-
-  dynamixel_addparam_result = gripperGoalPositionSyncWrite_->addParam(gripper_id_, (uint8_t*)&gripper_position);
-
-  if (dynamixel_addparam_result != true)
-  {
-    ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", gripper_id_);
-    return false;
-  }
-
-  dynamixel_comm_result = gripperGoalPositionSyncWrite_->txPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
-  {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return false;
-  }
-
-  gripperGoalPositionSyncWrite_->clearParam();
-  return true;
-}
-
-bool DynamixelController::jointTorque(bool onoff)
+bool DynamixelController::setTorque(bool onoff)
 {
   bool dynamixel_addparam_result;
   int8_t dynamixel_comm_result;
 
   int8_t index = 0;
 
-  while (index < MAX_JOINT_NUM)
+  while (index < MAX_DXL_NUM)
   {
-    dynamixel_addparam_result = jointTorqueSyncWrite_->addParam(joint_id_[index], (uint8_t*)&onoff);
+    dynamixel_addparam_result = dynamixelTorqueSyncWrite_->addParam(id_[index], (uint8_t*)&onoff);
 
     if (dynamixel_addparam_result != true)
     {
-      ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", joint_id_[index]);
+      ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", id_[index]);
       return 0;
     }
 
     index++;
   }
 
-  dynamixel_comm_result = jointTorqueSyncWrite_->txPacket();
+  dynamixel_comm_result = dynamixelTorqueSyncWrite_->txPacket();
   if (dynamixel_comm_result != COMM_SUCCESS)
   {
     packetHandler_->printTxRxResult(dynamixel_comm_result);
     return 0;
   }
 
-  jointTorqueSyncWrite_->clearParam();
+  dynamixelTorqueSyncWrite_->clearParam();
   return true;
 }
 
-bool DynamixelController::gripperTorque(bool onoff)
+bool DynamixelController::dynamixelPresentPosition(void)
 {
-  bool dynamixel_addparam_result;
+  bool dynamixel_getdata_result;
   int8_t dynamixel_comm_result;
 
-  dynamixel_addparam_result = gripperTorqueSyncWrite_->addParam(gripper_id_, (uint8_t*)&onoff);
+  sensor_msgs::JointState dynamixel_position;
+  int32_t present_dynamixel_position;
 
-  if (dynamixel_addparam_result != true)
-  {
-    ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", gripper_id_);
-    return 0;
-  }
-
-  dynamixel_comm_result = gripperTorqueSyncWrite_->txPacket();
+  dynamixel_comm_result = dynamixelPresentPositionSyncRead_->txRxPacket();
   if (dynamixel_comm_result != COMM_SUCCESS)
   {
     packetHandler_->printTxRxResult(dynamixel_comm_result);
     return 0;
   }
 
-  gripperTorqueSyncWrite_->clearParam();
-  return true;
-}
-
-bool DynamixelController::jointPresentPosition(void)
-{
-  bool dxl_getdata_result;
-  int8_t dynamixel_comm_result;
-
-  sensor_msgs::JointState joint_position;
-  int32_t present_joint_position;
-
-  dynamixel_comm_result = jointPresentPositionSyncRead_->txRxPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
+  for (int id_index = id_[0]; id_index <= MAX_DXL_NUM; id_index++)
   {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return 0;
-  }
-
-  for (int joint_index = joint_id_[0]; joint_index <= MAX_JOINT_NUM; joint_index++)
-  {
-    dynamixel_[joint_index]->item_ = dynamixel_[joint_index]->ctrl_table_["present_position"];
-    dxl_getdata_result = jointPresentPositionSyncRead_->isAvailable(joint_index, dynamixel_[joint_index]->item_->address, dynamixel_[joint_index]->item_->data_length);
-    if (dxl_getdata_result != true)
+    dynamixel_[id_index]->item_ = dynamixel_[id_index]->ctrl_table_["present_position"];
+    dynamixel_getdata_result = dynamixelPresentPositionSyncRead_->isAvailable(id_index, dynamixel_[id_index]->item_->address, dynamixel_[id_index]->item_->data_length);
+    if (dynamixel_getdata_result != true)
     {
-      fprintf(stderr, "[ID:%03d] groupSyncRead getdata failed\n", joint_index);
+      fprintf(stderr, "[ID:%03d] groupSyncRead getdata failed\n", id_index);
       return 0;
     }
 
-    std::stringstream joint_num;
-    joint_num << "joint" << joint_index;
-    present_joint_position = jointPresentPositionSyncRead_->getData(joint_index,
-                                                             dynamixel_[joint_index]->item_->address,
-                                                             dynamixel_[joint_index]->item_->data_length);
+    std::stringstream id_num;
+    id_num << "id_" << id_index;
+    present_dynamixel_position = dynamixelPresentPositionSyncRead_->getData(id_index,
+                                                                            dynamixel_[id_index]->item_->address,
+                                                                            dynamixel_[id_index]->item_->data_length);
 
-    joint_position.name.push_back(joint_num.str());
-    joint_position.position.push_back(convertValue2Radian(present_joint_position));
+    dynamixel_position.name.push_back(id_num.str());
+    dynamixel_position.position.push_back(convertValue2Radian(present_dynamixel_position));
   }
 
-  present_joint_position_pub_.publish(joint_position);
-}
-
-bool DynamixelController::gripperPresentPosition(void)
-{
-  bool dxl_getdata_result;
-  int8_t dynamixel_comm_result;
-
-  sensor_msgs::JointState gripper_position;
-  int32_t gripper_joint_position;
-
-  dynamixel_comm_result = gripperPresentPositionSyncRead_->txRxPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
-  {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return 0;
-  }
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["present_position"];
-  dxl_getdata_result = gripperPresentPositionSyncRead_->isAvailable(gripper_id_, dynamixel_[gripper_id_]->item_->address, dynamixel_[gripper_id_]->item_->data_length);
-  if (dxl_getdata_result != true)
-  {
-    fprintf(stderr, "[ID:%03d] groupSyncRead getdata failed\n", gripper_id_);
-    return 0;
-  }
-
-  gripper_joint_position = gripperPresentPositionSyncRead_->getData(gripper_id_, dynamixel_[gripper_id_]->item_->address, dynamixel_[gripper_id_]->item_->data_length);
-
-  gripper_position.name.push_back("grip_joint");
-  gripper_position.position.push_back(convertValue2Radian(gripper_joint_position));
-
-  present_gripper_position_pub_.publish(gripper_position);
+  present_dynamixel_position_pub_.publish(dynamixel_position);
 }
 
 bool DynamixelController::subscribePosition(void)
 {
   // Read & Publish Dynamixel position
-  jointPresentPosition();
-  gripperPresentPosition();
+  dynamixelPresentPosition();
 }
 
-void DynamixelController::goalJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
+void DynamixelController::goalPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  int64_t goal_joint_position[MAX_JOINT_NUM] = {0,};
+  int64_t goal_position[MAX_DXL_NUM] = {0,};
 
-  for (int joint_num = joint_id_[0]; joint_num <= MAX_JOINT_NUM; joint_num++)
+  for (int id_num = id_[0]; id_num <= MAX_DXL_NUM; id_num++)
   {
-    goal_joint_position[joint_num-1] = convertRadian2Value(msg->position.at(joint_num-1));
+    goal_position[id_num-1] = convertRadian2Value(msg->position.at(id_num-1));
 
-    ROS_INFO("goal_joint_position[%d] : %lf", joint_num-1, msg->position.at(joint_num-1));
+    ROS_INFO("goal_joint_position[%d] : %lf", id_num-1, msg->position.at(id_num-1));
   }
 
-  moveJoints(goal_joint_position);
-}
-
-void DynamixelController::goalGripperPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
-{
-  int64_t goal_gripper_position = 0;
-
-  goal_gripper_position = convertRadian2Value(msg->position.at(0));
-
-  moveGripper(goal_gripper_position);
+  dynamixelControl(goal_position);
 }
 
 int64_t DynamixelController::convertRadian2Value(double radian)
@@ -391,27 +272,27 @@ int64_t DynamixelController::convertRadian2Value(double radian)
   int64_t value = 0;
   if (radian > 0)
   {
-    if (dynamixel_[joint_id_[0]]->value_of_max_radian_position_ <= dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
-      return dynamixel_[joint_id_[0]]->value_of_max_radian_position_;
+    if (dynamixel_[id_[0]]->value_of_max_radian_position_ <= dynamixel_[id_[0]]->value_of_0_radian_position_)
+      return dynamixel_[id_[0]]->value_of_max_radian_position_;
 
-    value = (radian * (dynamixel_[joint_id_[0]]->value_of_max_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) / dynamixel_[joint_id_[0]]->max_radian_)
-                + dynamixel_[joint_id_[0]]->value_of_0_radian_position_;
+    value = (radian * (dynamixel_[id_[0]]->value_of_max_radian_position_ - dynamixel_[id_[0]]->value_of_0_radian_position_) / dynamixel_[id_[0]]->max_radian_)
+                + dynamixel_[id_[0]]->value_of_0_radian_position_;
   }
   else if (radian < 0)
   {
-    if (dynamixel_[joint_id_[0]]->value_of_min_radian_position_ >= dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
-      return dynamixel_[joint_id_[0]]->value_of_min_radian_position_;
+    if (dynamixel_[id_[0]]->value_of_min_radian_position_ >= dynamixel_[id_[0]]->value_of_0_radian_position_)
+      return dynamixel_[id_[0]]->value_of_min_radian_position_;
 
-    value = (radian * (dynamixel_[joint_id_[0]]->value_of_min_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) / dynamixel_[joint_id_[0]]->min_radian_)
-                + dynamixel_[joint_id_[0]]->value_of_0_radian_position_;
+    value = (radian * (dynamixel_[id_[0]]->value_of_min_radian_position_ - dynamixel_[id_[0]]->value_of_0_radian_position_) / dynamixel_[id_[0]]->min_radian_)
+                + dynamixel_[id_[0]]->value_of_0_radian_position_;
   }
   else
-    value = dynamixel_[joint_id_[0]]->value_of_0_radian_position_;
+    value = dynamixel_[id_[0]]->value_of_0_radian_position_;
 
-  if (value > dynamixel_[joint_id_[0]]->value_of_max_radian_position_)
-    return dynamixel_[joint_id_[0]]->value_of_max_radian_position_;
-  else if (value < dynamixel_[joint_id_[0]]->value_of_min_radian_position_)
-    return dynamixel_[joint_id_[0]]->value_of_min_radian_position_;
+  if (value > dynamixel_[id_[0]]->value_of_max_radian_position_)
+    return dynamixel_[id_[0]]->value_of_max_radian_position_;
+  else if (value < dynamixel_[id_[0]]->value_of_min_radian_position_)
+    return dynamixel_[id_[0]]->value_of_min_radian_position_;
 
   return value;
 }
@@ -419,27 +300,27 @@ int64_t DynamixelController::convertRadian2Value(double radian)
 double DynamixelController::convertValue2Radian(int32_t value)
 {
   double radian = 0.0;
-  if (value > dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
+  if (value > dynamixel_[id_[0]]->value_of_0_radian_position_)
   {
-    if (dynamixel_[joint_id_[0]]->max_radian_ <= 0)
-      return dynamixel_[joint_id_[0]]->max_radian_;
+    if (dynamixel_[id_[0]]->max_radian_ <= 0)
+      return dynamixel_[id_[0]]->max_radian_;
 
-    radian = (double) (value - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) * dynamixel_[joint_id_[0]]->max_radian_
-               / (double) (dynamixel_[joint_id_[0]]->value_of_max_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_);
+    radian = (double) (value - dynamixel_[id_[0]]->value_of_0_radian_position_) * dynamixel_[id_[0]]->max_radian_
+               / (double) (dynamixel_[id_[0]]->value_of_max_radian_position_ - dynamixel_[id_[0]]->value_of_0_radian_position_);
   }
-  else if (value < dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
+  else if (value < dynamixel_[id_[0]]->value_of_0_radian_position_)
   {
-    if (dynamixel_[joint_id_[0]]->min_radian_ >= 0)
-      return dynamixel_[joint_id_[0]]->min_radian_;
+    if (dynamixel_[id_[0]]->min_radian_ >= 0)
+      return dynamixel_[id_[0]]->min_radian_;
 
-    radian = (double) (value - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) * dynamixel_[joint_id_[0]]->min_radian_
-               / (double) (dynamixel_[joint_id_[0]]->value_of_min_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_);
+    radian = (double) (value - dynamixel_[id_[0]]->value_of_0_radian_position_) * dynamixel_[id_[0]]->min_radian_
+               / (double) (dynamixel_[id_[0]]->value_of_min_radian_position_ - dynamixel_[id_[0]]->value_of_0_radian_position_);
   }
 
-  if (radian > dynamixel_[joint_id_[0]]->max_radian_)
-    return dynamixel_[joint_id_[0]]->max_radian_;
-  else if (radian < dynamixel_[joint_id_[0]]->min_radian_)
-    return dynamixel_[joint_id_[0]]->min_radian_;
+  if (radian > dynamixel_[id_[0]]->max_radian_)
+    return dynamixel_[id_[0]]->max_radian_;
+  else if (radian < dynamixel_[id_[0]]->min_radian_)
+    return dynamixel_[id_[0]]->min_radian_;
 
   return radian;
 }
@@ -451,8 +332,7 @@ int main(int argc, char **argv)
   DynamixelController dynamixel_controller;
   ros::Rate loop_rate(ITERATION_FREQUENCY);
 
-  dynamixel_controller.jointTorque(true);
-  dynamixel_controller.gripperTorque(true);
+  dynamixel_controller.setTorque(true);
 
   while (ros::ok())
   {
