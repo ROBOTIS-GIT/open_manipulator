@@ -22,6 +22,7 @@ using namespace open_manipulator_position_ctrl;
 
 PositionController::PositionController()
     :nh_priv_("~"),
+     using_gazebo_(false),
      is_moving_(false),
      move_time_(0.0),
      all_time_steps_(0.0),
@@ -30,21 +31,9 @@ PositionController::PositionController()
      gripper_(false)
 {
   // Init parameter
-  nh_.param("is_debug", is_debug_, is_debug_);
-
-  // ROS Publisher
-  goal_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/goal_joint_states", 10);
-
-  // ROS Subscriber
-  present_joint_position_sub_     = nh_.subscribe("/robotis/open_manipulator/present_joint_states", 10,
-                                                    &PositionController::presentJointPositionMsgCallback, this);
-  move_group_feedback_sub_        = nh_.subscribe("/move_group/feedback", 10,
-                                                    &PositionController::moveGroupActionFeedbackMsgCallback, this);
-  display_planned_path_sub_       = nh_.subscribe("/move_group/display_planned_path", 10,
-                                                    &PositionController::displayPlannedPathMsgCallback, this);
-
-  gripper_position_sub_           = nh_.subscribe("/robotis/open_manipulator/gripper", 10,
-                                                    &PositionController::gripperPositionMsgCallback, this);
+  nh_priv_.param("is_debug", is_debug_, is_debug_);
+  nh_priv_.getParam("gazebo", using_gazebo_);
+  nh_priv_.getParam("robot_name", robot_name_);
 
   // Init target name
   ROS_ASSERT(initPositionController());
@@ -65,6 +54,34 @@ bool PositionController::initPositionController(void)
   present_joint_position_   = Eigen::VectorXd::Zero(MAX_JOINT_NUM+MAX_GRIPPER_NUM);
   goal_joint_position_      = Eigen::VectorXd::Zero(MAX_JOINT_NUM);
   goal_gripper_position_    = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
+
+  // ROS Publisher
+  if (using_gazebo_ == true)
+  {
+    for (std::map<std::string, uint8_t>::iterator state_iter = joint_id_.begin();
+         state_iter != joint_id_.end(); state_iter++)
+    {
+      std::string joint_name = state_iter->first;
+      gazebo_goal_joint_position_pub_[joint_id_[joint_name]-1]
+        = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/" + joint_name + "_position/command", 10);
+    }
+  }
+  else
+  {
+    goal_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/goal_joint_states", 10);
+  }
+
+  // ROS Subscriber
+  present_joint_position_sub_     = nh_.subscribe("/robotis/open_manipulator/present_joint_states", 10,
+                                                    &PositionController::presentJointPositionMsgCallback, this);
+  move_group_feedback_sub_        = nh_.subscribe("/move_group/feedback", 10,
+                                                    &PositionController::moveGroupActionFeedbackMsgCallback, this);
+  display_planned_path_sub_       = nh_.subscribe("/move_group/display_planned_path", 10,
+                                                    &PositionController::displayPlannedPathMsgCallback, this);
+
+  gripper_position_sub_           = nh_.subscribe("/robotis/open_manipulator/gripper", 10,
+                                                    &PositionController::gripperPositionMsgCallback, this);
+
 
   motionPlanningTool_ = new motion_planning_tool::MotionPlanningTool();
 
@@ -296,7 +313,17 @@ void PositionController::process(void)
 
   if (is_moving_)
   {
-    goal_joint_position_pub_.publish(send_to_joint_position);
+    if (using_gazebo_ == true)
+    {
+      for (int id = 1; id <= MAX_JOINT_NUM; id++)
+      {
+        // gazebo_goal_joint_position_pub_[id-1].publish(send_to_joint_position.position.at(id-1));
+      }
+    }
+    else
+    {
+      goal_joint_position_pub_.publish(send_to_joint_position);
+    }
   }
 
   if (is_moving_)

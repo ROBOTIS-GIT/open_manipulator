@@ -57,9 +57,12 @@ class PositionController
 
   // ROS Parameters
   bool is_debug_;
+  bool using_gazebo_;
+  std::string robot_name_;
 
   // ROS Publisher
   ros::Publisher goal_joint_position_pub_;
+  ros::Publisher gazebo_goal_joint_position_pub_[MAX_JOINT_NUM];
 
   // ROS Subscribers
   ros::Subscriber present_joint_position_sub_;
@@ -105,7 +108,7 @@ class PositionController
   void gripOff(void);
 
   void moveItTragectoryGenerateThread();
-  
+
  public:
   PositionController();
   virtual ~PositionController();

@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+
+<launch>
+  <arg name="use_gazebo"	default="true" />
+
+  <param name="gazebo" value="$(arg use_gazebo)" type="bool"/>
+  <param name="gazebo_robot_name" value="open_manipulator_chain"/>
+  <node name="open_manipulator_position_ctrl" pkg="open_manipulator_position_ctrl" type="position_controller" required="true" output="screen"/>
+</launch>

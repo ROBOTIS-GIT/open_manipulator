@@ -1,4 +1,4 @@
-lookso_jr:
+open_manipulator_chain:
   # Publish all joint states -----------------------------------
   joint_state_controller:
     type: joint_state_controller/JointStateController
