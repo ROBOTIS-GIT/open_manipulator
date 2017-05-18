@@ -54,7 +54,6 @@
     <origin xyz="0.012 0.0 0.036" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
-    <dynamics damping="0.1"/>
   </joint>
 
   <!--  Link 2 -->
@@ -90,7 +89,6 @@
     <origin xyz="0.0 0.0 0.040" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
-    <dynamics damping="0.1"/>
   </joint>
 
   <!--  Link 3 -->
@@ -126,7 +124,6 @@
     <origin xyz="0.022 0 0.122" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
-    <dynamics damping="0.1"/>
   </joint>
 
   <!--  Link 4 -->
@@ -162,7 +159,6 @@
     <origin xyz="0.124 0.0 0.0" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
-    <dynamics damping="0.1"/>
   </joint>
 
   <!--  Link 5 -->
@@ -224,7 +220,6 @@
     <origin xyz="0.071 0.0 0.0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit velocity="6.5" effort="1000" lower="-0.035" upper="0.01" />
-    <dynamics damping="0.1"/>
   </joint>
 
   <!--  Grip link sub -->
@@ -260,7 +255,6 @@
     <origin xyz="0.071 0.0 0" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
     <limit velocity="6.5" effort="1000" lower="-0.035" upper="0.01" />
-    <dynamics damping="0.1"/>
   </joint>
 
 </robot>

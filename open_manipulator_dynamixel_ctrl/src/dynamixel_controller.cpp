@@ -261,7 +261,7 @@ void DynamixelController::goalPositionMsgCallback(const sensor_msgs::JointState:
   {
     goal_position[id_num-1] = convertRadian2Value(msg->position.at(id_num-1));
 
-    ROS_INFO("goal_joint_position[%d] : %lf", id_num-1, msg->position.at(id_num-1));
+    ROS_INFO("goal_joint_position[%d] : %lf", id_num, msg->position.at(id_num-1));
   }
 
   dynamixelControl(goal_position);

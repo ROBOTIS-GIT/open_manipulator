@@ -56,7 +56,7 @@ bool PositionController::initPositionController(void)
   goal_gripper_position_    = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
 
   // ROS Publisher
-  if (using_gazebo_ == true)
+  if (using_gazebo_)
   {
     for (std::map<std::string, uint8_t>::iterator state_iter = joint_id_.begin();
          state_iter != joint_id_.end(); state_iter++)
@@ -313,11 +313,13 @@ void PositionController::process(void)
 
   if (is_moving_)
   {
-    if (using_gazebo_ == true)
+    if (using_gazebo_)
     {
       for (int id = 1; id <= MAX_JOINT_NUM; id++)
       {
-        // gazebo_goal_joint_position_pub_[id-1].publish(send_to_joint_position.position.at(id-1));
+        std_msgs::Float64 joint_position;
+        joint_position.data = send_to_joint_position.position.at(id-1);
+        gazebo_goal_joint_position_pub_[2].publish(joint_position);
       }
     }
     else
