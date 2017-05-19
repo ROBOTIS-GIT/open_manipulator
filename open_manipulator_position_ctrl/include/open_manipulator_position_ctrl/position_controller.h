@@ -66,6 +66,7 @@ class PositionController
 
   // ROS Subscribers
   ros::Subscriber present_joint_position_sub_;
+  ros::Subscriber gazebo_present_joint_position_sub_;
   ros::Subscriber display_planned_path_sub_;
   ros::Subscriber move_group_feedback_sub_;
   ros::Subscriber gripper_position_sub_;
@@ -98,6 +99,7 @@ class PositionController
   boost::thread* trajectory_generate_thread_;
 
   void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
 
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);

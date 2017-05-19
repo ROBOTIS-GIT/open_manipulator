@@ -32,8 +32,8 @@ PositionController::PositionController()
 {
   // Init parameter
   nh_priv_.param("is_debug", is_debug_, is_debug_);
-  nh_priv_.getParam("gazebo", using_gazebo_);
-  nh_priv_.getParam("robot_name", robot_name_);
+  nh_.getParam("gazebo", using_gazebo_);
+  nh_.getParam("gazebo_robot_name", robot_name_);
 
   // Init target name
   ROS_ASSERT(initPositionController());
@@ -72,8 +72,17 @@ bool PositionController::initPositionController(void)
   }
 
   // ROS Subscriber
-  present_joint_position_sub_     = nh_.subscribe("/robotis/open_manipulator/present_joint_states", 10,
-                                                    &PositionController::presentJointPositionMsgCallback, this);
+  if (using_gazebo_)
+  {
+    gazebo_present_joint_position_sub_ = nh_.subscribe("/" + robot_name_ + "/joint_states", 10,
+                                                       &PositionController::gazeboPresentJointPositionMsgCallback, this);
+  }
+  else
+  {
+    present_joint_position_sub_     = nh_.subscribe("/robotis/open_manipulator/present_joint_states", 10,
+                                                      &PositionController::presentJointPositionMsgCallback, this);
+  }
+
   move_group_feedback_sub_        = nh_.subscribe("/move_group/feedback", 10,
                                                     &PositionController::moveGroupActionFeedbackMsgCallback, this);
   display_planned_path_sub_       = nh_.subscribe("/move_group/display_planned_path", 10,
@@ -248,6 +257,23 @@ void PositionController::moveItTragectoryGenerateThread()
   }
 }
 
+void PositionController::gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
+{
+  uint8_t gripper_joint_num = 0;
+
+  gripper_joint_num = MAX_GRIPPER_NUM + 1;
+
+//  for (int index = gripper_joint_num; index < MAX_JOINT_NUM + gripper_joint_num; index++)
+//  {
+//    present_joint_position_(index - gripper_joint_num) = msg->position.at(index);
+//  }
+
+//  for (int index = 0; index < MAX_GRIPPER_NUM; index++)
+//  {
+//    present_joint_position_(index + MAX_JOINT_NUM) = msg->position.at(index);
+//  }
+}
+
 void PositionController::presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   for (int index = 0; index < MAX_JOINT_NUM + MAX_GRIPPER_NUM; index++)
@@ -319,7 +345,7 @@ void PositionController::process(void)
       {
         std_msgs::Float64 joint_position;
         joint_position.data = send_to_joint_position.position.at(id-1);
-        gazebo_goal_joint_position_pub_[2].publish(joint_position);
+        gazebo_goal_joint_position_pub_[id-1].publish(joint_position);
       }
     }
     else
