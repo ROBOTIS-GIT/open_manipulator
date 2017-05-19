@@ -22,9 +22,6 @@
 #include <std_msgs/Float64.h>
 #include <sensor_msgs/JointState.h>
 
-ros::Publisher gazebo_present_joint_position_pub;
-ros::Publisher gazebo_present_gripper_position_pub;
-
 void jointStateMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
 
@@ -35,10 +32,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "open_manipulator_gazebo");
   ros::NodeHandle nh("~");
 
-  gazebo_present_joint_position_pub = nh.advertise<std_msgs::Float64>("/gazebo/dynamixel/present_joint_states", 5);
-  gazebo_present_gripper_position_pub = nh.advertise<std_msgs::Float64>("/gazebo/dynamixel/present_gripper_states", 5);
-
-  ros::Subscriber joint_states_sub_ = nh.subscribe("/joint_states", 10, jointStateMsgCallback);
+  ros::Subscriber joint_states_sub_ = nh.subscribe("/open_manipulator_chain/joint_states", 10, jointStateMsgCallback);
 
   ros::spin();
 
