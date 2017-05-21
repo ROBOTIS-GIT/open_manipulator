@@ -28,13 +28,13 @@
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find open_manipulator_moveit)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true" />
-    <arg name="moveit_controller_manager" value="gazebo_open_manipulator_chain" unless="$(arg fake_execution)"/>
+    <arg name="moveit_controller_manager" value="open_manipulator_chain" unless="$(arg fake_execution)"/>
     <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
   </include>
 
   <!-- Sensors Functionality -->
   <include ns="move_group" file="$(find open_manipulator_moveit)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
-    <arg name="moveit_sensor_manager" value="gazebo_open_manipulator_chain" />
+    <arg name="moveit_sensor_manager" value="open_manipulator_chain" />
   </include>
 
   <!-- Start the actual move_group node/action server -->

@@ -3,8 +3,8 @@ moveit_setup_assistant_config:
     package: open_manipulator_description
     relative_path: urdf/open_manipulator_chain.xacro
   SRDF:
-    relative_path: config/gazebo_open_manipulator_chain.srdf
+    relative_path: config/open_manipulator_chain.srdf
   CONFIG:
     author_name: Darby Lim
     author_email: thlim@robotis.com
-    generated_timestamp: 1489492366
+    generated_timestamp: 1495351940

@@ -58,6 +58,7 @@ bool PositionController::initPositionController(void)
   // ROS Publisher
   if (using_gazebo_)
   {
+    ROS_WARN("SET Gazebo Simulation Mode");
     for (std::map<std::string, uint8_t>::iterator state_iter = joint_id_.begin();
          state_iter != joint_id_.end(); state_iter++)
     {
