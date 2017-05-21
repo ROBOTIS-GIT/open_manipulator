@@ -264,15 +264,15 @@ void PositionController::gazeboPresentJointPositionMsgCallback(const sensor_msgs
 
   gripper_joint_num = MAX_GRIPPER_NUM + 1;
 
-//  for (int index = gripper_joint_num; index < MAX_JOINT_NUM + gripper_joint_num; index++)
-//  {
-//    present_joint_position_(index - gripper_joint_num) = msg->position.at(index);
-//  }
+ for (int index = gripper_joint_num; index < MAX_JOINT_NUM + gripper_joint_num; index++)
+ {
+   present_joint_position_(index - gripper_joint_num) = msg->position.at(index);
+ }
 
-//  for (int index = 0; index < MAX_GRIPPER_NUM; index++)
-//  {
-//    present_joint_position_(index + MAX_JOINT_NUM) = msg->position.at(index);
-//  }
+ for (int index = 0; index < MAX_GRIPPER_NUM; index++)
+ {
+   present_joint_position_(index + MAX_JOINT_NUM) = msg->position.at(index);
+ }
 }
 
 void PositionController::presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
