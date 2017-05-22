@@ -1,18 +1,14 @@
-# open_manipulator
+# open_manipulator chain
 
-# remotePC
+# Gazebo simulation
 
-$ roscore
+$ roslaunch open_manipulator_gazebo open_manipulator_gazebo.launch
 
-$ roslaunch open_manipulator_moveit open_manipulator_demo.launch
+$ roslaunch open_manipulator_moveit open_manipulator_demo.launch use_gazebo:=true
 
-$ rosrun open_manipulator_position_ctrl position_controller
+# Platform (DYNAMIXEL X-Series)
 
-$ rostopic pub /robotis/open_manipulator/pick_and_place std_msgs/String "init_joint"
-
-# Raspberry PI 3
-
-$ roslaunch ar_pose turtlebot3_pickandplace_ar_pose.launch
-
-$ sudo chmod a+rw /dev/ttyUSB0
 $ roslaunch open_manipulator_dynamixel_ctrl dynamixel_controller.launch
+
+$ roslaunch open_manipulator_moveit open_manipulator_demo.launch use_gazebo:=false
+

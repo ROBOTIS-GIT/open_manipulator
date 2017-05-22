@@ -115,12 +115,11 @@ void PositionController::gripOn(void)
   Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIP_JOINT_NUM);
   initial_position(0) = present_joint_position_(4) * 100.0;
 
-  goal_gripper_position_(0) = -75.0 * DEGREE2RADIAN;
+  goal_gripper_position_(0) = 75.0 * DEGREE2RADIAN;
   Eigen::VectorXd target_position = goal_gripper_position_;
 
   move_time_ = 2.0;
   calculateGripperGoalTrajectory(initial_position, target_position);
-  ROS_INFO("initial_position = %f, target_position = %f", initial_position(0), target_position(0));
 }
 
 void PositionController::gripOff(void)
@@ -133,7 +132,6 @@ void PositionController::gripOff(void)
 
   move_time_ = 2.0;
   calculateGripperGoalTrajectory(initial_position, target_position);
-  ROS_INFO("initial_position = %f, target_position = %f", initial_position(0), target_position(0));
 }
 
 void PositionController::calculateGripperGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position)
