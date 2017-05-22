@@ -51,9 +51,9 @@ bool PositionController::initPositionController(void)
   joint_id_["joint3"] = 3;
   joint_id_["joint4"] = 4;
 
-  present_joint_position_   = Eigen::VectorXd::Zero(MAX_JOINT_NUM+MAX_GRIPPER_NUM);
+  present_joint_position_   = Eigen::VectorXd::Zero(MAX_JOINT_NUM+MAX_GRIP_JOINT_NUM);
   goal_joint_position_      = Eigen::VectorXd::Zero(MAX_JOINT_NUM);
-  goal_gripper_position_    = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
+  goal_gripper_position_    = Eigen::VectorXd::Zero(MAX_GRIP_JOINT_NUM);
 
   // ROS Publisher
   if (using_gazebo_)
@@ -66,6 +66,9 @@ bool PositionController::initPositionController(void)
       gazebo_goal_joint_position_pub_[joint_id_[joint_name]-1]
         = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/" + joint_name + "_position/command", 10);
     }
+
+    gazebo_gripper_position_pub_[LEFT_GRIP]  = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/grip_joint_position/command", 10);
+    gazebo_gripper_position_pub_[RIGHT_GRIP] = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/grip_joint_sub_position/command", 10);
   }
   else
   {
@@ -109,26 +112,28 @@ bool PositionController::shutdownPositionController(void)
 
 void PositionController::gripOn(void)
 {
-  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
-  initial_position(0) = present_joint_position_(4);
+  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIP_JOINT_NUM);
+  initial_position(0) = present_joint_position_(4) * 100.0;
 
   goal_gripper_position_(0) = -75.0 * DEGREE2RADIAN;
   Eigen::VectorXd target_position = goal_gripper_position_;
 
   move_time_ = 2.0;
   calculateGripperGoalTrajectory(initial_position, target_position);
+  ROS_INFO("initial_position = %f, target_position = %f", initial_position(0), target_position(0));
 }
 
 void PositionController::gripOff(void)
 {
-  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIPPER_NUM);
-  initial_position(0) = present_joint_position_(4);
+  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIP_JOINT_NUM);
+  initial_position(0) = present_joint_position_(4) * 100.0;
 
   goal_gripper_position_(0) = 0.0 * DEGREE2RADIAN;
   Eigen::VectorXd target_position = goal_gripper_position_;
 
   move_time_ = 2.0;
   calculateGripperGoalTrajectory(initial_position, target_position);
+  ROS_INFO("initial_position = %f, target_position = %f", initial_position(0), target_position(0));
 }
 
 void PositionController::calculateGripperGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position)
@@ -137,10 +142,10 @@ void PositionController::calculateGripperGoalTrajectory(Eigen::VectorXd initial_
   all_time_steps_ = int(floor((move_time_ / ITERATION_TIME) + 1.0));
   move_time_ = double(all_time_steps_ - 1) * ITERATION_TIME;
 
-  goal_gripper_trajectory_.resize(all_time_steps_, MAX_GRIPPER_NUM);
+  goal_gripper_trajectory_.resize(all_time_steps_, MAX_GRIP_JOINT_NUM);
 
   /* calculate gripper trajectory */
-  for (int index = 0; index < MAX_GRIPPER_NUM; index++)
+  for (int index = 0; index < MAX_GRIP_JOINT_NUM; index++)
   {
     double init_position_value = initial_position(index);
     double target_position_value = target_position(index);
@@ -262,14 +267,14 @@ void PositionController::gazeboPresentJointPositionMsgCallback(const sensor_msgs
 {
   uint8_t gripper_joint_num = 0;
 
-  gripper_joint_num = MAX_GRIPPER_NUM + 1;
+  gripper_joint_num = MAX_GRIP_JOINT_NUM + 1;
 
  for (int index = gripper_joint_num; index < MAX_JOINT_NUM + gripper_joint_num; index++)
  {
    present_joint_position_(index - gripper_joint_num) = msg->position.at(index);
  }
 
- for (int index = 0; index < MAX_GRIPPER_NUM; index++)
+ for (int index = 0; index < MAX_GRIP_JOINT_NUM; index++)
  {
    present_joint_position_(index + MAX_JOINT_NUM) = msg->position.at(index);
  }
@@ -277,7 +282,7 @@ void PositionController::gazeboPresentJointPositionMsgCallback(const sensor_msgs
 
 void PositionController::presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  for (int index = 0; index < MAX_JOINT_NUM + MAX_GRIPPER_NUM; index++)
+  for (int index = 0; index < MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM; index++)
   {
     present_joint_position_(index) = msg->position.at(index);
   }
@@ -308,7 +313,7 @@ void PositionController::process(void)
   {
     if (gripper_)
     {
-      for (int index = 0; index < MAX_GRIPPER_NUM; index++)
+      for (int index = 0; index < MAX_GRIP_JOINT_NUM; index++)
       {
         goal_gripper_position_(index) = goal_gripper_trajectory_(step_cnt_, index);
       }
@@ -348,6 +353,11 @@ void PositionController::process(void)
         joint_position.data = send_to_joint_position.position.at(id-1);
         gazebo_goal_joint_position_pub_[id-1].publish(joint_position);
       }
+
+      std_msgs::Float64 gripper_position;
+      gripper_position.data = send_to_joint_position.position.at(4) * 0.01;
+      gazebo_gripper_position_pub_[LEFT_GRIP].publish(gripper_position);
+      gazebo_gripper_position_pub_[RIGHT_GRIP].publish(gripper_position);
     }
     else
     {

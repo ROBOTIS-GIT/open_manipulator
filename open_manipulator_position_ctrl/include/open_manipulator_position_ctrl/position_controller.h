@@ -44,7 +44,9 @@
 namespace open_manipulator_position_ctrl
 {
 #define MAX_JOINT_NUM        (4)
-#define MAX_GRIPPER_NUM      (1)
+#define MAX_GRIP_JOINT_NUM   (1)
+#define LEFT_GRIP            (0)
+#define RIGHT_GRIP           (1)
 #define ITERATION_FREQUENCY  (25)
 #define ITERATION_TIME       (0.04)
 
@@ -63,6 +65,7 @@ class PositionController
   // ROS Publisher
   ros::Publisher goal_joint_position_pub_;
   ros::Publisher gazebo_goal_joint_position_pub_[MAX_JOINT_NUM];
+  ros::Publisher gazebo_gripper_position_pub_[MAX_GRIP_JOINT_NUM+1];
 
   // ROS Subscribers
   ros::Subscriber present_joint_position_sub_;

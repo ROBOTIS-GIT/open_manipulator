@@ -16,7 +16,7 @@
 
 /* Authors: Taehoon Lim (Darby) */
 
-#include "open_manipulator_position_ctrl//motion_planning_tool.h"
+#include "open_manipulator_position_ctrl/motion_planning_tool.h"
 
 using namespace motion_planning_tool;
 
