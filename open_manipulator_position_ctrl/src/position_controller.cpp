@@ -113,9 +113,10 @@ bool PositionController::shutdownPositionController(void)
 void PositionController::gripOn(void)
 {
   Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_GRIP_JOINT_NUM);
-  initial_position(0) = present_joint_position_(4) * 100.0;
+  initial_position(0) = present_joint_position_(4);
 
   goal_gripper_position_(0) = 75.0 * DEGREE2RADIAN;
+
   Eigen::VectorXd target_position = goal_gripper_position_;
 
   move_time_ = 2.0;
