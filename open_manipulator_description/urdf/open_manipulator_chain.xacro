@@ -56,7 +56,7 @@
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
   </joint>
 
-  <!-- Transmisstion 1 -->
+  <!-- Transmission 1 -->
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint1">
@@ -103,7 +103,7 @@
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
   </joint>
 
-  <!-- Transmisstion 2 -->
+  <!-- Transmission 2 -->
   <transmission name="tran2">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint2">
@@ -150,7 +150,7 @@
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
   </joint>
 
-  <!-- Transmisstion 3 -->
+  <!-- Transmission 3 -->
   <transmission name="tran3">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint3">
@@ -197,7 +197,7 @@
     <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
   </joint>
 
-  <!-- Transmisstion 4 -->
+  <!-- Transmission 4 -->
   <transmission name="tran4">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint4">
@@ -270,7 +270,7 @@
     <limit velocity="6.5" effort="1000" lower="-0.01" upper="0.035" />
   </joint>
 
-  <!-- Transmisstion 5 -->
+  <!-- Transmission 5 -->
   <transmission name="tran5">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="grip_joint">
@@ -317,7 +317,7 @@
     <limit velocity="6.5" effort="1000" lower="-0.01" upper="0.035" />
   </joint>
 
-  <!-- Transmisstion 6 -->
+  <!-- Transmission 6 -->
   <transmission name="tran6">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="grip_joint_sub">
