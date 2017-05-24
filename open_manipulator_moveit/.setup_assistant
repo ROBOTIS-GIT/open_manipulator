@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: open_manipulator_description
+    relative_path: urdf/open_manipulator_chain.xacro
+  SRDF:
+    relative_path: config/open_manipulator_chain.srdf
+  CONFIG:
+    author_name: Darby Lim
+    author_email: thlim@robotis.com
+    generated_timestamp: 1495352863

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<launch>
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find open_manipulator_gazebo)/config/position_controller.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+  output="screen" ns="/open_manipulator_chain" args="joint_state_controller
+                                                            joint1_position
+                                                            joint2_position
+                                                            joint3_position
+                                                            joint4_position
+                                                            grip_joint_position
+                                                            grip_joint_sub_position"/>
+</launch>

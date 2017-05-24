@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+  <name>open_manipulator_position_ctrl</name>
+  <version>0.0.0</version>
+  <description>The open_manipulator_position_ctrl package</description>
+  <license>Apache License 2.0</license>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>control_msgs</build_depend>
+  <build_depend>moveit_msgs</build_depend>
+  <build_depend>open_manipulator_msgs</build_depend>
+  <build_depend>dynamixel_sdk</build_depend>
+  <build_depend>robotis_math</build_depend>
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <export></export>
+</package>
