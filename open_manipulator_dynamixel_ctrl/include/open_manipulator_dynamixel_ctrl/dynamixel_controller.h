@@ -24,16 +24,27 @@
 #include <stdio.h>
 #include <sstream>
 #include <ros/ros.h>
-#include <dynamixel_workbench_toolbox/dynamixel_tool.h>
+
+#include <dynamixel_workbench_toolbox/dynamixel_multi_driver.h>
 #include <sensor_msgs/JointState.h>
 #include <open_manipulator_msgs/JointPose.h>
 
-#include <dynamixel_sdk/dynamixel_sdk.h>
-
 namespace open_manipulator_dynamixel_controller
 {
-#define MAX_DXL_NUM        (5)
+#define MOTOR                (0)
+#define MAX_DXL_NUM          (5)
 #define ITERATION_FREQUENCY  (25)
+
+typedef struct
+{
+  std::vector<uint8_t>  torque;
+  std::vector<uint32_t> pos;
+}WriteValue;
+
+typedef struct
+{
+  std::vector<uint32_t> pos;
+}ReadValue;
 
 class DynamixelController
 {
@@ -47,47 +58,40 @@ class DynamixelController
   ros::NodeHandle nh_priv_;
 
   // ROS Parameters
-  bool is_debug_;
 
-  // ROS Publisher
+  // ROS Topic Publisher
   ros::Publisher present_dynamixel_position_pub_;
 
-  // ROS Subscriber
+  // ROS Topic Subscriber
   ros::Subscriber goal_dynamixel_position_sub_;
 
+  // ROS Service Server
+
+  // ROS Service Client
+
   // Dynamixel Parameters
-  std::string device_name_;
-  std::string motor_model_;
-  float protocol_version_;
-  int baud_rate_;
+  std::vector<dynamixel_driver::DynamixelInfo*> dynamixel_info_;
+  dynamixel_multi_driver::DynamixelMultiDriver *multi_driver_;
 
-  // Joint states
-  int id_[MAX_DXL_NUM];
-
-  // Parameters
-  std::map<int, dynamixel_tool::DynamixelTool *> dynamixel_;
-  std::map<std::string, std::vector<int64_t> *> read_data_;
-
-  dynamixel::GroupSyncWrite *dynamixelTorqueSyncWrite_;
-  dynamixel::GroupSyncWrite *dynamixelGoalPositionSyncWrite_;
-  dynamixel::GroupSyncRead  *dynamixelPresentPositionSyncRead_;
+  WriteValue *writeValue_;
+  ReadValue  *readValue_;
 
  public:
   DynamixelController();
   ~DynamixelController();
-  bool subscribePosition(void);
+  bool control_loop();
 
-  bool initDynamixelController(void);
-  bool shutdownDynamixelController(void);
+  bool loadDynamixel();
+  bool initDynamixelStatePublisher();
+  bool initDynamixelStateSubscriber();
 
-  bool initMotor(std::string motor_model, uint8_t motor_id, float protocol_version);
-
-  bool dynamixelControl(int64_t dynamixel_position[MAX_DXL_NUM]);
   bool setTorque(bool onoff);
-  bool dynamixelPresentPosition(void);
+  bool setPosition(uint32_t* pos);
 
-  int64_t convertRadian2Value(double radian);
-  double convertValue2Radian(int32_t value);
+  bool readDynamixelState();
+
+  uint32_t convertRadian2Value(float radian);
+  float convertValue2Radian(int32_t value);
 
   void goalPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
 };
