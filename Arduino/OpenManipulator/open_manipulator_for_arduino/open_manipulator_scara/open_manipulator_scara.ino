@@ -46,27 +46,7 @@ void setup()
   establishContactToProcessing();
 #endif
 
-  // link[JOINT1].q_ = 20.0*DEG2RAD;
-  // link[JOINT2].q_ = -20.0*DEG2RAD;
-  // link[JOINT3].q_ = 40.0*DEG2RAD;
-  //
   setFK(link, BASE);
-
-  // showFKResult(link, BASE, END);
-
-//   0.198, 0.077, 0.061,
-// R_ :
-// 0.766, -0.643, 0.000,
-// 0.643, 0.766, 0.000,
-// 0.000, 0.000, 1.000,
-
-  // open_manipulator::Pose goal_pose;
-  // goal_pose.position << 0.198, 0.077, 0.061;
-  //
-  // setIK("position", link, END, goal_pose);
-  //
-  // sendJointDataToProcessing();
-
 
 #ifdef DEBUG
   Serial.println("OpenManipulator SCARA Initialization Success!!");
