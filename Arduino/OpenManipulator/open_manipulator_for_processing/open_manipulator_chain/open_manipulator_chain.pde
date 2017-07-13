@@ -536,38 +536,52 @@ class ChildApplet extends PApplet
 *******************************************************************************/
     cp5.addButton("Forward")
        .setValue(0)
-       .setPosition(150,200)
+       .setPosition(150,150)
        .setSize(100,100)
        .setFont(createFont("arial",15))
        ;
 
     cp5.addButton("Back")
        .setValue(0)
-       .setPosition(150,400)
+       .setPosition(150,350)
        .setSize(100,100)
        .setFont(createFont("arial",15))
        ;
 
     cp5.addButton("Left")
        .setValue(0)
-       .setPosition(50,300)
+       .setPosition(50,250)
        .setSize(100,100)
        .setFont(createFont("arial",15))
        ;
 
     cp5.addButton("Right")
        .setValue(0)
-       .setPosition(250,300)
+       .setPosition(250,250)
        .setSize(100,100)
        .setFont(createFont("arial",15))
        ;
 
     cp5.addButton("Set")
        .setValue(0)
-       .setPosition(170,320)
+       .setPosition(170,270)
        .setSize(60,60)
        .setFont(createFont("arial",15))
        ;
+
+    cp5.addButton("Up")
+       .setValue(0)
+       .setPosition(50,450)
+       .setSize(100,100)
+       .setFont(createFont("arial",15))
+       ;
+
+   cp5.addButton("Down")
+      .setValue(0)
+      .setPosition(250,450)
+      .setSize(100,100)
+      .setFont(createFont("arial",15))
+      ;
 
 /*******************************************************************************
 * Init Hand Teaching Controller
@@ -622,6 +636,8 @@ class ChildApplet extends PApplet
     cp5.getController("Left").moveTo("Task Space Control");
     cp5.getController("Right").moveTo("Task Space Control");
     cp5.getController("Set").moveTo("Task Space Control");
+    cp5.getController("Up").moveTo("Task Space Control");
+    cp5.getController("Down").moveTo("Task Space Control");
 
     cp5.getController("Torque_Off").moveTo("Hand Teaching");
     cp5.getController("Make_Joint_Pose").moveTo("Hand Teaching");
@@ -834,6 +850,32 @@ class ChildApplet extends PApplet
     {
       opencr_port.write("right" + '\n');
       println("Move Right");
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+  public void Up(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("up" + '\n');
+      println("Move Up");
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+  public void Down(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("down" + '\n');
+      println("Move Don");
     }
     else
     {
