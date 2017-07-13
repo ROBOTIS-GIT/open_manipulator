@@ -18,9 +18,9 @@
 
 #include "open_manipulator_chain_config.h"
 
-#define DEBUG
-// #define DYNAMIXEL
-// #define SIMULATION
+// #define DEBUG
+#define DYNAMIXEL
+#define SIMULATION
 
 /*******************************************************************************
 * Setup
@@ -46,31 +46,7 @@ void setup()
   establishContactToProcessing();
 #endif
 
-  // link[JOINT1].q_ = 0.0*DEG2RAD;
-  // link[JOINT2].q_ = 20.0*DEG2RAD;
-  // link[JOINT3].q_ = -30.0*DEG2RAD;
-  // link[JOINT4].q_ = 40.0*DEG2RAD;
-  //
   setFK(link, BASE);
-  //
-  // showFKResult(link,END,END);
-
-//   p_ :
-// 0.222, 0.000, 0.190,
-// R_ :
-// 0.866, 0.000, 0.500,
-// 0.000, 1.000, 0.000,
-// -0.500, 0.000, 0.866,
-
-  // open_manipulator::Pose tmp;
-  // tmp.position << 0.222, 0.000, 0.190;
-  // tmp.orientation << 0.866, 0.000, 0.500,
-  // 0.000, 1.000, 0.000,
-  // -0.500, 0.000, 0.866;
-  //
-  // setIK("position", link, END, tmp);
-  // sendJointDataToProcessing();
-
 
 #ifdef DEBUG
   Serial.println("OpenManipulator Chain Initialization Success!!");
@@ -177,7 +153,7 @@ void getDataFromProcessing(bool &comm)
       target_pose.position    = link[END].p_;
       target_pose.orientation = link[END].R_;
 
-      target_pose.position(0) -= 0.010;
+      target_pose.position(0) += 0.010;
 
       setIK("position", link, END, target_pose);
 
@@ -204,7 +180,115 @@ void getDataFromProcessing(bool &comm)
       target_pose.position    = link[END].p_;
       target_pose.orientation = link[END].R_;
 
-      target_pose.position(0) += 0.010;
+      target_pose.position(0) -= 0.010;
+
+      setIK("position", link, END, target_pose);
+
+      float joint_pos[LINK_NUM] = {0.0,
+                                   link[JOINT1].q_,
+                                   link[JOINT2].q_,
+                                   link[JOINT3].q_,
+                                   link[JOINT4].q_,
+                                   0.0};
+
+      setJointPropPos(joint_pos);
+      setMoveTime(0.5);
+      joint_tra = trajectory->minimumJerk(start_prop,
+                                          end_prop,
+                                          LINK_NUM,
+                                          control_period,
+                                          mov_time);
+      moving = true;
+    }
+    else if (cmd[0] == "right")
+    {
+      setFK(link, BASE);
+
+      target_pose.position    = link[END].p_;
+      target_pose.orientation = link[END].R_;
+
+      target_pose.position(1) += 0.010;
+
+      setIK("position", link, END, target_pose);
+
+      float joint_pos[LINK_NUM] = {0.0,
+                                   link[JOINT1].q_,
+                                   link[JOINT2].q_,
+                                   link[JOINT3].q_,
+                                   link[JOINT4].q_,
+                                   0.0};
+
+      setJointPropPos(joint_pos);
+      setMoveTime(0.5);
+      joint_tra = trajectory->minimumJerk(start_prop,
+                                          end_prop,
+                                          LINK_NUM,
+                                          control_period,
+                                          mov_time);
+      moving = true;
+    }
+    else if (cmd[0] == "left")
+    {
+      setFK(link, BASE);
+
+      target_pose.position    = link[END].p_;
+      target_pose.orientation = link[END].R_;
+
+      target_pose.position(1) -= 0.010;
+
+      setIK("position", link, END, target_pose);
+
+      float joint_pos[LINK_NUM] = {0.0,
+                                   link[JOINT1].q_,
+                                   link[JOINT2].q_,
+                                   link[JOINT3].q_,
+                                   link[JOINT4].q_,
+                                   0.0};
+
+      setJointPropPos(joint_pos);
+      setMoveTime(0.5);
+      joint_tra = trajectory->minimumJerk(start_prop,
+                                          end_prop,
+                                          LINK_NUM,
+                                          control_period,
+                                          mov_time);
+      moving = true;
+    }
+    else if (cmd[0] == "up")
+    {
+      setFK(link, BASE);
+
+      target_pose.position    = link[END].p_;
+      target_pose.orientation = link[END].R_;
+
+      target_pose.position(2) += 0.010;
+
+      setIK("position", link, END, target_pose);
+
+      float joint_pos[LINK_NUM] = {0.0,
+                                   link[JOINT1].q_,
+                                   link[JOINT2].q_,
+                                   link[JOINT3].q_,
+                                   link[JOINT4].q_,
+                                   0.0};
+
+      setJointPropPos(joint_pos);
+      setMoveTime(0.5);
+      joint_tra = trajectory->minimumJerk(start_prop,
+                                          end_prop,
+                                          LINK_NUM,
+                                          control_period,
+                                          mov_time);
+      moving = true;
+    }
+    else if (cmd[0] == "down")
+    {
+      setFK(link, BASE);
+
+      target_pose.position    = link[END].p_;
+      target_pose.orientation = link[END].R_;
+
+      target_pose.position(2) -= 0.010;
 
       setIK("position", link, END, target_pose);
 
@@ -713,7 +797,7 @@ void initLinkAndMotor()
   link[JOINT2].q_                       = 0.0;
   link[JOINT2].dq_                      = 0.0;
   link[JOINT2].ddq_                     = 0.0;
-  link[JOINT2].a_                       << 0, 1, 0;
+  link[JOINT2].a_                       << 0, -1, 0;
   link[JOINT2].b_                       << 0, 0, 0.040;
   link[JOINT2].v_                       = Eigen::Vector3f::Zero();
   link[JOINT2].w_                       = Eigen::Vector3f::Zero();
@@ -734,7 +818,7 @@ void initLinkAndMotor()
   link[JOINT3].q_                       = 0.0;
   link[JOINT3].dq_                      = 0.0;
   link[JOINT3].ddq_                     = 0.0;
-  link[JOINT3].a_                       << 0, 1, 0;
+  link[JOINT3].a_                       << 0, -1, 0;
   link[JOINT3].b_                       << 0.022, 0, 0.122;
   link[JOINT3].v_                       = Eigen::Vector3f::Zero();
   link[JOINT3].w_                       = Eigen::Vector3f::Zero();
@@ -754,7 +838,7 @@ void initLinkAndMotor()
   link[JOINT4].q_                       = 0.0;
   link[JOINT4].dq_                      = 0.0;
   link[JOINT4].ddq_                     = 0.0;
-  link[JOINT4].a_                       << 0, 1, 0;
+  link[JOINT4].a_                       << 0, -1, 0;
   link[JOINT4].b_                       << 0.124, 0, 0;
   link[JOINT4].v_                       = Eigen::Vector3f::Zero();
   link[JOINT4].w_                       = Eigen::Vector3f::Zero();
@@ -775,7 +859,7 @@ void initLinkAndMotor()
   link[END].dq_                         = 0.0;
   link[END].ddq_                        = 0.0;
   link[END].a_                          = Eigen::Vector3f::Zero();
-  link[END].b_                          << 0.030, 0, 0;
+  link[END].b_                          << 0.099, 0, 0;
   link[END].v_                          = Eigen::Vector3f::Zero();
   link[END].w_                          = Eigen::Vector3f::Zero();
 
