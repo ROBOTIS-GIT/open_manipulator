@@ -58,8 +58,10 @@ float link_angle[LINK_NUM];
 float motor_angle[LINK_NUM];
 float angle_storage[STORAGE][LINK_NUM];
 
+
 Eigen::MatrixXf joint_tra;
 
+open_manipulator::Pose         target_pose;
 open_manipulator::Motor        motor[LINK_NUM];
 open_manipulator::Link         link[LINK_NUM];
 open_manipulator::Kinematics*  kinematics;
@@ -78,6 +80,7 @@ void initMotorDriver(bool torque);
 
 void establishContactToProcessing();
 
+void setMoveTime(float get_time);
 void setJointPropPos(float* joint_pos);
 void setGripperPropPos(float gripper);
 

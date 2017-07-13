@@ -18,9 +18,9 @@
 
 #include "open_manipulator_chain_config.h"
 
-// #define DEBUG
-#define DYNAMIXEL
-#define SIMULATION
+#define DEBUG
+// #define DYNAMIXEL
+// #define SIMULATION
 
 /*******************************************************************************
 * Setup
@@ -46,7 +46,31 @@ void setup()
   establishContactToProcessing();
 #endif
 
+  // link[JOINT1].q_ = 0.0*DEG2RAD;
+  // link[JOINT2].q_ = 20.0*DEG2RAD;
+  // link[JOINT3].q_ = -30.0*DEG2RAD;
+  // link[JOINT4].q_ = 40.0*DEG2RAD;
+  //
   setFK(link, BASE);
+  //
+  // showFKResult(link,END,END);
+
+//   p_ :
+// 0.222, 0.000, 0.190,
+// R_ :
+// 0.866, 0.000, 0.500,
+// 0.000, 1.000, 0.000,
+// -0.500, 0.000, 0.866,
+
+  // open_manipulator::Pose tmp;
+  // tmp.position << 0.222, 0.000, 0.190;
+  // tmp.orientation << 0.866, 0.000, 0.500,
+  // 0.000, 1.000, 0.000,
+  // -0.500, 0.000, 0.866;
+  //
+  // setIK("position", link, END, tmp);
+  // sendJointDataToProcessing();
+
 
 #ifdef DEBUG
   Serial.println("OpenManipulator Chain Initialization Success!!");
@@ -104,45 +128,100 @@ void getDataFromProcessing(bool &comm)
                                    cmd[JOINT4].toFloat(),
                                    0.0};
       setJointPropPos(joint_pos);
+      setMoveTime(3.0);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
                                           control_period,
                                           mov_time);
-      moving = true;
+      moving   = true;
     }
     else if (cmd[0] == "gripper")
     {
 
       setGripperPropPos(cmd[1].toFloat());
+      setMoveTime(1.5);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
                                           control_period,
                                           mov_time);
-
       moving = true;
     }
     else if (cmd[0] == "on")
     {
       setGripperPropPos(grip_on);
+      setMoveTime(1.5);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
                                           control_period,
                                           mov_time);
-
       moving = true;
     }
     else if (cmd[0] == "off")
     {
       setGripperPropPos(grip_off);
+      setMoveTime(1.5);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
                                           control_period,
                                           mov_time);
+      moving = true;
+    }
+    else if (cmd[0] == "forward")
+    {
+      setFK(link, BASE);
 
+      target_pose.position    = link[END].p_;
+      target_pose.orientation = link[END].R_;
+
+      target_pose.position(0) -= 0.010;
+
+      setIK("position", link, END, target_pose);
+
+      float joint_pos[LINK_NUM] = {0.0,
+                                   link[JOINT1].q_,
+                                   link[JOINT2].q_,
+                                   link[JOINT3].q_,
+                                   link[JOINT4].q_,
+                                   0.0};
+
+      setJointPropPos(joint_pos);
+      setMoveTime(0.5);
+      joint_tra = trajectory->minimumJerk(start_prop,
+                                          end_prop,
+                                          LINK_NUM,
+                                          control_period,
+                                          mov_time);
+      moving = true;
+    }
+    else if (cmd[0] == "back")
+    {
+      setFK(link, BASE);
+
+      target_pose.position    = link[END].p_;
+      target_pose.orientation = link[END].R_;
+
+      target_pose.position(0) += 0.010;
+
+      setIK("position", link, END, target_pose);
+
+      float joint_pos[LINK_NUM] = {0.0,
+                                   link[JOINT1].q_,
+                                   link[JOINT2].q_,
+                                   link[JOINT3].q_,
+                                   link[JOINT4].q_,
+                                   0.0};
+
+      setJointPropPos(joint_pos);
+      setMoveTime(0.5);
+      joint_tra = trajectory->minimumJerk(start_prop,
+                                          end_prop,
+                                          LINK_NUM,
+                                          control_period,
+                                          mov_time);
       moving = true;
     }
 #ifdef DYNAMIXEL
@@ -152,12 +231,12 @@ void getDataFromProcessing(bool &comm)
     }
     else if (cmd[0] == "get")
     {
-      if (cmd[1].toInt() == -1)
+      if (cmd[1] == "on")
       {
         angle_storage[motion_num][0] = -1;
         motion_num++;
       }
-      else if (cmd[1].toInt() == -2)
+      else if (cmd[1] == "off")
       {
         angle_storage[motion_num][0] = -2;
         motion_num++;
@@ -344,6 +423,14 @@ void setMotion(bool onoff)
   {
     motion_cnt = 0;
   }
+}
+
+/*******************************************************************************
+* Set Move Time
+*******************************************************************************/
+void setMoveTime(float get_time)
+{
+  mov_time = get_time;
 }
 
 /*******************************************************************************
