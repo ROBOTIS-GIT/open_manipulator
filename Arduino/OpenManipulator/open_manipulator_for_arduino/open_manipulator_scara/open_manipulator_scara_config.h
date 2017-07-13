@@ -71,6 +71,7 @@ void initMotorDriver(bool torque);
 
 void establishContactToProcessing();
 
+void setMoveTime(float get_time);
 void setJointPropPos(float* joint_pos);
 void setGripperPropPos(float gripper);
 

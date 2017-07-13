@@ -102,6 +102,7 @@ void getDataFromProcessing(bool &comm)
                                    cmd[JOINT3].toFloat(),
                                    0.0};
       setJointPropPos(joint_pos);
+      setMoveTime(3.0);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
@@ -112,17 +113,18 @@ void getDataFromProcessing(bool &comm)
     else if (cmd[0] == "gripper")
     {
       setGripperPropPos(cmd[1].toFloat());
+      setMoveTime(1.5);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
                                           control_period,
                                           mov_time);
-
       moving = true;
     }
     else if (cmd[0] == "on")
     {
       setGripperPropPos(grip_on);
+      setMoveTime(1.5);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
@@ -134,6 +136,7 @@ void getDataFromProcessing(bool &comm)
     else if (cmd[0] == "off")
     {
       setGripperPropPos(grip_off);
+      setMoveTime(1.5);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
@@ -158,6 +161,7 @@ void getDataFromProcessing(bool &comm)
                                    0.0};
 
       setJointPropPos(joint_pos);
+      setMoveTime(0.1);
       joint_tra = trajectory->minimumJerk(start_prop,
                                           end_prop,
                                           LINK_NUM,
@@ -219,6 +223,14 @@ void handler_control()
       cnt++;
     }
   }
+}
+
+/*******************************************************************************
+* Set Move Time
+*******************************************************************************/
+void setMoveTime(float get_time)
+{
+  mov_time = get_time;
 }
 
 /*******************************************************************************
@@ -464,7 +476,7 @@ void initLinkAndMotor()
   link[JOINT1].dq_                      = 0.0;
   link[JOINT1].ddq_                     = 0.0;
   link[JOINT1].a_                       << 0, 0, 1;
-  link[JOINT1].b_                       << 0.0, 0.0, 0.036;
+  link[JOINT1].b_                       << 0.0, 0.0, 0.0661;
   link[JOINT1].v_                       = Eigen::Vector3f::Zero();
   link[JOINT1].w_                       = Eigen::Vector3f::Zero();
 
@@ -484,7 +496,7 @@ void initLinkAndMotor()
   link[JOINT2].dq_                      = 0.0;
   link[JOINT2].ddq_                     = 0.0;
   link[JOINT2].a_                       << 0, 0, 1;
-  link[JOINT2].b_                       << 0.030, 0.0, 0.0248;
+  link[JOINT2].b_                       << 0.030, 0.0, 0.0;
   link[JOINT2].v_                       = Eigen::Vector3f::Zero();
   link[JOINT2].w_                       = Eigen::Vector3f::Zero();
 

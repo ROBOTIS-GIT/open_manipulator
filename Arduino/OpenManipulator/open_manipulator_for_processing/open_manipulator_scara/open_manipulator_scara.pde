@@ -213,12 +213,12 @@ void drawManipulator()
   shape(link2);
   drawLocalFrame();
 
-  translate(30, 0, 0);
+  translate(30, 0, 1);
   rotateZ(-joint_angle[1]);
   shape(link3);
   drawLocalFrame();
 
-  translate(90.25, 0, 0);
+  translate(90.25, 0, -2);
   rotateZ(-joint_angle[2]);
   shape(link4);
   drawLocalFrame();
