@@ -355,7 +355,7 @@ class ChildApplet extends PApplet
 {
   ControlP5 cp5;
 
-  Textlabel myTextlabelA;
+  Textlabel headLabel;
 
   Knob joint1, joint2, joint3, joint4, gripper;
 
@@ -414,20 +414,20 @@ class ChildApplet extends PApplet
 /*******************************************************************************
 * Init Joint Space Controller
 *******************************************************************************/
-    myTextlabelA = cp5.addTextlabel("Label")
-                     .setText("Controller for OpenManipulator Chain")
-                     .setPosition(10,20)
-                     .setColorValue(0xffffff00)
-                     .setFont(createFont("arial",20))
-                     ;
+    headLabel = cp5.addTextlabel("Label")
+                   .setText("Controller for OpenManipulator Chain")
+                   .setPosition(10,20)
+                   .setColorValue(0xffffff00)
+                   .setFont(createFont("arial",20))
+                   ;
 
     cp5.addToggle("Controller_OnOff")
        .setPosition(0,50)
        .setSize(400,40)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
     joint1 = cp5.addKnob("joint1")
@@ -527,8 +527,8 @@ class ChildApplet extends PApplet
        .setSize(400,40)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
 /*******************************************************************************
@@ -583,46 +583,57 @@ class ChildApplet extends PApplet
       .setFont(createFont("arial",15))
       ;
 
+   cp5.addToggle("Gripper_pos")
+      .setPosition(165,480)
+      .setSize(70,70)
+      .setMode(Toggle.SWITCH)
+      .setFont(createFont("arial",10))
+      .setColorActive(color(196, 196, 196))
+      .setColorBackground(color(255, 255, 153))
+      ;
+
 /*******************************************************************************
 * Init Hand Teaching Controller
 *******************************************************************************/
-    cp5.addButton("Torque_Off")
-       .setValue(0)
+    cp5.addToggle("Torque_OnOff")
        .setPosition(0,130)
        .setSize(400,40)
+       .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
     cp5.addButton("Make_Joint_Pose")
        .setValue(0)
-       .setPosition(0,190)
-       .setSize(400,40)
+       .setPosition(0,210)
+       .setSize(400,100)
        .setFont(createFont("arial",15))
        ;
 
     cp5.addToggle("Make_Gripper_Pose")
-       .setPosition(0,250)
+       .setPosition(0,320)
        .setSize(400,40)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
     cp5.addButton("Motion_Start")
        .setValue(0)
-       .setPosition(0,330)
-       .setSize(400,40)
+       .setPosition(0,400)
+       .setSize(400,80)
        .setFont(createFont("arial",15))
        ;
 
     cp5.addToggle("Motion_Repeat")
-       .setPosition(0,390)
-       .setSize(400,40)
+       .setPosition(0,490)
+       .setSize(400,80)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
 /*******************************************************************************
@@ -638,8 +649,9 @@ class ChildApplet extends PApplet
     cp5.getController("Set").moveTo("Task Space Control");
     cp5.getController("Up").moveTo("Task Space Control");
     cp5.getController("Down").moveTo("Task Space Control");
+    cp5.getController("Gripper_pos").moveTo("Task Space Control");
 
-    cp5.getController("Torque_Off").moveTo("Hand Teaching");
+    cp5.getController("Torque_OnOff").moveTo("Hand Teaching");
     cp5.getController("Make_Joint_Pose").moveTo("Hand Teaching");
     cp5.getController("Make_Gripper_Pose").moveTo("Hand Teaching");
     cp5.getController("Motion_Start").moveTo("Hand Teaching");
@@ -809,7 +821,8 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("forward" + '\n');
+      opencr_port.write("task"    + ',' +
+                        "forward" + '\n');
       println("Move Forward");
     }
     else
@@ -822,7 +835,8 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("back" + '\n');
+      opencr_port.write("task"    + ',' +
+                        "back"    + '\n');
       println("Move Back");
     }
     else
@@ -835,7 +849,8 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("left" + '\n');
+      opencr_port.write("task"    + ',' +
+                        "left"    + '\n');
       println("Move Left");
     }
     else
@@ -848,7 +863,8 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("right" + '\n');
+      opencr_port.write("task"    + ',' +
+                        "right"   + '\n');
       println("Move Right");
     }
     else
@@ -861,7 +877,8 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("up" + '\n');
+      opencr_port.write("task"    + ',' +
+                        "up"      + '\n');
       println("Move Up");
     }
     else
@@ -874,8 +891,9 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("down" + '\n');
-      println("Move Don");
+      opencr_port.write("task"    + ',' +
+                        "down"    + '\n');
+      println("Move Down");
     }
     else
     {
@@ -909,15 +927,42 @@ class ChildApplet extends PApplet
     }
   }
 
-/*******************************************************************************
-* Init Function of Hand Teaching Controller
-*******************************************************************************/
-  public void Torque_Off(int theValue)
+  void Gripper_pos(boolean flag)
   {
     if (onoff_flag)
     {
-      opencr_port.write("loose" + '\n');
-      println("Torque Disable of OpenManipulator");
+      if (flag)
+      {
+        opencr_port.write("on" + '\n');
+      }
+      else
+      {
+        opencr_port.write("off" + '\n');
+      }
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+/*******************************************************************************
+* Init Function of Hand Teaching Controller
+*******************************************************************************/
+  void Torque_OnOff(boolean flag)
+  {
+    if (onoff_flag)
+    {
+      if (flag)
+      {
+        opencr_port.write("torque"  + ',' +
+                          "off"     + '\n');
+      }
+      else
+      {
+        opencr_port.write("torque"  + ',' +
+                          "on"      + '\n');
+      }
     }
     else
     {

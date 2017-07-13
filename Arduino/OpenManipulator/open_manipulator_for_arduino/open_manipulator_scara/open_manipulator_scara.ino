@@ -96,78 +96,36 @@ void getDataFromProcessing(bool &comm)
     }
     else if (cmd[0] == "joint")
     {
-      float joint_pos[LINK_NUM] = {0.0,
-                                   cmd[JOINT1].toFloat(),
-                                   cmd[JOINT2].toFloat(),
-                                   cmd[JOINT3].toFloat(),
-                                   0.0};
-      setJointPropPos(joint_pos);
-      setMoveTime(3.0);
-      joint_tra = trajectory->minimumJerk(start_prop,
-                                          end_prop,
-                                          LINK_NUM,
-                                          control_period,
-                                          mov_time);
-      moving = true;
+      for (int id = JOINT1; id <= JOINT3; id++)
+        joint_pos[id] = cmd[id].toFloat();
+
+      jointMove(joint_pos, 3.0);
     }
     else if (cmd[0] == "gripper")
     {
-      setGripperPropPos(cmd[1].toFloat());
-      setMoveTime(1.5);
-      joint_tra = trajectory->minimumJerk(start_prop,
-                                          end_prop,
-                                          LINK_NUM,
-                                          control_period,
-                                          mov_time);
-      moving = true;
+      gripMove(cmd[1].toFloat(), 1.5);
     }
     else if (cmd[0] == "on")
     {
-      setGripperPropPos(grip_on);
-      setMoveTime(1.5);
-      joint_tra = trajectory->minimumJerk(start_prop,
-                                          end_prop,
-                                          LINK_NUM,
-                                          control_period,
-                                          mov_time);
-
-      moving = true;
+      gripMove(grip_on, 1.5);
     }
     else if (cmd[0] == "off")
     {
-      setGripperPropPos(grip_off);
-      setMoveTime(1.5);
-      joint_tra = trajectory->minimumJerk(start_prop,
-                                          end_prop,
-                                          LINK_NUM,
-                                          control_period,
-                                          mov_time);
-
-      moving = true;
+      gripMove(grip_off, 1.5);
     }
     else if (cmd[0] == "pos")
     {
       open_manipulator::Pose goal_pose;
       goal_pose.position << cmd[1].toFloat(),
                             cmd[2].toFloat(),
-                            0.061;
+                            0.0661;
 
       setIK("position", link, END, goal_pose);
 
-      float joint_pos[LINK_NUM] = {0.0,
-                                   link[JOINT1].q_,
-                                   link[JOINT2].q_,
-                                   link[JOINT3].q_,
-                                   0.0};
+      for (int id = JOINT1; id <= JOINT3; id++)
+        joint_pos[id] = link[id].q_;
 
-      setJointPropPos(joint_pos);
-      setMoveTime(0.1);
-      joint_tra = trajectory->minimumJerk(start_prop,
-                                          end_prop,
-                                          LINK_NUM,
-                                          control_period,
-                                          mov_time);
-      moving = true;
+      jointMove(joint_pos, 0.1);
     }
     else
     {
@@ -182,11 +140,11 @@ void getDataFromProcessing(bool &comm)
 void handler_control()
 {
   uint16_t step_time = mov_time/control_period + 1;
-  static uint16_t cnt = 0;
+  static uint16_t step_cnt = 0;
 
   if (moving && comm)
   {
-    if (cnt >= step_time)
+    if (step_cnt >= step_time)
     {
 #ifdef DYNAMIXEL
       getDynamixelPosition();
@@ -196,14 +154,14 @@ void handler_control()
       setFK(link, BASE);
 
       moving = false;
-      cnt = 0;
+      step_cnt = 0;
       Serial.println("end");
     }
     else
     {
       for (int num = BASE; num <= END; num++)
       {
-        link[num].q_ = joint_tra(cnt, num);
+        link[num].q_ = joint_tra(step_cnt, num);
       }
 #ifdef SIMULATION
       sendJointDataToProcessing();
@@ -220,7 +178,7 @@ void handler_control()
       setGripperDataToDynamixel();
 #endif
 
-      cnt++;
+      step_cnt++;
     }
   }
 }
@@ -368,6 +326,36 @@ void setTimer(bool onoff)
 void getDynamixelPosition()
 {
   motor_driver->readPosition(motor);
+}
+
+/*******************************************************************************
+* Joint move
+*******************************************************************************/
+void jointMove(float* set_joint_pos, float set_mov_time)
+{
+  setJointPropPos(set_joint_pos);
+  setMoveTime(set_mov_time);
+  joint_tra = trajectory->minimumJerk(start_prop,
+                                      end_prop,
+                                      LINK_NUM,
+                                      control_period,
+                                      mov_time);
+  moving = true;
+}
+
+/*******************************************************************************
+* Grip move
+*******************************************************************************/
+void gripMove(float set_grip_pos, float set_mov_time)
+{
+  setGripperPropPos(set_grip_pos);
+  setMoveTime(set_mov_time);
+  joint_tra = trajectory->minimumJerk(start_prop,
+                                      end_prop,
+                                      LINK_NUM,
+                                      control_period,
+                                      mov_time);
+  moving = true;
 }
 
 /*******************************************************************************

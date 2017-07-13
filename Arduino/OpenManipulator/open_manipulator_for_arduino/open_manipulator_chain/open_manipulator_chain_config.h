@@ -20,6 +20,7 @@
 #define OPEN_MANIPULATOR_CHAIN_CONFIG_H_
 
 #include "OpenManipulator.h"
+#include <RC100.h>
 
 #define CONTROL_RATE        8000
 #define SERIAL_RATE         57600
@@ -43,7 +44,7 @@
 const float grip_on  = 1.3;
 const float grip_off = 0.0;
 
-float mov_time             = 3.0;
+float mov_time             = 2.5;
 const float control_period = 0.008;
 
 bool moving        = false;
@@ -54,14 +55,13 @@ uint8_t motion_num = 0;
 
 String cmd[5];
 
+float joint_pos[LINK_NUM];
 float link_angle[LINK_NUM];
 float motor_angle[LINK_NUM];
 float angle_storage[STORAGE][LINK_NUM];
 
-
 Eigen::MatrixXf joint_tra;
 
-open_manipulator::Pose         target_pose;
 open_manipulator::Motor        motor[LINK_NUM];
 open_manipulator::Link         link[LINK_NUM];
 open_manipulator::Kinematics*  kinematics;
@@ -71,6 +71,9 @@ open_manipulator::Property     end_prop[LINK_NUM];
 open_manipulator::Trajectory*  trajectory;
 
 HardwareTimer control_timer(TIMER_CH1);
+
+RC100 rc100;
+int getData = 0;
 
 void initLinkAndMotor();
 void initTimer();
@@ -98,6 +101,13 @@ void getDynamixelPosition();
 // PROCESSING
 void sendJointDataToProcessing();
 void getDataFromProcessing(bool &comm);
+
+// RC100
+void getDataFromRC100();
+
+void setPoseDirection(String dir, float step);
+void jointMove(float* joint_pos, float mov_time);
+void gripMove(float grip_pos, float mov_time);
 
 void getLinkAngle(float* angle);
 void getMotorAngle(float* angle);

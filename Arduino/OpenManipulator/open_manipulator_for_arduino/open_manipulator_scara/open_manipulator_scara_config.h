@@ -40,7 +40,7 @@
 const float grip_on  = 0.0;
 const float grip_off = -1.0;
 
-float mov_time             = 0.1;
+float mov_time             = 2.5;
 const float control_period = 0.008;
 
 bool moving        = false;
@@ -48,6 +48,7 @@ bool comm          = false;
 
 String cmd[5];
 
+float joint_pos[LINK_NUM];
 float link_angle[LINK_NUM];
 float motor_angle[LINK_NUM];
 
@@ -89,6 +90,9 @@ void getDynamixelPosition();
 // PROCESSING
 void sendJointDataToProcessing();
 void getDataFromProcessing(bool &comm);
+
+void jointMove(float* joint_pos, float mov_time);
+void gripMove(float grip_pos, float mov_time);
 
 void getLinkAngle(float* angle);
 void getMotorAngle(float* angle);

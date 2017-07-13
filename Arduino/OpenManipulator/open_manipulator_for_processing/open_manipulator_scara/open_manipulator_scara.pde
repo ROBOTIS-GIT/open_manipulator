@@ -183,10 +183,10 @@ void drawTitle()
   pushMatrix();
   rotateX(radians(0));
   rotateZ(radians(90));
-  textSize(50);
+  textSize(45);
   fill(255,204,102);
   text("OpenManipulator SCARA", -300,-460,0);
-  textSize(25);
+  textSize(20);
   fill(102,255,255);
   text("Press 'A','D','W','S'", -300,-420,0);
   text("And   'Q','E'",         -300,-390,0);
@@ -348,6 +348,9 @@ class ChildApplet extends PApplet
 
     cp5 = new ControlP5(this);
 
+/*******************************************************************************
+* Init Tab
+*******************************************************************************/
     cp5.addTab("Task Space Control")
        .setColorBackground(color(0, 160, 100))
        .setColorLabel(color(255))
@@ -365,7 +368,10 @@ class ChildApplet extends PApplet
        .setId(2)
        ;
 
-    headLabel = cp5.addTextlabel("label")
+/*******************************************************************************
+* Init Joint Space Controller
+*******************************************************************************/
+    headLabel = cp5.addTextlabel("Label")
                    .setText("Controller for OpenManipulator SCARA")
                    .setPosition(4,17)
                    .setColorValue(0xffffff00)
@@ -377,8 +383,8 @@ class ChildApplet extends PApplet
        .setSize(400,40)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
     joint1 = cp5.addKnob("joint1")
@@ -466,19 +472,23 @@ class ChildApplet extends PApplet
        .setSize(400,40)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
+/*******************************************************************************
+* Init Task Space Controller
+*******************************************************************************/
     slider2d = cp5.addSlider2D("Drawing")
                   .setPosition(50,200)
                   .setSize(300,300)
-                  .setMinMax(300,240,-300,40)
+                  .setMinMax(300,240,-300,0)
                   .setValue(0,240)
-                   //.disableCrosshair()
-     ;
-
-    cp5.getController("label").moveTo("global");
+                  ;
+/*******************************************************************************
+* Set Tap UI
+*******************************************************************************/
+    cp5.getController("Label").moveTo("global");
     cp5.getController("Controller_OnOff").moveTo("global");
 
     cp5.getController("Drawing").moveTo("Task Space Control");
@@ -489,6 +499,9 @@ class ChildApplet extends PApplet
     background(0);
   }
 
+/*******************************************************************************
+* Init Function of Joint Space Controller
+*******************************************************************************/
   void Controller_OnOff(boolean flag)
   {
     onoff_flag = flag;
@@ -624,6 +637,9 @@ class ChildApplet extends PApplet
     }
   }
 
+/*******************************************************************************
+* Init Function of Task Space Controller
+*******************************************************************************/
   void Drawing()
   {
     float x = slider2d.getArrayValue()[0] * 0.001;
