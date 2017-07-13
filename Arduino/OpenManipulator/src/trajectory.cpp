@@ -57,14 +57,14 @@ Eigen::MatrixXf Trajectory::minimumJerk(Property* start, Property* end, uint8_t 
     a[4] = x(1);
     a[5] = x(2);
 
-    for (int cnt = 0; cnt < step_time; cnt++)
+    for (int step_cnt = 0; step_cnt < step_time; step_cnt++)
     {
-      single_trajectory(cnt) = a[0] +
-                               a[1]*pow(control_period*cnt,1) +
-                               a[2]*pow(control_period*cnt,2) +
-                               a[3]*pow(control_period*cnt,3) +
-                               a[4]*pow(control_period*cnt,4) +
-                               a[5]*pow(control_period*cnt,5);
+      single_trajectory(step_cnt) = a[0] +
+                               a[1]*pow(control_period*step_cnt,1) +
+                               a[2]*pow(control_period*step_cnt,2) +
+                               a[3]*pow(control_period*step_cnt,3) +
+                               a[4]*pow(control_period*step_cnt,4) +
+                               a[5]*pow(control_period*step_cnt,5);
     }
     trajectory.col(num) = single_trajectory;
   }
