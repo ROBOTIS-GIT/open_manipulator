@@ -238,7 +238,7 @@ void drawManipulator()
   drawLocalFrame();
 
   translate(69, 0, 0);
-  drawSphere(30,0,0,100,100,100,10);
+  drawSphere(50,0,0,100,100,100,10);
   translate(0, gripper_pos[0], 0);
   shape(gripper);
   drawLocalFrame();

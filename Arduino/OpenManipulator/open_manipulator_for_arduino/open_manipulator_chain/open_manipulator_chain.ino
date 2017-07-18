@@ -18,9 +18,9 @@
 
 #include "open_manipulator_chain_config.h"
 
-// #define DEBUG
-#define DYNAMIXEL
-#define SIMULATION
+#define DEBUG
+// #define DYNAMIXEL
+// #define SIMULATION
 
 /*******************************************************************************
 * Setup
@@ -118,12 +118,12 @@ void getDataFromProcessing(bool &comm)
     }
     else if (cmd[0] == "task")
     {
-      setPoseDirection(cmd[1], 0.020);
+      setPoseDirection(cmd[1], TASK_TRAJECTORY_UNIT);
 
       for (int id = JOINT1; id <= JOINT4; id++)
         joint_pos[id] = link[id].q_;
 
-      jointMove(joint_pos, 0.1);
+      jointMove(joint_pos, TASK_TRAJECTORY_TIME);
     }
 #ifdef DYNAMIXEL
     else if (cmd[0] == "torque")
@@ -208,61 +208,52 @@ void getDataFromRC100()
   if (rc100.available())
   {
     getData = rc100.readData();
+    Serial.println(getData);
 
     if (getData & RC100_BTN_U)
     {
-      setPoseDirection("forward", 0.010);
+      setPoseDirection("forward", TASK_TRAJECTORY_UNIT);
 
-      joint_pos[1] = link[JOINT1].q_;
-      joint_pos[2] = link[JOINT2].q_;
-      joint_pos[3] = link[JOINT3].q_;
-      joint_pos[4] = link[JOINT4].q_;
+      for (int id = JOINT1; id <= JOINT4; id++)
+        joint_pos[id] = link[id].q_;
 
-      jointMove(joint_pos, 0.5);
+      jointMove(joint_pos, TASK_TRAJECTORY_TIME);
     }
     else if (getData & RC100_BTN_D)
     {
-      setPoseDirection("back", 0.010);
+      setPoseDirection("back", TASK_TRAJECTORY_UNIT);
 
-      joint_pos[1] = link[JOINT1].q_;
-      joint_pos[2] = link[JOINT2].q_;
-      joint_pos[3] = link[JOINT3].q_;
-      joint_pos[4] = link[JOINT4].q_;
+      for (int id = JOINT1; id <= JOINT4; id++)
+        joint_pos[id] = link[id].q_;
 
-      jointMove(joint_pos, 0.5);
+      jointMove(joint_pos, TASK_TRAJECTORY_TIME);
     }
     else if (getData & RC100_BTN_L)
     {
-      setPoseDirection("left", 0.010);
+      setPoseDirection("left", TASK_TRAJECTORY_UNIT);
 
-      joint_pos[1] = link[JOINT1].q_;
-      joint_pos[2] = link[JOINT2].q_;
-      joint_pos[3] = link[JOINT3].q_;
-      joint_pos[4] = link[JOINT4].q_;
+      for (int id = JOINT1; id <= JOINT4; id++)
+        joint_pos[id] = link[id].q_;
 
-      jointMove(joint_pos, 0.5);
+      jointMove(joint_pos, TASK_TRAJECTORY_TIME);
     }
     else if (getData & RC100_BTN_R)
     {
-      setPoseDirection("right", 0.010);
+      setPoseDirection("right", TASK_TRAJECTORY_UNIT);
 
-      joint_pos[1] = link[JOINT1].q_;
-      joint_pos[2] = link[JOINT2].q_;
-      joint_pos[3] = link[JOINT3].q_;
-      joint_pos[4] = link[JOINT4].q_;
+      for (int id = JOINT1; id <= JOINT4; id++)
+        joint_pos[id] = link[id].q_;
 
-      jointMove(joint_pos, 0.5);
+      jointMove(joint_pos, TASK_TRAJECTORY_TIME);
     }
     else if (getData & RC100_BTN_1)
     {
-      setPoseDirection("up", 0.010);
+      setPoseDirection("up", TASK_TRAJECTORY_UNIT);
 
-      joint_pos[1] = link[JOINT1].q_;
-      joint_pos[2] = link[JOINT2].q_;
-      joint_pos[3] = link[JOINT3].q_;
-      joint_pos[4] = link[JOINT4].q_;
+      for (int id = JOINT1; id <= JOINT4; id++)
+        joint_pos[id] = link[id].q_;
 
-      jointMove(joint_pos, 0.5);
+      jointMove(joint_pos, TASK_TRAJECTORY_TIME);
     }
     else if (getData & RC100_BTN_2)
     {
@@ -270,14 +261,12 @@ void getDataFromRC100()
     }
     else if (getData & RC100_BTN_3)
     {
-      setPoseDirection("down", 0.010);
+      setPoseDirection("down", TASK_TRAJECTORY_UNIT);
 
-      joint_pos[1] = link[JOINT1].q_;
-      joint_pos[2] = link[JOINT2].q_;
-      joint_pos[3] = link[JOINT3].q_;
-      joint_pos[4] = link[JOINT4].q_;
+      for (int id = JOINT1; id <= JOINT4; id++)
+        joint_pos[id] = link[id].q_;
 
-      jointMove(joint_pos, 0.5);
+      jointMove(joint_pos, TASK_TRAJECTORY_TIME);
     }
     else if (getData & RC100_BTN_4)
     {
@@ -317,16 +306,13 @@ void handler_control()
   {
     if (step_cnt >= step_time)
     {
-#ifdef DYNAMIXEL
-      getDynamixelPosition();
-      getMotorAngle(motor_angle);
-#endif
-
       setFK(link, BASE);
 
       moving = false;
       step_cnt = 0;
-      Serial.println("end");
+#ifdef DEBUG
+      Serial.println("End Trajectory");
+#endif
     }
     else
     {
@@ -374,7 +360,7 @@ void setMotion(bool onoff)
       }
       else
       {
-        for (int i=0; i<STORAGE; i++)
+        for (int i = 0; i < STORAGE; i++)
         {
           angle_storage[i][0] = 0;
         }
@@ -584,9 +570,11 @@ void setPoseDirection(String dir, float step)
   target_pose.position    = link[END].p_;
   target_pose.orientation = link[END].R_;
 
+#ifdef DEBUG
   Serial.println(dir);
+#endif
 
-  if      (dir == "forward")
+  if (dir == "forward")
   {
     target_pose.position(0) += step;
   }
@@ -835,7 +823,7 @@ void initLinkAndMotor()
   link[END].dq_                         = 0.0;
   link[END].ddq_                        = 0.0;
   link[END].a_                          = Eigen::Vector3f::Zero();
-  link[END].b_                          << 0.099, 0, 0;
+  link[END].b_                          << 0.119, 0, 0;
   link[END].v_                          = Eigen::Vector3f::Zero();
   link[END].w_                          = Eigen::Vector3f::Zero();
 
@@ -874,6 +862,9 @@ void initMotorDriver(bool torque)
     return;
 }
 
+/*******************************************************************************
+* Torque enable or disable
+*******************************************************************************/
 void setMotorTorque(bool onoff)
 {
   motor_driver->setTorque(onoff);

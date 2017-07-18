@@ -32,7 +32,7 @@
 #define GRIP_NUM            1
 #define LINK_NUM            6
 
-#define STORAGE 7
+#define STORAGE 15
 
 #define BASE    0
 #define JOINT1  1
@@ -40,6 +40,9 @@
 #define JOINT3  3
 #define JOINT4  4
 #define END     5
+
+#define TASK_TRAJECTORY_TIME 0.3
+#define TASK_TRAJECTORY_UNIT 0.010
 
 const float grip_on  = 1.3;
 const float grip_off = 0.0;
@@ -56,8 +59,12 @@ uint8_t motion_num = 0;
 String cmd[5];
 
 float joint_pos[LINK_NUM];
+float joint_vel[LINK_NUM];
+float joint_acc[LINK_NUM];
+
 float link_angle[LINK_NUM];
 float motor_angle[LINK_NUM];
+
 float angle_storage[STORAGE][LINK_NUM];
 
 Eigen::MatrixXf joint_tra;
