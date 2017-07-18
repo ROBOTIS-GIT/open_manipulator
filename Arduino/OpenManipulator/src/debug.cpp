@@ -126,15 +126,19 @@ void showJointAngle(String unit, open_manipulator::Link* link, int from, int to)
   {
     for (num = from; num <= to; num++)
     {
-      Serial.println(link[num].q_);
+      Serial.print(link[num].q_); 
+      Serial.print(" ");
     }
+    Serial.println("");
   }
   else if (unit == "deg")
   {
     for (num = from; num <= to; num++)
     {
-      Serial.println(link[num].q_*RAD2DEG);
+      Serial.print(link[num].q_*RAD2DEG);
+      Serial.print(" ");
     }
+    Serial.println("");
   }
 }
 
