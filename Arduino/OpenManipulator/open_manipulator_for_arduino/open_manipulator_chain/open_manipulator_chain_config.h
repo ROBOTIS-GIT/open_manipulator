@@ -42,10 +42,15 @@
 #define JOINT4  4
 #define END     5
 
+#define CHECK_FLAG   0
+#define WAIT_FOR_SEC 1
+
 #define JOINT_TRA_TIME       2.4
 #define GRIP_TRA_TIME        1.6
-#define TASK_TRA_TIME        0.8
 
+#define MOTION_TRA_TIME      2.4
+
+#define TASK_TRA_TIME        0.8
 #define TASK_TRA_UNIT        0.010
 
 const float grip_on  = 1.3;
@@ -64,16 +69,13 @@ String cmd[5];
 
 float pos_tmp[LINK_NUM] = {0.0, };
 
-float set_joint_pos[LINK_NUM];
+float target_pos[LINK_NUM];
 
-float joint_pos[LINK_NUM];
-float joint_vel[LINK_NUM];
-float joint_acc[LINK_NUM];
+float goal_pos[LINK_NUM];
+float goal_vel[LINK_NUM];
+float goal_acc[LINK_NUM];
 
-float link_angle[LINK_NUM];
-float motor_angle[LINK_NUM];
-
-float angle_storage[STORAGE][LINK_NUM];
+float motion_storage[STORAGE][LINK_NUM];
 
 open_manipulator::Motor        motor[LINK_NUM];
 open_manipulator::Link         link[LINK_NUM];
@@ -89,13 +91,13 @@ HardwareTimer control_timer(TIMER_CH1);
 
 RC100 rc100;
 
-// Link and Motor
-void initLinkAndMotor();
+// Link
+void initLink();
 
 // Joint properties
 void initJointProp();
-void setJointProp(float* set_joint_pos);
-void setGripperProp(float set_grip_pos);
+void setJointProp(float* set_goal_pos);
+void setGripperProp(float set_goal_pos);
 
 // Timer
 void initTimer();
@@ -108,12 +110,13 @@ void setIK(open_manipulator::Link* link, uint8_t to, open_manipulator::Pose goal
 void setPoseDirection(String dir, float step);
 
 // DYNAMIXEL
+void initMotor();
 void initMotorDriver(bool torque);
 void setMotorTorque(bool onoff);
 void setJointDataToDynamixel();
 void setGripperDataToDynamixel();
 void getDynamixelPosition();
-void getMotorAngle(float* angle);
+void getMotorAngle();
 
 // DATA
 void getData(uint32_t wait_time);
@@ -131,7 +134,7 @@ void establishContactToProcessing();
 void sendJointDataToProcessing();
 
 // Motion
-void setMotion(bool onoff);
+void setMotion();
 
 
 #endif // OPEN_MANIPULATOR_CHAIN_CONFIG_H_

@@ -57,7 +57,6 @@ typedef struct
 {
   String name;
   uint8_t id;
-  float goal_position;
   float present_position;
 } Motor;
 
