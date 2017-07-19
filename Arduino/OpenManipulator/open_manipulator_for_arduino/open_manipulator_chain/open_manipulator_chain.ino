@@ -148,6 +148,8 @@ void getData(uint32_t wait_time)
       }
       else if (processing_flag)
       {
+        moving = false;
+
         dataFromProcessing(get_processing_data);   
         tick = millis();
         state  = WAIT_FOR_SEC;
@@ -215,10 +217,6 @@ void dataFromProcessing(String get)
   else if (cmd[0] == "task")
   {
     setPoseDirection(cmd[1], TASK_TRA_UNIT);
-
-    for (int id = JOINT1; id <= JOINT4; id++)
-      target_pos[id] = link[id].q_;
-
     jointMove(target_pos, TASK_TRA_TIME);
   }
 #ifdef DYNAMIXEL
@@ -304,46 +302,26 @@ void dataFromRC100(uint8_t receive_data)
   if (receive_data & RC100_BTN_U)
   {
     setPoseDirection("forward", TASK_TRA_UNIT);
-
-    for (int id = JOINT1; id <= JOINT4; id++)
-      target_pos[id] = link[id].q_;
-
     jointMove(target_pos, TASK_TRA_TIME);
   }
   else if (receive_data & RC100_BTN_D)
   {
     setPoseDirection("back", TASK_TRA_UNIT);
-
-    for (int id = JOINT1; id <= JOINT4; id++)
-      target_pos[id] = link[id].q_;
-
     jointMove(target_pos, TASK_TRA_TIME);
   }
   else if (receive_data & RC100_BTN_L)
   {
     setPoseDirection("left", TASK_TRA_UNIT);
-
-    for (int id = JOINT1; id <= JOINT4; id++)
-      target_pos[id] = link[id].q_;
-
     jointMove(target_pos, TASK_TRA_TIME);
   }
   else if (receive_data & RC100_BTN_R)
   {
     setPoseDirection("right", TASK_TRA_UNIT);
-
-    for (int id = JOINT1; id <= JOINT4; id++)
-      target_pos[id] = link[id].q_;
-
     jointMove(target_pos, TASK_TRA_TIME);
   }
   else if (receive_data & RC100_BTN_1)
   {
     setPoseDirection("up", TASK_TRA_UNIT);
-
-    for (int id = JOINT1; id <= JOINT4; id++)
-      target_pos[id] = link[id].q_;
-
     jointMove(target_pos, TASK_TRA_TIME);
   }
   else if (receive_data & RC100_BTN_2)
@@ -353,10 +331,6 @@ void dataFromRC100(uint8_t receive_data)
   else if (receive_data & RC100_BTN_3)
   {
     setPoseDirection("down", TASK_TRA_UNIT);
-
-    for (int id = JOINT1; id <= JOINT4; id++)
-      target_pos[id] = link[id].q_;
-
     jointMove(target_pos, TASK_TRA_TIME);
   }
   else if (receive_data & RC100_BTN_4)
@@ -370,7 +344,7 @@ void dataFromRC100(uint8_t receive_data)
     target_pos[3] = -20.0 * PI/180.0;
     target_pos[4] = -40.0 * PI/180.0;
 
-    jointMove(target_pos, 3.0);
+    jointMove(target_pos, JOINT_TRA_TIME);
   }
   else if (receive_data & RC100_BTN_6)
   {
@@ -379,7 +353,7 @@ void dataFromRC100(uint8_t receive_data)
     target_pos[3] = 0.0;
     target_pos[4] = 0.0;
 
-    jointMove(target_pos, 3.0);
+    jointMove(target_pos, JOINT_TRA_TIME);
   }
   return;
 }
@@ -412,7 +386,7 @@ void setMotion()
         motion_cnt = 0;
         motion_num = 0;        
 #ifdef DEBUG
-        Serial.println("End" + String(","));
+        Serial.println("Eend Motion");
 #endif
         return;
       }
@@ -668,6 +642,9 @@ void setIK(String cmd, open_manipulator::Link* link, uint8_t to, open_manipulato
     kinematics->sr_inverse(link, to, goal_pose);
   else if (cmd == "position")
     kinematics->position_only_inverse(link, to, goal_pose);
+
+  for (int id = JOINT1; id <= JOINT4; id++)
+    target_pos[id] = link[id].q_;
 }
 
 /*******************************************************************************
