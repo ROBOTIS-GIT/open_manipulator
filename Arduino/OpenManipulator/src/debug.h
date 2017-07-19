@@ -32,5 +32,6 @@ void print_mt3f(const Eigen::Matrix3f& m);
 void print_vt3f(const Eigen::Vector3f& v);
 void showJointAngle(String unit, open_manipulator::Link* link, int from, int to);
 void showFKResult(open_manipulator::Link* link, int from, int to);
+void showJointProp(float* get_joint_pos, float* get_joint_vel, float* get_joint_acc, int from, int to);
 
 #endif // DEBUG_H_

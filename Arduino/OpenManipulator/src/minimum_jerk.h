@@ -16,8 +16,8 @@
 
 /* Authors: Darby Lim */
 
-#ifndef TRAJECTORY_H_
-#define TRAJECTORY_H_
+#ifndef MINIMUM_JERK_H_
+#define MINIMUM_JERK_H_
 
 #include "calc.h"
 
@@ -30,14 +30,19 @@ typedef struct
   float acc;
 } Property;
 
-class Trajectory
+class MinimumJerk
 {
  public:
-  Trajectory();
-  ~Trajectory();
+  Eigen::MatrixXf coeffi;
 
-  Eigen::MatrixXf minimumJerk(Property* start, Property* end, uint8_t target_num, float control_period, float mov_time);
+ public:
+  MinimumJerk(Property* start, Property* end, uint8_t target_num, float mov_time);
+  ~MinimumJerk();
+
+  void getPosition(float* pos, uint8_t to, float control_period, uint16_t step_cnt);
+  void getVelocity(float* vel, uint8_t to, float control_period, uint16_t step_cnt);
+  void getAcceleration(float* acc, uint8_t to, float control_period, uint16_t step_cnt);
 };
 }
 
-#endif // TRAJECTORY_H_
+#endif // MINIMUM_JERK_H_

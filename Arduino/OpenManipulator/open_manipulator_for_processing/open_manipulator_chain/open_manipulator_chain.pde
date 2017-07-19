@@ -359,6 +359,9 @@ class ChildApplet extends PApplet
 
   Knob joint1, joint2, joint3, joint4, gripper;
 
+  float[] set_joint_angle = new float[4];
+  float[] set_gripper_pos = new float[2];
+
   float grip_angle;
   boolean onoff_flag = false;
   int motion_num = 0;
