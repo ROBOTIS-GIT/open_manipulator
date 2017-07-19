@@ -148,8 +148,6 @@ void getData(uint32_t wait_time)
       }
       else if (processing_flag)
       {
-        moving = false;
-
         dataFromProcessing(get_processing_data);   
         tick = millis();
         state  = WAIT_FOR_SEC;
