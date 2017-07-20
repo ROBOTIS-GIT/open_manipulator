@@ -19,8 +19,11 @@
 #include "minimum_jerk.h"
 using namespace open_manipulator;
 
-MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, float mov_time)
+MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period)
 {
+  uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
+  mov_time = double(step_time - 1) * control_period;
+
   coeffi.resize(6, target_num);
 
   Eigen::Matrix3f A = Eigen::Matrix3f::Identity(3,3);
@@ -56,38 +59,38 @@ MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, flo
 
 MinimumJerk::~MinimumJerk(){}
 
-void MinimumJerk::getPosition(float* pos, uint8_t to, float control_period, uint16_t step_cnt)
+void MinimumJerk::getPosition(float* pos, uint8_t to, float tick)
 {
   for (int8_t num = 0; num <= to; num++)
   {
-    pos[num] = coeffi(0,num)                                +
-               coeffi(1,num)*pow(control_period*step_cnt,1) +
-               coeffi(2,num)*pow(control_period*step_cnt,2) +
-               coeffi(3,num)*pow(control_period*step_cnt,3) +
-               coeffi(4,num)*pow(control_period*step_cnt,4) +
-               coeffi(5,num)*pow(control_period*step_cnt,5);
+    pos[num] = coeffi(0,num)             +
+               coeffi(1,num)*pow(tick,1) +
+               coeffi(2,num)*pow(tick,2) +
+               coeffi(3,num)*pow(tick,3) +
+               coeffi(4,num)*pow(tick,4) +
+               coeffi(5,num)*pow(tick,5);
   }
 }
 
-void MinimumJerk::getVelocity(float* vel, uint8_t to, float control_period, uint16_t step_cnt)
+void MinimumJerk::getVelocity(float* vel, uint8_t to, float tick)
 {
   for (int8_t num = 0; num <= to; num++)
   {
-    vel[num] =   coeffi(1,num)                                +
-               2*coeffi(2,num)*pow(control_period*step_cnt,1) +
-               3*coeffi(3,num)*pow(control_period*step_cnt,2) +
-               4*coeffi(4,num)*pow(control_period*step_cnt,3) +
-               5*coeffi(5,num)*pow(control_period*step_cnt,4);
+    vel[num] =   coeffi(1,num)             +
+               2*coeffi(2,num)*pow(tick,1) +
+               3*coeffi(3,num)*pow(tick,2) +
+               4*coeffi(4,num)*pow(tick,3) +
+               5*coeffi(5,num)*pow(tick,4);
   }
 }
 
-void MinimumJerk::getAcceleration(float* acc, uint8_t to, float control_period, uint16_t step_cnt)
+void MinimumJerk::getAcceleration(float* acc, uint8_t to, float tick)
 {
   for (int8_t num = 0; num <= to; num++)
   {
-    acc[num] = 2 *coeffi(2,num)                                +
-               6 *coeffi(3,num)*pow(control_period*step_cnt,1) +
-               12*coeffi(4,num)*pow(control_period*step_cnt,2) +
-               20*coeffi(5,num)*pow(control_period*step_cnt,3);
+    acc[num] = 2 *coeffi(2,num)             +
+               6 *coeffi(3,num)*pow(tick,1) +
+               12*coeffi(4,num)*pow(tick,2) +
+               20*coeffi(5,num)*pow(tick,3);
   }
 }

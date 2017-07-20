@@ -22,7 +22,7 @@
 #include "OpenManipulator.h"
 #include <RC100.h>
 
-#define CONTROL_RATE        8000
+#define CONTROL_RATE        20000
 #define SERIAL_RATE         57600
 #define REMOTE_RATE         100
 #define BAUE_RATE           1000000
@@ -45,19 +45,20 @@
 #define CHECK_FLAG   0
 #define WAIT_FOR_SEC 1
 
-#define JOINT_TRA_TIME       2.4
-#define GRIP_TRA_TIME        1.6
+#define JOINT_TRA_TIME       2.5
+#define GRIP_TRA_TIME        1.5
 
-#define MOTION_TRA_TIME      2.4
+#define MOTION_TRA_TIME      2.5
 
-#define TASK_TRA_TIME        0.8
+#define TASK_TRA_TIME        0.7
 #define TASK_TRA_UNIT        0.010
 
 const float grip_on  = 1.3;
 const float grip_off = 0.0;
 
-float mov_time             = 2.5;
-const float control_period = 0.008;
+float mov_time             = 0.0;
+uint16_t step_cnt          = 0;
+const float control_period = CONTROL_RATE*1e-6;
 
 bool moving        = false;
 bool comm          = false;

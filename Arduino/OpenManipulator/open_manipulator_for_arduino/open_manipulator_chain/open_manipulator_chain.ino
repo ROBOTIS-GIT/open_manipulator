@@ -19,7 +19,7 @@
 #include "open_manipulator_chain_config.h"
 
 // #define DEBUG
-// #define DYNAMIXEL
+#define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************
@@ -70,10 +70,11 @@ void loop()
 *******************************************************************************/
 void handler_control()
 {
-  uint16_t step_time = mov_time/control_period + 1;
-  static uint16_t step_cnt = 0;
+  uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
+  float tick_time = 0;
+
 #ifdef DEBUG
-  // showJointProp(goal_pos, goal_vel, goal_acc, BASE, END);
+  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT1);
 #endif
   if (moving && comm)
   {
@@ -95,9 +96,11 @@ void handler_control()
     }
     else
     {
-      minimum_jerk->getPosition(goal_pos, END, control_period, step_cnt);
-      minimum_jerk->getVelocity(goal_vel, END, control_period, step_cnt);
-      minimum_jerk->getAcceleration(goal_acc, END, control_period, step_cnt);
+      tick_time = control_period * step_cnt;
+
+      minimum_jerk->getPosition(goal_pos, END, tick_time);
+      minimum_jerk->getVelocity(goal_vel, END, tick_time);
+      minimum_jerk->getAcceleration(goal_acc, END, tick_time);
 
       step_cnt++;
 
@@ -229,12 +232,12 @@ void dataFromProcessing(String get)
   {
     if (cmd[1] == "on")
     {
-      angle_storage[motion_num][0] = -1;
+      motion_storage[motion_num][0] = -1;
       motion_num++;
     }
     else if (cmd[1] == "off")
     {
-      angle_storage[motion_num][0] = -2;
+      motion_storage[motion_num][0] = -2;
       motion_num++;
     }
     else if (cmd[1].toInt() < STORAGE)
@@ -244,7 +247,7 @@ void dataFromProcessing(String get)
 
       for (int i = 0; i < LINK_NUM; i++)
       {
-        angle_storage[motion_num][i] = motor[i].present_position;
+        motion_storage[motion_num][i] = motor[i].present_position;
       }
       motion_num++;
     }
@@ -277,7 +280,7 @@ void dataFromProcessing(String get)
   else if (cmd[0] == "stop")
   {
     for (int i=0; i<STORAGE; i++)
-      angle_storage[i][0] = 0;
+      motion_storage[i][0] = 0;
 
     motion     = false;
     repeat     = false;
@@ -384,7 +387,7 @@ void setMotion()
         motion_cnt = 0;
         motion_num = 0;        
 #ifdef DEBUG
-        Serial.println("Eend Motion");
+        Serial.println("End Motion");
 #endif
         return;
       }
@@ -592,8 +595,9 @@ void jointMove(float* set_goal_pos, float set_mov_time)
   setJointProp(set_goal_pos);
   setMoveTime(set_mov_time);
 
-  minimum_jerk = new open_manipulator::MinimumJerk(start_prop, end_prop, LINK_NUM, mov_time);
+  minimum_jerk = new open_manipulator::MinimumJerk(start_prop, end_prop, LINK_NUM, mov_time, control_period);
 
+  step_cnt = 0;
   moving = true;
 }
 
@@ -605,8 +609,9 @@ void gripMove(float set_goal_pos, float set_mov_time)
   setGripperProp(set_goal_pos);
   setMoveTime(set_mov_time);
 
-  minimum_jerk = new open_manipulator::MinimumJerk(start_prop, end_prop, LINK_NUM, mov_time);
+  minimum_jerk = new open_manipulator::MinimumJerk(start_prop, end_prop, LINK_NUM, mov_time, control_period);
 
+  step_cnt = 0;
   moving = true;
 }
 
