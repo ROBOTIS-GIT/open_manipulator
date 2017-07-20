@@ -24,7 +24,7 @@ MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, flo
   uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
   mov_time = double(step_time - 1) * control_period;
 
-  coeffi.resize(6, target_num);
+  coeffi_.resize(6, target_num);
 
   Eigen::Matrix3f A = Eigen::Matrix3f::Identity(3,3);
   Eigen::Vector3f x = Eigen::Vector3f::Zero();
@@ -53,7 +53,7 @@ MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, flo
     single_coeffi(4) = x(1);
     single_coeffi(5) = x(2);
 
-    coeffi.col(num) = single_coeffi;
+    coeffi_.col(num) = single_coeffi;
   }
 }
 
@@ -61,36 +61,36 @@ MinimumJerk::~MinimumJerk(){}
 
 void MinimumJerk::getPosition(float* pos, uint8_t to, float tick)
 {
-  for (int8_t num = 0; num <= to; num++)
+  for (int num = 0; num <= to; num++)
   {
-    pos[num] = coeffi(0,num)             +
-               coeffi(1,num)*pow(tick,1) +
-               coeffi(2,num)*pow(tick,2) +
-               coeffi(3,num)*pow(tick,3) +
-               coeffi(4,num)*pow(tick,4) +
-               coeffi(5,num)*pow(tick,5);
+    pos[num] = coeffi_(0,num)             +
+               coeffi_(1,num)*pow(tick,1) +
+               coeffi_(2,num)*pow(tick,2) +
+               coeffi_(3,num)*pow(tick,3) +
+               coeffi_(4,num)*pow(tick,4) +
+               coeffi_(5,num)*pow(tick,5);
   }
 }
 
 void MinimumJerk::getVelocity(float* vel, uint8_t to, float tick)
 {
-  for (int8_t num = 0; num <= to; num++)
+  for (int num = 0; num <= to; num++)
   {
-    vel[num] =   coeffi(1,num)             +
-               2*coeffi(2,num)*pow(tick,1) +
-               3*coeffi(3,num)*pow(tick,2) +
-               4*coeffi(4,num)*pow(tick,3) +
-               5*coeffi(5,num)*pow(tick,4);
+    vel[num] =   coeffi_(1,num)             +
+               2*coeffi_(2,num)*pow(tick,1) +
+               3*coeffi_(3,num)*pow(tick,2) +
+               4*coeffi_(4,num)*pow(tick,3) +
+               5*coeffi_(5,num)*pow(tick,4);
   }
 }
 
 void MinimumJerk::getAcceleration(float* acc, uint8_t to, float tick)
 {
-  for (int8_t num = 0; num <= to; num++)
+  for (int num = 0; num <= to; num++)
   {
-    acc[num] = 2 *coeffi(2,num)             +
-               6 *coeffi(3,num)*pow(tick,1) +
-               12*coeffi(4,num)*pow(tick,2) +
-               20*coeffi(5,num)*pow(tick,3);
+    acc[num] = 2 *coeffi_(2,num)             +
+               6 *coeffi_(3,num)*pow(tick,1) +
+               12*coeffi_(4,num)*pow(tick,2) +
+               20*coeffi_(5,num)*pow(tick,3);
   }
 }

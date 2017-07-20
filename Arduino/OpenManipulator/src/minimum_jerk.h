@@ -33,7 +33,7 @@ typedef struct
 class MinimumJerk
 {
  public:
-  Eigen::MatrixXf coeffi;
+  Eigen::MatrixXf coeffi_;
 
  public:
   MinimumJerk(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period);

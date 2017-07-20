@@ -74,14 +74,14 @@ void handler_control()
   float tick_time = 0;
 
 #ifdef DEBUG
-  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT1);
+  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT4);
 #endif
   if (moving && comm)
   {
     if (step_cnt >= step_time)
     {
       for (int num = BASE; num <= END; num++)
-        link[num].q_ = target_pos[num];
+        link[num].q_ = goal_pos[num];
 
       setFK(link, BASE);
 
@@ -102,14 +102,14 @@ void handler_control()
       minimum_jerk->getVelocity(goal_vel, END, tick_time);
       minimum_jerk->getAcceleration(goal_acc, END, tick_time);
 
-      step_cnt++;
-
       sendJointDataToProcessing();
 
 #ifdef DYNAMIXEL
       setJointDataToDynamixel();
       setGripperDataToDynamixel();
 #endif
+
+      step_cnt++;
     }
   }
 }
@@ -125,7 +125,7 @@ void getData(uint32_t wait_time)
   bool rc100_flag      = false;
   bool processing_flag = false;
 
-  uint8_t get_rc100_data     = 0;
+  uint16_t get_rc100_data     = 0;
   String get_processing_data = "";
 
   if (rc100.available())
@@ -145,6 +145,7 @@ void getData(uint32_t wait_time)
     case CHECK_FLAG:
       if (rc100_flag)
       {
+        Serial.println(get_rc100_data);
         dataFromRC100(get_rc100_data);   
         tick = millis();
         state  = WAIT_FOR_SEC;
@@ -298,7 +299,7 @@ void dataFromProcessing(String get)
 /*******************************************************************************
 * Data from RC100 Controller
 *******************************************************************************/
-void dataFromRC100(uint8_t receive_data)
+void dataFromRC100(uint16_t receive_data)
 {
   if (receive_data & RC100_BTN_U)
   {
@@ -547,6 +548,11 @@ void getDynamixelPosition()
 void setPoseDirection(String dir, float step)
 {
   open_manipulator::Pose target_pose;
+
+  for (int num = BASE; num <= END; num++)
+    link[num].q_ = goal_pos[num];
+
+  setFK(link, BASE);
 
   target_pose.position    = link[END].p_;
   target_pose.orientation = link[END].R_;

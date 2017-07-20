@@ -50,7 +50,7 @@
 
 #define MOTION_TRA_TIME      2.5
 
-#define TASK_TRA_TIME        0.7
+#define TASK_TRA_TIME        0.2
 #define TASK_TRA_UNIT        0.010
 
 const float grip_on  = 1.3;
@@ -58,7 +58,7 @@ const float grip_off = 0.0;
 
 float mov_time             = 0.0;
 uint16_t step_cnt          = 0;
-const float control_period = CONTROL_RATE*1e-6;
+const float control_period = CONTROL_RATE * 1e-6;
 
 bool moving        = false;
 bool comm          = false;
