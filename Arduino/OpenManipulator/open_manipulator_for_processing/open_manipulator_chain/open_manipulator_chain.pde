@@ -398,6 +398,12 @@ class ChildApplet extends PApplet
        .setColorActive(color(0,0,255))
        ;
 
+    cp5.addTab("Motion")
+       .setColorBackground(color(0, 160, 100))
+       .setColorLabel(color(255))
+       .setColorActive(color(0,0,255))
+       ;
+
     cp5.getTab("default")
        .activateEvent(true)
        .setLabel("Joint Space Control")
@@ -412,6 +418,11 @@ class ChildApplet extends PApplet
     cp5.getTab("Hand Teaching")
        .activateEvent(true)
        .setId(3)
+       ;
+
+    cp5.getTab("Motion")
+       .activateEvent(true)
+       .setId(4)
        ;
 
 /*******************************************************************************
@@ -640,6 +651,23 @@ class ChildApplet extends PApplet
        ;
 
 /*******************************************************************************
+* Init Motion
+*******************************************************************************/
+    cp5.addButton("Start")
+       .setValue(0)
+       .setPosition(0,200)
+       .setSize(400,100)
+       .setFont(createFont("arial",15))
+       ;
+
+    cp5.addButton("Stop")
+       .setValue(0)
+       .setPosition(0,400)
+       .setSize(400,100)
+       .setFont(createFont("arial",15))
+       ;
+
+/*******************************************************************************
 * Set Tap UI
 *******************************************************************************/
     cp5.getController("Label").moveTo("global");
@@ -659,6 +687,9 @@ class ChildApplet extends PApplet
     cp5.getController("Make_Gripper_Pose").moveTo("Hand Teaching");
     cp5.getController("Motion_Start").moveTo("Hand Teaching");
     cp5.getController("Motion_Repeat").moveTo("Hand Teaching");
+
+    cp5.getController("Start").moveTo("Motion");
+    cp5.getController("Stop").moveTo("Motion");
   }
 
   public void draw()
@@ -679,12 +710,14 @@ class ChildApplet extends PApplet
       joint3.setValue(joint_angle[2]);
       joint4.setValue(joint_angle[3]);
 
-      opencr_port.write("ready" + '\n');
+      opencr_port.write("mnp"   + ',' +
+                        "ready" + '\n');
       println("OpenManipulator Chain Ready!!!");
     }
     else
     {
-      opencr_port.write("end" + '\n');
+      opencr_port.write("mnp"  + ',' +
+                        "end"  + '\n');
       println("OpenManipulator Chain End...");
     }
   }
@@ -719,21 +752,16 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      joint_angle[0] = 0.0;
-      joint_angle[1] = 0.0;
-      joint_angle[2] = 0.0;
-      joint_angle[3] = 0.0;
+      set_joint_angle[0] = 0.0;
+      set_joint_angle[1] = 0.0;
+      set_joint_angle[2] = 0.0;
+      set_joint_angle[3] = 0.0;
 
-      joint1.setValue(joint_angle[0]);
-      joint2.setValue(joint_angle[1]);
-      joint3.setValue(joint_angle[2]);
-      joint4.setValue(joint_angle[3]);
-
-      opencr_port.write("joint"        + ',' +
-                        joint_angle[0] + ',' +
-                        joint_angle[1] + ',' +
-                        joint_angle[2] + ',' +
-                        joint_angle[3] + '\n');
+      opencr_port.write("joint"            + ',' +
+                        set_joint_angle[0] + ',' +
+                        set_joint_angle[1] + ',' +
+                        set_joint_angle[2] + ',' +
+                        set_joint_angle[3] + '\n');
     }
     else
     {
@@ -745,21 +773,16 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      joint_angle[0] = 0.0;
-      joint_angle[1] = 60.0  * PI/180.0;
-      joint_angle[2] = -20.0 * PI/180.0;
-      joint_angle[3] = -40.0 * PI/180.0;
-
-      joint1.setValue(joint_angle[0]);
-      joint2.setValue(joint_angle[1]);
-      joint3.setValue(joint_angle[2]);
-      joint4.setValue(joint_angle[3]);
+      set_joint_angle[0] = 0.0;
+      set_joint_angle[1] = 60.0  * PI/180.0;
+      set_joint_angle[2] = -20.0 * PI/180.0;
+      set_joint_angle[3] = -40.0 * PI/180.0;
 
       opencr_port.write("joint"        + ',' +
-                        joint_angle[0] + ',' +
-                        joint_angle[1] + ',' +
-                        joint_angle[2] + ',' +
-                        joint_angle[3] + '\n');
+                        set_joint_angle[0] + ',' +
+                        set_joint_angle[1] + ',' +
+                        set_joint_angle[2] + ',' +
+                        set_joint_angle[3] + '\n');
     }
     else
     {
@@ -803,12 +826,14 @@ class ChildApplet extends PApplet
       if (flag)
       {
         gripper.setValue(1.3);
-        opencr_port.write("on" + '\n');
+        opencr_port.write("grip"  + ',' +
+                          "on" + '\n');
       }
       else
       {
         gripper.setValue(0.0);
-        opencr_port.write("off" + '\n');
+        opencr_port.write("grip"  + ',' +
+                          "off" + '\n');
       }
     }
     else
@@ -908,21 +933,16 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      joint_angle[0] = 0.0;
-      joint_angle[1] = 60.0  * PI/180.0;
-      joint_angle[2] = -20.0 * PI/180.0;
-      joint_angle[3] = -40.0 * PI/180.0;
+      set_joint_angle[0] = 0.0;
+      set_joint_angle[1] = 60.0  * PI/180.0;
+      set_joint_angle[2] = -20.0 * PI/180.0;
+      set_joint_angle[3] = -40.0 * PI/180.0;
 
-      joint1.setValue(joint_angle[0]);
-      joint2.setValue(joint_angle[1]);
-      joint3.setValue(joint_angle[2]);
-      joint4.setValue(joint_angle[3]);
-
-      opencr_port.write("joint"        + ',' +
-                        joint_angle[0] + ',' +
-                        joint_angle[1] + ',' +
-                        joint_angle[2] + ',' +
-                        joint_angle[3] + '\n');
+      opencr_port.write("joint"            + ',' +
+                        set_joint_angle[0] + ',' +
+                        set_joint_angle[1] + ',' +
+                        set_joint_angle[2] + ',' +
+                        set_joint_angle[3] + '\n');
     }
     else
     {
@@ -936,11 +956,13 @@ class ChildApplet extends PApplet
     {
       if (flag)
       {
-        opencr_port.write("on" + '\n');
+        opencr_port.write("grip"  + ',' +
+                          "on" + '\n');
       }
       else
       {
-        opencr_port.write("off" + '\n');
+        opencr_port.write("grip"  + ',' +
+                          "off" + '\n');
       }
     }
     else
@@ -1018,7 +1040,8 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("once" + '\n');
+      opencr_port.write("hand"     + ',' +
+                        "once"  + '\n');
       println("Motion Start!!!");
 
       motion_num = 0;
@@ -1035,12 +1058,42 @@ class ChildApplet extends PApplet
     {
       if (flag)
       {
-        opencr_port.write("repeat" + '\n');
+        opencr_port.write("hand"    + ',' +
+                          "repeat"  + '\n');
       }
       else
       {
-        opencr_port.write("stop" + '\n');
+        opencr_port.write("hand"  + ',' +
+                          "stop"  + '\n');;
       }
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+  public void Start(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("motion"  + ',' +
+                        "start"   + '\n');
+      println("Motion Start!!!");
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+  public void Stop(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("motion"  + ',' +
+                        "stop"    + '\n');
+      println("Motion Stop!!!");
     }
     else
     {

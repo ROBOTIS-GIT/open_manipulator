@@ -22,7 +22,7 @@ using namespace open_manipulator;
 MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period)
 {
   uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
-  mov_time = double(step_time - 1) * control_period;
+  mov_time = float(step_time - 1) * control_period;
 
   coeffi_.resize(6, target_num);
 

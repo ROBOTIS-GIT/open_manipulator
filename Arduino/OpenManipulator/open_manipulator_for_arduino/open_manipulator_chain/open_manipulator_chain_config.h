@@ -22,7 +22,7 @@
 #include "OpenManipulator.h"
 #include <RC100.h>
 
-#define CONTROL_RATE        20000
+#define CONTROL_RATE        10000
 #define SERIAL_RATE         57600
 #define REMOTE_RATE         100
 #define BAUE_RATE           1000000
@@ -46,11 +46,11 @@
 #define WAIT_FOR_SEC 1
 
 #define JOINT_TRA_TIME       2.5
-#define GRIP_TRA_TIME        1.5
+#define GRIP_TRA_TIME        1.6
 
-#define MOTION_TRA_TIME      2.5
+#define MOTION_TRA_TIME      3.0
 
-#define TASK_TRA_TIME        0.2
+#define TASK_TRA_TIME        0.16
 #define TASK_TRA_UNIT        0.010
 
 const float grip_on  = 1.3;
@@ -68,7 +68,7 @@ uint8_t motion_num = 0;
 
 String cmd[5];
 
-float pos_tmp[LINK_NUM] = {0.0, };
+// float pos_tmp[LINK_NUM] = {0.0, };
 
 float target_pos[LINK_NUM];
 
@@ -77,6 +77,19 @@ float goal_vel[LINK_NUM];
 float goal_acc[LINK_NUM];
 
 float motion_storage[STORAGE][LINK_NUM];
+float motion_set[STORAGE][LINK_NUM] = { 
+                                        { 0.0,  0.0, 1.05, -0.35, -0.70, 0.0},
+                                        { 0.0,  0.0,-0.05, -0.82,  0.90, 0.0},
+                                        { 0.0, 0.35,-0.60,  0.05,  0.55, 0.0},
+                                        {-1.0, 0.35,-0.60,  0.05,  0.55, 1.8},
+                                        { 0.0, 0.35,-0.05, -0.82,  0.90, 1.8},
+                                        { 0.0,-0.35,-0.05, -0.82,  0.90, 1.8},
+                                        { 0.0,-0.35,-0.60,  0.05,  0.55, 1.8},
+                                        {-2.0,-0.35,-0.60,  0.05,  0.55, 0.0},
+                                        { 0.0,-0.35,-0.05, -0.82,  0.90, 0.0},
+                                        { 0.0,  0.0,-0.05, -0.82,  0.90, 0.0},
+                                        { 0.0,  0.0, 1.05, -0.35, -0.70, 0.0}
+                                      };
 
 open_manipulator::Motor        motor[LINK_NUM];
 open_manipulator::Link         link[LINK_NUM];

@@ -129,7 +129,6 @@ bool MotorDriver::jointControl(int32_t* value)
   {
     if (motor_[num].name.substring(0,5) == "Joint")
     {
-      Serial.println(motor_[num].id);
       param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(value[num]));
       param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(value[num]));
       param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(value[num]));

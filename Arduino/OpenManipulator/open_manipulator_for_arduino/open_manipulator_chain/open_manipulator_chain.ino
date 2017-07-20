@@ -18,9 +18,9 @@
 
 #include "open_manipulator_chain_config.h"
 
-// #define DEBUG
+#define DEBUG
 #define DYNAMIXEL
-#define SIMULATION
+// #define SIMULATION
 
 /*******************************************************************************
 * Setup
@@ -74,7 +74,7 @@ void handler_control()
   float tick_time = 0;
 
 #ifdef DEBUG
-  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT4);
+  // showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT4);
 #endif
   if (moving && comm)
   {
@@ -108,7 +108,6 @@ void handler_control()
       setJointDataToDynamixel();
       setGripperDataToDynamixel();
 #endif
-
       step_cnt++;
     }
   }
@@ -145,7 +144,6 @@ void getData(uint32_t wait_time)
     case CHECK_FLAG:
       if (rc100_flag)
       {
-        Serial.println(get_rc100_data);
         dataFromRC100(get_rc100_data);   
         tick = millis();
         state  = WAIT_FOR_SEC;
@@ -180,22 +178,25 @@ void dataFromProcessing(String get)
 
   split(get, ',', cmd);
 
-  if (cmd[0] == "ready")
+  if (cmd[0] == "mnp")
   {
+    if (cmd[1] == "ready")
+    {
 #ifdef DYNAMIXEL
-    setMotorTorque(true);
-    getDynamixelPosition();
-    sendJointDataToProcessing();
+      setMotorTorque(true);
+      getDynamixelPosition();
+      sendJointDataToProcessing();
 #endif
-    setTimer(true);
-    comm = true;
-  }
-  else if (cmd[0] == "end")
-  {
+      setTimer(true);
+      comm = true;
+    }
+    else if (cmd[1] == "end")
+    {
 #ifdef DYNAMIXEL
-    setMotorTorque(false);
+      setMotorTorque(false);
 #endif
-    comm = false;
+      comm = false;
+    }
   }
   else if (cmd[0] == "joint")
   {
@@ -208,13 +209,12 @@ void dataFromProcessing(String get)
   {
     gripMove(cmd[1].toFloat(), GRIP_TRA_TIME);
   }
-  else if (cmd[0] == "on")
+  else if (cmd[0] == "grip")
   {
-    gripMove(grip_on, GRIP_TRA_TIME);
-  }
-  else if (cmd[0] == "off")
-  {
-    gripMove(grip_off, GRIP_TRA_TIME);
+    if (cmd[1] == "on")
+      gripMove(grip_on, GRIP_TRA_TIME);
+    else if (cmd[1] == "off")
+      gripMove(grip_off, GRIP_TRA_TIME);
   }
   else if (cmd[0] == "task")
   {
@@ -259,35 +259,79 @@ void dataFromProcessing(String get)
 #endif
     }
   }
-  else if (cmd[0] == "once")
+  else if (cmd[0] == "hand")
   {
-    setMotorTorque(true);
+    if (cmd[1] == "once")
+    {
+      setMotorTorque(true);
 
-    getDynamixelPosition();
-    sendJointDataToProcessing();
+      getDynamixelPosition();
+      sendJointDataToProcessing();
 
-    motion = true;
-  }
-  else if (cmd[0] == "repeat")
-  {
-    setMotorTorque(true);
+      motion = true;
+    }
+    else if (cmd[1] == "repeat")
+    {
+      setMotorTorque(true);
 
-    getDynamixelPosition();
-    sendJointDataToProcessing();
+      getDynamixelPosition();
+      sendJointDataToProcessing();
 
-    motion = true;
-    repeat = true;
-  }
-  else if (cmd[0] == "stop")
-  {
-    for (int i=0; i<STORAGE; i++)
-      motion_storage[i][0] = 0;
+      motion = true;
+      repeat = true;
+    }
+    else if (cmd[1] == "stop")
+    {
+      for (int i=0; i<STORAGE; i++)
+      {
+        for (int j=0; j<LINK_NUM; j++)
+        {
+          motion_storage[i][j] = 0;
+        }
+      }
 
-    motion     = false;
-    repeat     = false;
-    motion_num = 0;
+      motion     = false;
+      repeat     = false;
+      motion_num = 0;
+    }
   }
 #endif
+  else if (cmd[0] == "motion")
+  {
+    if (cmd[1] == "start")
+    {
+      setMotorTorque(true);
+
+      getDynamixelPosition();
+      sendJointDataToProcessing();
+
+      for (int i=0; i<STORAGE; i++)
+      {
+        for (int j=0; j<LINK_NUM; j++)
+        {
+          motion_storage[i][j] = motion_set[i][j];
+        }
+      }
+
+      motion_num = 11;
+      motion = true;
+      repeat = true;
+    }
+    else if (cmd[1] == "stop")
+    {
+      for (int i=0; i<STORAGE; i++)
+      {
+        for (int j=0; j<LINK_NUM; j++)
+        {
+          motion_storage[i][j] = 0;
+        }
+      }
+
+      motion     = false;
+      repeat     = false;
+      motion_num = 0;
+    }
+  }
   else
   {
 #ifdef DEBUG
