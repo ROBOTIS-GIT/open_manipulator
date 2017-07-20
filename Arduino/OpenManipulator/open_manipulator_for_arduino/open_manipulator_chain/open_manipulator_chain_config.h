@@ -68,8 +68,6 @@ uint8_t motion_num = 0;
 
 String cmd[5];
 
-// float pos_tmp[LINK_NUM] = {0.0, };
-
 float target_pos[LINK_NUM];
 
 float goal_pos[LINK_NUM];

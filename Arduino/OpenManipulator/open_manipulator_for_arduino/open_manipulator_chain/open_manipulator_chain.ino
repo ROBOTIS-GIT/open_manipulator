@@ -18,9 +18,9 @@
 
 #include "open_manipulator_chain_config.h"
 
-#define DEBUG
+// #define DEBUG
 #define DYNAMIXEL
-// #define SIMULATION
+#define SIMULATION
 
 /*******************************************************************************
 * Setup
@@ -74,7 +74,7 @@ void handler_control()
   float tick_time = 0;
 
 #ifdef DEBUG
-  // showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT4);
+  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT4);
 #endif
   if (moving && comm)
   {
