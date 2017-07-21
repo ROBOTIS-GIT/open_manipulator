@@ -19,7 +19,7 @@
 #include "open_manipulator_chain_config.h"
 
 // #define DEBUG
-// #define DYNAMIXEL
+ #define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************

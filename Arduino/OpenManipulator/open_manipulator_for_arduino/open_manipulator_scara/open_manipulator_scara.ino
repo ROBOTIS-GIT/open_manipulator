@@ -67,7 +67,9 @@ void loop()
   }
 
   getData(REMOTE_RATE);
-  
+
+  setMotion(motion_num);
+
   showLedStatus();
 }
 
@@ -80,7 +82,7 @@ void handler_control()
   float tick_time = 0;
 
 #ifdef DEBUG
-  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT3);
+  // showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT3);
 #endif
   if (moving && comm)
   {
@@ -211,11 +213,61 @@ void dataFromProcessing(String get)
     setPose(goal_pose);
     jointMove(target_pos, TASK_TRA_TIME);
   }
+  else if (cmd[0] == "motion")
+  {
+    open_manipulator::Pose goal_pose;
+    goal_pose.position << 0.15,
+                          0.0,
+                          0.0661;
+
+    setPose(goal_pose);
+    jointMove(target_pos, TASK_TRA_TIME);
+
+    motion_num = cmd[1].toInt();
+    motion = true;
+  }
   else
   {
 #ifdef DEBUG
     Serial.println("Error");
 #endif
+  }
+}
+
+/*******************************************************************************
+* Set motion
+*******************************************************************************/
+void setMotion(uint8_t get_motion_num)
+{
+  static uint8_t motion_cnt = 0;
+
+  open_manipulator::Pose goal_pose;
+
+  if (motion)
+  {
+    if (moving)
+      return;
+
+    switch (get_motion_num)
+    {
+      case 1:
+        goal_pose.position << 0.15 + 0.04*cos(motion_cnt*0.1),
+                              0.0  + 0.04*sin(motion_cnt*0.1),
+                              0.0661;        
+       break;
+
+      default:
+       break;
+    }
+
+    motion_cnt++;
+
+    setPose(goal_pose);
+    jointMove(target_pos, MOTION_TRA_TIME);
+  }
+  else
+  {
+    motion_cnt = 0;
   }
 }
 

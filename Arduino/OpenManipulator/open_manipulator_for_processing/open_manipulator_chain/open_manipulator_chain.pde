@@ -47,7 +47,7 @@ float[] gripper_pos = new float[2];
 *******************************************************************************/
 void settings()
 {
-  size(600, 600, OPENGL);
+  size(900, 900, OPENGL);
 }
 
 /*******************************************************************************
@@ -191,7 +191,7 @@ void drawSphere(int x, int y, int z, int r, int g, int b, int size)
 void drawTitle()
 {
   pushMatrix();
-  rotateX(radians(0));
+  rotateX(radians(60));
   rotateZ(radians(180));
   textSize(60);
   fill(255,204,102);

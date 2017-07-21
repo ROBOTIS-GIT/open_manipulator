@@ -41,11 +41,12 @@
 #define CHECK_FLAG   0
 #define WAIT_FOR_SEC 1
 
-#define JOINT_TRA_TIME       2.5
+#define JOINT_TRA_TIME       2.0
 #define GRIP_TRA_TIME        1.6
 
-#define TASK_TRA_TIME        0.16
-#define TASK_TRA_UNIT        0.010
+#define TASK_TRA_TIME        0.45
+
+#define MOTION_TRA_TIME      0.05
 
 const float grip_on  = 0.0;
 const float grip_off = -0.5;
@@ -56,6 +57,8 @@ const float control_period = CONTROL_RATE * 1e-6;
 
 bool moving        = false;
 bool comm          = false;
+bool motion        = false;
+uint8_t motion_num = 0;
 
 String cmd[5];
 
@@ -118,5 +121,8 @@ void setMoveTime(float get_time);
 // Communication
 void establishContactToProcessing();
 void sendJointDataToProcessing();
+
+// Motion
+void setMotion(uint8_t get_motion_num);
 
 #endif // OPEN_MANIPULATOR_SCARA_CONFIG_H_

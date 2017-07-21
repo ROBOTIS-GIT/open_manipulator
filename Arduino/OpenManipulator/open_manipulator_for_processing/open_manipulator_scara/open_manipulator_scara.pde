@@ -42,12 +42,14 @@ Serial opencr_port;
 float[] joint_angle   = new float[3];
 float gripper_angle   = 0.0;
 
+float posX, posY;
+
 /*******************************************************************************
 * Setting window size
 *******************************************************************************/
 void settings()
 {
-  size(600, 600, OPENGL);
+  size(900, 900, OPENGL);
 }
 
 /*******************************************************************************
@@ -229,6 +231,7 @@ void drawManipulator()
   drawLocalFrame();
 
   translate(30, 0, 0);
+
   drawLocalFrame();
   popMatrix();
 }
@@ -348,17 +351,22 @@ class ChildApplet extends PApplet
   public void setup()
   {
     surface.setTitle("Control Interface");
-
     cp5 = new ControlP5(this);
 
 /*******************************************************************************
 * Init Tab
 *******************************************************************************/
     cp5.addTab("Task Space Control")
-       .setColorBackground(color(0, 160, 100))
+       .setColorBackground(color(242,56,39))
        .setColorLabel(color(255))
-       .setColorActive(color(255,128,0))
+       .setColorActive(color(242,211,39))
        ;
+
+    cp5.addTab("Motion")
+       .setColorBackground(color(242,56,39))
+       .setColorLabel(color(255))
+       .setColorActive(color(242,211,39))
+       ; 
 
     cp5.getTab("default")
        .activateEvent(true)
@@ -369,6 +377,11 @@ class ChildApplet extends PApplet
     cp5.getTab("Task Space Control")
        .activateEvent(true)
        .setId(2)
+       ;
+
+    cp5.getTab("Motion")
+       .activateEvent(true)
+       .setId(3)
        ;
 
 /*******************************************************************************
@@ -488,6 +501,17 @@ class ChildApplet extends PApplet
                   .setMinMax(300,240,-300,0)
                   .setValue(0,240)
                   ;
+
+/*******************************************************************************
+* Init Task Space Controller
+*******************************************************************************/
+    cp5.addButton("Go")
+       .setValue(0)
+       .setPosition(0,460)
+       .setSize(400,40)
+       .setFont(createFont("arial",15))
+       ;
+
 /*******************************************************************************
 * Set Tap UI
 *******************************************************************************/
@@ -495,11 +519,13 @@ class ChildApplet extends PApplet
     cp5.getController("Controller_OnOff").moveTo("global");
 
     cp5.getController("Drawing").moveTo("Task Space Control");
+
+    cp5.getController("Go").moveTo("Motion");
   }
 
   public void draw()
   {
-    background(0);
+    background(1,35,64);
   }
 
 /*******************************************************************************
@@ -645,13 +671,31 @@ class ChildApplet extends PApplet
 *******************************************************************************/
   void Drawing()
   {
-    float x = slider2d.getArrayValue()[0] * 0.001;
-    float y = slider2d.getArrayValue()[1] * 0.001;
+    posX = slider2d.getArrayValue()[0] * 0.001;
+    posY = slider2d.getArrayValue()[1] * 0.001;
 
-    opencr_port.write("pos"  + ',' +
-                      y      + ',' +
-                      x      + '\n');
+    opencr_port.write("pos"     + ',' +
+                      posY      + ',' +
+                      posX      + '\n');
 
-    println("x = " + y + " y = " + x);
+    println("x = " + posY + " y = " + posX);
+  }
+
+/*******************************************************************************
+* Init Function of Motion
+*******************************************************************************/
+  public void Go(int theValue)
+  {
+    if (onoff_flag)
+    {
+        opencr_port.write("motion"  + ',' +
+                          "1"       + '\n');
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
   }
 }
+
+
