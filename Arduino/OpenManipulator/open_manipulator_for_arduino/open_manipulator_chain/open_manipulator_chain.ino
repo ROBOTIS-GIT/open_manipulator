@@ -823,11 +823,17 @@ void initLink()
   link[END].w_                          = Eigen::Vector3f::Zero();
 }
 
+/*******************************************************************************
+* Initialization Trajectory
+*******************************************************************************/
 void initMinimumJerk()
 {
   minimum_jerk = new open_manipulator::MinimumJerk();
 }
 
+/*******************************************************************************
+* Manipulator Motor initialization
+*******************************************************************************/
 void initMotor()
 {
   motor[BASE].name                      = link[BASE].name_;

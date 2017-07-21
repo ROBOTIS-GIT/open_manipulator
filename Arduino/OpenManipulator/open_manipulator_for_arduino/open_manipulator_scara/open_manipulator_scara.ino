@@ -18,8 +18,8 @@
 
 #include "open_manipulator_scara_config.h"
 
-#define DEBUG
-// #define DYNAMIXEL
+// #define DEBUG
+#define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************
@@ -32,19 +32,19 @@ void setup()
    while(!Serial);
 #endif
 
-  initLinkAndMotor();
+  initLink();
+  initMotor();
+
+  initMinimumJerk();
+
+  initJointProp();
   initKinematics();
 
-  initTrajectory();
-
-#ifdef DYNAMIXEL
   initMotorDriver(false);
-#endif
+
   initTimer();
 
-#ifdef SIMULATION
   establishContactToProcessing();
-#endif
 
   setFK(link, BASE);
 
@@ -58,80 +58,17 @@ void setup()
 *******************************************************************************/
 void loop()
 {
-  getDataFromProcessing(comm);
-  showLedStatus();
-}
-
-/*******************************************************************************
-* Get Data From Processing
-*******************************************************************************/
-void getDataFromProcessing(bool &comm)
-{
-  String get = "";
-
-  if (Serial.available())
+  static uint32_t tmp_time = micros();
+  
+  if ((micros() - tmp_time) >= CONTROL_RATE)
   {
-    get = Serial.readStringUntil('\n');
-    get.trim();
-
-    split(get, ',', cmd);
-
-    if (cmd[0] == "ready")
-    {
-#ifdef DYNAMIXEL
-      setMotorTorque(true);
-      getDynamixelPosition();
-      getMotorAngle(motor_angle);
-      sendJointDataToProcessing();
-#endif
-      setTimer(true);
-      comm = true;
-    }
-    else if (cmd[0] == "end")
-    {
-#ifdef DYNAMIXEL
-      setMotorTorque(false);
-#endif
-      comm = false;
-    }
-    else if (cmd[0] == "joint")
-    {
-      for (int id = JOINT1; id <= JOINT3; id++)
-        joint_pos[id] = cmd[id].toFloat();
-
-      jointMove(joint_pos, 3.0);
-    }
-    else if (cmd[0] == "gripper")
-    {
-      gripMove(cmd[1].toFloat(), 1.5);
-    }
-    else if (cmd[0] == "on")
-    {
-      gripMove(grip_on, 1.5);
-    }
-    else if (cmd[0] == "off")
-    {
-      gripMove(grip_off, 1.5);
-    }
-    else if (cmd[0] == "pos")
-    {
-      open_manipulator::Pose goal_pose;
-      goal_pose.position << cmd[1].toFloat(),
-                            cmd[2].toFloat(),
-                            0.0661;
-
-      setIK("position", link, END, goal_pose);
-
-      for (int id = JOINT1; id <= JOINT3; id++)
-        joint_pos[id] = link[id].q_;
-
-      jointMove(joint_pos, 0.1);
-    }
-    else
-    {
-      Serial.println("Error");
-    }
+    tmp_time = micros();
+    handler_control();
   }
+
+  getData(REMOTE_RATE);
+  
+  showLedStatus();
 }
 
 /*******************************************************************************
@@ -139,47 +76,146 @@ void getDataFromProcessing(bool &comm)
 *******************************************************************************/
 void handler_control()
 {
-  uint16_t step_time = mov_time/control_period + 1;
-  static uint16_t step_cnt = 0;
+  uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
+  float tick_time = 0;
 
+#ifdef DEBUG
+  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT3);
+#endif
   if (moving && comm)
   {
     if (step_cnt >= step_time)
     {
-#ifdef DYNAMIXEL
-      getDynamixelPosition();
-      getMotorAngle(motor_angle);
-#endif
+      for (int num = BASE; num <= END; num++)
+        link[num].q_ = goal_pos[num];
 
       setFK(link, BASE);
 
       moving = false;
       step_cnt = 0;
-      Serial.println("end");
+
+#ifdef DEBUG
+      Serial.println("End Trajectory");
+#endif
     }
     else
     {
-      for (int num = BASE; num <= END; num++)
-      {
-        link[num].q_ = joint_tra(step_cnt, num);
-      }
-#ifdef SIMULATION
-      sendJointDataToProcessing();
-      getLinkAngle(link_angle);
-#endif
+      tick_time = control_period * step_cnt;
 
-#ifdef DEBUG
-      sendJointDataToProcessing();
-      getLinkAngle(link_angle);
-#endif
+      minimum_jerk->getPosition(goal_pos, END, tick_time);
+      minimum_jerk->getVelocity(goal_vel, END, tick_time);
+      minimum_jerk->getAcceleration(goal_acc, END, tick_time);
 
-#ifdef DYNAMIXEL
+      sendJointDataToProcessing();
       setJointDataToDynamixel();
       setGripperDataToDynamixel();
-#endif
 
       step_cnt++;
     }
+  }
+}
+
+/*******************************************************************************
+* Get Data 
+*******************************************************************************/
+void getData(uint32_t wait_time)
+{
+  static uint8_t state = 0;
+  static uint32_t tick = 0;
+
+  bool processing_flag = false;
+
+  String get_processing_data = "";
+
+  if (Serial.available())
+  {
+    get_processing_data = Serial.readStringUntil('\n');
+    processing_flag = true;
+  }
+
+  switch (state)
+  {
+    case CHECK_FLAG:
+      if (processing_flag)
+      {
+        dataFromProcessing(get_processing_data);   
+        tick = millis();
+        state  = WAIT_FOR_SEC;
+      }
+     break;
+    
+    case WAIT_FOR_SEC:
+      if ((millis() - tick) >= wait_time)
+      {
+        state = CHECK_FLAG;
+      }
+     break;
+    
+    default :
+     state = CHECK_FLAG;
+     break;
+  }
+}
+
+/*******************************************************************************
+* Data From Processing
+*******************************************************************************/
+void dataFromProcessing(String get)
+{
+  get.trim();
+
+  split(get, ',', cmd);
+
+  if (cmd[0] == "mnp")
+  {
+    if (cmd[1] == "ready")
+    {
+      setMotorTorque(true);
+      getDynamixelPosition();
+      sendJointDataToProcessing();
+
+      // setTimer(true);
+      comm = true;
+    }
+    else if (cmd[1] == "end")
+    {
+      setMotorTorque(false);
+      comm = false;
+    }
+  }
+  else if (cmd[0] == "joint")
+  {
+    for (int num = JOINT1; num <= JOINT3; num++)
+      target_pos[num] = cmd[num].toFloat();
+
+    jointMove(target_pos, JOINT_TRA_TIME);
+  }
+  else if (cmd[0] == "gripper")
+  {
+    gripMove(cmd[1].toFloat(), GRIP_TRA_TIME);
+  }
+  else if (cmd[0] == "grip")
+  {
+    if (cmd[1] == "on")
+      gripMove(grip_on, GRIP_TRA_TIME);
+    else if (cmd[1] == "off")
+      gripMove(grip_off, GRIP_TRA_TIME);
+  }
+  else if (cmd[0] == "pos")
+  {
+    open_manipulator::Pose goal_pose;
+    goal_pose.position << cmd[1].toFloat(),
+                          cmd[2].toFloat(),
+                          0.0661;
+
+    setPose(goal_pose);
+    jointMove(target_pos, TASK_TRA_TIME);
+  }
+  else
+  {
+#ifdef DEBUG
+    Serial.println("Error");
+#endif
   }
 }
 
@@ -198,105 +234,80 @@ void sendJointDataToProcessing()
 {
   Serial.print("angle");
   Serial.print(",");
-  Serial.print(link[JOINT1].q_);
+  Serial.print(goal_pos[JOINT1]);
   Serial.print(",");
-  Serial.print(link[JOINT2].q_);
+  Serial.print(goal_pos[JOINT2]);
   Serial.print(",");
-  Serial.print(link[JOINT3].q_);
+  Serial.print(goal_pos[JOINT3]);
   Serial.print(",");
-  Serial.println(link[END].q_);
+  Serial.println(goal_pos[END]);
 }
 
 /*******************************************************************************
-* Set Joint Position
+* Init Joint Properties
 *******************************************************************************/
-void setJointPropPos(float* joint_pos)
+void initJointProp()
 {
-  start_prop[BASE].pos = 0.0;
-  start_prop[BASE].vel = 0.0;
-  start_prop[BASE].acc = 0.0;
+  for (int num = BASE; num <= END; num++)
+  {
+    start_prop[num].pos   = 0.0;
+    start_prop[num].vel   = 0.0;
+    start_prop[num].acc   = 0.0;
 
-  end_prop[BASE].pos   = 0.0;
-  end_prop[BASE].vel   = 0.0;
-  end_prop[BASE].acc   = 0.0;
-
-  start_prop[JOINT1].pos = motor[JOINT1].present_position;
-  start_prop[JOINT1].vel = 0.0;
-  start_prop[JOINT1].acc = 0.0;
-
-  end_prop[JOINT1].pos   = joint_pos[JOINT1];
-  end_prop[JOINT1].vel   = 0.0;
-  end_prop[JOINT1].acc   = 0.0;
-
-  start_prop[JOINT2].pos = motor[JOINT2].present_position;
-  start_prop[JOINT2].vel = 0.0;
-  start_prop[JOINT2].acc = 0.0;
-
-  end_prop[JOINT2].pos   = joint_pos[JOINT2];
-  end_prop[JOINT2].vel   = 0.0;
-  end_prop[JOINT2].acc   = 0.0;
-
-  start_prop[JOINT3].pos = motor[JOINT3].present_position;
-  start_prop[JOINT3].vel = 0.0;
-  start_prop[JOINT3].acc = 0.0;
-
-  end_prop[JOINT3].pos   = joint_pos[JOINT3];
-  end_prop[JOINT3].vel   = 0.0;
-  end_prop[JOINT3].acc   = 0.0;
-
-  start_prop[END].pos = motor[END].present_position;
-  start_prop[END].vel = 0.0;
-  start_prop[END].acc = 0.0;
-
-  end_prop[END].pos   = motor[END].present_position;
-  end_prop[END].vel   = 0.0;
-  end_prop[END].acc   = 0.0;
+    end_prop[num].pos     = 0.0;
+    end_prop[num].vel     = 0.0;
+    end_prop[num].acc     = 0.0;
+  }
 }
 
 /*******************************************************************************
-* Set Gripper Position
+* Set Joint Properties
 *******************************************************************************/
-void setGripperPropPos(float gripper)
+void setJointProp(float* set_target_pos)
 {
-  start_prop[BASE].pos = 0.0;
-  start_prop[BASE].vel = 0.0;
-  start_prop[BASE].acc = 0.0;
+  for (int num = JOINT1; num <= JOINT3; num++)
+  {
+    start_prop[num].pos   = goal_pos[num];
+    start_prop[num].vel   = goal_vel[num];
+    start_prop[num].acc   = goal_acc[num];
 
-  end_prop[BASE].pos   = 0.0;
-  end_prop[BASE].vel   = 0.0;
-  end_prop[BASE].acc   = 0.0;
+    end_prop[num].pos     = set_target_pos[num];
+    end_prop[num].vel     = 0.0;
+    end_prop[num].acc     = 0.0;
+  }
 
-  start_prop[JOINT1].pos = motor[JOINT1].present_position;
-  start_prop[JOINT1].vel = 0.0;
-  start_prop[JOINT1].acc = 0.0;
+  start_prop[END].pos    = goal_pos[END];
+  start_prop[END].vel    = 0.0;
+  start_prop[END].acc    = 0.0;
 
-  end_prop[JOINT1].pos   = motor[JOINT1].present_position;
-  end_prop[JOINT1].vel   = 0.0;
-  end_prop[JOINT1].acc   = 0.0;
+  end_prop[END].pos      = goal_pos[END];
+  end_prop[END].vel      = 0.0;
+  end_prop[END].acc      = 0.0;
+}
 
-  start_prop[JOINT2].pos = motor[JOINT2].present_position;
-  start_prop[JOINT2].vel = 0.0;
-  start_prop[JOINT2].acc = 0.0;
+/*******************************************************************************
+* Set Gripper Properties
+*******************************************************************************/
+void setGripperProp(float get_target_pos)
+{
+  for (int num = JOINT1; num <= JOINT3; num++)
+  {
+    start_prop[num].pos   = goal_pos[num];
+    start_prop[num].vel   = 0.0;
+    start_prop[num].acc   = 0.0;
 
-  end_prop[JOINT2].pos   = motor[JOINT2].present_position;
-  end_prop[JOINT2].vel   = 0.0;
-  end_prop[JOINT2].acc   = 0.0;
+    end_prop[num].pos     = goal_pos[num];
+    end_prop[num].vel     = 0.0;
+    end_prop[num].acc     = 0.0;
+  }
 
-  start_prop[JOINT3].pos = motor[JOINT3].present_position;
-  start_prop[JOINT3].vel = 0.0;
-  start_prop[JOINT3].acc = 0.0;
+  start_prop[END].pos    = goal_pos[END];
+  start_prop[END].vel    = goal_vel[END];
+  start_prop[END].acc    = goal_acc[END];
 
-  end_prop[JOINT3].pos   = motor[JOINT3].present_position;
-  end_prop[JOINT3].vel   = 0.0;
-  end_prop[JOINT3].acc   = 0.0;
-
-  start_prop[END].pos = motor[END].present_position;
-  start_prop[END].vel = 0.0;
-  start_prop[END].acc = 0.0;
-
-  end_prop[END].pos   = gripper;
-  end_prop[END].vel   = 0.0;
-  end_prop[END].acc   = 0.0;
+  end_prop[END].pos      = get_target_pos;
+  end_prop[END].vel      = 0.0;
+  end_prop[END].acc      = 0.0;
 }
 
 /*******************************************************************************
@@ -325,60 +336,61 @@ void setTimer(bool onoff)
 *******************************************************************************/
 void getDynamixelPosition()
 {
+#ifdef DYNAMIXEL
   motor_driver->readPosition(motor);
+  getMotorAngle();
+#endif
+}
+
+/*******************************************************************************
+* Set Pose
+*******************************************************************************/
+void setPose(open_manipulator::Pose target_pose)
+{
+  for (int num = BASE; num <= END; num++)
+    link[num].q_ = goal_pos[num];
+
+  setFK(link, BASE);
+
+  setIK("position", link, END, target_pose);
 }
 
 /*******************************************************************************
 * Joint move
 *******************************************************************************/
-void jointMove(float* set_joint_pos, float set_mov_time)
+void jointMove(float* set_goal_pos, float set_mov_time)
 {
-  setJointPropPos(set_joint_pos);
+  setJointProp(set_goal_pos);
   setMoveTime(set_mov_time);
-  joint_tra = trajectory->minimumJerk(start_prop,
-                                      end_prop,
-                                      LINK_NUM,
-                                      control_period,
-                                      mov_time);
+
+  minimum_jerk->setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
+
+  step_cnt = 0;
   moving = true;
 }
 
 /*******************************************************************************
 * Grip move
 *******************************************************************************/
-void gripMove(float set_grip_pos, float set_mov_time)
+void gripMove(float set_goal_pos, float set_mov_time)
 {
-  setGripperPropPos(set_grip_pos);
+  setGripperProp(set_goal_pos);
   setMoveTime(set_mov_time);
-  joint_tra = trajectory->minimumJerk(start_prop,
-                                      end_prop,
-                                      LINK_NUM,
-                                      control_period,
-                                      mov_time);
-  moving = true;
-}
 
-/*******************************************************************************
-* Get Link Position (rad)
-*******************************************************************************/
-void getLinkAngle(float* angle)
-{
-  for (int num = BASE; num <= END; num++)
-  {
-    angle[num]                  = link[num].q_;
-    motor[num].present_position = angle[num];
-  }
+  minimum_jerk->setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
+
+  step_cnt = 0;
+  moving = true;
 }
 
 /*******************************************************************************
 * Get Motor Position (rad)
 *******************************************************************************/
-void getMotorAngle(float* angle)
+void getMotorAngle()
 {
   for (int num = BASE; num <= END; num++)
   {
-    angle[num]   = motor[num].present_position;
-    link[num].q_ = angle[num];
+    goal_pos[num] = motor[num].present_position;
   }
 }
 
@@ -401,6 +413,9 @@ void setIK(String cmd, open_manipulator::Link* link, uint8_t to, open_manipulato
     kinematics->sr_inverse(link, to, goal_pose);
   else if (cmd == "position")
     kinematics->position_only_inverse(link, to, goal_pose);
+
+  for (int id = JOINT1; id <= JOINT3; id++)
+    target_pos[id] = link[id].q_;
 }
 
 /*******************************************************************************
@@ -408,13 +423,15 @@ void setIK(String cmd, open_manipulator::Link* link, uint8_t to, open_manipulato
 *******************************************************************************/
 void setJointDataToDynamixel()
 {
+#ifdef DYNAMIXEL
   int32_t joint_value[LINK_NUM] = {0, };
 
   for (int num = BASE; num <= END; num++)
   {
-    joint_value[num] = motor_driver->convertRadian2Value(link[num].q_);
+    joint_value[num] = motor_driver->convertRadian2Value(goal_pos[num]);
   }
   motor_driver->jointControl(joint_value);
+#endif
 }
 
 /*******************************************************************************
@@ -422,16 +439,18 @@ void setJointDataToDynamixel()
 *******************************************************************************/
 void setGripperDataToDynamixel()
 {
+#ifdef DYNAMIXEL
   int32_t gripper_value = 0;
 
-  gripper_value = motor_driver->convertRadian2Value(link[END].q_);
+  gripper_value = motor_driver->convertRadian2Value(goal_pos[END]);
   motor_driver->gripControl(gripper_value);
+#endif
 }
 
 /*******************************************************************************
 * Manipulator link initialization
 *******************************************************************************/
-void initLinkAndMotor()
+void initLink()
 {
   link[BASE].name_                      = "Base";
   link[BASE].mother_                    = -1;
@@ -448,11 +467,6 @@ void initLinkAndMotor()
   link[BASE].v_                         = Eigen::Vector3f::Zero();
   link[BASE].w_                         = Eigen::Vector3f::Zero();
 
-  motor[BASE].name                      = link[BASE].name_;
-  motor[BASE].id                        = 0;
-  motor[BASE].goal_position             = 0.0;
-  motor[BASE].present_position          = 0.0;
-
   link[JOINT1].name_                    = "Joint1";
   link[JOINT1].mother_                  = 0;
   link[JOINT1].sibling_                 = -1;
@@ -467,11 +481,6 @@ void initLinkAndMotor()
   link[JOINT1].b_                       << 0.0, 0.0, 0.0661;
   link[JOINT1].v_                       = Eigen::Vector3f::Zero();
   link[JOINT1].w_                       = Eigen::Vector3f::Zero();
-
-  motor[JOINT1].name                    = link[JOINT1].name_;
-  motor[JOINT1].id                      = 1;
-  motor[JOINT1].goal_position           = 0.0;
-  motor[JOINT1].present_position        = 0.0;
 
   link[JOINT2].name_                    = "Joint2";
   link[JOINT2].mother_                  = 1;
@@ -488,11 +497,6 @@ void initLinkAndMotor()
   link[JOINT2].v_                       = Eigen::Vector3f::Zero();
   link[JOINT2].w_                       = Eigen::Vector3f::Zero();
 
-  motor[JOINT2].name                    = link[JOINT2].name_;
-  motor[JOINT2].id                      = 2;
-  motor[JOINT2].goal_position           = 0.0;
-  motor[JOINT2].present_position        = 0.0;
-
   link[JOINT3].name_                    = "Joint3";
   link[JOINT3].mother_                  = 2;
   link[JOINT3].sibling_                 = -1;
@@ -508,11 +512,6 @@ void initLinkAndMotor()
   link[JOINT3].v_                       = Eigen::Vector3f::Zero();
   link[JOINT3].w_                       = Eigen::Vector3f::Zero();
 
-  motor[JOINT3].name                    = link[JOINT3].name_;
-  motor[JOINT3].id                      = 3;
-  motor[JOINT3].goal_position           = 0.0;
-  motor[JOINT3].present_position        = 0.0;
-
   link[END].name_                       = "Gripper";
   link[END].mother_                     = 3;
   link[END].sibling_                    = -1;
@@ -527,10 +526,39 @@ void initLinkAndMotor()
   link[END].b_                          << 0.104, 0.0, 0.0;
   link[END].v_                          = Eigen::Vector3f::Zero();
   link[END].w_                          = Eigen::Vector3f::Zero();
+}
+
+/*******************************************************************************
+* Initialization Trajectory
+*******************************************************************************/
+void initMinimumJerk()
+{
+  minimum_jerk = new open_manipulator::MinimumJerk();
+}
+
+/*******************************************************************************
+* Manipulator link initialization
+*******************************************************************************/
+void initMotor()
+{
+  motor[BASE].name                      = link[BASE].name_;
+  motor[BASE].id                        = 0;
+  motor[BASE].present_position          = 0.0;
+
+  motor[JOINT1].name                    = link[JOINT1].name_;
+  motor[JOINT1].id                      = 1;
+  motor[JOINT1].present_position        = 0.0;
+
+  motor[JOINT2].name                    = link[JOINT2].name_;
+  motor[JOINT2].id                      = 2;
+  motor[JOINT2].present_position        = 0.0;
+
+  motor[JOINT3].name                    = link[JOINT3].name_;
+  motor[JOINT3].id                      = 3;
+  motor[JOINT3].present_position        = 0.0;
 
   motor[END].name                       = link[END].name_;
   motor[END].id                         = 4;
-  motor[END].goal_position              = 0.0;
   motor[END].present_position           = 0.0;
 }
 
@@ -543,29 +571,28 @@ void initKinematics()
 }
 
 /*******************************************************************************
-* Initialization Trajectory Library
-*******************************************************************************/
-void initTrajectory()
-{
-  trajectory = new open_manipulator::Trajectory();
-}
-
-/*******************************************************************************
 * Initialization Motor Driver Library
 *******************************************************************************/
 void initMotorDriver(bool torque)
 {
+#ifdef DYNAMIXEL
   motor_driver = new open_manipulator::MotorDriver(PROTOCOL_VERSION, BAUE_RATE);
 
   if (motor_driver->init(motor, JOINT_NUM+GRIP_NUM))
     setMotorTorque(torque);
   else
     return;
+#endif
 }
 
+/*******************************************************************************
+* Torque enable or disable
+*******************************************************************************/
 void setMotorTorque(bool onoff)
 {
+#ifdef DYNAMIXEL
   motor_driver->setTorque(onoff);
+#endif
 }
 
 /*******************************************************************************
@@ -573,6 +600,7 @@ void setMotorTorque(bool onoff)
 *******************************************************************************/
 void establishContactToProcessing()
 {
+#ifdef SIMULATION
   if (Serial.available())
   {
     Serial.print(0.0);
@@ -581,9 +609,10 @@ void establishContactToProcessing()
     Serial.print(",");
     Serial.print(0.0);
     Serial.print(",");
-    Serial.println(0.0);
+    Serial.print(0.0);
     delay(300);
   }
+#endif
 }
 
 /*******************************************************************************

@@ -74,12 +74,6 @@ float goal_pos[LINK_NUM];
 float goal_vel[LINK_NUM];
 float goal_acc[LINK_NUM];
 
-bool update_flag = false;
-
-float get_goal_pos[LINK_NUM];
-float get_goal_vel[LINK_NUM];
-float get_goal_acc[LINK_NUM];
-
 float motion_storage[STORAGE][LINK_NUM];
 float motion_set[STORAGE][LINK_NUM] = { 
                                         { 0.0,  0.0, 1.05, -0.35, -0.70, 0.0},
@@ -113,9 +107,6 @@ RC100 rc100;
 // Link
 void initLink();
 
-// Trajectory
-void initMinimumJerk();
-
 // Joint properties
 void initJointProp();
 void setJointProp(float* set_goal_pos);
@@ -147,6 +138,7 @@ void dataFromRC100(uint8_t receive_data);
 void split(String data, char separator, String* temp);
 
 // MinimumJerk
+void initMinimumJerk();
 void jointMove(float* joint_pos, float mov_time);
 void gripMove(float grip_pos, float mov_time);
 void setMoveTime(float get_time);

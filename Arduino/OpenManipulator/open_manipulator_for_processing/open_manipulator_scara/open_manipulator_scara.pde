@@ -329,6 +329,9 @@ class ChildApplet extends PApplet
   Knob joint1, joint2, joint3, gripper;
   Slider2D slider2d;
 
+  float[] set_joint_angle = new float[3];
+  float set_gripper_pos;
+
   boolean onoff_flag = false;
 
   public ChildApplet()
@@ -511,13 +514,15 @@ class ChildApplet extends PApplet
       joint2.setValue(joint_angle[1]);
       gripper.setValue(gripper_angle);
 
-      opencr_port.write("ready" + '\n');
-      println("OpenManipulator Chain Ready!!!");
+      opencr_port.write("mnp"   + ',' +
+                        "ready" + '\n');
+      println("OpenManipulator SCARA Ready!!!");
     }
     else
     {
-      opencr_port.write("end" + '\n');
-      println("OpenManipulator Chain End...");
+      opencr_port.write("mnp"  + ',' +
+                        "end"  + '\n');
+      println("OpenManipulator SCARA End...");
     }
   }
 
@@ -569,18 +574,14 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      joint_angle[0] = -60.0 * PI/180.0;
-      joint_angle[1] = 20.0 * PI/180.0;
-      joint_angle[2] = 40.0 * PI/180.0;
+      set_joint_angle[0] = -60.0 * PI/180.0;
+      set_joint_angle[1] = 20.0 * PI/180.0;
+      set_joint_angle[2] = 40.0 * PI/180.0;
 
-      joint1.setValue(joint_angle[0]);
-      joint2.setValue(joint_angle[1]);
-      joint3.setValue(joint_angle[2]);
-
-      opencr_port.write("joint"        + ',' +
-                        joint_angle[0] + ',' +
-                        joint_angle[1] + ',' +
-                        joint_angle[2] + '\n');
+      opencr_port.write("joint"            + ',' +
+                        set_joint_angle[0] + ',' +
+                        set_joint_angle[1] + ',' +
+                        set_joint_angle[2] + '\n');
     }
     else
     {
@@ -623,12 +624,14 @@ class ChildApplet extends PApplet
       if (flag)
       {
         gripper.setValue(0.0);
-        opencr_port.write("on" + '\n');
+        opencr_port.write("grip"  + ',' +
+                          "on" + '\n');
       }
       else
       {
-        gripper.setValue(-1.0);
-        opencr_port.write("off" + '\n');
+        gripper.setValue(-0.5);
+        opencr_port.write("grip"  + ',' +
+                          "off" + '\n');
       }
     }
     else
