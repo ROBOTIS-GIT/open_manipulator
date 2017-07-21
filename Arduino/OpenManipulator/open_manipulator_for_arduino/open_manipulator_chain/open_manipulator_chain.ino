@@ -19,7 +19,7 @@
 #include "open_manipulator_chain_config.h"
 
 // #define DEBUG
-#define DYNAMIXEL
+// #define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************
@@ -36,17 +36,16 @@ void setup()
   initLink();
   initMotor();
 
+  initMinimumJerk();
+
   initJointProp();
   initKinematics();
 
-#ifdef DYNAMIXEL
   initMotorDriver(false);
-#endif
+
   initTimer();
 
-#ifdef SIMULATION
   establishContactToProcessing();
-#endif
 
   setFK(link, BASE);
 
@@ -60,7 +59,16 @@ void setup()
 *******************************************************************************/
 void loop()
 {
+  static uint32_t tmp_time = micros();
+  
+  if ((micros() - tmp_time) >= CONTROL_RATE)
+  {
+    tmp_time = micros();
+    handler_control();
+  }
+
   getData(REMOTE_RATE);
+  
   setMotion();
   showLedStatus();
 }
@@ -88,8 +96,6 @@ void handler_control()
       moving = false;
       step_cnt = 0;
 
-      delete minimum_jerk;
-
 #ifdef DEBUG
       Serial.println("End Trajectory");
 #endif
@@ -103,11 +109,9 @@ void handler_control()
       minimum_jerk->getAcceleration(goal_acc, END, tick_time);
 
       sendJointDataToProcessing();
-
-#ifdef DYNAMIXEL
       setJointDataToDynamixel();
       setGripperDataToDynamixel();
-#endif
+
       step_cnt++;
     }
   }
@@ -182,19 +186,16 @@ void dataFromProcessing(String get)
   {
     if (cmd[1] == "ready")
     {
-#ifdef DYNAMIXEL
       setMotorTorque(true);
       getDynamixelPosition();
       sendJointDataToProcessing();
-#endif
-      setTimer(true);
+
+      // setTimer(true);
       comm = true;
     }
     else if (cmd[1] == "end")
     {
-#ifdef DYNAMIXEL
       setMotorTorque(false);
-#endif
       comm = false;
     }
   }
@@ -221,7 +222,6 @@ void dataFromProcessing(String get)
     setPoseDirection(cmd[1], TASK_TRA_UNIT);
     jointMove(target_pos, TASK_TRA_TIME);
   }
-#ifdef DYNAMIXEL
   else if (cmd[0] == "torque")
   {
     if (cmd[1] == "on")
@@ -251,12 +251,6 @@ void dataFromProcessing(String get)
         motion_storage[motion_num][i] = motor[i].present_position;
       }
       motion_num++;
-    }
-    else
-    {
-#ifdef DEBUG
-      Serial.println("Overflow");
-#endif
     }
   }
   else if (cmd[0] == "hand")
@@ -295,7 +289,6 @@ void dataFromProcessing(String get)
       motion_num = 0;
     }
   }
-#endif
   else if (cmd[0] == "motion")
   {
     if (cmd[1] == "start")
@@ -305,21 +298,21 @@ void dataFromProcessing(String get)
       getDynamixelPosition();
       sendJointDataToProcessing();
 
-      for (int i=0; i<STORAGE; i++)
+      motion_num = 12;            
+      motion = true;
+      repeat = true;
+
+      for (int i=0; i<motion_num; i++)
       {
         for (int j=0; j<LINK_NUM; j++)
         {
           motion_storage[i][j] = motion_set[i][j];
         }
       }
-
-      motion_num = 11;
-      motion = true;
-      repeat = true;
     }
     else if (cmd[1] == "stop")
     {
-      for (int i=0; i<STORAGE; i++)
+      for (int i=0; i<motion_num; i++)
       {
         for (int j=0; j<LINK_NUM; j++)
         {
@@ -424,9 +417,12 @@ void setMotion()
       }
       else
       {
-        for (int i = 0; i < STORAGE; i++)
+        for (int i = 0; i < motion_num; i++)
         {
-          motion_storage[i][0] = 0;
+          for (int j = 0; j < LINK_NUM; j++)
+          {
+            motion_storage[i][j] = 0;
+          }
         }
         motion     = false;
         motion_cnt = 0;
@@ -438,12 +434,12 @@ void setMotion()
       }
     }
 
-    if (motion_storage[motion_cnt][0] == -1)
+    if (motion_storage[motion_cnt][0] == -1.0)
     {
       gripMove(grip_on, GRIP_TRA_TIME);
       motion_cnt++;
     }
-    else if (motion_storage[motion_cnt][0] == -2)
+    else if (motion_storage[motion_cnt][0] == -2.0)
     {
       gripMove(grip_off, GRIP_TRA_TIME);
       motion_cnt++;
@@ -582,8 +578,10 @@ void setTimer(bool onoff)
 *******************************************************************************/
 void getDynamixelPosition()
 {
+#ifdef DYNAMIXEL
   motor_driver->readPosition(motor);
   getMotorAngle();
+#endif
 }
 
 /*******************************************************************************
@@ -645,7 +643,7 @@ void jointMove(float* set_goal_pos, float set_mov_time)
   setJointProp(set_goal_pos);
   setMoveTime(set_mov_time);
 
-  minimum_jerk = new open_manipulator::MinimumJerk(start_prop, end_prop, LINK_NUM, mov_time, control_period);
+  minimum_jerk->setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
 
   step_cnt = 0;
   moving = true;
@@ -659,7 +657,7 @@ void gripMove(float set_goal_pos, float set_mov_time)
   setGripperProp(set_goal_pos);
   setMoveTime(set_mov_time);
 
-  minimum_jerk = new open_manipulator::MinimumJerk(start_prop, end_prop, LINK_NUM, mov_time, control_period);
+  minimum_jerk->setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
 
   step_cnt = 0;
   moving = true;
@@ -705,6 +703,7 @@ void setIK(String cmd, open_manipulator::Link* link, uint8_t to, open_manipulato
 *******************************************************************************/
 void setJointDataToDynamixel()
 {
+#ifdef DYNAMIXEL
   int32_t joint_value[LINK_NUM] = {0, };
 
   for (int num = BASE; num <= END; num++)
@@ -712,6 +711,7 @@ void setJointDataToDynamixel()
     joint_value[num] = motor_driver->convertRadian2Value(goal_pos[num]);
   }
   motor_driver->jointControl(joint_value);
+#endif
 }
 
 /*******************************************************************************
@@ -719,10 +719,12 @@ void setJointDataToDynamixel()
 *******************************************************************************/
 void setGripperDataToDynamixel()
 {
+#ifdef DYNAMIXEL
   int32_t gripper_value = 0;
 
   gripper_value = motor_driver->convertRadian2Value(goal_pos[END]);
   motor_driver->gripControl(gripper_value);
+#endif
 }
 
 /*******************************************************************************
@@ -821,6 +823,11 @@ void initLink()
   link[END].w_                          = Eigen::Vector3f::Zero();
 }
 
+void initMinimumJerk()
+{
+  minimum_jerk = new open_manipulator::MinimumJerk();
+}
+
 void initMotor()
 {
   motor[BASE].name                      = link[BASE].name_;
@@ -861,12 +868,14 @@ void initKinematics()
 *******************************************************************************/
 void initMotorDriver(bool torque)
 {
+#ifdef DYNAMIXEL
   motor_driver = new open_manipulator::MotorDriver(PROTOCOL_VERSION, BAUE_RATE);
 
   if (motor_driver->init(motor, JOINT_NUM+GRIP_NUM))
     setMotorTorque(torque);
   else
     return;
+#endif
 }
 
 /*******************************************************************************
@@ -874,7 +883,9 @@ void initMotorDriver(bool torque)
 *******************************************************************************/
 void setMotorTorque(bool onoff)
 {
+#ifdef DYNAMIXEL
   motor_driver->setTorque(onoff);
+#endif
 }
 
 /*******************************************************************************
@@ -882,6 +893,7 @@ void setMotorTorque(bool onoff)
 *******************************************************************************/
 void establishContactToProcessing()
 {
+#ifdef SIMULATION
   if (Serial.available())
   {
     Serial.print(0.0);
@@ -895,6 +907,7 @@ void establishContactToProcessing()
     Serial.println(0.0);
     delay(300);
   }
+#endif
 }
 
 /*******************************************************************************

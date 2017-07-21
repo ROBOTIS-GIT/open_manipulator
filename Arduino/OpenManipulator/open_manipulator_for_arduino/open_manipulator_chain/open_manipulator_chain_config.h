@@ -74,10 +74,17 @@ float goal_pos[LINK_NUM];
 float goal_vel[LINK_NUM];
 float goal_acc[LINK_NUM];
 
+bool update_flag = false;
+
+float get_goal_pos[LINK_NUM];
+float get_goal_vel[LINK_NUM];
+float get_goal_acc[LINK_NUM];
+
 float motion_storage[STORAGE][LINK_NUM];
 float motion_set[STORAGE][LINK_NUM] = { 
                                         { 0.0,  0.0, 1.05, -0.35, -0.70, 0.0},
                                         { 0.0,  0.0,-0.05, -0.82,  0.90, 0.0},
+                                        { 0.0, 0.35,-0.05, -0.82,  0.90, 0.0},
                                         { 0.0, 0.35,-0.60,  0.05,  0.55, 0.0},
                                         {-1.0, 0.35,-0.60,  0.05,  0.55, 1.8},
                                         { 0.0, 0.35,-0.05, -0.82,  0.90, 1.8},
@@ -105,6 +112,9 @@ RC100 rc100;
 
 // Link
 void initLink();
+
+// Trajectory
+void initMinimumJerk();
 
 // Joint properties
 void initJointProp();

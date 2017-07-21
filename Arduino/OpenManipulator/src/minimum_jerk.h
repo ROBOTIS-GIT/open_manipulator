@@ -36,8 +36,10 @@ class MinimumJerk
   Eigen::MatrixXf coeffi_;
 
  public:
-  MinimumJerk(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period);
+  MinimumJerk();
   ~MinimumJerk();
+
+  void setCoeffi(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period);
 
   void getPosition(float* pos, uint8_t to, float tick);
   void getVelocity(float* vel, uint8_t to, float tick);

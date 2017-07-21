@@ -19,7 +19,11 @@
 #include "minimum_jerk.h"
 using namespace open_manipulator;
 
-MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period)
+MinimumJerk::MinimumJerk(){}
+
+MinimumJerk::~MinimumJerk(){}
+
+void MinimumJerk::setCoeffi(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period)
 {
   uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
   mov_time = float(step_time - 1) * control_period;
@@ -54,10 +58,8 @@ MinimumJerk::MinimumJerk(Property* start, Property* end, uint8_t target_num, flo
     single_coeffi(5) = x(2);
 
     coeffi_.col(num) = single_coeffi;
-  }
+  }  
 }
-
-MinimumJerk::~MinimumJerk(){}
 
 void MinimumJerk::getPosition(float* pos, uint8_t to, float tick)
 {
