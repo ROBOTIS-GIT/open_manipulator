@@ -64,6 +64,8 @@ bool moving        = false;
 bool comm          = false;
 bool motion        = false;
 bool repeat        = false;
+
+uint8_t motion_cnt = 0;
 uint8_t motion_num = 0;
 
 String cmd[5];

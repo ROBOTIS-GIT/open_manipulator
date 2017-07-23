@@ -298,7 +298,8 @@ void dataFromProcessing(String get)
       getDynamixelPosition();
       sendJointDataToProcessing();
 
-      motion_num = 12;            
+      motion_num = 12;  
+      motion_cnt = 0;          
       motion = true;
       repeat = true;
 
@@ -323,6 +324,7 @@ void dataFromProcessing(String get)
       motion     = false;
       repeat     = false;
       motion_num = 0;
+      motion_cnt = 0;
     }
   }
   else
@@ -402,8 +404,6 @@ void dataFromRC100(uint16_t receive_data)
 *******************************************************************************/
 void setMotion()
 {
-  static uint8_t motion_cnt = 0;
-
   if (motion)
   {
     if (moving)
