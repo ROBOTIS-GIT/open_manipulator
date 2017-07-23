@@ -19,7 +19,7 @@
 #include "open_manipulator_scara_config.h"
 
 // #define DEBUG
-#define DYNAMIXEL
+// #define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************
@@ -68,7 +68,7 @@ void loop()
 
   getData(REMOTE_RATE);
 
-  setMotion(motion_num);
+  setMotion();
 
   showLedStatus();
 }
@@ -82,7 +82,7 @@ void handler_control()
   float tick_time = 0;
 
 #ifdef DEBUG
-  // showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT3);
+  showJointProp(goal_pos, goal_vel, goal_acc, JOINT1, JOINT3);
 #endif
   if (moving && comm)
   {
@@ -215,16 +215,24 @@ void dataFromProcessing(String get)
   }
   else if (cmd[0] == "motion")
   {
-    open_manipulator::Pose goal_pose;
-    goal_pose.position << 0.15,
-                          0.0,
-                          0.0661;
+    if (cmd[1] == "stop")
+    {
+      motion_cnt = 0.0;
+      motion = false;
+    }
+    else
+    {
+      open_manipulator::Pose goal_pose;
+      goal_pose.position << 0.0,
+                            0.0001,
+                            0.0661;
 
-    setPose(goal_pose);
-    jointMove(target_pos, TASK_TRA_TIME);
+      setPose(goal_pose);
+      jointMove(target_pos, TASK_TRA_TIME);
 
-    motion_num = cmd[1].toInt();
-    motion = true;
+      motion_cnt = 0.0;
+      motion = true;
+    }
   }
   else
   {
@@ -237,9 +245,12 @@ void dataFromProcessing(String get)
 /*******************************************************************************
 * Set motion
 *******************************************************************************/
-void setMotion(uint8_t get_motion_num)
+void setMotion()
 {
-  static uint8_t motion_cnt = 0;
+  static uint8_t motion_state = 0;
+
+  static float pos_x = 0.20;
+  static float pos_y = 0.0;
 
   open_manipulator::Pose goal_pose;
 
@@ -248,22 +259,84 @@ void setMotion(uint8_t get_motion_num)
     if (moving)
       return;
 
-    switch (get_motion_num)
+    switch (motion_state)
     {
-      case 1:
-        goal_pose.position << 0.15 + 0.04*cos(motion_cnt*0.1),
-                              0.0  + 0.04*sin(motion_cnt*0.1),
-                              0.0661;        
+      case 0:
+        gripMove(grip_on, GRIP_TRA_TIME);
+        motion_state = 2;
+       break;
+      
+      case 2:
+        goal_pose.position << pos_x + 0.02*cos(motion_cnt*DEG2RAD),
+                              pos_y + 0.02*sin(motion_cnt*DEG2RAD),
+                              0.0661;  
+
+        setPose(goal_pose);
+        jointMove(target_pos, MOTION_TRA_TIME);
+ 
+        motion_state = 3;
+       break;
+
+      case 3:
+        if (moving == false)
+        {
+          if (pos_x <= 0.10)
+          {
+            goal_pose.position << 0.0,
+                                  0.0001,
+                                  0.0661;
+
+            setPose(goal_pose);
+            jointMove(target_pos, TASK_TRA_TIME);
+
+            motion_state = 7;
+          }
+          else
+          {
+            if (motion_cnt == 360.0)
+            {
+              motion_cnt = 0.0;
+              motion_state = 4;
+            }
+            else
+            {
+              motion_cnt += 5.0;
+              motion_state = 2;
+            }
+          }          
+        }
+       break;
+
+      case 4:
+        gripMove(grip_off, GRIP_TRA_TIME);
+        motion_state = 5;
+       break;
+
+      case 5:
+        goal_pose.position << pos_x - 0.02,
+                              0.0,
+                              0.0661;
+
+        setPose(goal_pose);
+        jointMove(target_pos, 1.0);
+
+        pos_x = pos_x - (2*0.02);
+        motion_state = 6;
+       break;
+
+      case 6:
+        gripMove(grip_on, GRIP_TRA_TIME);
+        motion_state = 2;
+       break;
+
+      case 7:
+        motion_cnt = 0.0;
+        motion = false;
        break;
 
       default:
        break;
     }
-
-    motion_cnt++;
-
-    setPose(goal_pose);
-    jointMove(target_pos, MOTION_TRA_TIME);
   }
   else
   {

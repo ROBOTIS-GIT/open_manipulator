@@ -42,8 +42,6 @@ Serial opencr_port;
 float[] joint_angle   = new float[3];
 float gripper_angle   = 0.0;
 
-float posX, posY;
-
 /*******************************************************************************
 * Setting window size
 *******************************************************************************/
@@ -63,7 +61,7 @@ void setup()
   initShape();
   initView();
 
-  connectOpenCR(0); // It is depend on laptop enviroments.
+  connectOpenCR(7); // It is depend on laptop enviroments.
 }
 
 /*******************************************************************************
@@ -496,19 +494,35 @@ class ChildApplet extends PApplet
 * Init Task Space Controller
 *******************************************************************************/
     slider2d = cp5.addSlider2D("Drawing")
-                  .setPosition(50,200)
+                  .setPosition(50,150)
                   .setSize(300,300)
                   .setMinMax(300,240,-300,0)
                   .setValue(0,240)
                   ;
 
+    cp5.addToggle("Drawing_Gripper_Set")
+       .setPosition(0,520)
+       .setSize(400,40)
+       .setMode(Toggle.SWITCH)
+       .setFont(createFont("arial",15))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
+       ;
+
 /*******************************************************************************
 * Init Task Space Controller
 *******************************************************************************/
-    cp5.addButton("Go")
+    cp5.addButton("Motion_Start")
        .setValue(0)
-       .setPosition(0,460)
-       .setSize(400,40)
+       .setPosition(0,200)
+       .setSize(400,100)
+       .setFont(createFont("arial",15))
+       ;
+
+    cp5.addButton("Motion_Stop")
+       .setValue(0)
+       .setPosition(0,330)
+       .setSize(400,100)
        .setFont(createFont("arial",15))
        ;
 
@@ -519,8 +533,10 @@ class ChildApplet extends PApplet
     cp5.getController("Controller_OnOff").moveTo("global");
 
     cp5.getController("Drawing").moveTo("Task Space Control");
+    cp5.getController("Drawing_Gripper_Set").moveTo("Task Space Control");
 
-    cp5.getController("Go").moveTo("Motion");
+    cp5.getController("Motion_Start").moveTo("Motion");
+    cp5.getController("Motion_Stop").moveTo("Motion");
   }
 
   public void draw()
@@ -651,13 +667,13 @@ class ChildApplet extends PApplet
       {
         gripper.setValue(0.0);
         opencr_port.write("grip"  + ',' +
-                          "on" + '\n');
+                          "off" + '\n');
       }
       else
       {
         gripper.setValue(-0.5);
         opencr_port.write("grip"  + ',' +
-                          "off" + '\n');
+                          "on" + '\n');
       }
     }
     else
@@ -671,6 +687,8 @@ class ChildApplet extends PApplet
 *******************************************************************************/
   void Drawing()
   {
+    float posX, posY;
+
     posX = slider2d.getArrayValue()[0] * 0.001;
     posY = slider2d.getArrayValue()[1] * 0.001;
 
@@ -681,15 +699,50 @@ class ChildApplet extends PApplet
     println("x = " + posY + " y = " + posX);
   }
 
-/*******************************************************************************
-* Init Function of Motion
-*******************************************************************************/
-  public void Go(int theValue)
+  void Drawing_Gripper_Set(boolean flag)
   {
     if (onoff_flag)
     {
-        opencr_port.write("motion"  + ',' +
-                          "1"       + '\n');
+      if (flag)
+      {
+        gripper.setValue(0.0);
+        opencr_port.write("grip"  + ',' +
+                          "off" + '\n');
+      }
+      else
+      {
+        gripper.setValue(-0.5);
+        opencr_port.write("grip"  + ',' +
+                          "on" + '\n');
+      }
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+/*******************************************************************************
+* Init Function of Motion
+*******************************************************************************/
+  public void Motion_Start(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("motion"  + '\n');
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+  public void Motion_Stop(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("motion"  + ',' +
+                        "stop"       + '\n');
     }
     else
     {
