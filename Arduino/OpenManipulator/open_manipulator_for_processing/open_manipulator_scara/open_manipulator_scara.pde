@@ -47,7 +47,7 @@ float gripper_angle   = 0.0;
 *******************************************************************************/
 void settings()
 {
-  size(600, 600, OPENGL);
+  size(900, 900, OPENGL);
 }
 
 /*******************************************************************************
@@ -61,7 +61,7 @@ void setup()
   initShape();
   initView();
 
-  connectOpenCR(0); // It is depend on laptop enviroments.
+  connectOpenCR(7); // It is depend on laptop enviroments.
 }
 
 /*******************************************************************************
@@ -183,10 +183,10 @@ void drawTitle()
   pushMatrix();
   rotateX(radians(0));
   rotateZ(radians(90));
-  textSize(50);
+  textSize(45);
   fill(255,204,102);
   text("OpenManipulator SCARA", -300,-460,0);
-  textSize(25);
+  textSize(20);
   fill(102,255,255);
   text("Press 'A','D','W','S'", -300,-420,0);
   text("And   'Q','E'",         -300,-390,0);
@@ -208,12 +208,12 @@ void drawManipulator()
   shape(link1);
   drawLocalFrame();
 
-  translate(0, 0, 36);
+  translate(0, 0, 66.1);
   rotateZ(-joint_angle[0]);
   shape(link2);
   drawLocalFrame();
 
-  translate(30, 0, 24.8);
+  translate(30, 0, 0);
   rotateZ(-joint_angle[1]);
   shape(link3);
   drawLocalFrame();
@@ -229,6 +229,7 @@ void drawManipulator()
   drawLocalFrame();
 
   translate(30, 0, 0);
+
   drawLocalFrame();
   popMatrix();
 }
@@ -329,6 +330,9 @@ class ChildApplet extends PApplet
   Knob joint1, joint2, joint3, gripper;
   Slider2D slider2d;
 
+  float[] set_joint_angle = new float[3];
+  float set_gripper_pos;
+
   boolean onoff_flag = false;
 
   public ChildApplet()
@@ -345,14 +349,22 @@ class ChildApplet extends PApplet
   public void setup()
   {
     surface.setTitle("Control Interface");
-
     cp5 = new ControlP5(this);
 
+/*******************************************************************************
+* Init Tab
+*******************************************************************************/
     cp5.addTab("Task Space Control")
-       .setColorBackground(color(0, 160, 100))
+       .setColorBackground(color(242,56,39))
        .setColorLabel(color(255))
-       .setColorActive(color(255,128,0))
+       .setColorActive(color(242,211,39))
        ;
+
+    cp5.addTab("Motion")
+       .setColorBackground(color(242,56,39))
+       .setColorLabel(color(255))
+       .setColorActive(color(242,211,39))
+       ; 
 
     cp5.getTab("default")
        .activateEvent(true)
@@ -365,7 +377,15 @@ class ChildApplet extends PApplet
        .setId(2)
        ;
 
-    headLabel = cp5.addTextlabel("label")
+    cp5.getTab("Motion")
+       .activateEvent(true)
+       .setId(3)
+       ;
+
+/*******************************************************************************
+* Init Joint Space Controller
+*******************************************************************************/
+    headLabel = cp5.addTextlabel("Label")
                    .setText("Controller for OpenManipulator SCARA")
                    .setPosition(4,17)
                    .setColorValue(0xffffff00)
@@ -377,8 +397,8 @@ class ChildApplet extends PApplet
        .setSize(400,40)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
     joint1 = cp5.addKnob("joint1")
@@ -466,29 +486,67 @@ class ChildApplet extends PApplet
        .setSize(400,40)
        .setMode(Toggle.SWITCH)
        .setFont(createFont("arial",15))
-       .setColorForeground(color(0, 160, 100))
-       .setColorBackground(color(255, 255, 255))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
        ;
 
+/*******************************************************************************
+* Init Task Space Controller
+*******************************************************************************/
     slider2d = cp5.addSlider2D("Drawing")
-                  .setPosition(50,200)
+                  .setPosition(50,150)
                   .setSize(300,300)
-                  .setMinMax(300,240,-300,40)
+                  .setMinMax(300,240,-300,0)
                   .setValue(0,240)
-                   //.disableCrosshair()
-     ;
+                  ;
 
-    cp5.getController("label").moveTo("global");
+    cp5.addToggle("Drawing_Gripper_Set")
+       .setPosition(0,520)
+       .setSize(400,40)
+       .setMode(Toggle.SWITCH)
+       .setFont(createFont("arial",15))
+       .setColorActive(color(196, 196, 196))
+       .setColorBackground(color(255, 255, 153))
+       ;
+
+/*******************************************************************************
+* Init Task Space Controller
+*******************************************************************************/
+    cp5.addButton("Motion_Start")
+       .setValue(0)
+       .setPosition(0,200)
+       .setSize(400,100)
+       .setFont(createFont("arial",15))
+       ;
+
+    cp5.addButton("Motion_Stop")
+       .setValue(0)
+       .setPosition(0,330)
+       .setSize(400,100)
+       .setFont(createFont("arial",15))
+       ;
+
+/*******************************************************************************
+* Set Tap UI
+*******************************************************************************/
+    cp5.getController("Label").moveTo("global");
     cp5.getController("Controller_OnOff").moveTo("global");
 
     cp5.getController("Drawing").moveTo("Task Space Control");
+    cp5.getController("Drawing_Gripper_Set").moveTo("Task Space Control");
+
+    cp5.getController("Motion_Start").moveTo("Motion");
+    cp5.getController("Motion_Stop").moveTo("Motion");
   }
 
   public void draw()
   {
-    background(0);
+    background(1,35,64);
   }
 
+/*******************************************************************************
+* Init Function of Joint Space Controller
+*******************************************************************************/
   void Controller_OnOff(boolean flag)
   {
     onoff_flag = flag;
@@ -498,13 +556,15 @@ class ChildApplet extends PApplet
       joint2.setValue(joint_angle[1]);
       gripper.setValue(gripper_angle);
 
-      opencr_port.write("ready" + '\n');
-      println("OpenManipulator Chain Ready!!!");
+      opencr_port.write("mnp"   + ',' +
+                        "ready" + '\n');
+      println("OpenManipulator SCARA Ready!!!");
     }
     else
     {
-      opencr_port.write("end" + '\n');
-      println("OpenManipulator Chain End...");
+      opencr_port.write("mnp"  + ',' +
+                        "end"  + '\n');
+      println("OpenManipulator SCARA End...");
     }
   }
 
@@ -556,18 +616,14 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      joint_angle[0] = -60.0 * PI/180.0;
-      joint_angle[1] = 20.0 * PI/180.0;
-      joint_angle[2] = 40.0 * PI/180.0;
+      set_joint_angle[0] = -60.0 * PI/180.0;
+      set_joint_angle[1] = 20.0 * PI/180.0;
+      set_joint_angle[2] = 40.0 * PI/180.0;
 
-      joint1.setValue(joint_angle[0]);
-      joint2.setValue(joint_angle[1]);
-      joint3.setValue(joint_angle[2]);
-
-      opencr_port.write("joint"        + ',' +
-                        joint_angle[0] + ',' +
-                        joint_angle[1] + ',' +
-                        joint_angle[2] + '\n');
+      opencr_port.write("joint"            + ',' +
+                        set_joint_angle[0] + ',' +
+                        set_joint_angle[1] + ',' +
+                        set_joint_angle[2] + '\n');
     }
     else
     {
@@ -610,12 +666,14 @@ class ChildApplet extends PApplet
       if (flag)
       {
         gripper.setValue(0.0);
-        opencr_port.write("on" + '\n');
+        opencr_port.write("grip"  + ',' +
+                          "off" + '\n');
       }
       else
       {
-        gripper.setValue(-1.0);
-        opencr_port.write("off" + '\n');
+        gripper.setValue(-0.5);
+        opencr_port.write("grip"  + ',' +
+                          "on" + '\n');
       }
     }
     else
@@ -624,15 +682,73 @@ class ChildApplet extends PApplet
     }
   }
 
+/*******************************************************************************
+* Init Function of Task Space Controller
+*******************************************************************************/
   void Drawing()
   {
-    float x = slider2d.getArrayValue()[0] * 0.001;
-    float y = slider2d.getArrayValue()[1] * 0.001;
+    float posX, posY;
 
-    opencr_port.write("pos"  + ',' +
-                      y      + ',' +
-                      x      + '\n');
+    posX = slider2d.getArrayValue()[0] * 0.001;
+    posY = slider2d.getArrayValue()[1] * 0.001;
 
-    println("x = " + y + " y = " + x);
+    opencr_port.write("pos"     + ',' +
+                      posY      + ',' +
+                      posX      + '\n');
+
+    println("x = " + posY + " y = " + posX);
+  }
+
+  void Drawing_Gripper_Set(boolean flag)
+  {
+    if (onoff_flag)
+    {
+      if (flag)
+      {
+        gripper.setValue(0.0);
+        opencr_port.write("grip"  + ',' +
+                          "off" + '\n');
+      }
+      else
+      {
+        gripper.setValue(-0.5);
+        opencr_port.write("grip"  + ',' +
+                          "on" + '\n');
+      }
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+/*******************************************************************************
+* Init Function of Motion
+*******************************************************************************/
+  public void Motion_Start(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("motion"  + '\n');
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
+
+  public void Motion_Stop(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("motion"  + ',' +
+                        "stop"       + '\n');
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
   }
 }
+
+

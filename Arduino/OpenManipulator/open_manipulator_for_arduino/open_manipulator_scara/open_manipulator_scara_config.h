@@ -23,6 +23,7 @@
 
 #define CONTROL_RATE        8000
 #define SERIAL_RATE         57600
+#define REMOTE_RATE         100
 #define BAUE_RATE           1000000
 
 #define PROTOCOL_VERSION    2.0
@@ -37,61 +38,92 @@
 #define JOINT3  3
 #define END     4
 
-const float grip_on  = 0.0;
-const float grip_off = -1.0;
+#define CHECK_FLAG   0
+#define WAIT_FOR_SEC 1
 
-float mov_time             = 0.1;
-const float control_period = 0.008;
+#define JOINT_TRA_TIME       1.0
+#define GRIP_TRA_TIME        1.6
+
+#define TASK_TRA_TIME        0.40
+
+#define MOTION_TRA_TIME      0.1
+
+const float grip_on  = 0.0;
+const float grip_off = -0.5;
+
+float mov_time             = 0.0;
+uint16_t step_cnt          = 0;
+const float control_period = CONTROL_RATE * 1e-6;
 
 bool moving        = false;
 bool comm          = false;
+bool motion        = false;
+
+float motion_cnt = 0.0;
 
 String cmd[5];
 
-float link_angle[LINK_NUM];
-float motor_angle[LINK_NUM];
+float target_pos[LINK_NUM];
 
-Eigen::MatrixXf joint_tra;
+float goal_pos[LINK_NUM];
+float goal_vel[LINK_NUM];
+float goal_acc[LINK_NUM];
 
 open_manipulator::Motor        motor[LINK_NUM];
 open_manipulator::Link         link[LINK_NUM];
+
 open_manipulator::Kinematics*  kinematics;
 open_manipulator::MotorDriver* motor_driver;
+open_manipulator::MinimumJerk* minimum_jerk;
+
 open_manipulator::Property     start_prop[LINK_NUM];
 open_manipulator::Property     end_prop[LINK_NUM];
-open_manipulator::Trajectory*  trajectory;
 
 HardwareTimer control_timer(TIMER_CH1);
 
-void initLinkAndMotor();
+// Link
+void initLink();
+
+// Joint properties
+void initJointProp();
+void setJointProp(float* set_goal_pos);
+void setGripperProp(float set_goal_pos);
+
+// Timer
 void initTimer();
-void initKinematics();
-void initTrajectory();
-void initMotorDriver(bool torque);
-
-void establishContactToProcessing();
-
-void setJointPropPos(float* joint_pos);
-void setGripperPropPos(float gripper);
-
 void setTimer(bool onoff);
-void setMotorTorque(bool onoff);
-void setMotion(bool onoff);
+
+// kinematics
+void initKinematics();
 void setFK(open_manipulator::Link* link, int8_t me);
 void setIK(open_manipulator::Link* link, uint8_t to, open_manipulator::Pose goal_pose);
+void setPose(open_manipulator::Pose target_pose);
 
 // DYNAMIXEL
+void initMotor();
+void initMotorDriver(bool torque);
+void setMotorTorque(bool onoff);
 void setJointDataToDynamixel();
 void setGripperDataToDynamixel();
 void getDynamixelPosition();
+void getMotorAngle();
 
-// PROCESSING
-void sendJointDataToProcessing();
-void getDataFromProcessing(bool &comm);
-
-void getLinkAngle(float* angle);
-void getMotorAngle(float* angle);
-
+// DATA
+void getData(uint32_t wait_time);
+void dataFromProcessing(String get);
 void split(String data, char separator, String* temp);
+
+// MinimumJerk
+void initMinimumJerk();
+void jointMove(float* joint_pos, float mov_time);
+void gripMove(float grip_pos, float mov_time);
+void setMoveTime(float get_time);
+
+// Communication
+void establishContactToProcessing();
+void sendJointDataToProcessing();
+
+// Motion
+void setMotion();
 
 #endif // OPEN_MANIPULATOR_SCARA_CONFIG_H_

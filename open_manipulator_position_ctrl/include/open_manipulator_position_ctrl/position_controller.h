@@ -74,6 +74,10 @@ class PositionController
   ros::Subscriber move_group_feedback_sub_;
   ros::Subscriber gripper_position_sub_;
 
+  // ROS Service Server
+
+  // ROS Service Client
+
   // Process state variables
   bool is_moving_;
   bool moveit_execution_;
@@ -101,12 +105,18 @@ class PositionController
   // thread
   boost::thread* trajectory_generate_thread_;
 
-  void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
-  void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
-  void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
+ public:
+  PositionController();
+  virtual ~PositionController();
 
-  void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
-  void moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg);
+  void process(void);
+
+ private:
+  bool initPositionController(void);
+  bool shutdownPositionController(void);
+
+  bool initStatePublisher(bool using_gazebo);
+  bool initStateSubscriber(bool using_gazebo);
 
   void calculateGripperGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position);
   void gripOn(void);
@@ -114,14 +124,12 @@ class PositionController
 
   void moveItTragectoryGenerateThread();
 
- public:
-  PositionController();
-  virtual ~PositionController();
+  void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
 
-  bool initPositionController(void);
-  bool shutdownPositionController(void);
-
-  void process(void);
+  void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
+  void moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg);
 };
 }
 

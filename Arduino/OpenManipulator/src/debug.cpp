@@ -126,15 +126,19 @@ void showJointAngle(String unit, open_manipulator::Link* link, int from, int to)
   {
     for (num = from; num <= to; num++)
     {
-      Serial.println(link[num].q_);
+      Serial.print(link[num].q_); 
+      Serial.print(" ");
     }
+    Serial.println("");
   }
   else if (unit == "deg")
   {
     for (num = from; num <= to; num++)
     {
-      Serial.println(link[num].q_*RAD2DEG);
+      Serial.print(link[num].q_*RAD2DEG);
+      Serial.print(" ");
     }
+    Serial.println("");
   }
 }
 
@@ -148,4 +152,33 @@ void showFKResult(open_manipulator::Link* link, int from, int to)
     Serial.println("p_ : "); print_vt3f(link[num].p_);
     Serial.println("R_ : "); print_mt3f(link[num].R_);
   }
+}
+
+void showJointProp(float* get_joint_pos, float* get_joint_vel, float* get_joint_acc, int from, int to)
+{
+  int num = 0;
+
+  Serial.print("pos : ");
+  for (num = from; num <= to; num++)
+  {
+    Serial.print(get_joint_pos[num], 3); 
+    Serial.print(" ");
+  }
+  Serial.println(" ");
+
+  Serial.print("vel : ");
+  for (num = from; num <= to; num++)
+  {
+    Serial.print(get_joint_vel[num], 3); 
+    Serial.print(" ");
+  }
+  Serial.println(" ");
+
+  Serial.print("acc : ");
+  for (num = from; num <= to; num++)
+  {
+    Serial.print(get_joint_acc[num], 3); 
+    Serial.print(" ");
+  }
+  Serial.println(" ");  
 }

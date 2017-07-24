@@ -55,8 +55,27 @@ bool PositionController::initPositionController(void)
   goal_joint_position_      = Eigen::VectorXd::Zero(MAX_JOINT_NUM);
   goal_gripper_position_    = Eigen::VectorXd::Zero(MAX_GRIP_JOINT_NUM);
 
+  initStatePublisher(using_gazebo_);
+  initStateSubscriber(using_gazebo_);
+
+  motionPlanningTool_ = new motion_planning_tool::MotionPlanningTool();
+
+  motionPlanningTool_->init("robot_description");
+
+  ROS_INFO("open_manipulator_position_controller : Init OK!");
+  return true;
+}
+
+bool PositionController::shutdownPositionController(void)
+{
+  ros::shutdown();
+  return true;
+}
+
+bool PositionController::initStatePublisher(bool using_gazebo)
+{
   // ROS Publisher
-  if (using_gazebo_)
+  if (using_gazebo)
   {
     ROS_WARN("SET Gazebo Simulation Mode");
     for (std::map<std::string, uint8_t>::iterator state_iter = joint_id_.begin();
@@ -74,9 +93,12 @@ bool PositionController::initPositionController(void)
   {
     goal_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/goal_joint_states", 10);
   }
+}
 
+bool PositionController::initStateSubscriber(bool using_gazebo)
+{
   // ROS Subscriber
-  if (using_gazebo_)
+  if (using_gazebo)
   {
     gazebo_present_joint_position_sub_ = nh_.subscribe("/" + robot_name_ + "/joint_states", 10,
                                                        &PositionController::gazeboPresentJointPositionMsgCallback, this);
@@ -94,20 +116,6 @@ bool PositionController::initPositionController(void)
 
   gripper_position_sub_           = nh_.subscribe("/robotis/open_manipulator/gripper", 10,
                                                     &PositionController::gripperPositionMsgCallback, this);
-
-
-  motionPlanningTool_ = new motion_planning_tool::MotionPlanningTool();
-
-  motionPlanningTool_->init("robot_description");
-
-  ROS_INFO("open_manipulator_position_controller : Init OK!");
-  return true;
-}
-
-bool PositionController::shutdownPositionController(void)
-{
-  ros::shutdown();
-  return true;
 }
 
 void PositionController::gripOn(void)
