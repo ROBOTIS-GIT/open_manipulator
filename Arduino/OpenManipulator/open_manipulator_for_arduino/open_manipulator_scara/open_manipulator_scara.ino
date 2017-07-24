@@ -19,7 +19,7 @@
 #include "open_manipulator_scara_config.h"
 
 // #define DEBUG
-// #define DYNAMIXEL
+#define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************
@@ -540,7 +540,9 @@ void setIK(String cmd, open_manipulator::Link* link, uint8_t to, open_manipulato
     kinematics->position_only_inverse(link, to, goal_pose);
 
   for (int id = JOINT1; id <= JOINT3; id++)
+  {
     target_pos[id] = link[id].q_;
+  }
 }
 
 /*******************************************************************************

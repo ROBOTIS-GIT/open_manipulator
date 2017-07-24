@@ -61,7 +61,7 @@ void setup()
   initShape();
   initView();
 
-  connectOpenCR(7); // It is depend on laptop enviroments.
+  connectOpenCR(0); // It is depend on laptop enviroments.
 }
 
 /*******************************************************************************
@@ -496,7 +496,7 @@ class ChildApplet extends PApplet
     slider2d = cp5.addSlider2D("Drawing")
                   .setPosition(50,150)
                   .setSize(300,300)
-                  .setMinMax(300,240,-300,0)
+                  .setMinMax(130,250,-130,100)
                   .setValue(0,240)
                   ;
 

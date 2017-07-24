@@ -44,7 +44,7 @@
 #define JOINT_TRA_TIME       1.0
 #define GRIP_TRA_TIME        1.6
 
-#define TASK_TRA_TIME        0.40
+#define TASK_TRA_TIME        0.30
 
 #define MOTION_TRA_TIME      0.1
 
