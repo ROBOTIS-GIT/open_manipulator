@@ -44,12 +44,12 @@
 #define JOINT_TRA_TIME       1.0
 #define GRIP_TRA_TIME        1.6
 
-#define TASK_TRA_TIME        0.30
+#define TASK_TRA_TIME        1.5
 
-#define MOTION_TRA_TIME      0.1
+#define MOTION_TRA_TIME      1.0
 
 const float grip_on  = 0.0;
-const float grip_off = -0.5;
+const float grip_off = -1.3;
 
 float mov_time             = 0.0;
 uint16_t step_cnt          = 0;

@@ -224,7 +224,7 @@ void dataFromProcessing(String get)
     {
       open_manipulator::Pose goal_pose;
       goal_pose.position << 0.0,
-                            0.0001,
+                            0.166,
                             0.0661;
 
       setPose(goal_pose);
@@ -249,8 +249,8 @@ void setMotion()
 {
   static uint8_t motion_state = 0;
 
-  static float pos_x = 0.20;
-  static float pos_y = 0.0;
+  static float pos_x = 0.0;
+  static float pos_y = 0.116;
 
   open_manipulator::Pose goal_pose;
 
@@ -263,10 +263,10 @@ void setMotion()
     {
       case 0:
         gripMove(grip_on, GRIP_TRA_TIME);
-        motion_state = 2;
+        motion_state = 1;
        break;
       
-      case 2:
+      case 1:
         goal_pose.position << pos_x + 0.02*cos(motion_cnt*DEG2RAD),
                               pos_y + 0.02*sin(motion_cnt*DEG2RAD),
                               0.0661;  
@@ -274,65 +274,66 @@ void setMotion()
         setPose(goal_pose);
         jointMove(target_pos, MOTION_TRA_TIME);
  
-        motion_state = 3;
+        motion_cnt += 10.0;
+        motion_state = 1;
        break;
 
-      case 3:
-        if (moving == false)
-        {
-          if (pos_x <= 0.10)
-          {
-            goal_pose.position << 0.0,
-                                  0.0001,
-                                  0.0661;
+      // case 3:
+      //   if (moving == false)
+      //   {
+      //     if (pos_x <= 0.10)
+      //     {
+      //       goal_pose.position << 0.0,
+      //                             0.0001,
+      //                             0.0661;
 
-            setPose(goal_pose);
-            jointMove(target_pos, TASK_TRA_TIME);
+      //       setPose(goal_pose);
+      //       jointMove(target_pos, TASK_TRA_TIME);
 
-            motion_state = 7;
-          }
-          else
-          {
-            if (motion_cnt == 360.0)
-            {
-              motion_cnt = 0.0;
-              motion_state = 4;
-            }
-            else
-            {
-              motion_cnt += 5.0;
-              motion_state = 2;
-            }
-          }          
-        }
-       break;
+      //       motion_state = 7;
+      //     }
+      //     else
+      //     {
+      //       if (motion_cnt == 360.0)
+      //       {
+      //         motion_cnt = 0.0;
+      //         motion_state = 4;
+      //       }
+      //       else
+      //       {
+      //         motion_cnt += 5.0;
+      //         motion_state = 2;
+      //       }
+      //     }          
+      //   }
+      //  break;
 
-      case 4:
-        gripMove(grip_off, GRIP_TRA_TIME);
-        motion_state = 5;
-       break;
+      // case 4:
+      //   gripMove(grip_off, GRIP_TRA_TIME);
+      //   motion_state = 5;
+      //  break;
 
-      case 5:
-        goal_pose.position << pos_x - 0.02,
-                              0.0,
-                              0.0661;
+      // case 5:
+      //   goal_pose.position << pos_x - 0.02,
+      //                         0.0,
+      //                         0.0661;
 
-        setPose(goal_pose);
-        jointMove(target_pos, 1.0);
+      //   setPose(goal_pose);
+      //   jointMove(target_pos, 1.0);
 
-        pos_x = pos_x - (2*0.02);
-        motion_state = 6;
-       break;
+      //   pos_x = pos_x - (2*0.02);
+      //   motion_state = 6;
+      //  break;
 
-      case 6:
-        gripMove(grip_on, GRIP_TRA_TIME);
-        motion_state = 2;
-       break;
+      // case 6:
+      //   gripMove(grip_on, GRIP_TRA_TIME);
+      //   motion_state = 2;
+      //  break;
 
-      case 7:
-        motion_cnt = 0.0;
-        motion = false;
-       break;
+      // case 7:
+      //   motion_cnt = 0.0;
+      //   motion = false;
+      //  break;
 
       default:
        break;
