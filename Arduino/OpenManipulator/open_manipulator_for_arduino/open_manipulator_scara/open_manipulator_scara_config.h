@@ -22,6 +22,7 @@
 #include "OpenManipulator.h"
 
 #define CONTROL_RATE        8000
+#define MOTION_RATE         8000
 #define SERIAL_RATE         57600
 #define REMOTE_RATE         100
 #define BAUE_RATE           1000000
@@ -46,20 +47,20 @@
 
 #define TASK_TRA_TIME        1.5
 
-#define MOTION_TRA_TIME      1.0
-
 const float grip_on  = 0.0;
 const float grip_off = -1.3;
 
 float mov_time             = 0.0;
 uint16_t step_cnt          = 0;
+uint16_t motion_cnt        = 0;
 const float control_period = CONTROL_RATE * 1e-6;
+const float motion_period  = MOTION_RATE  * 1e-6;
 
 bool moving        = false;
 bool comm          = false;
 bool motion        = false;
-
-float motion_cnt = 0.0;
+bool circle        = false;
+bool reverse       = false;
 
 String cmd[5];
 
@@ -69,12 +70,21 @@ float goal_pos[LINK_NUM];
 float goal_vel[LINK_NUM];
 float goal_acc[LINK_NUM];
 
+const float circle_x = 0.22;
+const float circle_y = 0.01;
+float radius = 0.005;
+
+float draw_time = 5.0;
+
+uint8_t motion_state = 0;
+
 open_manipulator::Motor        motor[LINK_NUM];
 open_manipulator::Link         link[LINK_NUM];
 
 open_manipulator::Kinematics*  kinematics;
 open_manipulator::MotorDriver* motor_driver;
 open_manipulator::MinimumJerk* minimum_jerk;
+open_manipulator::MinimumJerk* circle_tra;
 
 open_manipulator::Property     start_prop[LINK_NUM];
 open_manipulator::Property     end_prop[LINK_NUM];
@@ -123,7 +133,12 @@ void setMoveTime(float get_time);
 void establishContactToProcessing();
 void sendJointDataToProcessing();
 
+// Joint
+void jointControl();
+
 // Motion
+void drawCircle();
+
 void setMotion();
 
 #endif // OPEN_MANIPULATOR_SCARA_CONFIG_H_

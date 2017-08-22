@@ -494,8 +494,8 @@ class ChildApplet extends PApplet
 * Init Task Space Controller
 *******************************************************************************/
     slider2d = cp5.addSlider2D("Drawing")
-                  .setPosition(50,150)
-                  .setSize(300,300)
+                  .setPosition(70,240)
+                  .setSize(260,150)
                   .setMinMax(130,250,-130,100)
                   .setValue(0,240)
                   ;
@@ -750,5 +750,3 @@ class ChildApplet extends PApplet
     }
   }
 }
-
-

@@ -54,21 +54,27 @@ void setup()
 }
 
 /*******************************************************************************
-* Loop
+* loop
 *******************************************************************************/
 void loop()
 {
-  static uint32_t tmp_time = micros();
+  static uint32_t tmp_time[2];
   
-  if ((micros() - tmp_time) >= CONTROL_RATE)
+  if ((micros() - tmp_time[0]) >= CONTROL_RATE)
   {
-    tmp_time = micros();
-    handler_control();
+    tmp_time[0] = micros();
+    jointControl();
   }
 
-  getData(REMOTE_RATE);
+  if ((micros() - tmp_time[1]) >= MOTION_RATE)
+  {
+    tmp_time[1] = micros();
+    drawCircle();
+  }
 
   setMotion();
+  
+  getData(REMOTE_RATE);
 
   showLedStatus();
 }
@@ -76,7 +82,7 @@ void loop()
 /*******************************************************************************
 * Timer (8mm)
 *******************************************************************************/
-void handler_control()
+void jointControl()
 {
   uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
   float tick_time = 0;
@@ -114,6 +120,149 @@ void handler_control()
 
       step_cnt++;
     }
+  }
+}
+
+/*******************************************************************************
+* draw circle
+*******************************************************************************/
+void drawCircle()
+{
+  uint16_t motion_time = uint16_t(floor(draw_time/motion_period) + 1.0);
+  float tick_time = 0.0;
+
+  float goal_angle[2] = {0.0, 0.0};
+  open_manipulator::Pose goal_pose;
+
+  if (circle)
+  {
+    if (motion_cnt >= motion_time)
+    {
+      if (reverse)
+        radius -= 0.005;
+      else
+        radius += 0.005; 
+
+      if (radius >= 0.060 || radius <= 0.005)
+      {
+        motion_cnt = 0;
+        circle = false;
+        motion_state++;
+        reverse = !reverse;
+      }
+      else
+      {
+        motion_cnt = 0;
+      }
+    }
+    else
+    {
+      tick_time = motion_period * motion_cnt;
+
+      circle_tra->getPosition(goal_angle, 1, tick_time);
+      goal_pose.position << (circle_x-radius) + radius*cos(goal_angle[0]),
+                            circle_y          + radius*sin(goal_angle[0]),
+                            0.0661; 
+
+      setPose(goal_pose);
+
+      for (int i=BASE; i <= END; i++)
+        goal_pos[i] = target_pos[i];
+
+      sendJointDataToProcessing();
+      setJointDataToDynamixel();
+
+      motion_cnt++;
+    }
+  }
+}
+
+/*******************************************************************************
+* Set motion
+*******************************************************************************/
+void setMotion()
+{
+  open_manipulator::Pose goal_pose;
+
+  if (motion)
+  {
+    if (moving)
+      return;
+
+    if (circle)
+      return;
+
+    switch (motion_state)
+    {
+      case 0:
+        goal_pose.position << circle_x,
+                              circle_y,
+                              0.0661;
+    
+        setPose(goal_pose);
+        jointMove(target_pos, 3.0);
+
+        motion_state = 1;
+       break;
+
+      case 1:
+        gripMove(grip_on, GRIP_TRA_TIME);
+
+        motion_state = 2;
+       break; 
+
+      case 2:
+        initJointProp();
+        start_prop[0].pos = 0.0;
+        end_prop[0].pos   = M_PI*2;
+
+        if (reverse)
+          radius = 0.060;  
+        else
+          radius = 0.005;
+
+        draw_time = 5.0;    
+        circle_tra->setCoeffi(start_prop, end_prop, 1, draw_time, motion_period); 
+
+        motion_cnt = 0;
+        circle = true;
+       break;
+
+       case 3:
+        gripMove(grip_off, GRIP_TRA_TIME);
+
+        motion_state = 4;
+       break;
+
+     case 4:
+       target_pos[JOINT1] = -1.731;
+       target_pos[JOINT2] =  0.347;
+       target_pos[JOINT3] =  2.247;
+
+       jointMove(target_pos, 3.0);
+
+       motion_state = 5;
+      break;
+
+     case 5:
+       gripMove(grip_on, GRIP_TRA_TIME);
+       
+       motion_state = 6;
+      break;
+
+     case 6:
+       gripMove(grip_off, GRIP_TRA_TIME);
+
+       motion_state = 0;
+      break;
+
+      default:
+       break;
+    }
+  }
+  else
+  {
+    motion_state = 0;
   }
 }
 
@@ -217,20 +366,18 @@ void dataFromProcessing(String get)
   {
     if (cmd[1] == "stop")
     {
-      motion_cnt = 0.0;
+      motion_state = 0;
+      motion_cnt = 0;
+      reverse = false;
       motion = false;
+      circle = false;
     }
     else
     {
-      open_manipulator::Pose goal_pose;
-      goal_pose.position << 0.0,
-                            0.166,
-                            0.0661;
+      getDynamixelPosition();
+      sendJointDataToProcessing();
 
-      setPose(goal_pose);
-      jointMove(target_pos, TASK_TRA_TIME);
-
-      motion_cnt = 0.0;
+      motion_state = 3;
       motion = true;
     }
   }
@@ -239,109 +386,6 @@ void dataFromProcessing(String get)
 #ifdef DEBUG
     Serial.println("Error");
 #endif
-  }
-}
-
-/*******************************************************************************
-* Set motion
-*******************************************************************************/
-void setMotion()
-{
-  static uint8_t motion_state = 0;
-
-  static float pos_x = 0.0;
-  static float pos_y = 0.116;
-
-  open_manipulator::Pose goal_pose;
-
-  if (motion)
-  {
-    if (moving)
-      return;
-
-    switch (motion_state)
-    {
-      case 0:
-        gripMove(grip_on, GRIP_TRA_TIME);
-        motion_state = 1;
-       break;
-      
-      case 1:
-        goal_pose.position << pos_x + 0.02*cos(motion_cnt*DEG2RAD),
-                              pos_y + 0.02*sin(motion_cnt*DEG2RAD),
-                              0.0661;  
-
-        setPose(goal_pose);
-        jointMove(target_pos, MOTION_TRA_TIME);
- 
-        motion_cnt += 10.0;
-        motion_state = 1;
-       break;
-
-      // case 3:
-      //   if (moving == false)
-      //   {
-      //     if (pos_x <= 0.10)
-      //     {
-      //       goal_pose.position << 0.0,
-      //                             0.0001,
-      //                             0.0661;
-
-      //       setPose(goal_pose);
-      //       jointMove(target_pos, TASK_TRA_TIME);
-
-      //       motion_state = 7;
-      //     }
-      //     else
-      //     {
-      //       if (motion_cnt == 360.0)
-      //       {
-      //         motion_cnt = 0.0;
-      //         motion_state = 4;
-      //       }
-      //       else
-      //       {
-      //         motion_cnt += 5.0;
-      //         motion_state = 2;
-      //       }
-      //     }          
-      //   }
-      //  break;
-
-      // case 4:
-      //   gripMove(grip_off, GRIP_TRA_TIME);
-      //   motion_state = 5;
-      //  break;
-
-      // case 5:
-      //   goal_pose.position << pos_x - 0.02,
-      //                         0.0,
-      //                         0.0661;
-
-      //   setPose(goal_pose);
-      //   jointMove(target_pos, 1.0);
-
-      //   pos_x = pos_x - (2*0.02);
-      //   motion_state = 6;
-      //  break;
-
-      // case 6:
-      //   gripMove(grip_on, GRIP_TRA_TIME);
-      //   motion_state = 2;
-      //  break;
-
-      // case 7:
-      //   motion_cnt = 0.0;
-      //   motion = false;
-      //  break;
-
-      default:
-       break;
-    }
-  }
-  else
-  {
-    motion_cnt = 0;
   }
 }
 
@@ -443,7 +487,7 @@ void initTimer()
 {
   control_timer.stop();
   control_timer.setPeriod(CONTROL_RATE);
-  control_timer.attachInterrupt(handler_control);
+  control_timer.attachInterrupt(jointControl);
 }
 
 /*******************************************************************************
@@ -662,6 +706,7 @@ void initLink()
 void initMinimumJerk()
 {
   minimum_jerk = new open_manipulator::MinimumJerk();
+  circle_tra   = new open_manipulator::MinimumJerk();
 }
 
 /*******************************************************************************
