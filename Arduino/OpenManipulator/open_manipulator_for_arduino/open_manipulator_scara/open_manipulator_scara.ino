@@ -221,7 +221,7 @@ void setMotion()
         else
           radius = 0.005;
 
-        draw_time = 5.0;    
+        draw_time = 8.0;    
         circle_tra->setCoeffi(start_prop, end_prop, 1, draw_time, motion_period); 
 
         motion_cnt = 0;
@@ -245,7 +245,7 @@ void setMotion()
       break;
 
      case 5:
-       gripMove(grip_on, GRIP_TRA_TIME);
+       gripMove(-0.2, GRIP_TRA_TIME);
        
        motion_state = 6;
       break;
