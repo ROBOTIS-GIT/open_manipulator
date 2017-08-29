@@ -63,6 +63,7 @@ bool MotorDriver::init(Motor* motor, uint8_t motor_num)
 
   groupSyncWriteTorque_   = new dynamixel::GroupSyncWrite(portHandler_, packetHandler_, ADDR_X_TORQUE_ENABLE,    LEN_X_TORQUE_ENABLE);
   groupSyncWritePosition_ = new dynamixel::GroupSyncWrite(portHandler_, packetHandler_, ADDR_X_GOAL_POSITION,    LEN_X_GOAL_POSITION);
+  groupSyncWriteCurrent_  = new dynamixel::GroupSyncWrite(portHandler_, packetHandler_, ADDR_X_GOAL_CURRENT,     LEN_X_GOAL_CURRENT);
 
   groupSyncReadPosition_  = new dynamixel::GroupSyncRead (portHandler_, packetHandler_, ADDR_X_PRESENT_POSITION, LEN_X_PRESENT_POSITION);
 
@@ -181,6 +182,39 @@ bool MotorDriver::gripControl(int32_t value)
   }
 
   groupSyncWritePosition_->clearParam();
+  return true;
+}
+
+bool MotorDriver::gripCurrentControl(int16_t value)
+{
+  bool dxl_addparam_result;
+  int8_t dxl_comm_result;
+
+  uint8_t param_goal_current[4];
+
+  for (int num = 0; num <= motor_num_; num++)
+  {
+    if (motor_[num].name.substring(0,7) == "Gripper")
+    {
+      param_goal_current[0] = DXL_LOBYTE(DXL_LOWORD(value));
+      param_goal_current[1] = DXL_HIBYTE(DXL_LOWORD(value));
+      param_goal_current[2] = DXL_LOBYTE(DXL_HIWORD(value));
+      param_goal_current[3] = DXL_HIBYTE(DXL_HIWORD(value));
+
+      dxl_addparam_result = groupSyncWriteCurrent_->addParam(motor_[num].id, (uint8_t*)&param_goal_current);
+      if (dxl_addparam_result != true)
+        return false;
+    }
+  }
+
+  dxl_comm_result = groupSyncWriteCurrent_->txPacket();
+  if (dxl_comm_result != COMM_SUCCESS)
+  {
+    packetHandler_->printTxRxResult(dxl_comm_result);
+    return false;
+  }
+
+  groupSyncWriteCurrent_->clearParam();
   return true;
 }
 
