@@ -92,7 +92,8 @@ class MotorDriver
 
   bool setTorque(uint8_t onoff);
   bool jointControl(int32_t *value);
-  bool gripControl (int32_t value);
+  bool gripControl(int32_t value);
+  bool gripCurrentControl(int16_t value);
 
   bool readPosition(Motor* get_motor);
 
