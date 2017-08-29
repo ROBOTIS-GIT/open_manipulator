@@ -19,7 +19,7 @@
 #include "open_manipulator_scara_config.h"
 
 // #define DEBUG
-#define DYNAMIXEL
+// #define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************
@@ -161,7 +161,7 @@ void drawCircle()
 
       circle_tra->getPosition(goal_angle, 1, tick_time);
       goal_pose.position << (circle_x-radius) + radius*cos(goal_angle[0]),
-                            circle_y          + radius*sin(goal_angle[0]),
+                            circle_y + radius*sin(goal_angle[0]),
                             0.0661; 
 
       setPose(goal_pose);
@@ -695,7 +695,7 @@ void initLink()
   link[END].dq_                         = 0.0;
   link[END].ddq_                        = 0.0;
   link[END].a_                          << 1, 0, 0;
-  link[END].b_                          << 0.104, 0.0, 0.0;
+  link[END].b_                          << 0.114, 0.0, 0.0;
   link[END].v_                          = Eigen::Vector3f::Zero();
   link[END].w_                          = Eigen::Vector3f::Zero();
 }
