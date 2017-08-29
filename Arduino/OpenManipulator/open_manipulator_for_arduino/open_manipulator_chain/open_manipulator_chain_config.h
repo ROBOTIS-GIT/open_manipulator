@@ -77,27 +77,27 @@ float goal_vel[LINK_NUM];
 float goal_acc[LINK_NUM];
 
 float motion_storage[STORAGE][LINK_NUM];
-float motion_set[STORAGE][LINK_NUM] = { 
-                                        { 0.0,  0.0, 1.05, -0.35, -0.70, 0.0},
-                                        { 0.0,  0.0,-0.05, -0.82,  0.90, 0.0},
-                                        { 0.0, 0.35,-0.05, -0.82,  0.90, 0.0},
-                                        { 0.0, 0.35,-0.60,  0.05,  0.55, 0.0},
-                                        {-1.0, 0.35,-0.60,  0.05,  0.55, 1.8},
-                                        { 0.0, 0.35,-0.05, -0.82,  0.90, 1.8},
-                                        { 0.0,-0.35,-0.05, -0.82,  0.90, 1.8},
-                                        { 0.0,-0.35,-0.60,  0.05,  0.55, 1.8},
-                                        {-2.0,-0.35,-0.60,  0.05,  0.55, 0.0},
-                                        { 0.0,-0.35,-0.05, -0.82,  0.90, 0.0},
-                                        { 0.0,  0.0,-0.05, -0.82,  0.90, 0.0},
-                                        { 0.0,  0.0, 1.05, -0.35, -0.70, 0.0}
+float motion_set[STORAGE][LINK_NUM] = { //grip, joint1, joint2, joint3, joint, time
+                                        { 0.0,   0.0,  1.05, -0.35, -0.70, 3.0}, 
+                                        { 0.0,   0.0, -0.05, -0.82,  0.90, 3.0},
+                                        { 0.0,  0.35, -0.05, -0.82,  0.90, 3.0},
+                                        { 0.0,  0.35, -0.60,  0.05,  0.55, 1.0},
+                                        {-1.0,  0.35, -0.60,  0.05,  0.55, 1.0},
+                                        { 0.0,  0.35, -0.05, -0.82,  0.90, 1.0},
+                                        { 0.0, -0.35, -0.05, -0.82,  0.90, 1.0},
+                                        { 0.0, -0.35, -0.60,  0.05,  0.55, 1.0},
+                                        { 1.0, -0.35, -0.60,  0.05,  0.55, 3.0},
+                                        { 0.0, -0.35, -0.05, -0.82,  0.90, 3.0},
+                                        { 0.0,   0.0, -0.05, -0.82,  0.90, 3.0},
+                                        { 0.0,   0.0,  1.05, -0.35, -0.70, 3.0}
                                       };
 
 open_manipulator::Motor        motor[LINK_NUM];
 open_manipulator::Link         link[LINK_NUM];
 
-open_manipulator::Kinematics*  kinematics;
-open_manipulator::MotorDriver* motor_driver;
-open_manipulator::MinimumJerk* minimum_jerk;
+open_manipulator::Kinematics  kinematics;
+open_manipulator::MotorDriver motor_driver(PROTOCOL_VERSION, BAUE_RATE);
+open_manipulator::MinimumJerk minimum_jerk;
 
 open_manipulator::Property     start_prop[LINK_NUM];
 open_manipulator::Property     end_prop[LINK_NUM];
@@ -119,13 +119,11 @@ void initTimer();
 void setTimer(bool onoff);
 
 // kinematics
-void initKinematics();
 void setFK(open_manipulator::Link* link, int8_t me);
 void setIK(open_manipulator::Link* link, uint8_t to, open_manipulator::Pose goal_pose);
 void setPoseDirection(String dir, float step);
 
 // DYNAMIXEL
-void initMotor();
 void initMotorDriver(bool torque);
 void setMotorTorque(bool onoff);
 void setJointDataToDynamixel();
@@ -140,7 +138,6 @@ void dataFromRC100(uint8_t receive_data);
 void split(String data, char separator, String* temp);
 
 // MinimumJerk
-void initMinimumJerk();
 void jointMove(float* joint_pos, float mov_time);
 void gripMove(float grip_pos, float mov_time);
 void setMoveTime(float get_time);

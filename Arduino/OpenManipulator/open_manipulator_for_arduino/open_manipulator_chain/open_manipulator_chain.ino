@@ -19,7 +19,7 @@
 #include "open_manipulator_chain_config.h"
 
 // #define DEBUG
- #define DYNAMIXEL
+#define DYNAMIXEL
 #define SIMULATION
 
 /*******************************************************************************
@@ -35,18 +35,10 @@ void setup()
 
   initLink();
   initMotor();
-
-  initMinimumJerk();
-
   initJointProp();
-  initKinematics();
-
   initMotorDriver(false);
-
   initTimer();
-
   establishContactToProcessing();
-
   setFK(link, BASE);
 
 #ifdef DEBUG
@@ -74,7 +66,7 @@ void loop()
 }
 
 /*******************************************************************************
-* Timer (8mm)
+* Timer 
 *******************************************************************************/
 void handler_control()
 {
@@ -104,9 +96,9 @@ void handler_control()
     {
       tick_time = control_period * step_cnt;
 
-      minimum_jerk->getPosition(goal_pos, END, tick_time);
-      minimum_jerk->getVelocity(goal_vel, END, tick_time);
-      minimum_jerk->getAcceleration(goal_acc, END, tick_time);
+      minimum_jerk.getPosition(goal_pos, END, tick_time);
+      minimum_jerk.getVelocity(goal_vel, END, tick_time);
+      minimum_jerk.getAcceleration(goal_acc, END, tick_time);
 
       sendJointDataToProcessing();
       setJointDataToDynamixel();
@@ -439,7 +431,7 @@ void setMotion()
       gripMove(grip_on, GRIP_TRA_TIME);
       motion_cnt++;
     }
-    else if (motion_storage[motion_cnt][0] == -2.0)
+    else if (motion_storage[motion_cnt][0] == 1.0)
     {
       gripMove(grip_off, GRIP_TRA_TIME);
       motion_cnt++;
@@ -449,7 +441,7 @@ void setMotion()
       for (int num = JOINT1; num <= JOINT4; num++)
         target_pos[num] = motion_storage[motion_cnt][num];
 
-      jointMove(target_pos, MOTION_TRA_TIME);
+      jointMove(target_pos, motion_storage[motion_cnt][5]);
       motion_cnt++;
     }
   }
@@ -579,7 +571,7 @@ void setTimer(bool onoff)
 void getDynamixelPosition()
 {
 #ifdef DYNAMIXEL
-  motor_driver->readPosition(motor);
+  motor_driver.readPosition(motor);
   getMotorAngle();
 #endif
 }
@@ -643,7 +635,7 @@ void jointMove(float* set_goal_pos, float set_mov_time)
   setJointProp(set_goal_pos);
   setMoveTime(set_mov_time);
 
-  minimum_jerk->setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
+  minimum_jerk.setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
 
   step_cnt = 0;
   moving = true;
@@ -657,7 +649,7 @@ void gripMove(float set_goal_pos, float set_mov_time)
   setGripperProp(set_goal_pos);
   setMoveTime(set_mov_time);
 
-  minimum_jerk->setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
+  minimum_jerk.setCoeffi(start_prop, end_prop, LINK_NUM, mov_time, control_period);
 
   step_cnt = 0;
   moving = true;
@@ -679,7 +671,7 @@ void getMotorAngle()
 *******************************************************************************/
 void setFK(open_manipulator::Link* link, int8_t me)
 {
-  kinematics->forward(link, me);
+  kinematics.forward(link, me);
 }
 
 /*******************************************************************************
@@ -688,11 +680,11 @@ void setFK(open_manipulator::Link* link, int8_t me)
 void setIK(String cmd, open_manipulator::Link* link, uint8_t to, open_manipulator::Pose goal_pose)
 {
   if (cmd == "normal")
-    kinematics->inverse(link, to, goal_pose);
+    kinematics.inverse(link, to, goal_pose);
   else if (cmd == "robust")
-    kinematics->sr_inverse(link, to, goal_pose);
+    kinematics.sr_inverse(link, to, goal_pose);
   else if (cmd == "position")
-    kinematics->position_only_inverse(link, to, goal_pose);
+    kinematics.position_only_inverse(link, to, goal_pose);
 
   for (int id = JOINT1; id <= JOINT4; id++)
     target_pos[id] = link[id].q_;
@@ -708,9 +700,9 @@ void setJointDataToDynamixel()
 
   for (int num = BASE; num <= END; num++)
   {
-    joint_value[num] = motor_driver->convertRadian2Value(goal_pos[num]);
+    joint_value[num] = motor_driver.convertRadian2Value(goal_pos[num]);
   }
-  motor_driver->jointControl(joint_value);
+  motor_driver.jointControl(joint_value);
 #endif
 }
 
@@ -722,8 +714,8 @@ void setGripperDataToDynamixel()
 #ifdef DYNAMIXEL
   int32_t gripper_value = 0;
 
-  gripper_value = motor_driver->convertRadian2Value(goal_pos[END]);
-  motor_driver->gripControl(gripper_value);
+  gripper_value = motor_driver.convertRadian2Value(goal_pos[END]);
+  motor_driver.gripControl(gripper_value);
 #endif
 }
 
@@ -824,14 +816,6 @@ void initLink()
 }
 
 /*******************************************************************************
-* Initialization Trajectory
-*******************************************************************************/
-void initMinimumJerk()
-{
-  minimum_jerk = new open_manipulator::MinimumJerk();
-}
-
-/*******************************************************************************
 * Manipulator Motor initialization
 *******************************************************************************/
 void initMotor()
@@ -862,22 +846,12 @@ void initMotor()
 }
 
 /*******************************************************************************
-* Initialization Kinematics Library
-*******************************************************************************/
-void initKinematics()
-{
-  kinematics = new open_manipulator::Kinematics();
-}
-
-/*******************************************************************************
 * Initialization Motor Driver Library
 *******************************************************************************/
 void initMotorDriver(bool torque)
 {
 #ifdef DYNAMIXEL
-  motor_driver = new open_manipulator::MotorDriver(PROTOCOL_VERSION, BAUE_RATE);
-
-  if (motor_driver->init(motor, JOINT_NUM+GRIP_NUM))
+  if (motor_driver.init(motor, JOINT_NUM+GRIP_NUM))
     setMotorTorque(torque);
   else
     return;
@@ -890,7 +864,7 @@ void initMotorDriver(bool torque)
 void setMotorTorque(bool onoff)
 {
 #ifdef DYNAMIXEL
-  motor_driver->setTorque(onoff);
+  motor_driver.setTorque(onoff);
 #endif
 }
 
