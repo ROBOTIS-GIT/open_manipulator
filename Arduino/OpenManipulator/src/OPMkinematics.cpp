@@ -16,43 +16,41 @@
 
 /* Authors: Darby Lim */
 
-#include "kinematics.h"
-using namespace open_manipulator;
+#include "OPMKinematics.h"
 
-Kinematics::Kinematics()
-{
-  calc_ = new Calc();
-}
+#define BASE 0
 
-Kinematics::~Kinematics(){}
+OPMKinematics::OPMKinematics(){}
+
+OPMKinematics::~OPMKinematics(){}
 
 /*******************************************************************************
 * Forward kinematics
 *******************************************************************************/
-void Kinematics::forward(Link* link, int8_t me)
+void OPMKinematics::forward(OPMLink* link, int8_t from)
 {
   int8_t mother = 0;
 
-  if (me == -1)
+  if (from == -1)
   {
     return;
   }
 
-  if (me != 0)
+  if (from != 0)
   {
-    mother = link[me].mother_;
-    link[me].p_ = link[mother].R_ * link[me].b_ + link[mother].p_;
-    link[me].R_ = link[mother].R_ * calc_->Rodrigues(link[me].a_, link[me].q_);
+    mother = link[from].mother_;
+    link[from].p_ = link[mother].R_ * link[from].joint_pos_ + link[mother].p_;
+    link[from].R_ = link[mother].R_ * opm_math_.Rodrigues(link[from].joint_axis_, link[from].joint_angle_);
   }
 
-  forward(link, link[me].sibling_);
-  forward(link, link[me].child_);
+  forward(link, link[from].sibling_);
+  forward(link, link[from].child_);
 }
 
 /*******************************************************************************
 * Inverse kinematics (Numerical Method)
 *******************************************************************************/
-void Kinematics::inverse(Link* link, uint8_t to, Pose goal_pose, float lambda)
+void OPMKinematics::inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lambda)
 {
   //lambda :  To stabilize the numeric calculation (0 1]
   uint8_t size = to;
@@ -65,9 +63,9 @@ void Kinematics::inverse(Link* link, uint8_t to, Pose goal_pose, float lambda)
 
   for (int i = 0; i < 10; i++)
   {
-    J = calc_->Jacobian(link, size, goal_pose);
+    J = opm_math_.Jacobian(link, goal_pose, BASE, to);
 
-    VWerr = calc_->VWerr(goal_pose, link[to].p_, link[to].R_);
+    VWerr = opm_math_.VWerr(goal_pose, link[to].p_, link[to].R_);
 
     if (VWerr.norm() < 1E-6)
       return;
@@ -80,7 +78,7 @@ void Kinematics::inverse(Link* link, uint8_t to, Pose goal_pose, float lambda)
   }
 }
 
-void Kinematics::sr_inverse(Link* link, uint8_t to, Pose goal_pose)
+void OPMKinematics::sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose)
 {
   uint8_t size = to;
 
@@ -108,12 +106,12 @@ void Kinematics::sr_inverse(Link* link, uint8_t to, Pose goal_pose)
   Wn = Eigen::MatrixXf::Identity(size, size);
 
   forward(link, BASE);
-  VWerr = calc_->VWerr(goal_pose, link[to].p_, link[to].R_);
+  VWerr = opm_math_.VWerr(goal_pose, link[to].p_, link[to].R_);
   Ek = VWerr.transpose() * We * VWerr;
 
   for (int i = 0; i < 10; i++)
   {
-    J = calc_->Jacobian(link, size, goal_pose);
+    J = opm_math_.Jacobian(link, goal_pose, BASE, to);
     lambda = Ek + 0.002;
 
     Jh = (J.transpose() * We * J) + (lambda * Wn);
@@ -124,7 +122,7 @@ void Kinematics::sr_inverse(Link* link, uint8_t to, Pose goal_pose)
 
     setAngle(link, to, dq);
     forward(link, BASE);
-    VWerr = calc_->VWerr(goal_pose, link[to].p_, link[to].R_);
+    VWerr = opm_math_.VWerr(goal_pose, link[to].p_, link[to].R_);
 
     Ek2 = VWerr.transpose() * We * VWerr;
 
@@ -145,7 +143,7 @@ void Kinematics::sr_inverse(Link* link, uint8_t to, Pose goal_pose)
   }
 }
 
-void Kinematics::position_only_inverse(Link* link, uint8_t to, Pose goal_pose)
+void OPMKinematics::position_only_inverse(OPMLink* link, uint8_t to, Pose goal_pose)
 {
   uint8_t size = to;
 
@@ -171,12 +169,12 @@ void Kinematics::position_only_inverse(Link* link, uint8_t to, Pose goal_pose)
   Wn = Eigen::MatrixXf::Identity(size, size);
 
   forward(link, BASE);
-  Verr = calc_->Verr(goal_pose.position, link[to].p_);
+  Verr = opm_math_.Verr(goal_pose.position, link[to].p_);
   Ek = Verr.transpose() * We * Verr;
 
   for (int i = 0; i < 10; i++)
   {
-    J = calc_->Jacobian(link, size, goal_pose);
+    J = opm_math_.Jacobian(link, goal_pose, BASE, to);
     Jpos.row(0) = J.row(0);
     Jpos.row(1) = J.row(1);
     Jpos.row(2) = J.row(2);
@@ -190,7 +188,7 @@ void Kinematics::position_only_inverse(Link* link, uint8_t to, Pose goal_pose)
 
     setAngle(link, to, dq);
     forward(link, BASE);
-    Verr = calc_->Verr(goal_pose.position, link[to].p_);
+    Verr = opm_math_.Verr(goal_pose.position, link[to].p_);
 
     Ek2 = Verr.transpose() * We * Verr;
 
@@ -211,10 +209,10 @@ void Kinematics::position_only_inverse(Link* link, uint8_t to, Pose goal_pose)
   }
 }
 
-void Kinematics::setAngle(Link* link, uint8_t to, Eigen::VectorXf dq)
+void OPMKinematics::setAngle(OPMLink* link, uint8_t to, Eigen::VectorXf dq)
 {
   for (int id = 1; id <= to; id++)
   {
-    link[id].q_ = link[id].q_ + dq(id-1);
+    link[id].joint_angle_ = link[id].joint_angle_ + dq(id-1);
   }
 }

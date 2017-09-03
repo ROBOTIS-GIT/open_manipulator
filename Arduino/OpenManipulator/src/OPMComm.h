@@ -16,22 +16,14 @@
 
 /* Authors: Darby Lim */
 
-#ifndef CALC_H_
-#define CALC_H_
+#ifndef OPMCOMM_H_
+#define OPMCOMM_H_
 
-#include "link.h"
-
-#include <Eigen.h>        // Calls main Eigen matrix class library
-#include <Eigen/LU>       // Calls inverse, determinant, LU decomp., etc.
-#include <Eigen/Dense>
-
-#include <math.h>
+#include <unistd.h>
+#include <Eigen.h>
 
 #define DEG2RAD (M_PI / 180.0)
 #define RAD2DEG (180.0 / M_PI)
-
-namespace open_manipulator
-{
 
 typedef struct
 {
@@ -39,23 +31,33 @@ typedef struct
   Eigen::Matrix3f orientation;
 } Pose;
 
-class Calc
+typedef struct
 {
- public:
-  Calc();
-  ~Calc();
+  float pos;
+  float vel;
+  float acc;
+} State;
 
-  Eigen::Matrix3f skew(Eigen::Vector3f v);
-  float sign(float num);
+typedef struct
+{
+  float present;
+  float target;
+} Position;
 
-  Eigen::Matrix3f Rodrigues(Eigen::Vector3f axis, float angle);
-  Eigen::Matrix3f RotationMatrix(String notation, float angle);
-  Eigen::Vector3f Verr(Eigen::Vector3f Cref, Eigen::Vector3f Cnow);
-  Eigen::Vector3f Werr(Eigen::Matrix3f Cref, Eigen::Matrix3f Cnow);
-  Eigen::VectorXf VWerr(Pose goal_pos, Eigen::Vector3f pos, Eigen::Matrix3f rot);
-  Eigen::Vector3f AngularVelocity(Eigen::Matrix3f rotation_matrix);
-  Eigen::MatrixXf Jacobian(Link* link, uint8_t size, Pose goal_pose);
-};
-}
+typedef struct
+{
+  int8_t link_num;
+  int8_t joint_num;
+  int8_t grip_num;
+  
+  int8_t dxl_num;
 
-#endif // CALC_H_
+  int8_t base;
+  int8_t joint1;
+  int8_t joint2;
+  int8_t joint3;
+  int8_t joint4;
+  int8_t grip;  
+} OPM;
+
+#endif // OPMCOMM_H_
