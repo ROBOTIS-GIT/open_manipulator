@@ -29,7 +29,7 @@ OPMKinematics::~OPMKinematics(){}
 *******************************************************************************/
 void OPMKinematics::forward(OPMLink* link, int8_t from)
 {
-  int8_t mother = 0;
+  int8_t mother = 0;  
 
   if (from == -1)
   {

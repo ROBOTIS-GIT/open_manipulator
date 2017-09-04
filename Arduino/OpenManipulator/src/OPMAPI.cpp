@@ -24,6 +24,9 @@
 #define CHECK_FLAG   0
 #define WAIT_FOR_SEC 1
 
+#define MOTION_NUM 15
+#define STORAGE 10
+
 OPM opm;
 OPMLink* copy_link;
 OPMDynamixel dxl;
@@ -31,8 +34,25 @@ OPMKinematics km;
 OPMMinimumJerk mj;
 RC100 rc100;
 
-State state[10] = {{0.0, 0.0, 0.0}, };
-Position pos[10] = {{0.0, 0.0}, };
+State state[STORAGE] = {{0.0, 0.0, 0.0}, };
+Position pos[STORAGE] = {{0.0, 0.0}, };
+
+uint8_t motion_cnt = 0;
+uint8_t motion_num = 0;
+float motion_set[MOTION_NUM][STORAGE] = { // time, grip, joint1, joint2, joint3, joint4, ...
+                                            { 3.0,  0.0,   0.0,  1.05, -0.35, -0.70 }, 
+                                            { 3.0,  0.0,   0.0, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,  0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,  0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0, -1.0,  0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0,  0.0,  0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0, -0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0, -0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0,  1.0, -0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0,  0.0, -0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,   0.0, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,   0.0,  1.05, -0.35, -0.70 }
+                                        };
 
 HardwareTimer control_timer(TIMER_CH1);
 
@@ -42,8 +62,10 @@ const float control_period = CONTROL_RATE * 1e-6;
 
 bool platform  = true;
 bool moving    = false;
+bool motion    = false;
+bool repeat    = false;
 
-String cmd[10];
+String cmd[5];
 
 void setJointAngle(float* radian)
 {
@@ -172,6 +194,64 @@ void setTimer(bool onoff)
     control_timer.stop();
 }
 
+void setMotion()
+{
+  if (motion)
+  {
+    if (getMoving())
+      return;
+
+    if (motion_cnt >= motion_num)
+    {
+      if (repeat)
+      {
+        motion_cnt = 0;
+      }
+      else
+      {
+        motion     = false;       
+      }
+    }
+
+    if (motion_set[motion_cnt][1] == -1.0)
+    {
+      setGripAngle(1.3);
+      move(1.5);
+
+      motion_cnt++;
+    }
+    else if (motion_set[motion_cnt][1] == 1.0)
+    {
+      setGripAngle(0.0);
+      move(1.5);
+
+      motion_cnt++;
+    }
+    else
+    {
+      // for (int num = JOINT1; num <= JOINT4; num++)
+      //   target_pos[num] = motion_storage[motion_cnt][num];
+
+      // jointMove(target_pos, motion_storage[motion_cnt][5]);
+      // motion_cnt++;
+
+      float target_pos[opm.dxl_num] = {0.0, };
+      
+      for (int i = opm.joint1; i < opm.grip; i++)
+        target_pos[i] = motion_set[motion_cnt][i+1];
+  
+      setJointAngle(target_pos);
+      move(motion_set[motion_cnt][0]);
+
+      motion_cnt++;
+    }
+  }
+  else
+  {
+    motion_cnt = 0;
+  }
+}
+
 void forwardKinematics(OPMLink* link, int8_t from)
 {
   for (int i = opm.base; i<=opm.grip; i++)
@@ -282,10 +362,10 @@ void OPMInit(String series, OPMLink* link, bool dynamixel, bool torque_onoff)
 
 void OPMRun()
 {
+  setMotion();
+
   if (rc100.available())
     dataFromRC100(rc100.readData());
-
-  // while(moving);  
 }
 
 void OPMSimulator(String ctrl)
@@ -320,9 +400,6 @@ void handler_control()
     }
     else
     {
-      for (int i = opm.base; i <= opm.grip; i++)
-        pos[i].present = pos[i].target;
-
       step_cnt = 0;
       moving   = false; 
     }
@@ -578,48 +655,23 @@ void dataFromProcessing(String get)
 //       motion_num = 0;
 //     }
 //   }
-//   else if (cmd[0] == "motion")
-//   {
-//     if (cmd[1] == "start")
-//     {
-//       setMotorTorque(true);
+  else if (cmd[0] == "motion")
+  {
+    if (cmd[1] == "start")
+    {
+      if (platform)
+        getAngle();
+      sendAngle2Processing(state, opm.dxl_num); 
 
-//       getDynamixelPosition();
-//       sendJointDataToProcessing();
-
-//       motion_num = 12;  
-//       motion_cnt = 0;          
-//       motion = true;
-//       repeat = true;
-
-//       for (int i=0; i<motion_num; i++)
-//       {
-//         for (int j=0; j<LINK_NUM; j++)
-//         {
-//           motion_storage[i][j] = motion_set[i][j];
-//         }
-//       }
-//     }
-//     else if (cmd[1] == "stop")
-//     {
-//       for (int i=0; i<motion_num; i++)
-//       {
-//         for (int j=0; j<LINK_NUM; j++)
-//         {
-//           motion_storage[i][j] = 0;
-//         }
-//       }
-
-//       motion     = false;
-//       repeat     = false;
-//       motion_num = 0;
-//       motion_cnt = 0;
-//     }
-//   }
-//   else
-//   {
-// #ifdef DEBUG
-//     Serial.println("Error");
-// #endif
-//   }
+      motion_num = 12;  
+      motion_cnt = 0;          
+      motion = true;
+      repeat = true;
+    }
+    else if (cmd[1] == "stop")
+    {
+      motion  = false;
+      repeat  = false;
+    }
+  }
 }

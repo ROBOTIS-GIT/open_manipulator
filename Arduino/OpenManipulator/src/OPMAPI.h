@@ -65,6 +65,8 @@ void OPMRun();
 
 void OPMSimulator(String ctrl);
 
+static void setMotion();
+
 static void handler_control();
 
 static void initProcessing();
