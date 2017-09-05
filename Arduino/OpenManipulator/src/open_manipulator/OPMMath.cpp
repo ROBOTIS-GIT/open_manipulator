@@ -16,7 +16,7 @@
 
 /* Authors: Darby Lim */
 
-#include "OPMMath.h"
+#include "../../include/open_manipulator/OPMMath.h"
 
 OPMMath::OPMMath(){}
 

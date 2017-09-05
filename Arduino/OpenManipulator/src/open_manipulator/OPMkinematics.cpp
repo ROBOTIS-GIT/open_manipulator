@@ -16,7 +16,7 @@
 
 /* Authors: Darby Lim */
 
-#include "OPMKinematics.h"
+#include "../../include/open_manipulator/OPMKinematics.h"
 
 #define BASE 0
 
@@ -50,7 +50,7 @@ void OPMKinematics::forward(OPMLink* link, int8_t from)
 /*******************************************************************************
 * Inverse kinematics (Numerical Method)
 *******************************************************************************/
-void OPMKinematics::inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lambda)
+float OPMKinematics::inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lambda)
 {
   //lambda :  To stabilize the numeric calculation (0 1]
   uint8_t size = to;
@@ -68,7 +68,7 @@ void OPMKinematics::inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lam
     VWerr = opm_math_.VWerr(goal_pose, link[to].p_, link[to].R_);
 
     if (VWerr.norm() < 1E-6)
-      return;
+      return VWerr.norm();
 
     Eigen::ColPivHouseholderQR<Eigen::MatrixXf> dec(J);
     dq = lambda * dec.solve(VWerr);
@@ -78,7 +78,7 @@ void OPMKinematics::inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lam
   }
 }
 
-void OPMKinematics::sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose)
+float OPMKinematics::sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose, float param)
 {
   uint8_t size = to;
 
@@ -109,10 +109,10 @@ void OPMKinematics::sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose)
   VWerr = opm_math_.VWerr(goal_pose, link[to].p_, link[to].R_);
   Ek = VWerr.transpose() * We * VWerr;
 
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 50; i++)
   {
     J = opm_math_.Jacobian(link, goal_pose, BASE, to);
-    lambda = Ek + 0.002;
+    lambda = Ek + param;
 
     Jh = (J.transpose() * We * J) + (lambda * Wn);
     gerr = J.transpose() * We * VWerr;
@@ -128,7 +128,7 @@ void OPMKinematics::sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose)
 
     if (Ek2 < 1E-12)
     {
-      break;
+      return Ek2;
     }
     else if (Ek2 < Ek)
     {
@@ -138,12 +138,13 @@ void OPMKinematics::sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose)
     {
       setAngle(link, to, -dq);
       forward(link, BASE);
-      break;
     }
   }
+
+  return Ek2;
 }
 
-void OPMKinematics::position_only_inverse(OPMLink* link, uint8_t to, Pose goal_pose)
+float OPMKinematics::position_only_inverse(OPMLink* link, uint8_t to, Pose goal_pose, float param)
 {
   uint8_t size = to;
 
@@ -178,7 +179,7 @@ void OPMKinematics::position_only_inverse(OPMLink* link, uint8_t to, Pose goal_p
     Jpos.row(0) = J.row(0);
     Jpos.row(1) = J.row(1);
     Jpos.row(2) = J.row(2);
-    lambda = Ek + 0.002;
+    lambda = Ek + param;
 
     Jh = (Jpos.transpose() * We * Jpos) + (lambda * Wn);
     gerr = Jpos.transpose() * We * Verr;
@@ -194,7 +195,7 @@ void OPMKinematics::position_only_inverse(OPMLink* link, uint8_t to, Pose goal_p
 
     if (Ek2 < 1E-12)
     {
-      break;
+      return Ek2;
     }
     else if (Ek2 < Ek)
     {
@@ -204,9 +205,10 @@ void OPMKinematics::position_only_inverse(OPMLink* link, uint8_t to, Pose goal_p
     {
       setAngle(link, to, -dq);
       forward(link, BASE);
-      break;
     }
   }
+
+  return Ek2;
 }
 
 void OPMKinematics::setAngle(OPMLink* link, uint8_t to, Eigen::VectorXf dq)

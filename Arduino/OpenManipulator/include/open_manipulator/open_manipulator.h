@@ -1,0 +1,9 @@
+#include <Arduino.h>
+#include "OPMLink.h"
+#include "OPMMath.h"
+#include "OPMKinematics.h"
+#include "OPMMinimumJerk.h"
+#include "OPMDebug.h"
+#include "OPMComm.h"
+#include "OPMDynamixel.h"
+#include "OPMAPI.h"

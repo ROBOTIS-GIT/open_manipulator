@@ -16,25 +16,37 @@
 
 /* Authors: Darby Lim */
 
-#ifndef OPMDEBUG_H_
-#define OPMDEBUG_H_
-
-#include <Arduino.h>
-#include <Eigen.h>
+#ifndef OPMKINEMATICS_H_
+#define OPMKINEMATICS_H_
 
 #include "OPMLink.h"
 #include "OPMComm.h"
+#include "OPMMath.h"
 
-void showLedStatus();
-void updateRxTxLed();
+#include <Eigen.h>        // Calls main Eigen matrix class library
+#include <Eigen/LU>       // Calls inverse, determinant, LU decomp., etc.
+#include <Eigen/Dense>
 
-void print_mt3f(const Eigen::Matrix3f& m);
-void print_vt3f(const Eigen::Vector3f& v);
-void print_mtXf(const Eigen::MatrixXf& m);
-void print_vtXf(const Eigen::VectorXf& v);
+#include <math.h>
 
-void showJointAngle(String unit, OPMLink* link, int from, int to);
-void showFKResult(OPMLink* link, int from, int to);
-// void showJointProp(float* get_joint_pos, float* get_joint_vel, float* get_joint_acc, int from, int to);
+class OPMKinematics
+{
+ private:
+   OPMMath opm_math_;
 
-#endif // OPMDEBUG_H_
+ public:
+  OPMKinematics();
+  ~OPMKinematics();
+
+  void forward(OPMLink* link, int8_t from);
+  
+  float inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lambda = 0.7);
+  float sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose, float param = 0.002);
+  float position_only_inverse(OPMLink* link, uint8_t to, Pose goal_pose, float param = 0.002);
+
+ private:
+  void setAngle(OPMLink* link, uint8_t to, Eigen::VectorXf dq);
+
+};
+
+#endif // OPMKINEMATICS_H_

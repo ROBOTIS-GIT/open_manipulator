@@ -16,37 +16,24 @@
 
 /* Authors: Darby Lim */
 
-#ifndef OPMKINEMATICS_H_
-#define OPMKINEMATICS_H_
+#ifndef OPMDEBUG_H_
+#define OPMDEBUG_H_
+
+#include <Arduino.h>
+#include <Eigen.h>
 
 #include "OPMLink.h"
 #include "OPMComm.h"
-#include "OPMMath.h"
 
-#include <Eigen.h>        // Calls main Eigen matrix class library
-#include <Eigen/LU>       // Calls inverse, determinant, LU decomp., etc.
-#include <Eigen/Dense>
+void showLedStatus();
+void updateRxTxLed();
 
-#include <math.h>
+void print_mt3f(const Eigen::Matrix3f& m);
+void print_vt3f(const Eigen::Vector3f& v);
+void print_mtXf(const Eigen::MatrixXf& m);
+void print_vtXf(const Eigen::VectorXf& v);
 
-class OPMKinematics
-{
- private:
-   OPMMath opm_math_;
+void showJointAngle(String unit, OPMLink* link, int from, int to);
+void showFKResult(OPMLink* link, int from, int to);
 
- public:
-  OPMKinematics();
-  ~OPMKinematics();
-
-  void forward(OPMLink* link, int8_t from);
-  
-  void inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lambda = 0.7);
-  void sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose);
-  void position_only_inverse(OPMLink* link, uint8_t to, Pose goal_pose);
-
- private:
-  void setAngle(OPMLink* link, uint8_t to, Eigen::VectorXf dq);
-
-};
-
-#endif // OPMKINEMATICS_H_
+#endif // OPMDEBUG_H_

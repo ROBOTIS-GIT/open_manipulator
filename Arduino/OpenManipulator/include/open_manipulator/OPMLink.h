@@ -26,7 +26,8 @@
 class OPMLink
 {
  public:
-  String name_;           
+  String name_;
+  int8_t me_;           
   int8_t mother_;
   int8_t sibling_;
   int8_t child_;        
@@ -41,6 +42,7 @@ class OPMLink
  public:
   OPMLink()
     : name_(""),
+      me_(-1),
       mother_(-1),
       sibling_(-1),
       child_(-1),

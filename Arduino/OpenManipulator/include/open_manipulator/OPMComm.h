@@ -44,20 +44,4 @@ typedef struct
   float target;
 } Position;
 
-typedef struct
-{
-  int8_t link_num;
-  int8_t joint_num;
-  int8_t grip_num;
-  
-  int8_t dxl_num;
-
-  int8_t base;
-  int8_t joint1;
-  int8_t joint2;
-  int8_t joint3;
-  int8_t joint4;
-  int8_t grip;  
-} OPM;
-
 #endif // OPMCOMM_H_

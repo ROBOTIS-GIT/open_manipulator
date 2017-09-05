@@ -16,7 +16,7 @@
 
 /* Authors: Darby Lim */
 
-#include "OPMDynamixel.h"
+#include "../../include/open_manipulator/OPMDynamixel.h"
 
 OPMDynamixel::OPMDynamixel()
 {

@@ -33,13 +33,17 @@ void setJointAngle(float* radian);
 
 void setGripAngle(float radian);
 
-void getAngle();
+State* getAngle();
+
+State* getState();
 
 bool getMoving();
 
 void setMoveTime(float set_time = 3.0);
 
 void initDynamixel(bool torque_onoff);
+
+void initProcessing();
 
 void setTorque(bool onoff);
 
@@ -53,28 +57,16 @@ void forwardKinematics(OPMLink* link, int8_t from);
 
 void inverseKinematics(OPMLink* link, int8_t to, Pose goal_pose, String method = "normal");
 
-void getSeriesInfo(String series);
-
 void writeDXL(State* data);
 
-void sendAngle2Processing(State* data, int8_t size);
+void sendAngle2Processing(State* data);
 
-void OPMInit(String series, OPMLink* link, bool dynamixel = true, bool torque_onoff = true);
+void OPMInit(OPMLink* link, int8_t link_num, bool processing = true, bool dynamixel = true, bool torque_onoff = true);
 
 void OPMRun();
 
-void OPMSimulator(String ctrl);
-
-static void setMotion();
+static int8_t findMe(String name);
 
 static void handler_control();
-
-static void initProcessing();
-
-static void dataFromProcessing(String get);
-
-static void dataFromRC100(uint16_t receive_data);
-
-static void split(String data, char separator, String* temp);
 
 #endif  //OPMAPI_H_
