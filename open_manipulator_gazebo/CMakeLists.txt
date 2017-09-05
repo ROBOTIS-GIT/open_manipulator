@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   sensor_msgs
+  gazebo_ros_control
+  position_controllers
 )
 
 ################################################################################
