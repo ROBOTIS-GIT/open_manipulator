@@ -16,31 +16,25 @@
 
 /* Authors: Darby Lim */
 
-#ifndef KINEMATICS_H_
-#define KINEMATICS_H_
+#ifndef OPMDEBUG_H_
+#define OPMDEBUG_H_
 
-#include "calc.h"
+#include <Arduino.h>
+#include <Eigen.h>
 
-namespace open_manipulator
-{
-#define BASE 0
-class Kinematics
-{
- private:
-   Calc *calc_;
+#include "OPMLink.h"
+#include "OPMComm.h"
 
- public:
-  Kinematics();
-  ~Kinematics();
+void showLedStatus();
+void updateRxTxLed();
 
-  void setAngle(Link* link, uint8_t to, Eigen::VectorXf dq);
+void print_mt3f(const Eigen::Matrix3f& m);
+void print_vt3f(const Eigen::Vector3f& v);
+void print_mtXf(const Eigen::MatrixXf& m);
+void print_vtXf(const Eigen::VectorXf& v);
 
-  void forward(Link* link, int8_t me);
-  
-  void inverse(Link* link, uint8_t to, Pose goal_pose, float lambda = 0.7);
-  void sr_inverse(Link* link, uint8_t to, Pose goal_pose);
-  void position_only_inverse(Link* link, uint8_t to, Pose goal_pose);
-};
-}
+void showJointAngle(String unit, OPMLink* link, int from, int to);
+void showFKResult(OPMLink* link, int from, int to);
+// void showJointProp(float* get_joint_pos, float* get_joint_vel, float* get_joint_acc, int from, int to);
 
-#endif // KINEMATICS_H_
+#endif // OPMDEBUG_H_

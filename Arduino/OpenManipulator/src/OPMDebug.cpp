@@ -16,7 +16,7 @@
 
 /* Authors: Darby Lim */
 
-#include "debug.h"
+#include "OPMDebug.h"
 
 void showLedStatus(void)
 {
@@ -92,33 +92,61 @@ void updateRxTxLed(void)
 
 void print_mt3f(const Eigen::Matrix3f& m)
 {
-   uint8_t i, j;
+  uint8_t i = 0 , j = 0;
 
-   for (i=0; i<3; i++)
-   {
-       for (j=0; j<3; j++)
-       {
-           Serial.print(m(i,j), 3);   // print 6 decimal places
-           Serial.print(", ");
-       }
-       Serial.println();
-   }
-   Serial.println();
+  for (i=0; i<3; i++)
+  {
+      for (j=0; j<3; j++)
+      {
+          Serial.print(m(i,j), 3);   // print 6 decimal places
+          Serial.print(", ");
+      }
+      Serial.println();
+  }
+  Serial.println();
 }
 
 void print_vt3f(const Eigen::Vector3f& v)
 {
-   uint8_t i = 0;
+  uint8_t i = 0;
 
-   for (i=0; i<3; i++)
-   {
-     Serial.print(v(i), 3);
-     Serial.print(", ");
-   }
-   Serial.println();
+  for (i=0; i<3; i++)
+  {
+    Serial.print(v(i), 3);
+    Serial.print(", ");
+  }
+  Serial.println();
 }
 
-void showJointAngle(String unit, open_manipulator::Link* link, int from, int to)
+void print_mtXf(const Eigen::MatrixXf& m)
+{
+  uint8_t i = 0 , j = 0;
+
+  for (i=0; i<m.rows(); i++)
+  {
+      for (j=0; j<m.cols(); j++)
+      {
+          Serial.print(m(i,j), 3);   // print 6 decimal places
+          Serial.print(", ");
+      }
+      Serial.println();
+  }
+  Serial.println();
+}
+
+void print_vtXf(const Eigen::VectorXf& v)
+{
+  uint8_t i = 0;
+
+  for (i=0; i<v.size(); i++)
+  {
+    Serial.print(v(i), 3);
+    Serial.print(", ");
+  }
+  Serial.println();
+}
+
+void showJointAngle(String unit, OPMLink* link, int from, int to)
 {
   int num = 0;
 
@@ -126,7 +154,7 @@ void showJointAngle(String unit, open_manipulator::Link* link, int from, int to)
   {
     for (num = from; num <= to; num++)
     {
-      Serial.print(link[num].q_); 
+      Serial.print(link[num].joint_angle_); 
       Serial.print(" ");
     }
     Serial.println("");
@@ -135,14 +163,14 @@ void showJointAngle(String unit, open_manipulator::Link* link, int from, int to)
   {
     for (num = from; num <= to; num++)
     {
-      Serial.print(link[num].q_*RAD2DEG);
+      Serial.print(link[num].joint_angle_*RAD2DEG);
       Serial.print(" ");
     }
     Serial.println("");
   }
 }
 
-void showFKResult(open_manipulator::Link* link, int from, int to)
+void showFKResult(OPMLink* link, int from, int to)
 {
   int num = 0;
 
@@ -154,31 +182,31 @@ void showFKResult(open_manipulator::Link* link, int from, int to)
   }
 }
 
-void showJointProp(float* get_joint_pos, float* get_joint_vel, float* get_joint_acc, int from, int to)
-{
-  int num = 0;
+// void showJointProp(float* get_joint_pos, float* get_joint_vel, float* get_joint_acc, int from, int to)
+// {
+//   int num = 0;
 
-  Serial.print("pos : ");
-  for (num = from; num <= to; num++)
-  {
-    Serial.print(get_joint_pos[num], 3); 
-    Serial.print(" ");
-  }
-  Serial.println(" ");
+//   Serial.print("pos : ");
+//   for (num = from; num <= to; num++)
+//   {
+//     Serial.print(get_joint_pos[num], 3); 
+//     Serial.print(" ");
+//   }
+//   Serial.println(" ");
 
-  Serial.print("vel : ");
-  for (num = from; num <= to; num++)
-  {
-    Serial.print(get_joint_vel[num], 3); 
-    Serial.print(" ");
-  }
-  Serial.println(" ");
+//   Serial.print("vel : ");
+//   for (num = from; num <= to; num++)
+//   {
+//     Serial.print(get_joint_vel[num], 3); 
+//     Serial.print(" ");
+//   }
+//   Serial.println(" ");
 
-  Serial.print("acc : ");
-  for (num = from; num <= to; num++)
-  {
-    Serial.print(get_joint_acc[num], 3); 
-    Serial.print(" ");
-  }
-  Serial.println(" ");  
-}
+//   Serial.print("acc : ");
+//   for (num = from; num <= to; num++)
+//   {
+//     Serial.print(get_joint_acc[num], 3); 
+//     Serial.print(" ");
+//   }
+//   Serial.println(" ");  
+// }

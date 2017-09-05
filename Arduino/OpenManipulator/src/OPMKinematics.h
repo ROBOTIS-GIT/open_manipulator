@@ -16,35 +16,37 @@
 
 /* Authors: Darby Lim */
 
-#ifndef MINIMUM_JERK_H_
-#define MINIMUM_JERK_H_
+#ifndef OPMKINEMATICS_H_
+#define OPMKINEMATICS_H_
 
-#include "calc.h"
+#include "OPMLink.h"
+#include "OPMComm.h"
+#include "OPMMath.h"
 
-namespace open_manipulator
-{
-typedef struct
-{
-  float pos;
-  float vel;
-  float acc;
-} Property;
+#include <Eigen.h>        // Calls main Eigen matrix class library
+#include <Eigen/LU>       // Calls inverse, determinant, LU decomp., etc.
+#include <Eigen/Dense>
 
-class MinimumJerk
+#include <math.h>
+
+class OPMKinematics
 {
+ private:
+   OPMMath opm_math_;
+
  public:
-  Eigen::MatrixXf coeffi_;
+  OPMKinematics();
+  ~OPMKinematics();
 
- public:
-  MinimumJerk();
-  ~MinimumJerk();
+  void forward(OPMLink* link, int8_t from);
+  
+  void inverse(OPMLink* link, uint8_t to, Pose goal_pose, float lambda = 0.7);
+  void sr_inverse(OPMLink* link, uint8_t to, Pose goal_pose);
+  void position_only_inverse(OPMLink* link, uint8_t to, Pose goal_pose);
 
-  void setCoeffi(Property* start, Property* end, uint8_t target_num, float mov_time, float control_period);
+ private:
+  void setAngle(OPMLink* link, uint8_t to, Eigen::VectorXf dq);
 
-  void getPosition(float* pos, uint8_t to, float tick);
-  void getVelocity(float* vel, uint8_t to, float tick);
-  void getAcceleration(float* acc, uint8_t to, float tick);
 };
-}
 
-#endif // MINIMUM_JERK_H_
+#endif // OPMKINEMATICS_H_

@@ -16,15 +16,13 @@
 
 /* Authors: Darby Lim */
 
-#include "calc.h"
+#include "OPMMath.h"
 
-using namespace open_manipulator;
+OPMMath::OPMMath(){}
 
-Calc::Calc(){}
+OPMMath::~OPMMath(){}
 
-Calc::~Calc(){}
-
-Eigen::Matrix3f Calc::skew(Eigen::Vector3f v)
+Eigen::Matrix3f OPMMath::skew(Eigen::Vector3f v)
 {
   Eigen::Matrix3f skew_symmetric_matrix = Eigen::Matrix3f::Zero();
 
@@ -35,7 +33,7 @@ Eigen::Matrix3f Calc::skew(Eigen::Vector3f v)
   return skew_symmetric_matrix;
 }
 
-float Calc::sign(float num)
+float OPMMath::sign(float num)
 {
   if (num >= 0.0)
   {
@@ -47,7 +45,7 @@ float Calc::sign(float num)
   }
 }
 
-Eigen::Matrix3f Calc::Rodrigues(Eigen::Vector3f axis, float angle)
+Eigen::Matrix3f OPMMath::Rodrigues(Eigen::Vector3f axis, float angle)
 {
   Eigen::Matrix3f skew_symmetric_matrix = Eigen::Matrix3f::Zero();
   Eigen::Matrix3f rotation_matrix = Eigen::Matrix3f::Zero();
@@ -61,7 +59,7 @@ Eigen::Matrix3f Calc::Rodrigues(Eigen::Vector3f axis, float angle)
   return rotation_matrix;
 }
 
-Eigen::Matrix3f Calc::RotationMatrix(String notation, float angle)
+Eigen::Matrix3f OPMMath::RotationMatrix(String notation, float angle)
 {
   String roll  = "roll";
   String pitch = "pitch";
@@ -95,7 +93,7 @@ Eigen::Matrix3f Calc::RotationMatrix(String notation, float angle)
   return rotation_matrix;
 }
 
-Eigen::Vector3f Calc::AngularVelocity(Eigen::Matrix3f rotation_matrix)
+Eigen::Vector3f OPMMath::AngularVelocity(Eigen::Matrix3f rotation_matrix)
 {
   Eigen::Matrix3f R = rotation_matrix;
   Eigen::Vector3f l = Eigen::Vector3f::Zero();
@@ -111,9 +109,9 @@ Eigen::Vector3f Calc::AngularVelocity(Eigen::Matrix3f rotation_matrix)
   theta = atan2(l.norm(), R(0,0) + R(1,1) + R(2,2) - 1);
   diag  = R(0,0) + R(1,1) + R(2,2);
 
-  for (int i = 0; i < 3; i++)
+  for (int8_t i = 0; i < 3; i++)
   {
-    for (int j = 0; j < 3; j++)
+    for (int8_t j = 0; j < 3; j++)
     {
       if (i != j)
       {
@@ -142,7 +140,7 @@ Eigen::Vector3f Calc::AngularVelocity(Eigen::Matrix3f rotation_matrix)
   return w;
 }
 
-Eigen::Vector3f Calc::Verr(Eigen::Vector3f Cref, Eigen::Vector3f Cnow)
+Eigen::Vector3f OPMMath::Verr(Eigen::Vector3f Cref, Eigen::Vector3f Cnow)
 {
   Eigen::Vector3f get_Verr;
 
@@ -151,7 +149,7 @@ Eigen::Vector3f Calc::Verr(Eigen::Vector3f Cref, Eigen::Vector3f Cnow)
   return get_Verr;
 }
 
-Eigen::Vector3f Calc::Werr(Eigen::Matrix3f Cref, Eigen::Matrix3f Cnow)
+Eigen::Vector3f OPMMath::Werr(Eigen::Matrix3f Cref, Eigen::Matrix3f Cnow)
 {
   Eigen::Matrix3f get_Rerr;
   Eigen::Vector3f get_Werr;
@@ -162,7 +160,7 @@ Eigen::Vector3f Calc::Werr(Eigen::Matrix3f Cref, Eigen::Matrix3f Cnow)
   return get_Werr;
 }
 
-Eigen::VectorXf Calc::VWerr(Pose goal_pose, Eigen::Vector3f pos, Eigen::Matrix3f rot)
+Eigen::VectorXf OPMMath::VWerr(Pose goal_pose, Eigen::Vector3f pos, Eigen::Matrix3f rot)
 {
   Eigen::Vector3f get_Verr, get_Werr;
   Eigen::VectorXf get_VWerr(6);
@@ -175,21 +173,23 @@ Eigen::VectorXf Calc::VWerr(Pose goal_pose, Eigen::Vector3f pos, Eigen::Matrix3f
   return get_VWerr;
 }
 
-Eigen::MatrixXf Calc::Jacobian(Link* link, uint8_t size, Pose goal_pose)
+Eigen::MatrixXf OPMMath::Jacobian(OPMLink* link, Pose goal_pose, int8_t from, int8_t to)
 {
+  int8_t size = to-from+1;
+
   Eigen::MatrixXf J(6,size);
   Eigen::VectorXf pose_changed(6);
   Eigen::Vector3f joint_axis          = Eigen::Vector3f::Zero();
   Eigen::Vector3f position_changed    = Eigen::Vector3f::Zero();
   Eigen::Vector3f orientation_changed = Eigen::Vector3f::Zero();
 
-  for (int id = 1; id <= size; id++)
+  for (int8_t id = from; id <= to; id++)
   {
     int8_t mother = link[id].mother_;
     if (mother == -1)
       continue;
 
-    joint_axis          = link[mother].R_ * link[id].a_;
+    joint_axis          = link[mother].R_ * link[id].joint_axis_;
 
     position_changed    = skew(joint_axis) * (goal_pose.position - link[id].p_);
     orientation_changed = joint_axis;

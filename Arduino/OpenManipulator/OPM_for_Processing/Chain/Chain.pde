@@ -61,7 +61,7 @@ void setup()
   initShape();
   initView();
 
-  connectOpenCR(0); // It is depend on laptop enviroments.
+  connectOpenCR(7); // It is depend on laptop enviroments.
 }
 
 /*******************************************************************************
@@ -146,13 +146,13 @@ void initView()
 *******************************************************************************/
 void initShape()
 {
-  link1       = loadShape("meshes/chain/link1.obj");
-  link2       = loadShape("meshes/chain/link2.obj");
-  link3       = loadShape("meshes/chain/link3.obj");
-  link4       = loadShape("meshes/chain/link4.obj");
-  link5       = loadShape("meshes/chain/link5.obj");
-  gripper     = loadShape("meshes/chain/link6_l.obj");
-  gripper_sub = loadShape("meshes/chain/link6_r.obj");
+  link1       = loadShape("meshes/link1.obj");
+  link2       = loadShape("meshes/link2.obj");
+  link3       = loadShape("meshes/link3.obj");
+  link4       = loadShape("meshes/link4.obj");
+  link5       = loadShape("meshes/link5.obj");
+  gripper     = loadShape("meshes/link6_l.obj");
+  gripper_sub = loadShape("meshes/link6_r.obj");
 
   setJointAngle(0, 0, 0, 0);
   gripperOff();
@@ -710,13 +710,13 @@ class ChildApplet extends PApplet
       joint3.setValue(joint_angle[2]);
       joint4.setValue(joint_angle[3]);
 
-      opencr_port.write("mnp"   + ',' +
+      opencr_port.write("opm"   + ',' +
                         "ready" + '\n');
       println("OpenManipulator Chain Ready!!!");
     }
     else
     {
-      opencr_port.write("mnp"  + ',' +
+      opencr_port.write("opm"  + ',' +
                         "end"  + '\n');
       println("OpenManipulator Chain End...");
     }

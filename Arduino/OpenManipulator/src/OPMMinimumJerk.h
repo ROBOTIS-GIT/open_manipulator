@@ -16,22 +16,32 @@
 
 /* Authors: Darby Lim */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#ifndef OPMMINIMUMJERK_H_
+#define OPMMINIMUMJERK_H_
 
-#include <Arduino.h>
-#include <Eigen.h>
-#include "link.h"
+#include "OPMMath.h"
+#include "OPMComm.h"
 
-#define DEG2RAD (M_PI / 180.0)
-#define RAD2DEG (180.0 / M_PI)
+#include <Eigen.h>        // Calls main Eigen matrix class library
+#include <Eigen/LU>       // Calls inverse, determinant, LU decomp., etc.
+#include <Eigen/Dense>
 
-void showLedStatus();
-void updateRxTxLed();
-void print_mt3f(const Eigen::Matrix3f& m);
-void print_vt3f(const Eigen::Vector3f& v);
-void showJointAngle(String unit, open_manipulator::Link* link, int from, int to);
-void showFKResult(open_manipulator::Link* link, int from, int to);
-void showJointProp(float* get_joint_pos, float* get_joint_vel, float* get_joint_acc, int from, int to);
+#include <math.h>
 
-#endif // DEBUG_H_
+class OPMMinimumJerk
+{
+ public:
+  Eigen::MatrixXf coeffi_;
+
+ public:
+  OPMMinimumJerk();
+  ~OPMMinimumJerk();
+
+  void setCoeffi(State* start, State* target, uint8_t link_num, float mov_time, float control_period);
+
+  void getPosition(State* calc, uint8_t to, float tick);
+  void getVelocity(State* calc, uint8_t to, float tick);
+  void getAcceleration(State* calc, uint8_t to, float tick);
+};
+
+#endif // OPMMINIMUMJERK_H_
