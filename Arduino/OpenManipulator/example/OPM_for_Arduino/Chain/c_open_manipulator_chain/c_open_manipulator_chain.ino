@@ -7,8 +7,10 @@
 #define WAIT_FOR_SEC 1
 
 #define PROCESSING true
-#define DYNAMIXEL  false
+#define DYNAMIXEL  true
 #define TORQUE     false
+
+#define MOTION_NUM 12
 
 RC100 rc100;
 String cmd[5];
@@ -20,21 +22,22 @@ const float grip_on  = 1.3;
 const float grip_off = 0.0;
 
 uint8_t motion_cnt = 0;
-uint8_t motion_num = 12;
-const float motion_set[12][6] = { // time, grip, joint1, joint2, joint3, joint4
-                                    { 3.0,  0.0,   0.0,  1.05, -0.35, -0.70 }, 
-                                    { 3.0,  0.0,   0.0, -0.05, -0.82,  0.90 },
-                                    { 3.0,  0.0,  0.35, -0.05, -0.82,  0.90 },
-                                    { 3.0,  0.0,  0.35, -0.60,  0.05,  0.55 },
-                                    { 3.0, -1.0,  0.35, -0.60,  0.05,  0.55 },
-                                    { 3.0,  0.0,  0.35, -0.05, -0.82,  0.90 },
-                                    { 3.0,  0.0, -0.35, -0.05, -0.82,  0.90 },
-                                    { 3.0,  0.0, -0.35, -0.60,  0.05,  0.55 },
-                                    { 3.0,  1.0, -0.35, -0.60,  0.05,  0.55 },
-                                    { 3.0,  0.0, -0.35, -0.05, -0.82,  0.90 },
-                                    { 3.0,  0.0,   0.0, -0.05, -0.82,  0.90 },
-                                    { 3.0,  0.0,   0.0,  1.05, -0.35, -0.70 }
-                                };
+uint8_t motion_num = 0;
+float motion_storage[MOTION_NUM][6] = {0.0, };
+const float motion_set[MOTION_NUM][6] = { // time, grip, joint1, joint2, joint3, joint4
+                                            { 3.0,  0.0,   0.0,  1.05, -0.35, -0.70 }, 
+                                            { 3.0,  0.0,   0.0, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,  0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,  0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0, -1.0,  0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0,  0.0,  0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0, -0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0, -0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0,  1.0, -0.35, -0.60,  0.05,  0.55 },
+                                            { 3.0,  0.0, -0.35, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,   0.0, -0.05, -0.82,  0.90 },
+                                            { 3.0,  0.0,   0.0,  1.05, -0.35, -0.70 }
+                                        };
 
 void setup() 
 {
@@ -75,20 +78,21 @@ void setMotion()
       }
       else
       {
-        motion = false;       
+        motion_cnt = 0;
+        motion     = false;     
       }
     }
 
-    if (motion_set[motion_cnt][1] == -1.0)
+    if (motion_storage[motion_cnt][1] == -1.0)
     {
-      setGripAngle(1.3);
+      setGripAngle(grip_on);
       move(1.5);
 
       motion_cnt++;
     }
-    else if (motion_set[motion_cnt][1] == 1.0)
+    else if (motion_storage[motion_cnt][1] == 1.0)
     {
-      setGripAngle(0.0);
+      setGripAngle(grip_off);
       move(1.5);
 
       motion_cnt++;
@@ -98,10 +102,10 @@ void setMotion()
       float target_pos[LINK_NUM] = {0.0, };
       
       for (int i = JOINT1; i < GRIP; i++)
-        target_pos[i] = motion_set[motion_cnt][i+1];
+        target_pos[i] = motion_storage[motion_cnt][i+1];
   
       setJointAngle(target_pos);
-      move(motion_set[motion_cnt][0]);
+      move(motion_storage[motion_cnt][0]);
 
       motion_cnt++;
     }
@@ -332,66 +336,93 @@ void dataFromProcessing(String get)
         setTorque(false);
     }
   }
-//   else if (cmd[0] == "get")
-//   {
-//     if (cmd[1] == "on")
-//     {
-//       motion_storage[motion_num][0] = -1;
-//       motion_num++;
-//     }
-//     else if (cmd[1] == "off")
-//     {
-//       motion_storage[motion_num][0] = -2;
-//       motion_num++;
-//     }
-//     else if (cmd[1].toInt() < STORAGE)
-//     {
-//       getDynamixelPosition();
-//       sendJointDataToProcessing();
+  else if (cmd[0] == "get")
+  {
+    if (cmd[1] == "on")
+    {
+      motion_storage[motion_num][0] = 3.0;  //mov_time
+      motion_storage[motion_num][1] = -1.0;
+      motion_num++;
+    }
+    else if (cmd[1] == "off")
+    {
+      motion_storage[motion_num][0] = 3.0;  //mov_time
+      motion_storage[motion_num][1] = 1.0;
+      motion_num++;
+    }
+    else if (cmd[1] == "clear")
+    {
+      for (int i = 0; i < MOTION_NUM; i++)
+      {
+        for (int j = 0; j < 6; j++)
+        {
+          motion_storage[i][j] = 0.0;
+        }
+      }
+      
+      motion_num = 0;
+      motion_cnt = 0;
+      motion     = false;
+      repeat     = false;
+    }
+    else if (cmd[1] == "pose")
+    {
+      if (cmd[2].toInt() < MOTION_NUM)
+      {
+        State* state = getAngle();
 
-//       for (int i = 0; i < LINK_NUM; i++)
-//       {
-//         motion_storage[motion_num][i] = motor[i].present_position;
-//       }
-//       motion_num++;
-//     }
-//   }
-//   else if (cmd[0] == "hand")
-//   {
-//     if (cmd[1] == "once")
-//     {
-//       setMotorTorque(true);
+        if (DYNAMIXEL)
+          sendAngle2Processing(state); 
 
-//       getDynamixelPosition();
-//       sendJointDataToProcessing();
+        for (int i = JOINT1; i < GRIP; i++)
+        {
+          motion_storage[motion_num][0]   = 3.0;  //mov_time
+          motion_storage[motion_num][i+1] = state[i].pos;
+        }
+        motion_num++;
+      }
+    }
+  }
+  else if (cmd[0] == "hand")
+  {
+    if (cmd[1] == "once")
+    {
+      if (DYNAMIXEL)
+      {
+        setTorque(true);
+        sendAngle2Processing(getAngle()); 
+      }
 
-//       motion = true;
-//     }
-//     else if (cmd[1] == "repeat")
-//     {
-//       setMotorTorque(true);
+      motion_cnt = 0;
+      motion = true;
+    }
+    else if (cmd[1] == "repeat")
+    {
+      if (DYNAMIXEL)
+      {
+        setTorque(true);
+        sendAngle2Processing(getAngle()); 
+      }
 
-//       getDynamixelPosition();
-//       sendJointDataToProcessing();
+      motion_cnt = 0;
+      motion = true;
+      repeat = true;
+    }
+    else if (cmd[1] == "stop")
+    {
+      for (int i = 0; i < MOTION_NUM; i++)
+      {
+        for (int j = 0; j < 6; j++)
+        {
+          motion_storage[i][j] = 0;
+        }
+      }
 
-//       motion = true;
-//       repeat = true;
-//     }
-//     else if (cmd[1] == "stop")
-//     {
-//       for (int i=0; i<STORAGE; i++)
-//       {
-//         for (int j=0; j<LINK_NUM; j++)
-//         {
-//           motion_storage[i][j] = 0;
-//         }
-//       }
-
-//       motion     = false;
-//       repeat     = false;
-//       motion_num = 0;
-//     }
-//   }
+      motion_cnt = 0;
+      motion     = false;
+      repeat     = false;
+    }
+  }
   else if (cmd[0] == "motion")
   {
     if (cmd[1] == "start")
@@ -402,15 +433,24 @@ void dataFromProcessing(String get)
       if (PROCESSING)
         sendAngle2Processing(getState()); 
 
-      motion_num = 12;  
+      for (int i = 0; i < MOTION_NUM; i++)
+      {
+        for (int j = 0; j < 6; j++)
+        {
+          motion_storage[i][j] = motion_set[i][j];
+        }
+      }
+
+      motion_num = MOTION_NUM;  
       motion_cnt = 0;          
       motion = true;
       repeat = true;
     }
     else if (cmd[1] == "stop")
     {
-      motion  = false;
-      repeat  = false;
+      motion_cnt = 0;
+      motion     = false;
+      repeat     = false;
     }
   }
 }

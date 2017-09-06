@@ -617,11 +617,18 @@ class ChildApplet extends PApplet
        .setColorActive(color(196, 196, 196))
        .setColorBackground(color(255, 255, 153))
        ;
+       
+    cp5.addButton("Motion_Clear")
+       .setValue(0)
+       .setPosition(0,210)
+       .setSize(200,100)
+       .setFont(createFont("arial",15))
+       ;
 
     cp5.addButton("Make_Joint_Pose")
        .setValue(0)
-       .setPosition(0,210)
-       .setSize(400,100)
+       .setPosition(200,210)
+       .setSize(200,100)
        .setFont(createFont("arial",15))
        ;
 
@@ -683,6 +690,7 @@ class ChildApplet extends PApplet
     cp5.getController("Gripper_pos").moveTo("Task Space Control");
 
     cp5.getController("Torque_OnOff").moveTo("Hand Teaching");
+    cp5.getController("Motion_Clear").moveTo("Hand Teaching");
     cp5.getController("Make_Joint_Pose").moveTo("Hand Teaching");
     cp5.getController("Make_Gripper_Pose").moveTo("Hand Teaching");
     cp5.getController("Motion_Start").moveTo("Hand Teaching");
@@ -994,12 +1002,26 @@ class ChildApplet extends PApplet
       println("Please, Set On Controller");
     }
   }
+  
+  public void Motion_Clear(int theValue)
+  {
+    if (onoff_flag)
+    {
+      opencr_port.write("get" + ',' +
+                        "clear"  + '\n');
+    }
+    else
+    {
+      println("Please, Set On Controller");
+    }
+  }
 
   public void Make_Joint_Pose(int theValue)
   {
     if (onoff_flag)
     {
       opencr_port.write("get"      + ',' +
+                        "pose"     + ',' +
                         motion_num + '\n');
 
       motion_num++;

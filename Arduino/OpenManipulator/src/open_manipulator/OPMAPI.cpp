@@ -204,16 +204,16 @@ void writeDXL(State* data)
   dxl.writePos(value);
 }
 
-void initProcessing()
+void initProcessing(int8_t link_num)
 {  
-  Serial.print(0.0);
-  Serial.print(",");
-  Serial.print(0.0);
-  Serial.print(",");
-  Serial.print(0.0);
-  Serial.print(",");
-  Serial.print(0.0);
-  Serial.print(",");
+  int8_t joint_num = link_num-1;
+
+  for (int i = 0; i < joint_num-1; i++)
+  {
+    Serial.print(0.0);
+    Serial.print(",");
+  }
+
   Serial.println(0.0);
   delay(300);
 
@@ -239,7 +239,7 @@ void OPMInit(OPMLink* link, int8_t link_num, bool processing, bool dynamixel, bo
   platform       = dynamixel;
 
   if (processing)
-    initProcessing();
+    initProcessing(link_num);
 
   if (platform)
     initDynamixel(torque_onoff);  

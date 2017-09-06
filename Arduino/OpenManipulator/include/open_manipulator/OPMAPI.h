@@ -43,7 +43,7 @@ void setMoveTime(float set_time = 3.0);
 
 void initDynamixel(bool torque_onoff);
 
-void initProcessing();
+void initProcessing(int8_t link_num);
 
 void setTorque(bool onoff);
 
