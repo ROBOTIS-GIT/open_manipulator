@@ -65,8 +65,8 @@ void OPMInit(OPMLink* link, int8_t link_num, bool processing = true, bool dynami
 
 void OPMRun();
 
-static int8_t findMe(String name);
+int8_t findMe(String name);
 
-static void handler_control();
+static void jointControl();
 
 #endif  //OPMAPI_H_

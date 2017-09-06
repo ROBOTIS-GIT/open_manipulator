@@ -7,3 +7,4 @@
 #include "OPMComm.h"
 #include "OPMDynamixel.h"
 #include "OPMAPI.h"
+#include "OPMDraw.h"

@@ -56,6 +56,8 @@ void loop()
   setMotion();
 
   getData(100); //millis
+
+  showLedStatus();
 }
 
 void initRC100()

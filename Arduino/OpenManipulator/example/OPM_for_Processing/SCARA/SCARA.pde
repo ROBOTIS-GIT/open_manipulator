@@ -150,11 +150,11 @@ void initView()
 *******************************************************************************/
 void initShape()
 {
-  link1       = loadShape("meshes/scara/link1.obj");
-  link2       = loadShape("meshes/scara/link2.obj");
-  link3       = loadShape("meshes/scara/link3.obj");
-  link4       = loadShape("meshes/scara/link4.obj");
-  link5       = loadShape("meshes/scara/link5.obj");
+  link1       = loadShape("meshes/link1.obj");
+  link2       = loadShape("meshes/link2.obj");
+  link3       = loadShape("meshes/link3.obj");
+  link4       = loadShape("meshes/link4.obj");
+  link5       = loadShape("meshes/link5.obj");
 
   setJointAngle(0, 0, 0);
   gripperOn();
@@ -556,13 +556,13 @@ class ChildApplet extends PApplet
       joint2.setValue(joint_angle[1]);
       gripper.setValue(gripper_angle);
 
-      opencr_port.write("mnp"   + ',' +
+      opencr_port.write("opm"   + ',' +
                         "ready" + '\n');
       println("OpenManipulator SCARA Ready!!!");
     }
     else
     {
-      opencr_port.write("mnp"  + ',' +
+      opencr_port.write("opm"  + ',' +
                         "end"  + '\n');
       println("OpenManipulator SCARA End...");
     }
@@ -729,7 +729,8 @@ class ChildApplet extends PApplet
   {
     if (onoff_flag)
     {
-      opencr_port.write("motion"  + '\n');
+      opencr_port.write("motion"  + ',' +
+                        "start"   + '\n');
     }
     else
     {
@@ -742,7 +743,7 @@ class ChildApplet extends PApplet
     if (onoff_flag)
     {
       opencr_port.write("motion"  + ',' +
-                        "stop"       + '\n');
+                        "stop"    + '\n');
     }
     else
     {

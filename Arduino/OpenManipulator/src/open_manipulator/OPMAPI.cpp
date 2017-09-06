@@ -166,7 +166,7 @@ void setTimer(bool onoff)
 {
   control_timer.stop();
   control_timer.setPeriod(CONTROL_RATE);
-  control_timer.attachInterrupt(handler_control);
+  control_timer.attachInterrupt(jointControl);
 
   if (onoff)
     control_timer.start();
@@ -256,7 +256,7 @@ void OPMRun()
   if ((micros() - tmp_time) >= CONTROL_RATE)
   {
     tmp_time = micros();
-    handler_control();
+    jointControl();
   }
 }
 
@@ -269,7 +269,7 @@ int8_t findMe(String name)
   }
 }
 
-void handler_control()
+void jointControl()
 {
   uint16_t step_time = uint16_t(floor(mov_time/control_period) + 1.0);
   float tick_time = 0;
@@ -299,5 +299,5 @@ void handler_control()
       step_cnt = 0;
       moving   = false; 
     }
-  }
+  }  
 }
