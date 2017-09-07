@@ -29,12 +29,12 @@ typedef struct
   float y;
   float z;
   float radius;
-} Circle;
+} Object;
 
 class OPMDraw
 {
  public:
-  Circle circle;
+  Object object;
 
   float draw_time;
   uint16_t step_cnt;
@@ -46,18 +46,24 @@ class OPMDraw
   OPMLink* copy_link;
   int8_t copy_link_num;
   OPMMinimumJerk mj;
+  OPMKinematics km;
 
  public:
   OPMDraw();
   ~OPMDraw();
 
   void begin(OPMLink *link, int8_t link_num, bool dynamixel = false);
-  void setCircle(Circle set_circle);
+  void setObject(Object set_object);
+ 
   void setDrawTime(float set_time);
   void setRange(State* start, State* finish);
   bool getDrawing();
   void start();
-  void drawCircle();
+
+  Pose Circle(State* tra);
+  Pose Heart(State* tra);
+
+  void drawObject(String set_object);
 };
 
 #endif //OPMDRAW_H_

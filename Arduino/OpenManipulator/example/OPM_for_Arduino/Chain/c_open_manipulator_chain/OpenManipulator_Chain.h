@@ -28,9 +28,6 @@
 
 #define LINK_NUM 6
 
-const float grip_on  = 1.3;
-const float grip_off = 0.0;
-
 OPMLink chain[LINK_NUM];
 
 void initChain()

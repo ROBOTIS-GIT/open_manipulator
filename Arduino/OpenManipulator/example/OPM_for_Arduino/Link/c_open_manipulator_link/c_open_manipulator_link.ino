@@ -13,11 +13,16 @@
 #define MOV_TIME 0.3
 #define STEP     3.0
 
+#define RELAY_PIN 8
+
+bool relay = false;
 RC100 rc100;
 
 void setup() 
 {
   Serial.begin(57600);
+
+  pinMode(RELAY_PIN, OUTPUT);
 
   initLink();
   OPMInit(links, LINK_NUM, PROCESSING, DYNAMIXEL, TORQUE); 
@@ -163,11 +168,15 @@ void dataFromRC100(uint16_t receive_data)
     setJointAngle(target_pos);
     move(MOV_TIME);
   }
-  // else if (receive_data & RC100_BTN_4)
-  // {
-  //   setGripAngle(grip_off);
-  //   move(1.5);
-  // }
+  else if (receive_data & RC100_BTN_4)
+  {
+    if (relay)
+      digitalWrite(RELAY_PIN, HIGH);
+    else
+      digitalWrite(RELAY_PIN, LOW);
+
+    relay = !relay;
+  }
   else if (receive_data & RC100_BTN_5)
   {
     setTorque(true);

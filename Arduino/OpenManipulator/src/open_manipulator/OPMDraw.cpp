@@ -38,9 +38,19 @@ void OPMDraw::begin(OPMLink *link, int8_t link_num, bool dynamixel)
   drawing = false;
 }
 
-void OPMDraw::setCircle(Circle set_circle)
+void OPMDraw::setObject(Object set_object)
 {
-  circle = set_circle;
+  State* present_state = getState();
+
+  for (int i = findMe("BASE"); i <= findMe("Gripper"); i++)
+    copy_link[i].joint_angle_ = present_state[i].pos;
+
+  km.forward(copy_link, findMe("BASE"));
+  object.x = copy_link[findMe("Gripper")].p_(0);
+  object.y = copy_link[findMe("Gripper")].p_(1);
+  object.z = copy_link[findMe("Gripper")].p_(2);
+
+  object.radius = set_object.radius;
 }
 
 void OPMDraw::setDrawTime(float set_time)
@@ -64,7 +74,33 @@ void OPMDraw::start()
   drawing  = true;  
 }
 
-void OPMDraw::drawCircle()
+Pose OPMDraw::Circle(State* tra)
+{
+  Pose circle_pose;
+  Object circle = object;
+
+  circle_pose.position << (circle.x-circle.radius) + circle.radius*cos(tra->pos),
+                           circle.y                + circle.radius*sin(tra->pos),
+                           circle.z;
+
+  return circle_pose;
+}
+
+Pose OPMDraw::Heart(State* tra)
+{
+  const float offset = 0.015;
+
+  Pose heart_pose;
+  Object heart = object;
+
+  heart_pose.position  <<  heart.x            + heart.radius * (16.0*pow(sin(tra->pos), 3)),
+                          (heart.y - offset)  + heart.radius * (13.0*cos(tra->pos) - 5.0*cos(2*tra->pos) - 2.0*cos(3*tra->pos) - cos(4.0*tra->pos)),
+                           heart.z;
+
+  return heart_pose;            
+}
+
+void OPMDraw::drawObject(String object)
 {
   uint16_t step_time = uint16_t(floor(draw_time/control_period) + 1.0);
   float tick_time = 0;  
@@ -77,19 +113,36 @@ void OPMDraw::drawCircle()
 
       State* tra_state;
       State goal_state[copy_link_num];
-      Pose circle_pose;
+      Pose object_pose;
 
       mj.getPosition(tra_state, 1, tick_time);
+
+      if (object == "circle")
+        object_pose = Circle(tra_state);
+      else if (object == "heart")
+        object_pose = Heart(tra_state);
     
-      circle_pose.position << (circle.x-circle.radius) + circle.radius*cos(tra_state->pos),
-                               circle.y                + circle.radius*sin(tra_state->pos),
-                               circle.z; 
+      // circle_pose.position << (circle.x-circle.radius) + circle.radius*cos(tra_state->pos),
+      //                          circle.y                + circle.radius*sin(tra_state->pos),
+      //                          circle.z; 
+
+      // circle_pose.position << (circle.x) + 0.003 * (16.0*pow(sin(tra_state->pos), 3)),
+      //                          circle.y-0.015        + 0.003 * (13.0*cos(tra_state->pos) - 5.0*cos(2*tra_state->pos) - 2.0*cos(3*tra_state->pos) - cos(4.0*tra_state->pos)),
+      //                         copy_link[findMe("Gripper")].p_(2);
     
-      inverseKinematics(copy_link, findMe("Gripper"), circle_pose, "position");   
+      inverseKinematics(copy_link, findMe("Gripper"), object_pose, "position");   
       
-      for (int i = findMe("Joint1"); i < findMe("Gripper"); i++)
+      for (int i = findMe("Joint1"); i <= findMe("Gripper"); i++)
       {
-        goal_state[i].pos = copy_link[i].joint_angle_;
+        if (i == findMe("Gripper"))
+        {
+          State* state = getState();
+          goal_state[i].pos = state[i].pos;
+        }
+        else
+        {
+          goal_state[i].pos = copy_link[i].joint_angle_;
+        }
       }
 
       if (platform)
