@@ -1,11 +1,11 @@
 #include <OpenManipulator.h>
-#include "OPMSCARA.h"
+#include "OpenManipulator_SCARA.h"
 
 #define CHECK_FLAG   0
 #define WAIT_FOR_SEC 1
 
 #define PROCESSING true
-#define DYNAMIXEL  false
+#define DYNAMIXEL  true
 #define TORQUE     false
 
 #define START_POSE      0

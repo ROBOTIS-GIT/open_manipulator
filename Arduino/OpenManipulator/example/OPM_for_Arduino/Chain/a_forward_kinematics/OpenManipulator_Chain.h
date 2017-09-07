@@ -16,8 +16,8 @@
 
 /* Authors: Darby Lim */
 
-#ifndef OPMCHAIN_H_
-#define OPMCHAIN_H_
+#ifndef OPENMANIPULATOR_CHAIN_H_
+#define OPENMANIPULATOR_CHAIN_H_
 
 #define BASE    0
 #define JOINT1  1
@@ -114,4 +114,4 @@ void initChain()
   chain[GRIP].joint_pos_                 << 0.119, 0, 0;
 }
 
-#endif //OPMCHAIN_H_
+#endif //OPENMANIPULATOR_CHAIN_H_

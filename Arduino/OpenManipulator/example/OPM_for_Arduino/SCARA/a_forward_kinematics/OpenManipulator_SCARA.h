@@ -16,8 +16,8 @@
 
 /* Authors: Darby Lim */
 
-#ifndef OPMSCARA_H_
-#define OPMSCARA_H_
+#ifndef OPENMANIPULATOR_SCARA_H_
+#define OPENMANIPULATOR_SCARA_H_
 
 #define BASE    0
 #define JOINT1  1
@@ -97,4 +97,4 @@ void initSCARA()
   SCARA[GRIP].joint_pos_                 << 0.114, 0.0, 0.0;
 }
 
-#endif //OPMSCARA_H_
+#endif //OPENMANIPULATOR_SCARA_H_

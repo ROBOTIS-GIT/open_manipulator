@@ -1,5 +1,5 @@
 #include <OpenManipulator.h>
-#include "OPMChain.h"
+#include "OpenManipulator_Chain.h"
 
 #define PROCESSING false
 #define DYNAMIXEL  false

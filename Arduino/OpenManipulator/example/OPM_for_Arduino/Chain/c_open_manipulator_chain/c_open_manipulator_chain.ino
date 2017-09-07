@@ -1,13 +1,13 @@
 #include <OpenManipulator.h>
 #include <RC100.h>
 
-#include "OPMChain.h"
+#include "OpenManipulator_Chain.h"
 
 #define CHECK_FLAG   0
 #define WAIT_FOR_SEC 1
 
 #define PROCESSING true
-#define DYNAMIXEL  true
+#define DYNAMIXEL  false
 #define TORQUE     false
 
 #define MOTION_NUM 12
@@ -227,7 +227,7 @@ void dataFromRC100(uint16_t receive_data)
   }
   else if (receive_data & RC100_BTN_2)
   {
-    setGripAngle(1.3);
+    setGripAngle(grip_on);
     move(1.5);
   }
   else if (receive_data & RC100_BTN_3)
@@ -242,7 +242,7 @@ void dataFromRC100(uint16_t receive_data)
   }
   else if (receive_data & RC100_BTN_4)
   {
-    setGripAngle(0.0);
+    setGripAngle(grip_off);
     move(1.5);
   }
   else if (receive_data & RC100_BTN_5)

@@ -1,5 +1,5 @@
 #include <OpenManipulator.h>
-#include "OPMSCARA.h"
+#include "OpenManipulator_SCARA.h"
 
 #define PROCESSING false
 #define DYNAMIXEL  false
