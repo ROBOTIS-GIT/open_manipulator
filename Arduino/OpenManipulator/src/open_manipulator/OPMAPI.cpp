@@ -74,6 +74,14 @@ State* getState()
   return state;
 }
 
+void setState(State* copy_state)
+{
+  for (int i = findMe("Joint1"); i <= findMe("Gripper"); i++)
+  {
+    state[i].pos = copy_state[i].pos;
+  }
+}
+
 bool getMoving()
 {
   return moving;

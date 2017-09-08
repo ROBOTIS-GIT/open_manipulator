@@ -88,14 +88,21 @@ Pose OPMDraw::Circle(State* tra)
 
 Pose OPMDraw::Heart(State* tra)
 {
-  const float offset = 0.015;
+  const float offset = 0.020;
 
   Pose heart_pose;
   Object heart = object;
 
-  heart_pose.position  <<  heart.x            + heart.radius * (16.0*pow(sin(tra->pos), 3)),
-                          (heart.y - offset)  + heart.radius * (13.0*cos(tra->pos) - 5.0*cos(2*tra->pos) - 2.0*cos(3*tra->pos) - cos(4.0*tra->pos)),
-                           heart.z;
+  heart_pose.position  <<  heart.radius * (16.0*pow(sin(tra->pos), 3)),
+                           heart.radius * (13.0*cos(tra->pos) - 5.0*cos(2*tra->pos) - 2.0*cos(3*tra->pos) - cos(4.0*tra->pos)),
+                           0.0;
+
+  OPMMath math;
+  heart_pose.position = math.RotationMatrix("yaw", -90*DEG2RAD) * heart_pose.position;
+
+  heart_pose.position  <<  (heart.x - offset) + heart_pose.position(0),
+                            heart.y           + heart_pose.position(1),
+                            heart.z;
 
   return heart_pose;            
 }
@@ -122,14 +129,6 @@ void OPMDraw::drawObject(String object)
       else if (object == "heart")
         object_pose = Heart(tra_state);
     
-      // circle_pose.position << (circle.x-circle.radius) + circle.radius*cos(tra_state->pos),
-      //                          circle.y                + circle.radius*sin(tra_state->pos),
-      //                          circle.z; 
-
-      // circle_pose.position << (circle.x) + 0.003 * (16.0*pow(sin(tra_state->pos), 3)),
-      //                          circle.y-0.015        + 0.003 * (13.0*cos(tra_state->pos) - 5.0*cos(2*tra_state->pos) - 2.0*cos(3*tra_state->pos) - cos(4.0*tra_state->pos)),
-      //                         copy_link[findMe("Gripper")].p_(2);
-    
       inverseKinematics(copy_link, findMe("Gripper"), object_pose, "position");   
       
       for (int i = findMe("Joint1"); i <= findMe("Gripper"); i++)
@@ -150,6 +149,7 @@ void OPMDraw::drawObject(String object)
 
       sendAngle2Processing(goal_state);
 
+      setState(goal_state);
       step_cnt++;
     }
     else

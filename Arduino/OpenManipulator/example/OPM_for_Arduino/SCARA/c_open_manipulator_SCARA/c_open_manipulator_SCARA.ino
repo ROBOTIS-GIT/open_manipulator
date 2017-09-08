@@ -5,7 +5,7 @@
 #define WAIT_FOR_SEC 1
 
 #define PROCESSING true
-#define DYNAMIXEL  false
+#define DYNAMIXEL  true
 #define TORQUE     false
 
 #define START_POSE      0
@@ -45,19 +45,19 @@ void setup()
 
 void loop() 
 {
-  OPMRun();
-
   static uint32_t tmp_time = micros();
-  
-  if ((micros() - tmp_time) >= CONTROL_RATE)
-  {
-    tmp_time = micros();
-    draw.drawObject(set_object);
-  }
+
+  OPMRun();
 
   setMotion();
 
-  getData(100); //millis
+  getData(100); //millis 
+  
+  if ((micros() - tmp_time) >= CONTROL_RATE)
+  {
+    tmp_time = micros();    
+    draw.drawObject(set_object);
+  }
 
   showLedStatus();
 }
@@ -82,8 +82,6 @@ float* calcPosition2Angle(Pose set_pose)
 
 void setMotion()
 {
-  const float draw_time = 8.0;
-
   Pose goal_pose;
   float target_pos[LINK_NUM] = {0.0, };
   State* present_state;
@@ -106,7 +104,7 @@ void setMotion()
           goal_pose.position(0) = circle.x;
           goal_pose.position(1) = circle.y;
           goal_pose.position(2) = circle.z;
-        }
+        }        
         else if (set_object == "heart")
         {
           goal_pose.position(0) = heart.x;
@@ -122,7 +120,7 @@ void setMotion()
        break;
 
       case CLOSE_SCREEN:
-        setGripAngle(-0.30);
+        setGripAngle(-0.35);
         move(1.6);
 
         motion_state = ATTACH_SCREEN;
@@ -134,11 +132,11 @@ void setMotion()
         for (int i = JOINT1; i < GRIP; i++)
           target_pos[i] = present_state[i].pos;
 
-        target_pos[JOINT3] -= 0.15;
+        target_pos[JOINT3] -= 0.20;
 
         setJointAngle(target_pos);
         setGripAngle(grip_on);
-        move(1.6);
+        move(2.0);
 
         if (set_object == "circle")
           motion_state = DRAW_CIRCLE;
@@ -149,7 +147,7 @@ void setMotion()
 
       case DRAW_CIRCLE:
         draw.setObject(circle);
-        draw.setDrawTime(draw_time);
+        draw.setDrawTime(15.0);
         draw.setRange(&start, &finish);
         draw.start();
 
@@ -163,7 +161,6 @@ void setMotion()
           if (reverse)
           {
             circle.radius = 0.005;
-            set_object = "heart";
           }
           else
           {
@@ -175,32 +172,13 @@ void setMotion()
         }
        break;
 
-       case DRAW_HEART:
+      case DRAW_HEART:
         draw.setObject(heart);
-        draw.setDrawTime(draw_time);
+        draw.setDrawTime(25.0);
         draw.setRange(&start, &finish);
         draw.start();
 
-        if (reverse)
-          heart.radius -= 0.0005;
-        else
-          heart.radius += 0.0005;
-
-        if (heart.radius > 0.004 || heart.radius < 0.001)
-        {
-          if (reverse)
-          {
-            heart.radius = 0.001;
-            set_object = "circle";
-          }
-          else
-          {
-            heart.radius = 0.004;
-          }
-        
-          motion_state = DETACH_SCREEN;
-          reverse = !reverse;
-        }
+        motion_state = DETACH_SCREEN;
        break;
 
       case DETACH_SCREEN:
@@ -209,11 +187,16 @@ void setMotion()
         for (int i = JOINT1; i < GRIP; i++)
           target_pos[i] = present_state[i].pos;  
           
-        target_pos[JOINT3] += 0.15;
+        target_pos[JOINT3] += 0.40;
 
         setJointAngle(target_pos);
         setGripAngle(grip_off);
-        move(1.6);
+        move(2.0);
+
+        if (set_object == "circle")
+          set_object = "heart";
+        else if (set_object == "heart")
+          set_object = "circle";
 
         motion_state = RESET_POSE;
        break;
@@ -355,8 +338,8 @@ void dataFromProcessing(String get)
       if (DYNAMIXEL)
         sendAngle2Processing(getAngle()); 
       
-      circle = {0.22, 0.025, 0.0661, 0.005};
-      heart  = {0.15, 0.025, 0.0661, 0.001};  
+      circle = {0.220, 0.030, 0.0661, 0.005};
+      heart  = {0.180, 0.025, 0.0661, 0.004};  //0.208
 
       motion_state = DETACH_SCREEN;
       motion = true;

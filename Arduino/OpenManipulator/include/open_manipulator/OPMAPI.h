@@ -37,6 +37,8 @@ State* getAngle();
 
 State* getState();
 
+void setState(State* copy_state);
+
 bool getMoving();
 
 void setMoveTime(float set_time = 3.0);
