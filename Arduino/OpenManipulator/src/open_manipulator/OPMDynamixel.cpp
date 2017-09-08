@@ -21,30 +21,27 @@
 OPMDynamixel::OPMDynamixel()
 {
   dxl_cnt_ = 0;
-  
-  for (int i=0; i<10; i++)
-    dxl_[i] = 0;
 }
 
 OPMDynamixel::~OPMDynamixel()
 {
 }
 
-bool OPMDynamixel::begin(char* device_name, uint32_t baud_rate)
+bool OPMDynamixel::begin(char* device_name, uint32_t baud_rate, uint8_t scan_num)
 {
   bool error = false;
 
   error = driver_.begin("XM", device_name, baud_rate);
 
   if (!error)  
-    findDynamixel();
+    findDynamixel(scan_num);
 
   return error;
 }
 
-void OPMDynamixel::findDynamixel()
+void OPMDynamixel::findDynamixel(uint8_t to)
 {
-  dxl_cnt_ = driver_.scan(dxl_);
+  dxl_cnt_ = driver_.scan(dxl_, to);
 }
 
 void OPMDynamixel::setMode()
@@ -72,6 +69,16 @@ void OPMDynamixel::setSyncWrite(char* item_name)
 void OPMDynamixel::setSyncRead(char* item_name)
 {
   driver_.initSyncRead(dxl_[0], item_name);
+}
+
+void OPMDynamixel::writeCur(uint8_t id, int16_t data)
+{
+  driver_.writeRegister(id, "Goal Current", (uint32_t)data);
+}
+
+void OPMDynamixel::writePos(uint8_t id, int32_t data)
+{
+  driver_.writeRegister(id, "Goal Position", (uint32_t)data);
 }
 
 void OPMDynamixel::writePos(int32_t *data)

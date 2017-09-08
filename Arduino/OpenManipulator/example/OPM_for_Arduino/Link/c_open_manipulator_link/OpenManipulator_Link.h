@@ -35,7 +35,7 @@ void initLink()
   links[BASE].me_                        = BASE;
   links[BASE].mother_                    = -1;
   links[BASE].sibling_                   = -1;
-  links[BASE].child_                     = 1;
+  links[BASE].child_                     = JOINT1;
   links[BASE].p_                         = Eigen::Vector3f::Zero();
   links[BASE].R_                         = Eigen::Matrix3f::Identity(3,3);
   links[BASE].joint_angle_               = 0.0;
@@ -47,8 +47,8 @@ void initLink()
   links[JOINT1].name_                    = "Joint1";
   links[JOINT1].me_                      = JOINT1;
   links[JOINT1].mother_                  = 0;
-  links[JOINT1].sibling_                 = 3;
-  links[JOINT1].child_                   = 2;
+  links[JOINT1].sibling_                 = JOINT3;
+  links[JOINT1].child_                   = JOINT2;
   links[JOINT1].p_                       = Eigen::Vector3f::Zero();
   links[JOINT1].R_                       = Eigen::Matrix3f::Identity(3,3);
   links[JOINT1].joint_angle_             = 0.0;
@@ -59,9 +59,9 @@ void initLink()
 
   links[JOINT2].name_                    = "Joint2";
   links[JOINT2].me_                      = JOINT2;
-  links[JOINT2].mother_                  = 1;
+  links[JOINT2].mother_                  = JOINT1;
   links[JOINT2].sibling_                 = -1;
-  links[JOINT2].child_                   = 4;
+  links[JOINT2].child_                   = -1;
   links[JOINT2].p_                       = Eigen::Vector3f::Zero();
   links[JOINT2].R_                       = Eigen::Matrix3f::Identity(3,3);
   links[JOINT2].joint_angle_             = 0.0;
@@ -72,9 +72,9 @@ void initLink()
 
   links[JOINT3].name_                    = "Joint3";
   links[JOINT3].me_                      = JOINT3;
-  links[JOINT3].mother_                  = 1;
+  links[JOINT3].mother_                  = JOINT1;
   links[JOINT3].sibling_                 = -1;
-  links[JOINT3].child_                   = 4;
+  links[JOINT3].child_                   = GRIP;
   links[JOINT3].p_                       = Eigen::Vector3f::Zero();
   links[JOINT3].R_                       = Eigen::Matrix3f::Identity(3,3);
   links[JOINT3].joint_angle_             = 0.0;
@@ -85,7 +85,7 @@ void initLink()
 
   links[GRIP].name_                      = "Gripper";
   links[GRIP].me_                        = GRIP;
-  links[GRIP].mother_                    = 4;
+  links[GRIP].mother_                    = JOINT3;
   links[GRIP].sibling_                   = -1;
   links[GRIP].child_                     = -1;
   links[GRIP].p_                         = Eigen::Vector3f::Zero();

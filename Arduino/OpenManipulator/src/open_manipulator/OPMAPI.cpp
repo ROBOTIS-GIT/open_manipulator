@@ -20,7 +20,7 @@
 
 #define CONTROL_RATE 10000
 #define MOVE_TIME    3.0
-#define STORAGE 10
+#define STORAGE 20
 
 OPMLink* copy_link;
 int8_t copy_link_num;
@@ -114,14 +114,27 @@ void move(float set_move_time)
   moving   = true;  
 }
 
-void initDynamixel(bool torque_onoff)
+void initDynamixel(bool torque_onoff, uint16_t baud_rate, uint8_t scan_num)
 {
-  dxl.begin();
+  dxl.begin("/dev/ttyUSB0", baud_rate, scan_num);
   dxl.setTorque(torque_onoff);
   dxl.setSyncWrite();
   dxl.setSyncRead();
 
   getAngle();
+}
+
+void setCurrentMode(uint8_t id)
+{
+  const uint8_t current_mode = 5;
+
+  dxl.setMode(id, current_mode);
+}
+
+void setCurrentPos(uint8_t id, float pos, int16_t cur)
+{
+  dxl.writeCur(id, cur);
+  dxl.writePos(id, dxl.convertRadian2Value(id, pos));
 }
 
 void setTorque(bool onoff)

@@ -31,19 +31,21 @@ class OPMDynamixel
 
  public:
   uint8_t dxl_cnt_;
-  uint8_t dxl_[10];
+  uint8_t* dxl_;
 
  public:
  OPMDynamixel();
  ~OPMDynamixel();
 
- bool begin(char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE);
- void findDynamixel();
+ bool begin(char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE, uint8_t scan_num = 252);
+ void findDynamixel(uint8_t to);
  void setMode();
  void setMode(uint8_t id, uint32_t mode);
  void setTorque(bool onoff);
  void setSyncWrite(char* item_name = "Goal Position");
  void setSyncRead(char* item_name = "Present Position");
+ void writeCur(uint8_t id, int16_t data);
+ void writePos(uint8_t id, int32_t data);
  void writePos(int32_t *data);
  void readPos(int32_t *data);
 

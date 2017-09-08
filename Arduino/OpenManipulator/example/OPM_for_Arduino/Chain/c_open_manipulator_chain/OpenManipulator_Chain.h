@@ -36,7 +36,7 @@ void initChain()
   chain[BASE].me_                        = BASE;
   chain[BASE].mother_                    = -1;
   chain[BASE].sibling_                   = -1;
-  chain[BASE].child_                     = 1;
+  chain[BASE].child_                     = JOINT1;
   chain[BASE].p_                         = Eigen::Vector3f::Zero();
   chain[BASE].R_                         = Eigen::Matrix3f::Identity(3,3);
   chain[BASE].joint_angle_               = 0.0;
@@ -47,9 +47,9 @@ void initChain()
 
   chain[JOINT1].name_                    = "Joint1";
   chain[JOINT1].me_                      = JOINT1;
-  chain[JOINT1].mother_                  = 0;
+  chain[JOINT1].mother_                  = BASE;
   chain[JOINT1].sibling_                 = -1;
-  chain[JOINT1].child_                   = 2;
+  chain[JOINT1].child_                   = JOINT2;
   chain[JOINT1].p_                       = Eigen::Vector3f::Zero();
   chain[JOINT1].R_                       = Eigen::Matrix3f::Identity(3,3);
   chain[JOINT1].joint_angle_             = 0.0;
@@ -60,9 +60,9 @@ void initChain()
 
   chain[JOINT2].name_                    = "Joint2";
   chain[JOINT2].me_                      = JOINT2;
-  chain[JOINT2].mother_                  = 1;
+  chain[JOINT2].mother_                  = JOINT1;
   chain[JOINT2].sibling_                 = -1;
-  chain[JOINT2].child_                   = 3;
+  chain[JOINT2].child_                   = JOINT3;
   chain[JOINT2].p_                       = Eigen::Vector3f::Zero();
   chain[JOINT2].R_                       = Eigen::Matrix3f::Identity(3,3);
   chain[JOINT2].joint_angle_             = 0.0;
@@ -73,9 +73,9 @@ void initChain()
 
   chain[JOINT3].name_                    = "Joint3";
   chain[JOINT3].me_                      = JOINT3;
-  chain[JOINT3].mother_                  = 2;
+  chain[JOINT3].mother_                  = JOINT2;
   chain[JOINT3].sibling_                 = -1;
-  chain[JOINT3].child_                   = 4;
+  chain[JOINT3].child_                   = JOINT4;
   chain[JOINT3].p_                       = Eigen::Vector3f::Zero();
   chain[JOINT3].R_                       = Eigen::Matrix3f::Identity(3,3);
   chain[JOINT3].joint_angle_             = 0.0;
@@ -86,9 +86,9 @@ void initChain()
 
   chain[JOINT4].name_                    = "Joint4";
   chain[JOINT4].me_                      = JOINT4;
-  chain[JOINT4].mother_                  = 3;
+  chain[JOINT4].mother_                  = JOINT3;
   chain[JOINT4].sibling_                 = -1;
-  chain[JOINT4].child_                   = 5;
+  chain[JOINT4].child_                   = GRIP;
   chain[JOINT4].p_                       = Eigen::Vector3f::Zero();
   chain[JOINT4].R_                       = Eigen::Matrix3f::Identity(3,3);
   chain[JOINT4].joint_angle_             = 0.0;
@@ -99,7 +99,7 @@ void initChain()
 
   chain[GRIP].name_                      = "Gripper";
   chain[GRIP].me_                        = GRIP;
-  chain[GRIP].mother_                    = 4;
+  chain[GRIP].mother_                    = JOINT4;
   chain[GRIP].sibling_                   = -1;
   chain[GRIP].child_                     = -1;
   chain[GRIP].p_                         = Eigen::Vector3f::Zero();

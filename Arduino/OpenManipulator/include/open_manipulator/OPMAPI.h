@@ -43,9 +43,13 @@ bool getMoving();
 
 void setMoveTime(float set_time = 3.0);
 
-void initDynamixel(bool torque_onoff);
+void initDynamixel(bool torque_onoff, uint16_t baud_rate = 1000000, uint8_t scan_num = 10);
 
 void initProcessing(int8_t link_num);
+
+void setCurrentMode(uint8_t id);
+
+void setCurrentPos(uint8_t id, float pos, int16_t cur = 30);
 
 void setTorque(bool onoff);
 
