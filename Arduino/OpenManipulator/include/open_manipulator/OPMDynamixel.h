@@ -37,7 +37,7 @@ class OPMDynamixel
  OPMDynamixel();
  ~OPMDynamixel();
 
- bool begin(char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE, uint8_t scan_num = 252);
+ bool begin(char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE, uint8_t scan_num = 10);
  void findDynamixel(uint8_t to);
  void setMode();
  void setMode(uint8_t id, uint32_t mode);

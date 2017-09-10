@@ -46,7 +46,7 @@ void initSCARA()
 
   SCARA[JOINT1].name_                    = "Joint1";
   SCARA[JOINT1].me_                      = JOINT1;
-  SCARA[JOINT1].mother_                  = END;
+  SCARA[JOINT1].mother_                  = BASE;
   SCARA[JOINT1].sibling_                 = -1;
   SCARA[JOINT1].child_                   = JOINT2;
   SCARA[JOINT1].p_                       = Eigen::Vector3f::Zero();
@@ -74,7 +74,7 @@ void initSCARA()
   SCARA[JOINT3].me_                      = JOINT3;
   SCARA[JOINT3].mother_                  = JOINT2;
   SCARA[JOINT3].sibling_                 = -1;
-  SCARA[JOINT3].child_                   = JOINT4;
+  SCARA[JOINT3].child_                   = GRIP;
   SCARA[JOINT3].p_                       = Eigen::Vector3f::Zero();
   SCARA[JOINT3].R_                       = Eigen::Matrix3f::Identity(3,3);
   SCARA[JOINT3].joint_angle_             = 0.0;
