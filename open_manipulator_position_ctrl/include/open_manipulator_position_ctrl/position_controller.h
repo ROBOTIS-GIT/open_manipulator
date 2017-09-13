@@ -23,9 +23,11 @@
 #include <ros/callback_queue.h>
 #include <ros/package.h>
 
+#include <std_msgs/Bool.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
 #include <sensor_msgs/JointState.h>
+#include "open_manipulator_msgs/JointPos.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
 
 #include <map>
@@ -45,6 +47,7 @@ namespace open_manipulator_position_ctrl
 {
 #define MAX_JOINT_NUM        (4)
 #define MAX_GRIP_JOINT_NUM   (1)
+#define GRIPPER              (4)
 #define LEFT_GRIP            (0)
 #define RIGHT_GRIP           (1)
 #define ITERATION_FREQUENCY  (25)
@@ -60,9 +63,11 @@ class PositionController
   // ROS Parameters
   bool is_debug_;
   bool using_gazebo_;
+  bool using_moveit_;
   std::string robot_name_;
 
   // ROS Publisher
+  ros::Publisher moving_pub_;
   ros::Publisher goal_joint_position_pub_;
   ros::Publisher gazebo_goal_joint_position_pub_[MAX_JOINT_NUM];
   ros::Publisher gazebo_gripper_position_pub_[MAX_GRIP_JOINT_NUM+1];
@@ -73,6 +78,7 @@ class PositionController
   ros::Subscriber display_planned_path_sub_;
   ros::Subscriber move_group_feedback_sub_;
   ros::Subscriber gripper_position_sub_;
+  ros::Subscriber joint_position_sub_;
 
   // ROS Service Server
 
@@ -93,7 +99,7 @@ class PositionController
   Eigen::VectorXd goal_joint_position_;
   Eigen::VectorXd goal_gripper_position_;
 
-  Eigen::MatrixXd goal_joint_trajectory_;
+  Eigen::MatrixXd goal_trajectory_;
   Eigen::MatrixXd goal_gripper_trajectory_;
 
   // Joint states
@@ -118,7 +124,7 @@ class PositionController
   bool initStatePublisher(bool using_gazebo);
   bool initStateSubscriber(bool using_gazebo);
 
-  void calculateGripperGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position);
+  void calculateGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position);
   void gripOn(void);
   void gripOff(void);
 
@@ -127,6 +133,7 @@ class PositionController
   void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
+  void jointPositionMsgCallback(const open_manipulator_msgs::JointPos::ConstPtr &msg);
 
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
   void moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg);
