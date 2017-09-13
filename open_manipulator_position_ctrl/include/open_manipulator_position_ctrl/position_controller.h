@@ -50,8 +50,8 @@ namespace open_manipulator_position_ctrl
 #define GRIPPER              (4)
 #define LEFT_GRIP            (0)
 #define RIGHT_GRIP           (1)
-#define ITERATION_FREQUENCY  (25)
-#define ITERATION_TIME       (0.04)
+#define ITERATION_FREQUENCY  (100)
+#define ITERATION_TIME       (0.010)
 
 class PositionController
 {
