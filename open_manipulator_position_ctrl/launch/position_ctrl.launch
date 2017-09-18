@@ -2,7 +2,7 @@
 
 <launch>
   <arg name="use_gazebo"	   default="false" />
-  <arg name="use_moveit"     default="true"  />
+  <arg name="use_moveit"     default="true" />
   <arg name="use_robot_name" default="open_manipulator_chain"/>
 
   <param name="gazebo"            value="$(arg use_gazebo)" type="bool"/>

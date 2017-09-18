@@ -128,16 +128,29 @@ bool PositionController::initStateSubscriber(bool using_gazebo)
                                                     &PositionController::jointPositionMsgCallback, this);
 }
 
+bool PositionController::getPresentPosition()
+{
+  for (int it = 0; it < MAX_JOINT_NUM; it++)
+  {
+    goal_joint_position_(it)  = present_joint_position_(it);
+  }
+
+  goal_gripper_position_(0)  = present_joint_position_(GRIPPER);
+}
+
 void PositionController::gripOn(void)
 {
   Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
   Eigen::VectorXd target_position  = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
 
-  for (int it = 0; it < MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM; it++)
+  for (int it = 0; it < MAX_JOINT_NUM; it++)
   {
-    initial_position(it)  = present_joint_position_(it);
-    target_position(it)   = present_joint_position_(it);
+    initial_position(it)  = goal_joint_position_(it);
+    target_position(it)   = goal_joint_position_(it);
   }
+
+  initial_position(GRIPPER)  = goal_gripper_position_(0);
+  target_position(GRIPPER)   = goal_gripper_position_(0);
 
   target_position(GRIPPER) = 75.0 * DEGREE2RADIAN;
 
@@ -153,19 +166,14 @@ void PositionController::gripOff(void)
   Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
   Eigen::VectorXd target_position  = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
 
-  for (int it = 0; it < MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM; it++)
+  for (int it = 0; it < MAX_JOINT_NUM; it++)
   {
-    if (it < GRIPPER)
-    {
-      initial_position(it)  = present_joint_position_(it);
-      target_position(it)   = present_joint_position_(it);
-    }
-    else
-    {
-      initial_position(it)  = present_joint_position_(it) * 100.0;
-    }
-
+    initial_position(it)  = goal_joint_position_(it);
+    target_position(it)   = goal_joint_position_(it);
   }
+
+  initial_position(GRIPPER)  = goal_gripper_position_(0);
+  target_position(GRIPPER)   = goal_gripper_position_(0);
 
   target_position(GRIPPER) = 0.0 * DEGREE2RADIAN;
 
@@ -343,14 +351,25 @@ void PositionController::gripperPositionMsgCallback(const std_msgs::String::Cons
 
 void PositionController::jointPositionMsgCallback(const open_manipulator_msgs::JointPos::ConstPtr &msg)
 {
+  static bool check = true;
+
+  if (check)
+  {
+    getPresentPosition();
+    check = false;
+  }
+
   Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
   Eigen::VectorXd target_position  = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
 
-  for (int it = 0; it < MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM; it++)
+  for (int it = 0; it < MAX_JOINT_NUM; it++)
   {
-    initial_position(it)  = present_joint_position_(it);
-    target_position(it)   = present_joint_position_(it);
+    initial_position(it)  = goal_joint_position_(it);
+    target_position(it)   = goal_joint_position_(it);
   }
+
+  initial_position(GRIPPER)  = goal_gripper_position_(0);
+  target_position(GRIPPER)   = goal_gripper_position_(0);
 
   for (int it = 0; it < msg->joint_name.size(); it++)
   {
