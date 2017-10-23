@@ -5,7 +5,7 @@
 #define WAIT_FOR_SEC 1
 
 #define PROCESSING true
-#define DYNAMIXEL  false
+#define DYNAMIXEL  true
 #define TORQUE     false
 
 #define START_POSE      0

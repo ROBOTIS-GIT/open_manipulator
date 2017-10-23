@@ -27,27 +27,20 @@ OPMDynamixel::~OPMDynamixel()
 {
 }
 
-bool OPMDynamixel::begin(char* device_name, uint32_t baud_rate, uint8_t scan_num)
+bool OPMDynamixel::begin(char* device_name, uint32_t baud_rate)
 {
-  bool error = false;
+  bool error = 0;
 
-  error = driver_.begin("XM", device_name, baud_rate);
-
-  if (!error)  
-    findDynamixel(scan_num);
-
-  return error;
-}
-
-void OPMDynamixel::findDynamixel(uint8_t to)
-{
-  dxl_cnt_ = driver_.scan(dxl_, to);
+  error = driver_.begin(device_name, baud_rate);
+  
+  if (error == false)
+    dxl_cnt_ = driver_.scan(dxl_, 10);
 }
 
 void OPMDynamixel::setMode()
 {
-  for (int i=0; i<dxl_cnt_; i++)
-    driver_.writeRegister(dxl_[i], "Operating Mode", 3);
+  for (int id = 0; id < dxl_cnt_; id++)
+    driver_.writeRegister(dxl_[id], "Operating Mode", 3);
 }
 
 void OPMDynamixel::setMode(uint8_t id, uint32_t mode)
@@ -57,18 +50,18 @@ void OPMDynamixel::setMode(uint8_t id, uint32_t mode)
 
 void OPMDynamixel::setTorque(bool onoff)
 {
-  for (int i=0; i<dxl_cnt_; i++)
-    driver_.writeRegister(dxl_[i], "Torque Enable", (uint32_t)onoff);
+  for (int id = 0; id < dxl_cnt_; id++)
+    driver_.writeRegister(dxl_[id], "Torque Enable", (uint32_t)onoff);
 }
 
 void OPMDynamixel::setSyncWrite(char* item_name)
 {
-  driver_.initSyncWrite(dxl_[0], item_name);
+  driver_.addSyncWrite(item_name);
 }
 
 void OPMDynamixel::setSyncRead(char* item_name)
 {
-  driver_.initSyncRead(dxl_[0], item_name);
+  driver_.addSyncRead(item_name);
 }
 
 void OPMDynamixel::writeCur(uint8_t id, int16_t data)
@@ -83,7 +76,7 @@ void OPMDynamixel::writePos(uint8_t id, int32_t data)
 
 void OPMDynamixel::writePos(int32_t *data)
 {
-  driver_.syncWrite(data);
+  driver_.syncWrite("Goal Position", data);
 }
 
 void OPMDynamixel::readPos(int32_t *data)

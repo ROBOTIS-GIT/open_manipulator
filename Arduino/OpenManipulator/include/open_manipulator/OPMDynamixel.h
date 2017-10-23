@@ -31,14 +31,13 @@ class OPMDynamixel
 
  public:
   uint8_t dxl_cnt_;
-  uint8_t* dxl_;
+  uint8_t dxl_[10];
 
  public:
  OPMDynamixel();
  ~OPMDynamixel();
 
- bool begin(char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE, uint8_t scan_num = 10);
- void findDynamixel(uint8_t to);
+ bool begin(char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE);
  void setMode();
  void setMode(uint8_t id, uint32_t mode);
  void setTorque(bool onoff);

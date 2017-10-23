@@ -114,9 +114,9 @@ void move(float set_move_time)
   moving   = true;  
 }
 
-void initDynamixel(bool torque_onoff, uint16_t baud_rate, uint8_t scan_num)
+void initDynamixel(bool torque_onoff, uint32_t baud_rate)
 {
-  dxl.begin("/dev/ttyUSB0", baud_rate, scan_num);
+  dxl.begin("/dev/ttyUSB0", baud_rate);
   dxl.setTorque(torque_onoff);
   dxl.setSyncWrite();
   dxl.setSyncRead();
@@ -263,7 +263,7 @@ void OPMInit(OPMLink* link, int8_t link_num, bool processing, bool dynamixel, bo
     initProcessing(link_num);
 
   if (platform)
-    initDynamixel(torque_onoff);  
+    initDynamixel(torque_onoff, 1000000);  
   
   forwardKinematics(copy_link, findMe("BASE"));
 
