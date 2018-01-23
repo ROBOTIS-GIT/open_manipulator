@@ -128,7 +128,10 @@ bool DynamixelController::readDynamixelState(void)
 {
   readValue_->pos.clear();
   if (!multi_driver_->syncReadPosition(readValue_->pos))
+  {
     ROS_ERROR("Sync Read Failed!");
+    return true;
+  }
 
   sensor_msgs::JointState dynamixel_position;
 

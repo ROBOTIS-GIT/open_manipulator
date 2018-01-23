@@ -19,13 +19,13 @@ find_package(catkin REQUIRED
 ################################################################################
  add_message_files(
    FILES
-   JointPose.msg
+   JointPos.msg
    KinematicsPose.msg
  )
 
  add_service_files(
    FILES
-   GetJointPose.srv
+   GetJointPos.srv
    GetKinematicsPose.srv
  )
 
