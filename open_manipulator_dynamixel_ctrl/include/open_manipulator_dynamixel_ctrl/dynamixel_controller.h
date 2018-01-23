@@ -19,79 +19,50 @@
 #ifndef OPEN_MANIPULATOR_DYNAMIXEL_CONTROLLER_H
 #define OPEN_MANIPULATOR_DYNAMIXEL_CONTROLLER_H
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sstream>
 #include <ros/ros.h>
 
-#include <dynamixel_workbench_toolbox/dynamixel_multi_driver.h>
+#include <dynamixel_workbench.h>
 #include <sensor_msgs/JointState.h>
 #include <open_manipulator_msgs/JointPose.h>
 
-namespace open_manipulator_dynamixel_controller
+namespace dynamixel
 {
-#define MOTOR                (0)
-#define MAX_DXL_NUM          (5)
 #define ITERATION_FREQUENCY  (25)
-
-typedef struct
-{
-  std::vector<uint8_t>  torque;
-  std::vector<uint32_t> pos;
-}WriteValue;
-
-typedef struct
-{
-  std::vector<uint32_t> pos;
-}ReadValue;
 
 class DynamixelController
 {
- public:
-  dynamixel::PortHandler *portHandler_;
-  dynamixel::PacketHandler *packetHandler_;
-
  private:
   // ROS NodeHandle
-  ros::NodeHandle nh_;
-  ros::NodeHandle nh_priv_;
+  ros::NodeHandle node_handle_;
 
   // ROS Parameters
 
   // ROS Topic Publisher
-  ros::Publisher present_dynamixel_position_pub_;
+  ros::Publisher present_states_pub_;
 
   // ROS Topic Subscriber
-  ros::Subscriber goal_dynamixel_position_sub_;
+  ros::Subscriber goal_states_sub_;
 
   // ROS Service Server
 
   // ROS Service Client
 
-  // Dynamixel Parameters
-  std::vector<dynamixel_driver::DynamixelInfo*> dynamixel_info_;
-  dynamixel_multi_driver::DynamixelMultiDriver *multi_driver_;
-
-  WriteValue *writeValue_;
-  ReadValue  *readValue_;
+  // Dynamixel Workbench Parameters
+  DynamixelWorkbench *dxl_wb_;
+  uint8_t dxl_id_[16];
+  uint8_t dxl_cnt_;
 
  public:
   DynamixelController();
   ~DynamixelController();
   bool control_loop();
 
-  bool loadDynamixel();
-  bool initDynamixelStatePublisher();
-  bool initDynamixelStateSubscriber();
+ private:
+  void initMsg();
 
-  bool setTorque(bool onoff);
-  bool setPosition(uint32_t* pos);
-
-  bool readDynamixelState();
-
-  uint32_t convertRadian2Value(float radian);
-  float convertValue2Radian(int32_t value);
+  void initPublisher();
+  void initSubscriber();
+  void readDynamixelState();
 
   void goalPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
 };
