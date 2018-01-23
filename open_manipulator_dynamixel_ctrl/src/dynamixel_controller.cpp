@@ -18,206 +18,95 @@
 
 #include "open_manipulator_dynamixel_ctrl/dynamixel_controller.h"
 
-using namespace open_manipulator_dynamixel_controller;
+using namespace dynamixel;
 
 DynamixelController::DynamixelController()
-    :nh_(""),
-     nh_priv_("~")
+    :node_handle_("")
 {
-  if (!loadDynamixel())
-    ROS_ERROR("Cant' Load Dynamixel, Please check Parameter");
+  std::string device_name   = node_handle_.param<std::string>("device_name", "/dev/ttyUSB0");
+  uint32_t dxl_baud_rate    = node_handle_.param<int>("baud_rate", 1000000);
 
-  if (!multi_driver_->initSyncWrite())
-    ROS_ERROR("Init SyncWrite Failed!");
+  uint8_t scan_range        = node_handle_.param<int>("scan_range", 100);
 
-  if (!multi_driver_->initSyncRead())
-    ROS_ERROR("Init SyncRead Failed!");
+  dxl_wb_ = new DynamixelWorkbench;
 
-  writeValue_ = new WriteValue;
-  readValue_  = new ReadValue;
+  dxl_wb_->begin(device_name.c_str(), dxl_baud_rate);
+  dxl_wb_->scan(dxl_id_, &dxl_cnt_, scan_range);
 
-  setTorque(true);
+  dxl_wb_->addSyncWrite("Goal_Position");
+  dxl_wb_->addSyncRead("Present_Position");
+  dxl_wb_->addSyncRead("Present_Velocity");
 
-  initDynamixelStatePublisher();
+  for (int index = 0; index < dxl_cnt_; index++)
+    dxl_wb_->jointMode(dxl_id_[index]);
 
-  initDynamixelStateSubscriber();
+  initPublisher();
+  initSubscriber();
 
   ROS_INFO("open_manipulator_dynamixel_controller : Init OK!");
 }
 
 DynamixelController::~DynamixelController()
 {
-  setTorque(false);
+  for (int index = 0; index < dxl_cnt_; index++)
+    dxl_wb_->itemWrite(dxl_id_[index], "Torque_Enable", 0);
 
   ros::shutdown();
 }
 
-bool DynamixelController::loadDynamixel()
+void DynamixelController::initPublisher()
 {
-  bool ret = false;
-
-  for (int id = 1; id <= MAX_DXL_NUM; id++)
-  {
-    dynamixel_driver::DynamixelInfo *dynamixel= new dynamixel_driver::DynamixelInfo;
-
-    dynamixel->lode_info.device_name      = nh_.param<std::string>("device_name", "/dev/ttyUSB0");
-    dynamixel->lode_info.baud_rate        = nh_.param<int>("baud_rate", 1000000);
-    dynamixel->lode_info.protocol_version = nh_.param<float>("protocol_version", 2.0);
-
-    dynamixel->model_id                   = id;
-
-    dynamixel_info_.push_back(dynamixel);
-  }
-
-  multi_driver_ = new dynamixel_multi_driver::DynamixelMultiDriver(dynamixel_info_[MOTOR]->lode_info.device_name,
-                                                                   dynamixel_info_[MOTOR]->lode_info.baud_rate,
-                                                                   dynamixel_info_[MOTOR]->lode_info.protocol_version);
-
-  ret =  multi_driver_->loadDynamixel(dynamixel_info_);
-
- return ret;
+  present_states_pub_ = node_handle_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/present_states", 10);
 }
 
-bool DynamixelController::setTorque(bool onoff)
+void DynamixelController::initSubscriber()
 {
-  writeValue_->torque.clear();
-  for (int id = 1; id <= MAX_DXL_NUM; id++)
-  {
-    writeValue_->torque.push_back(onoff);
-  }
-
-  if (!multi_driver_->syncWriteTorque(writeValue_->torque))
-  {
-    ROS_ERROR("SyncWrite Torque Failed!");
-    return false;
-  }
-
-  return true;
+  goal_states_sub_  = node_handle_.subscribe("/robotis/dynamixel/goal_states", 10, &DynamixelController::goalPositionMsgCallback, this);
 }
 
-bool DynamixelController::setPosition(uint32_t* pos)
+void DynamixelController::readDynamixelState(void)
 {
-  writeValue_->pos.clear();
+  int32_t* get_present_position = dxl_wb_->syncRead("Present_Position");
+  int32_t present_position[dxl_cnt_] = {0, };
 
-  for (int id = 1; id <= MAX_DXL_NUM; id++)
-  {
-    writeValue_->pos.push_back(pos[id-1]);
-  }
+  for (int index = 0; index < dxl_cnt_; index++)
+    present_position[index] = get_present_position[index];
 
-  if (!multi_driver_->syncWritePosition(writeValue_->pos))
-  {
-    ROS_ERROR("SyncWrite Position Failed!");
-    return false;
-  }
+  int32_t* get_present_velocity = dxl_wb_->syncRead("Present_Velocity");
+  int32_t present_velocity[dxl_cnt_] = {0, };
 
-  return true;
-}
+  for (int index = 0; index < dxl_cnt_; index++)
+    present_velocity[index] = get_present_velocity[index];
 
-bool DynamixelController::initDynamixelStatePublisher()
-{
-  present_dynamixel_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/present_states", 10);
-}
+  sensor_msgs::JointState dynamixel_;
+  dynamixel_.header.stamp = ros::Time::now();
 
-bool DynamixelController::initDynamixelStateSubscriber()
-{
-  goal_dynamixel_position_sub_   = nh_.subscribe("/robotis/dynamixel/goal_states", 10,
-                                          &DynamixelController::goalPositionMsgCallback, this);
-}
-
-bool DynamixelController::readDynamixelState(void)
-{
-  readValue_->pos.clear();
-  if (!multi_driver_->syncReadPosition(readValue_->pos))
-  {
-    ROS_ERROR("Sync Read Failed!");
-    return true;
-  }
-
-  sensor_msgs::JointState dynamixel_position;
-
-  for (int id = 1; id <= MAX_DXL_NUM; id++)
+  for (int index = 0; index < dxl_cnt_; index++)
   {
     std::stringstream id_num;
-    id_num << "id_" << id;
+    id_num << "id_" << (int)(dxl_id_[index]);
 
-    dynamixel_position.name.push_back(id_num.str());
-    dynamixel_position.position.push_back(convertValue2Radian((int32_t)readValue_->pos.at(id-1)));
+    dynamixel_.name.push_back(id_num.str());
+
+    dynamixel_.position.push_back(dxl_wb_->convertValue2Radian(dxl_id_[index], present_position[index]));
+    dynamixel_.velocity.push_back(dxl_wb_->convertValue2Velocity(dxl_id_[index], present_velocity[index]));
   }
-  present_dynamixel_position_pub_.publish(dynamixel_position);
+  present_states_pub_.publish(dynamixel_);
 }
 
 void DynamixelController::goalPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  uint32_t goal_position[MAX_DXL_NUM] = {0, };
+  uint8_t index = dxl_cnt_;
+  int32_t goal_position[index] = {0, };
 
-  for (int id = 1; id <= MAX_DXL_NUM; id++)
+  for (int index = 0; index < dxl_cnt_; index++)
   {
-    goal_position[id-1] = convertRadian2Value(msg->position.at(id-1));
+    goal_position[index] = dxl_wb_->convertRadian2Value(dxl_id_[index], msg->position.at(index));
 
-    ROS_INFO("goal_joint_position[%d] : %lf", id, msg->position.at(id-1));
+    ROS_INFO("goal_joint_position[%d] : %lf", dxl_id_[index], msg->position.at(index));
   }
 
-  setPosition(goal_position);
-}
-
-uint32_t DynamixelController::convertRadian2Value(float radian)
-{
-  uint32_t value = 0;
-
-  if (radian > 0)
-  {
-    if (multi_driver_->multi_dynamixel_[MOTOR]->value_of_max_radian_position_ <= multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_)
-      return multi_driver_->multi_dynamixel_[MOTOR]->value_of_max_radian_position_;
-
-    value = (radian * (multi_driver_->multi_dynamixel_[MOTOR]->value_of_max_radian_position_ - multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_) / multi_driver_->multi_dynamixel_[MOTOR]->max_radian_)
-                + multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_;
-  }
-  else if (radian < 0)
-  {
-    if (multi_driver_->multi_dynamixel_[MOTOR]->value_of_min_radian_position_ >= multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_)
-      return multi_driver_->multi_dynamixel_[MOTOR]->value_of_min_radian_position_;
-
-    value = (radian * (multi_driver_->multi_dynamixel_[MOTOR]->value_of_min_radian_position_ - multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_) / multi_driver_->multi_dynamixel_[MOTOR]->min_radian_)
-                + multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_;
-  }
-  else
-    value = multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_;
-
-//  if (value > multi_driver_->multi_dynamixel_[MOTOR]->value_of_max_radian_position_)
-//    return multi_driver_->multi_dynamixel_[MOTOR]->value_of_max_radian_position_;
-//  else if (value < multi_driver_->multi_dynamixel_[MOTOR]->value_of_min_radian_position_)
-//    return multi_driver_->multi_dynamixel_[MOTOR]->value_of_min_radian_position_;
-
-  return value;
-}
-
-float DynamixelController::convertValue2Radian(int32_t value)
-{
-  float radian = 0.0;
-
-  if (value > multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_)
-  {
-    if (multi_driver_->multi_dynamixel_[MOTOR]->max_radian_ <= 0)
-      return multi_driver_->multi_dynamixel_[MOTOR]->max_radian_;
-
-    radian = (float) (value - multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_) * multi_driver_->multi_dynamixel_[MOTOR]->max_radian_
-               / (float) (multi_driver_->multi_dynamixel_[MOTOR]->value_of_max_radian_position_ - multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_);
-  }
-  else if (value < multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_)
-  {
-    if (multi_driver_->multi_dynamixel_[MOTOR]->min_radian_ >= 0)
-      return multi_driver_->multi_dynamixel_[MOTOR]->min_radian_;
-
-    radian = (float) (value - multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_) * multi_driver_->multi_dynamixel_[MOTOR]->min_radian_
-               / (float) (multi_driver_->multi_dynamixel_[MOTOR]->value_of_min_radian_position_ - multi_driver_->multi_dynamixel_[MOTOR]->value_of_0_radian_position_);
-  }
-
-//  if (radian > dynamixel_[PAN_TILT_MOTOR]->max_radian_)
-//    return dynamixel_[PAN_TILT_MOTOR]->max_radian_;
-//  else if (radian < dynamixel_[PAN_TILT_MOTOR]->min_radian_)
-//    return dynamixel_[PAN_TILT_MOTOR]->min_radian_;
-
-  return radian;
+  dxl_wb_->syncWrite("Goal_Position", goal_position);
 }
 
 bool DynamixelController::control_loop()

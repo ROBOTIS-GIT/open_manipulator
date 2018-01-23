@@ -29,17 +29,12 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES open_manipulator_dynamixel_ctrl
-  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp std_msgs dynamixel_sdk dynamixel_workbench_toolbox open_manipulator_msgs
 )
 
 ################################################################################
 # Build
 ################################################################################
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}

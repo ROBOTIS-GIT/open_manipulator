@@ -27,7 +27,7 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
 #include <sensor_msgs/JointState.h>
-#include "open_manipulator_msgs/JointPos.h"
+#include "open_manipulator_msgs/JointPose.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
 
 #include <map>
@@ -134,7 +134,7 @@ class PositionController
   void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
-  void jointPositionMsgCallback(const open_manipulator_msgs::JointPos::ConstPtr &msg);
+  void jointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
 
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
   void moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg);
