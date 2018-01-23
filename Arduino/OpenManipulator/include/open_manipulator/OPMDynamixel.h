@@ -27,29 +27,29 @@
 class OPMDynamixel
 {
  private:
-  DynamixelDriver driver_;
+  DynamixelWorkbench dxl_wb_;
 
  public:
   uint8_t dxl_cnt_;
-  uint8_t dxl_[10];
+  uint8_t dxl_id_[10];
 
  public:
  OPMDynamixel();
  ~OPMDynamixel();
 
- bool begin(char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE);
+ bool begin(const char* device_name = DEVICENAME, uint32_t baud_rate = BAUDRATE);
  void setMode();
  void setMode(uint8_t id, uint32_t mode);
  void setTorque(bool onoff);
- void setSyncWrite(char* item_name = "Goal Position");
- void setSyncRead(char* item_name = "Present Position");
+ void setSyncWrite(const char* item_name = "Goal_Position");
+ void setSyncRead(const char* item_name = "Present_Position");
  void writeCur(uint8_t id, int16_t data);
  void writePos(uint8_t id, int32_t data);
  void writePos(int32_t *data);
- void readPos(int32_t *data);
+ int32_t* readPos();
 
- int32_t convertRadian2Value(int8_t id, float radian);
- float   convertValue2Radian(int8_t id, int32_t value);
+ int32_t convertRadian2Value(uint8_t id, float radian);
+ float   convertValue2Radian(uint8_t id, int32_t value);
 };
 
 #endif // OPMDYNAMIXEL_H_

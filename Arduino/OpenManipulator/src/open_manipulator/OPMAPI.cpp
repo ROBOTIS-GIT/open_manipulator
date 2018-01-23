@@ -55,9 +55,8 @@ void setGripAngle(float radian)
 
 State* getAngle()
 {
-  int32_t dxl_angle[copy_link_num];
-
-  dxl.readPos(dxl_angle);  
+  int32_t* dxl_angle;
+  dxl_angle = dxl.readPos();  
 
   for (int i = findMe("Joint1"); i <= findMe("Gripper"); i++)
   {
@@ -117,7 +116,7 @@ void move(float set_move_time)
 void initDynamixel(bool torque_onoff, uint32_t baud_rate)
 {
   dxl.begin("/dev/ttyUSB0", baud_rate);
-  dxl.setTorque(torque_onoff);
+  dxl.setTorque(true);
   dxl.setSyncWrite();
   dxl.setSyncRead();
 
