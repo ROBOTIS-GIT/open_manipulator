@@ -349,7 +349,7 @@ void PositionController::gripperPositionMsgCallback(const std_msgs::String::Cons
   }
 }
 
-void PositionController::jointPositionMsgCallback(const open_manipulator_msgs::JointPos::ConstPtr &msg)
+void PositionController::jointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
 {
   static bool check = true;
 
