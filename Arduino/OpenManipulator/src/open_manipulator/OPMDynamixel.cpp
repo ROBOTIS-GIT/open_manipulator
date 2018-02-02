@@ -18,86 +18,70 @@
 
 #include "../../include/open_manipulator/OPMDynamixel.h"
 
-OPMDynamixel::OPMDynamixel()
-{
-  dxl_cnt_ = 0;
-}
+OPMDynamixel::OPMDynamixel() : dxl_cnt_(0) {}
 
-OPMDynamixel::~OPMDynamixel()
-{
-}
+OPMDynamixel::~OPMDynamixel() {}
 
-bool OPMDynamixel::begin(char* device_name, uint32_t baud_rate)
+bool OPMDynamixel::begin(const char* device_name, uint32_t baud_rate)
 {
-  bool error = 0;
-
-  error = driver_.begin(device_name, baud_rate);
+  dxl_wb_.begin(device_name, baud_rate);
   
-  if (error == false)
-    dxl_cnt_ = driver_.scan(dxl_, 10);
+  dxl_wb_.scan(dxl_id_, &dxl_cnt_, 10);
 }
 
 void OPMDynamixel::setMode()
 {
-  for (int id = 0; id < dxl_cnt_; id++)
-    driver_.writeRegister(dxl_[id], "Operating Mode", 3);
+  for (int index = 0; index < dxl_cnt_; index++)
+    dxl_wb_.jointMode(dxl_id_[index]);
 }
 
 void OPMDynamixel::setMode(uint8_t id, uint32_t mode)
 {
-  driver_.writeRegister(id, "Operating Mode", mode);
+  dxl_wb_.itemWrite(id, "Operating_Mode", mode);
 }
 
 void OPMDynamixel::setTorque(bool onoff)
 {
-  for (int id = 0; id < dxl_cnt_; id++)
-    driver_.writeRegister(dxl_[id], "Torque Enable", (uint32_t)onoff);
+  for (int index = 0; index < dxl_cnt_; index++)
+    dxl_wb_.itemWrite(dxl_id_[index], "Torque_Enable", onoff);
 }
 
-void OPMDynamixel::setSyncWrite(char* item_name)
+void OPMDynamixel::setSyncWrite(const char* item_name)
 {
-  driver_.addSyncWrite(item_name);
+  dxl_wb_.addSyncWrite(item_name);
 }
 
-void OPMDynamixel::setSyncRead(char* item_name)
+void OPMDynamixel::setSyncRead(const char* item_name)
 {
-  driver_.addSyncRead(item_name);
+  dxl_wb_.addSyncRead(item_name);
 }
 
 void OPMDynamixel::writeCur(uint8_t id, int16_t data)
 {
-  driver_.writeRegister(id, "Goal Current", (uint32_t)data);
+  dxl_wb_.itemWrite(id, "Goal_Current", (uint32_t)data);
 }
 
 void OPMDynamixel::writePos(uint8_t id, int32_t data)
 {
-  driver_.writeRegister(id, "Goal Position", (uint32_t)data);
+  dxl_wb_.itemWrite(id, "Goal_Position", (uint32_t)data);
 }
 
 void OPMDynamixel::writePos(int32_t *data)
 {
-  driver_.syncWrite("Goal Position", data);
+  dxl_wb_.syncWrite("Goal_Position", data);
 }
 
-void OPMDynamixel::readPos(int32_t *data)
+int32_t* OPMDynamixel::readPos()
 {
-  driver_.syncRead("Present Position", data);
+  return dxl_wb_.syncRead("Present_Position");
 }
 
-int32_t OPMDynamixel::convertRadian2Value(int8_t id, float radian)
-{
-  int32_t value = 0;
-  
-  value = driver_.convertRadian2Value(id, radian);
-
-  return value;
+int32_t OPMDynamixel::convertRadian2Value(uint8_t id, float radian)
+{  
+  return dxl_wb_.convertRadian2Value(id, radian);
 }
 
-float OPMDynamixel::convertValue2Radian(int8_t id, int32_t value)
+float OPMDynamixel::convertValue2Radian(uint8_t id, int32_t value)
 {
-  float radian = 0.0;
-
-  radian = driver_.convertValue2Radian(id, value);
-
-  return radian;
+  return dxl_wb_.convertValue2Radian(id, value);
 }
