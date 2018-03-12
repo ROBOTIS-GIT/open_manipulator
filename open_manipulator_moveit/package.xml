@@ -18,7 +18,6 @@
   <run_depend>joint_state_publisher</run_depend>
   <run_depend>robot_state_publisher</run_depend>
   <run_depend>xacro</run_depend>
-  <run_depend>open_manipulator_description</run_depend>
   <build_depend>moveit_ros_move_group</build_depend>
   <build_depend>moveit_kinematics</build_depend>
   <build_depend>moveit_planners_ompl</build_depend>
@@ -26,5 +25,4 @@
   <build_depend>joint_state_publisher</build_depend>
   <build_depend>robot_state_publisher</build_depend>
   <build_depend>xacro</build_depend>
-  <build_depend>open_manipulator_description</build_depend>
 </package>

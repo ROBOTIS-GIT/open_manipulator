@@ -57,10 +57,6 @@ add_executable(position_controller src/position_controller.cpp src/motion_planni
 add_dependencies(position_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(position_controller yaml-cpp ${catkin_LIBRARIES})
 
-add_executable(motion_planning_tool src/motion_planning_tool.cpp)
-add_dependencies(motion_planning_tool ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(motion_planning_tool yaml-cpp ${catkin_LIBRARIES})
-
 ################################################################################
 # Install
 ################################################################################
