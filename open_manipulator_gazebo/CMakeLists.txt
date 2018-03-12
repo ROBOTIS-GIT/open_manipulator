@@ -29,8 +29,8 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp std_msgs
+  LIBRARIES ${PROJECT_NAME} 
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs  gazebo_ros_control position_controllers
 )
 
 ################################################################################

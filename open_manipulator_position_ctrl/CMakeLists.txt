@@ -25,7 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
   open_manipulator_msgs
 )
 
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 ################################################################################
 # Declare ROS messages, services and actions
