@@ -4,12 +4,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(open_manipulator_description)
 
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 ################################################################################
 # Packages
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  std_msgs
+  sensor_msgs
 )
 
 ################################################################################
@@ -24,10 +26,8 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES open_manipulator_description
-  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS roscpp sensor_msgs
 )
 
 ################################################################################
@@ -44,6 +44,15 @@ target_link_libraries(open_manipulator_chain_rviz_pub ${catkin_LIBRARIES})
 ################################################################################
 # Install
 ################################################################################
+install(TARGETS open_manipulator_chain_rviz_pub
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
 
 ################################################################################
 # Test
