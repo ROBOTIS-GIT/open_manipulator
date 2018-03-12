@@ -27,7 +27,7 @@
 #include <control_msgs/JointControllerState.h>
 #include <eigen_conversions/eigen_msg.h>
 
-#include <moveit/move_group_interface/move_group.h>
+#include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 
 #include <moveit_msgs/DisplayTrajectory.h>
@@ -75,7 +75,7 @@ class MotionPlanningTool
   boost::shared_ptr<planning_scene::PlanningScene> planning_scene_;
 
   // moveit path planning
-  boost::shared_ptr<moveit::planning_interface::MoveGroup> arm_planning_group_;
+  boost::shared_ptr<moveit::planning_interface::MoveGroupInterface> arm_planning_group_;
 
   void init(std::string description);
 };
