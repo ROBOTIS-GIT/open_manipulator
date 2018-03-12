@@ -43,10 +43,7 @@ generate_messages(
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES open_manipulator_msgs
-  CATKIN_DEPENDS std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS message_runtime std_msgs geometry_msgs sensor_msgs
 )
 
 ################################################################################

@@ -14,7 +14,7 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Taehoon Lim (Darby) */
+/* Authors: Taehun Lim (Darby) */
 
 #ifndef OPEN_MANIPULATOR_DYNAMIXEL_CONTROLLER_H
 #define OPEN_MANIPULATOR_DYNAMIXEL_CONTROLLER_H

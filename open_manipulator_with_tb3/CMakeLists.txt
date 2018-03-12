@@ -23,10 +23,8 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES open_manipulator_description
+  LIBRARIES LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS std_msgs
-#  DEPENDS system_lib
 )
 
 ################################################################################
@@ -39,6 +37,9 @@ include_directories(
 ################################################################################
 # Install
 ################################################################################
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
 
 ################################################################################
 # Test

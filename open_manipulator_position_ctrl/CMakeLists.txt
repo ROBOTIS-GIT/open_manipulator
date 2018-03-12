@@ -25,7 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
   open_manipulator_msgs
 )
 
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -40,18 +40,17 @@ find_package(Eigen REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES open_manipulator_position_ctrl
-  CATKIN_DEPENDS roscpp std_msgs
-  DEPENDS system_lib EIGEN3
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS roscpp std_msgs dynamixel_sdk sensor_msgs control_msgs cmake_modules robotis_math moveit_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface open_manipulator_msgs
 )
 
 ################################################################################
 # Build
 ################################################################################
 include_directories(
-  include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
+  include
 )
 
 add_executable(position_controller src/position_controller.cpp src/motion_planning_tool.cpp)
@@ -61,6 +60,19 @@ target_link_libraries(position_controller yaml-cpp ${catkin_LIBRARIES})
 ################################################################################
 # Install
 ################################################################################
+install(TARGETS position_controller
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
 
 ################################################################################
 # Test
