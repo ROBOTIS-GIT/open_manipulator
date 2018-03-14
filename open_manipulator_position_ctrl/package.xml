@@ -24,4 +24,5 @@
   <depend>moveit_core</depend>
   <depend>moveit_ros_planning</depend>
   <depend>moveit_ros_planning_interface</depend>
+  <depend>yaml-cpp</depend>
 </package>
