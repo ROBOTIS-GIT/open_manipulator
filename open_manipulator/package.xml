@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>open_manipulator</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>
     ROS-enabled OpenManipulator is a full open robot platform consisting of OpenSoftware​, OpenHardware and OpenCR(Embedded board)​.
     OpenManipulator are based on ROS ​and OpenSource. ROS official hardware platform, TurtleBot series has been supporting ‘TurtleBot Arm’.
