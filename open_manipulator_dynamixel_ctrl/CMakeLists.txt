@@ -11,10 +11,10 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  dynamixel_sdk
-  dynamixel_workbench_toolbox
   sensor_msgs
   open_manipulator_msgs
+  dynamixel_sdk
+  dynamixel_workbench_toolbox
 )
 
 ################################################################################
@@ -30,29 +30,25 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp dynamixel_sdk dynamixel_workbench_toolbox sensor_msgs open_manipulator_msgs
+  CATKIN_DEPENDS roscpp sensor_msgs open_manipulator_msgs dynamixel_sdk dynamixel_workbench_toolbox
 )
 
 ################################################################################
 # Build
 ################################################################################
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
-  include  
 )
 
 add_executable(dynamixel_controller src/dynamixel_controller.cpp)
 add_dependencies(dynamixel_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(dynamixel_controller ${catkin_LIBRARIES})
 
-
 ################################################################################
 # Install
 ################################################################################
 install(TARGETS dynamixel_controller
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -60,8 +56,8 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 ################################################################################

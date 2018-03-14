@@ -12,17 +12,16 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
-  dynamixel_sdk
   sensor_msgs
   control_msgs
-  cmake_modules
-  robotis_math
   moveit_msgs
+  open_manipulator_msgs
+  dynamixel_sdk
+  robotis_math
+  cmake_modules
   moveit_core
   moveit_ros_planning
   moveit_ros_planning_interface
-
-  open_manipulator_msgs
 )
 
 find_package(Eigen3 REQUIRED)
@@ -40,17 +39,16 @@ find_package(Eigen3 REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp std_msgs dynamixel_sdk sensor_msgs control_msgs cmake_modules robotis_math moveit_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface open_manipulator_msgs
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs moveit_msgs open_manipulator_msgs dynamixel_sdk robotis_math cmake_modules moveit_core moveit_ros_planning moveit_ros_planning_interface
 )
 
 ################################################################################
 # Build
 ################################################################################
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
-  include
 )
 
 add_executable(position_controller src/position_controller.cpp src/motion_planning_tool.cpp)
@@ -61,8 +59,6 @@ target_link_libraries(position_controller yaml-cpp ${catkin_LIBRARIES})
 # Install
 ################################################################################
 install(TARGETS position_controller
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -70,8 +66,8 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+install(DIRECTORY launch config
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 ################################################################################

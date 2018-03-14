@@ -1,28 +1,22 @@
-<package>
+<?xml version="1.0"?>
+<package format="2">
   <name>open_manipulator_moveit</name>
-  <version>0.3.0</version>
+  <version>0.1.0</version>
   <description>
-     An automatically generated package with all the configuration and launch files for using the open_manipulator_chain with the MoveIt! Motion Planning Framework
+     An automatically generated package with all the configuration and launch files for using the open_manipulator_chain with the MoveIt! Motion Planning Framework.
   </description>
+  <license>Apache 2.0</license>
   <author email="thlim@robotis.com">Darby Lim</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
-  <license>Apache License 2.0</license>
-  <url type="website">http://moveit.ros.org/</url>
-  <url type="bugtracker">https://github.com/ros-planning/moveit/issues</url>
-  <url type="repository">https://github.com/ros-planning/moveit</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="website">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
   <buildtool_depend>catkin</buildtool_depend>
-  <run_depend>moveit_ros_move_group</run_depend>
-  <run_depend>moveit_kinematics</run_depend>
-  <run_depend>moveit_planners_ompl</run_depend>
-  <run_depend>moveit_ros_visualization</run_depend>
-  <run_depend>joint_state_publisher</run_depend>
-  <run_depend>robot_state_publisher</run_depend>
-  <run_depend>xacro</run_depend>
-  <build_depend>moveit_ros_move_group</build_depend>
-  <build_depend>moveit_kinematics</build_depend>
-  <build_depend>moveit_planners_ompl</build_depend>
-  <build_depend>moveit_ros_visualization</build_depend>
-  <build_depend>joint_state_publisher</build_depend>
-  <build_depend>robot_state_publisher</build_depend>
-  <build_depend>xacro</build_depend>
+  <depend>moveit_ros_move_group</depend>
+  <depend>moveit_kinematics</depend>
+  <depend>moveit_planners_ompl</depend>
+  <depend>moveit_ros_visualization</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>xacro</depend>
 </package>
