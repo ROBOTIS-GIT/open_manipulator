@@ -7,11 +7,10 @@ project(open_manipulator_msgs)
 ################################################################################
 # Packages
 ################################################################################
-find_package(catkin REQUIRED
-  message_generation
-  geometry_msgs
-  sensor_msgs
+find_package(catkin REQUIRED COMPONENTS
   std_msgs
+  geometry_msgs
+  message_generation
 )
 
 ################################################################################
@@ -43,15 +42,12 @@ generate_messages(
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS message_runtime std_msgs geometry_msgs sensor_msgs
+  CATKIN_DEPENDS std_msgs geometry_msgs message_runtime
 )
 
 ################################################################################
 # Build
 ################################################################################
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
 
 ################################################################################
 # Install

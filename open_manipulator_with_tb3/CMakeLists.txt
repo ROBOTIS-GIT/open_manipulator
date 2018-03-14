@@ -7,9 +7,7 @@ project(open_manipulator_with_tb3)
 ################################################################################
 # Packages
 ################################################################################
-find_package(catkin REQUIRED COMPONENTS
-  std_msgs
-)
+find_package(catkin REQUIRED)
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -22,23 +20,17 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 # Catkin specific configuration
 ################################################################################
-catkin_package(
-  LIBRARIES LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS std_msgs
-)
+catkin_package()
 
 ################################################################################
 # Build
 ################################################################################
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
 
 ################################################################################
 # Install
 ################################################################################
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+install(DIRECTORY launch meshes rviz urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 ################################################################################
