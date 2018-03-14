@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_dynamixel_ctrl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.1 (2018-03-15)
+------------------
+* none
+
 0.1.0 (2018-03-14)
 ------------------
 * added new dynamixel-workbench and velocity message

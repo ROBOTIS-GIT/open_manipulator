@@ -25,6 +25,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Eigen3 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -40,6 +42,7 @@ find_package(Eigen3 REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs moveit_msgs open_manipulator_msgs dynamixel_sdk robotis_math cmake_modules moveit_core moveit_ros_planning moveit_ros_planning_interface
+  DEPENDS EIGEN3
 )
 
 ################################################################################
@@ -49,11 +52,12 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
+  ${yaml_cpp_INCLUDE_DIRS}
 )
 
 add_executable(position_controller src/position_controller.cpp src/motion_planning_tool.cpp)
 add_dependencies(position_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(position_controller yaml-cpp ${catkin_LIBRARIES})
+target_link_libraries(position_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${yaml_cpp_LIBRARIES})
 
 ################################################################################
 # Install
