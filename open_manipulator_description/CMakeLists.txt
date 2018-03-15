@@ -26,7 +26,6 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp sensor_msgs
 )
 
@@ -45,13 +44,11 @@ target_link_libraries(open_manipulator_chain_rviz_pub ${catkin_LIBRARIES})
 # Install
 ################################################################################
 install(TARGETS open_manipulator_chain_rviz_pub
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 ################################################################################

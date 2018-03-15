@@ -1,35 +1,29 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>open_manipulator_position_ctrl</name>
-  <version>0.0.0</version>
-  <description>The open_manipulator_position_ctrl package</description>
-  <license>Apache License 2.0</license>
+  <version>0.1.1</version>
+  <description>
+    The position contrloller package for OpenManipulator
+  </description>
+  <license>Apache 2.0</license>
   <author email="thlim@robotis.com">Darby Lim</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="website">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>dynamixel_sdk</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>control_msgs</build_depend>
-  <build_depend>cmake_modules</build_depend>
-  <build_depend>robotis_math</build_depend>
-  <build_depend>moveit_msgs</build_depend>  
-  <build_depend>moveit_core</build_depend>
-  <build_depend>moveit_ros_planning</build_depend>
-  <build_depend>moveit_ros_planning_interface</build_depend>
-  <build_depend>open_manipulator_msgs</build_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>dynamixel_sdk</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>control_msgs</run_depend>
-  <run_depend>cmake_modules</run_depend>
-  <run_depend>robotis_math</run_depend>
-  <run_depend>moveit_msgs</run_depend>  
-  <run_depend>moveit_core</run_depend>
-  <run_depend>moveit_ros_planning</run_depend>
-  <run_depend>moveit_ros_planning_interface</run_depend>
-  <run_depend>open_manipulator_msgs</run_depend>
-  <export></export>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>moveit_msgs</depend>  
+  <depend>open_manipulator_msgs</depend>
+  <depend>dynamixel_sdk</depend>
+  <depend>robotis_math</depend>
+  <depend>cmake_modules</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_ros_planning</depend>
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>eigen</depend>
+  <depend>yaml-cpp</depend>
 </package>

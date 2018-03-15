@@ -29,8 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  LIBRARIES ${PROJECT_NAME} 
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs  gazebo_ros_control position_controllers
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs gazebo_ros_control position_controllers
 )
 
 ################################################################################
@@ -48,13 +47,11 @@ add_dependencies(open_manipulator_gazebo_grip_pub ${${PROJECT_NAME}_EXPORTED_TAR
 # Install
 ################################################################################
 install(TARGETS open_manipulator_gazebo_grip_pub
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 ################################################################################
