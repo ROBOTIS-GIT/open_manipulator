@@ -19,12 +19,12 @@
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description"
-   command="$(find xacro)/xacro.py '$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3.xacro'"/>
+   command="$(find xacro)/xacro --inorder '$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3.xacro'"/>
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
      args="-urdf -model open_manipulator_chain -z 0.0 -param robot_description"/>
 
   <!-- ros_control robotis manipulator launch file -->
-  <include file="$(find open_manipulator_gazebo)/launch/open_manipulator_controller.launch"/>
+  <include file="$(find open_manipulator_gazebo)/launch/open_manipulator_with_tb3_controller.launch"/>
 </launch>
