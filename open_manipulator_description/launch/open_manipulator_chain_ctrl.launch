@@ -18,7 +18,7 @@
   </node>
 
   <!-- Show in Rviz -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_description)/launch/open_manipulator.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_description)/rviz/open_manipulator.rviz"/>
 
   <!-- Gripper Pub-->
   <node name="open_manipulator_rviz_pub" pkg="open_manipulator_description" type="open_manipulator_chain_rviz_pub"/>
