@@ -26,5 +26,5 @@
      args="-urdf -model open_manipulator_chain -z 0.0 -param robot_description"/>
 
   <!-- ros_control robotis manipulator launch file -->
-  <include file="$(find open_manipulator_gazebo)/launch/position_controller.launch"/>
+  <include file="$(find open_manipulator_gazebo)/launch/open_manipulator_controller.launch"/>
 </launch>
