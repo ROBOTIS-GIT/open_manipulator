@@ -5,6 +5,9 @@
   <!-- Include TurtleBot3 Waffle URDF -->
   <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle_naked.urdf.xacro" />
 
+  <!-- Include OpenManipulator Chain Gazebo Parameter -->
+  <xacro:include filename="$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3.gazebo.xacro" />
+
   <!-- Base fixed joint -->
   <joint name="base_fixed" type="fixed">
     <origin xyz="-0.005 0.0 0.091" rpy="0 0 0"/>
