@@ -23,13 +23,6 @@
 
   <!-- Link 1 -->
   <link name="link1">
-    <collision>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link1.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
       <geometry>
@@ -37,6 +30,13 @@
       </geometry>
       <material name="grey"/>
     </visual>
+
+    <collision>
+      <origin xyz="0.0 0.0 0.017" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.0475 0.0295 0.0340"/>
+      </geometry>
+    </collision>
 
     <inertial>
       <origin xyz="0 0 0" />
@@ -70,13 +70,6 @@
 
   <!--  Link 2 -->
   <link name="link2">
-    <collision>
-      <origin xyz="0.0 0.0 0.040" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link2.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
     <visual>
       <origin xyz="0.0 0.0 0.040" rpy="0 0 0"/>
       <geometry>
@@ -84,6 +77,13 @@
       </geometry>
       <material name="grey"/>
     </visual>
+
+    <collision>
+      <origin xyz="0.0 0.0 0.030" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.0355 0.0550 0.0515"/>
+      </geometry>
+    </collision>
 
     <inertial>
       <origin xyz="0 0 0" />
@@ -99,8 +99,8 @@
     <parent link="link2"/>
     <child link="link3"/>
     <origin xyz="0.0 0.0 0.040" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
+    <axis xyz="0 1 0"/>
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
   </joint>
 
   <!-- Transmission 2 -->
@@ -117,13 +117,6 @@
 
   <!--  Link 3 -->
   <link name="link3">
-    <collision>
-      <origin xyz="0.022 0 0.122" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link3.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
     <visual>
       <origin xyz="0.022 0 0.122" rpy="0 0 0"/>
       <geometry>
@@ -131,6 +124,13 @@
       </geometry>
       <material name="grey"/>
     </visual>
+
+    <collision>
+      <origin xyz="0.0 0 0.085" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.030 0.055 0.120"/>
+      </geometry>
+    </collision>
 
     <inertial>
       <origin xyz="0 0 0" />
@@ -146,8 +146,8 @@
     <parent link="link3"/>
     <child link="link4"/>
     <origin xyz="0.022 0 0.122" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
+    <axis xyz="0 1 0"/>
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.4}" />
   </joint>
 
   <!-- Transmission 3 -->
@@ -164,13 +164,6 @@
 
   <!--  Link 4 -->
   <link name="link4">
-    <collision>
-      <origin xyz="0.124 0 0.0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link4.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
     <visual>
       <origin xyz="0.124 0 0.0" rpy="0 0 0"/>
       <geometry>
@@ -178,6 +171,13 @@
       </geometry>
       <material name="grey"/>
     </visual>
+
+    <collision>
+      <origin xyz="0.080 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.110 0.055 0.035"/>
+      </geometry>
+    </collision>
 
     <inertial>
       <origin xyz="0 0 0" />
@@ -193,8 +193,8 @@
     <parent link="link4"/>
     <child link="link5"/>
     <origin xyz="0.124 0.0 0.0" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.9}" upper="${pi*0.9}" />
+    <axis xyz="0 1 0"/>
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.4}" upper="${pi*0.5}" />
   </joint>
 
   <!-- Transmission 4 -->
@@ -211,13 +211,6 @@
 
   <!--  Link 5 -->
   <link name="link5">
-    <collision>
-      <origin xyz="0.046 0 0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link5.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
     <visual>
       <origin xyz="0.046 0 0" rpy="0 0 0"/>
       <geometry>
@@ -225,6 +218,13 @@
       </geometry>
       <material name="grey"/>
     </visual>
+
+    <collision>
+      <origin xyz="0.050 0 0.005" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.040 0.120 0.0650"/>
+      </geometry>
+    </collision>
 
     <inertial>
       <origin xyz="0 0 0" />
@@ -237,13 +237,6 @@
 
   <!--  Grip link -->
   <link name="grip_link">
-    <collision>
-      <origin xyz="0.0 0.047 0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_l.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
     <visual>
       <origin xyz="0.0 0.047 0" rpy="0 0 0"/>
       <geometry>
@@ -251,6 +244,13 @@
       </geometry>
       <material name="grey"/>
     </visual>
+
+    <collision>
+      <origin xyz="0.040 0.047 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.060 0.025 0.070"/>
+      </geometry>
+    </collision>
 
     <inertial>
       <origin xyz="0 0 0" />
@@ -284,13 +284,6 @@
 
   <!--  Grip link sub -->
   <link name="grip_link_sub">
-    <collision>
-      <origin xyz="0 -0.047 0" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_r.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-
     <visual>
       <origin xyz="0 -0.047 0" rpy="0 0 0"/>
       <geometry>
@@ -298,6 +291,13 @@
       </geometry>
       <material name="grey"/>
     </visual>
+
+    <collision>
+      <origin xyz="0.040 -0.047 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.060 0.025 0.070"/>
+      </geometry>
+    </collision>
 
     <inertial>
       <origin xyz="0 0 0" />
