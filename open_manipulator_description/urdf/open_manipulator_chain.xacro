@@ -2,9 +2,6 @@
 <!-- Open_Manipulator Chain -->
 <robot name="open_manipulator_chain" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- some parameters -->
-  <xacro:property name="pi" value="3.141592654" />
-
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator_chain.gazebo.xacro" />
   <!-- Import Rviz colors -->
