@@ -2,9 +2,6 @@
 <!-- Open_Manipulator Chain -->
 <robot name="open_manipulator_chain_with_tb3" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- some parameters -->
-  <xacro:property name="pi" value="3.141592654" />
-
   <!-- Include TurtleBot3 Waffle URDF -->
   <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle_naked.urdf.xacro" />
 
@@ -54,7 +51,7 @@
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint1">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor1">
       <hardwareInterface>PositionJointInterface</hardwareInterface>
@@ -101,7 +98,7 @@
   <transmission name="tran2">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint2">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor2">
       <hardwareInterface>PositionJointInterface</hardwareInterface>
@@ -148,7 +145,7 @@
   <transmission name="tran3">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint3">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor3">
       <hardwareInterface>PositionJointInterface</hardwareInterface>
@@ -195,7 +192,7 @@
   <transmission name="tran4">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint4">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor4">
       <hardwareInterface>PositionJointInterface</hardwareInterface>
@@ -268,7 +265,7 @@
   <transmission name="tran5">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="grip_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor7">
       <hardwareInterface>PositionJointInterface</hardwareInterface>
@@ -315,7 +312,7 @@
   <transmission name="tran6">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="grip_joint_sub">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor8">
       <hardwareInterface>PositionJointInterface</hardwareInterface>
