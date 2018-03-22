@@ -20,7 +20,7 @@
   <!-- We do not have a robot connected, so publish fake joint states -->
   <arg name="use_gazebo" default="false"/>
 
-  <node name="robotis_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="use_gui" value="false"/>
     <rosparam param="source_list" if="$(arg use_gazebo)">["open_manipulator_chain/joint_states"]</rosparam>
     <rosparam param="source_list" unless="$(arg use_gazebo)">["robotis/open_manipulator/present_joint_states"]</rosparam>
