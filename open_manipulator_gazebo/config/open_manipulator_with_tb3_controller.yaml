@@ -8,29 +8,29 @@ open_manipulator_chain_with_tb3:
   joint1_position:
     type: effort_controllers/JointPositionController
     joint: joint1
-    pid: {p: 20.0, i: 0.1, d: 0.9}
+    pid: {p: 300.0, i: 0.5, d: 20.0}
 
   joint2_position:
     type: effort_controllers/JointPositionController
     joint: joint2
-    pid: {p: 20.0, i: 0.1, d: 0.9}
+    pid: {p: 300.0, i: 0.5, d: 20.0}
 
   joint3_position:
     type: effort_controllers/JointPositionController
     joint: joint3
-    pid: {p: 15.0, i: 0.1, d: 0.2}
+    pid: {p: 300.0, i: 0.5, d: 20.0}
 
   joint4_position:
     type: effort_controllers/JointPositionController
     joint: joint4
-    pid: {p: 15.0, i: 0.1, d: 0.7}
+    pid: {p: 300.0, i: 0.5, d: 20.0}
 
   grip_joint_position:
     type: effort_controllers/JointPositionController
     joint: grip_joint
-    pid: {p: 10.0, i: 0.1, d: 0.5}
+    pid: {p: 20.0, i: 0.1, d: 3.0}
 
   grip_joint_sub_position:
     type: effort_controllers/JointPositionController
     joint: grip_joint_sub
-    pid: {p: 10.0, i: 0.1, d: 0.5}
+    pid: {p: 20.0, i: 0.1, d: 3.0}
