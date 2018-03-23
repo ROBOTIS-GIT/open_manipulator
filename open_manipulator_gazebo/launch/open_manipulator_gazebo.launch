@@ -1,4 +1,3 @@
-<?xml version="1.0" ?>
 <launch>
   <!-- These are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>

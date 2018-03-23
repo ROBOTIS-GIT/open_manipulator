@@ -1,5 +1,6 @@
-<?xml version="1.0" ?>
 <launch>
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [waffle, waffle_pi]"/>
+
   <!-- These are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -19,7 +20,7 @@
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description"
-   command="$(find xacro)/xacro --inorder '$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3.urdf.xacro'"/>
+   command="$(find xacro)/xacro --inorder '$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3_$(arg model).urdf.xacro'"/>
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
