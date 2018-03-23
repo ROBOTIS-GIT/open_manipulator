@@ -7,50 +7,50 @@
 
   <!-- Link1 -->
   <gazebo reference="link1">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>0.5</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <!-- Link2 -->
   <gazebo reference="link2">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>0.5</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <!-- Link3 -->
   <gazebo reference="link3">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>0.5</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <!-- Link4 -->
   <gazebo reference="link4">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>0.5</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <!-- Link5 -->
   <gazebo reference="link5">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>0.5</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <!-- grip_link -->
   <gazebo reference="grip_link">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>0.5</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <!-- grip_link_sub -->
   <gazebo reference="grip_link_sub">
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
+    <mu1>0.5</mu1>
+    <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
