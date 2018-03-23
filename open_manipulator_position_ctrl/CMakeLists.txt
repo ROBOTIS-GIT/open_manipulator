@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   control_msgs
   moveit_msgs
+  geometry_msgs
   open_manipulator_msgs
   dynamixel_sdk
   robotis_math
@@ -22,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   moveit_ros_planning
   moveit_ros_planning_interface
+  moveit_visual_tools
 )
 
 find_package(Eigen3 REQUIRED)
@@ -41,7 +43,7 @@ pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs moveit_msgs open_manipulator_msgs dynamixel_sdk robotis_math cmake_modules moveit_core moveit_ros_planning moveit_ros_planning_interface
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs control_msgs moveit_msgs geometry_msgs open_manipulator_msgs dynamixel_sdk robotis_math cmake_modules moveit_core moveit_ros_planning moveit_ros_planning_interface moveit_visual_tools
   DEPENDS EIGEN3
 )
 
@@ -59,10 +61,14 @@ add_executable(position_controller src/position_controller.cpp src/motion_planni
 add_dependencies(position_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(position_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${yaml_cpp_LIBRARIES})
 
+add_executable(pick_place_controller src/pick_place_controller.cpp)
+add_dependencies(pick_place_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pick_place_controller ${catkin_LIBRARIES})
+
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS position_controller
+install(TARGETS position_controller pick_place_controller
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
