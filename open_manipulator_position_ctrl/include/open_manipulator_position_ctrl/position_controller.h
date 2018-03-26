@@ -14,7 +14,7 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Taehoon Lim (Darby) */
+/* Authors: Taehun Lim (Darby) */
 
 #ifndef OPEN_MANIPULATOR_POSITION_CONTROLLER_H
 #define OPEN_MANIPULATOR_POSITION_CONTROLLER_H
@@ -43,7 +43,7 @@
 #include "moveit_msgs/ExecuteTrajectoryActionFeedback.h"
 #include "moveit_msgs/MoveGroupActionFeedback.h"
 
-namespace open_manipulator_position_ctrl
+namespace open_manipulator
 {
 #define MAX_JOINT_NUM        (4)
 #define MAX_GRIP_JOINT_NUM   (1)

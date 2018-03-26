@@ -14,11 +14,11 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Taehoon Lim (Darby) */
+/* Authors: Taehun Lim (Darby) */
 
 #include "open_manipulator_position_ctrl/position_controller.h"
 
-using namespace open_manipulator_position_ctrl;
+using namespace open_manipulator;
 
 PositionController::PositionController()
     :nh_priv_("~"),
