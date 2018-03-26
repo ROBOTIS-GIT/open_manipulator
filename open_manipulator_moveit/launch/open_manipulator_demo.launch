@@ -48,10 +48,10 @@
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
  </include>
 
-  <!-- Open-Manipulator Chain Topic Pub-->
+  <!-- OpenManipulator Chain Topic Pub-->
   <node name="open_manipulator_rviz_pub" pkg="open_manipulator_description" type="open_manipulator_chain_rviz_pub"/>
 
-  <!-- Open-Manipultor Position controller-->
+  <!-- OpenManipultor Position controller-->
   <include file="$(find open_manipulator_position_ctrl)/launch/position_ctrl.launch">
     <arg name="use_gazebo" value="$(arg use_gazebo)"/>
   </include>
