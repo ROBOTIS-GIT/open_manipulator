@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <launch>
-  <arg name="use_gazebo"	   default="true" />
+  <arg name="use_gazebo"	   default="false" />
   <arg name="use_robot_name" default="open_manipulator_chain_with_tb3"/>
 
   <param name="gazebo"            value="$(arg use_gazebo)" type="bool"/>
