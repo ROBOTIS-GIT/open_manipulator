@@ -4,7 +4,7 @@
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-  output="screen"  args="joint_state_controller
+  output="screen" args="joint_state_controller
                                                               joint1_position
                                                               joint2_position
                                                               joint3_position
