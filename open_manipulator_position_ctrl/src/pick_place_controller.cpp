@@ -23,25 +23,28 @@ using namespace open_manipulator;
 PickAndPlaceController::PickAndPlaceController()
     :using_gazebo_(false),
      robot_name_(""),
+     joint_num_(4),
+     dxl_first_id_(1),
      is_moving_(false)
 {
   // Init parameter
   nh_.getParam("gazebo", using_gazebo_);
   nh_.getParam("robot_name", robot_name_);
+  nh_.getParam("dxl_first_id", dxl_first_id_);
+  nh_.getParam("joint_num", joint_num_);
 
-  joint_[0].name = "joint1";
-  joint_[1].name = "joint2";
-  joint_[2].name = "joint3";
-  joint_[3].name = "joint4";
+  for (uint8_t num = 0; num < joint_num_; num++)
+  {
+    Joint joint;
 
-  gripper_.name = "gripper";
+    joint.name   = "joint" + std::to_string(num+1);
+    joint.dxl_id = num + dxl_first_id_;
 
-//  present_joint_position_ = Eigen::VectorXd::Zero(JOINT_NUM+GRIP_NUM);
-//  goal_joint_position_    = Eigen::VectorXd::Zero(JOINT_NUM);
+    joint_.push_back(joint);
+  }
 
   planned_path_info_.waypoints = 10;
-  planned_path_info_.time_from_start = ros::Duration(10.0);
-  planned_path_info_.planned_path_positions = Eigen::MatrixXd::Zero(planned_path_info_.waypoints, JOINT_NUM);
+  planned_path_info_.planned_path_positions = Eigen::MatrixXd::Zero(planned_path_info_.waypoints, joint_num_);
 
   planning_group_ = "arm";
 
@@ -63,14 +66,14 @@ void PickAndPlaceController::initPublisher(bool using_gazebo)
   {
     ROS_INFO("SET Gazebo Simulation Mode");
 
-    for (uint8_t index = 0; index < JOINT_NUM; index)
+    for (uint8_t index = 0; index < joint_num_; index++)
     {
       gazebo_goal_joint_position_pub_[index]
-        = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/" + joint_[index].name + "_position/command", 10);
+        = nh_.advertise<std_msgs::Float64>("/" + joint_[index].name + "_position/command", 10);
     }
 
-    gazebo_gripper_position_pub_[0]  = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/grip_joint_position/command", 10);
-    gazebo_gripper_position_pub_[1]  = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/grip_joint_sub_position/command", 10);
+    gazebo_gripper_position_pub_[0] = nh_.advertise<std_msgs::Float64>("/grip_joint_position/command", 10);
+    gazebo_gripper_position_pub_[1] = nh_.advertise<std_msgs::Float64>("/grip_joint_sub_position/command", 10);
   }
 }
 
@@ -78,7 +81,7 @@ void PickAndPlaceController::initSubscriber(bool using_gazebo)
 {
   if (using_gazebo)
   {
-    gazebo_present_joint_position_sub_ = nh_.subscribe("/" + robot_name_ + "/joint_states", 10,
+    gazebo_present_joint_position_sub_ = nh_.subscribe("/joint_states", 10,
                                                        &PickAndPlaceController::gazeboPresentJointPositionMsgCallback, this);
   }
 
@@ -160,84 +163,69 @@ void PickAndPlaceController::targetKinematicsPoseMsgCallback(const open_manipula
 
 void PickAndPlaceController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
 {
-  trajectory_msg_ = *msg;
+  ROS_INFO("Get Planned Path");
 
-  trajectory_generate_thread_ = new boost::thread(boost::bind(&PickAndPlaceController::moveItTrajectoryGenerateThread, this));
-  delete trajectory_generate_thread_;
-}
+  planned_path_info_.waypoints = msg->trajectory[0].joint_trajectory.points.size();
 
-void PickAndPlaceController::moveItTrajectoryGenerateThread()
-{
-  for (uint16_t tra_index = 0; tra_index < trajectory_msg_.trajectory.size(); tra_index++)
+  planned_path_info_.planned_path_positions.resize(planned_path_info_.waypoints, joint_num_);
+
+  for (uint16_t point_num = 0; point_num < planned_path_info_.waypoints; point_num++)
   {
-    planned_path_info_.waypoints = trajectory_msg_.trajectory[tra_index].joint_trajectory.points.size();
-
-    planned_path_info_.planned_path_positions.resize(planned_path_info_.waypoints, JOINT_NUM);
-
-    for (uint16_t point_index = 0; point_index < planned_path_info_.waypoints; point_index++)
+    for (uint8_t joint_num = 0; joint_num < joint_num_; joint_num++)
     {
-      planned_path_info_.time_from_start = trajectory_msg_.trajectory[tra_index].joint_trajectory.points[point_index].time_from_start;
+      float joint_position = msg->trajectory[0].joint_trajectory.points[point_num].positions[joint_num];
 
-      for (uint16_t joint_index = 0; joint_index < trajectory_msg_.trajectory[tra_index].joint_trajectory.joint_names.size(); joint_index++)
-      {
-        float joint_position = trajectory_msg_.trajectory[tra_index].joint_trajectory.points[point_index].positions[joint_index];
-
-        planned_path_info_.planned_path_positions.coeffRef(point_index , joint_index) = joint_position;
-      }
+      planned_path_info_.planned_path_positions.coeffRef(point_num , joint_num) = joint_position;
     }
   }
 
-  move_time_ = planned_path_info_.time_from_start.toSec();
-
-  all_time_steps_ = planned_path_info_.waypoints;
+  all_time_steps_ = planned_path_info_.waypoints - 1;
 
   ros::WallDuration sleep_time(0.5);
   sleep_time.sleep();
 
-  goal_trajectory_.resize(planned_path_info_.waypoints, JOINT_NUM);
-  goal_trajectory_ = planned_path_info_.planned_path_positions;
-  ROS_INFO("Get Joint Trajectory");
+  ROS_INFO("Execute");
 
   is_moving_  = true;
-
-  ROS_INFO("Send Motion Trajectory");
 }
 
 void PickAndPlaceController::process(void)
 {
   static uint16_t step_cnt = 0;
-  sensor_msgs::JointState goal_joint_state;
   std_msgs::Float64 goal_joint_position;
 
   if (is_moving_)
   {
     if (using_gazebo_)
     {
-      for (uint8_t index = 0; index < JOINT_NUM; index++)
+      for (uint8_t num = 0; num < joint_num_; num++)
       {
-        goal_joint_state.name.push_back(joint_[index].name);
-        goal_joint_state.position.push_back(goal_trajectory_(step_cnt, index));
-
-        goal_joint_position.data = goal_joint_state.position.at(index);
-        gazebo_goal_joint_position_pub_[index].publish(goal_joint_position);
+        goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, num);
+        gazebo_goal_joint_position_pub_[num].publish(goal_joint_position);
       }
     }
 
     if (step_cnt >= all_time_steps_)
     {
       is_moving_ = false;
-      step_cnt  = 0;
+      step_cnt   = 0;
 
       ROS_INFO("End Trajectory");
     }
     else
+    {
       step_cnt++;
+    }
   }
 }
 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "pick_and_place_controller_for_OpenManipulator");
+
+  ros::WallDuration sleep_time(10.0);
+  sleep_time.sleep();
+
   PickAndPlaceController controller;
 
   ros::Rate loop_rate(ITERATION_FREQUENCY);

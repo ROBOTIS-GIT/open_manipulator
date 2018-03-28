@@ -27,6 +27,8 @@
 
 #include <moveit_msgs/DisplayTrajectory.h>
 
+#include <vector>
+
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
 
@@ -35,15 +37,10 @@
 #include "open_manipulator_msgs/JointPose.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
 
-#include <boost/thread.hpp>
-
 #include <eigen3/Eigen/Eigen>
 
 namespace open_manipulator
 {
-#define JOINT_NUM 4
-#define GRIP_NUM  1
-
 #define LEFT_PALM   0
 #define RIGHT_PALM  1
 
@@ -52,14 +49,12 @@ namespace open_manipulator
 typedef struct
 {
   std::string name;
-  uint8_t id;
-  uint8_t joint_num;
+  uint8_t dxl_id;
 } Joint;
 
 typedef struct
 {
   uint16_t waypoints;                                  // planned number of via-points
-  ros::Duration time_from_start;                       // planned movement time
   Eigen::MatrixXd planned_path_positions;              // planned position trajectory
 } PlannedPathInfo;
 
@@ -72,9 +67,11 @@ class PickAndPlaceController
   // ROS Parameters
   bool using_gazebo_;
   std::string robot_name_;
+  int joint_num_;
+  int dxl_first_id_;
 
   // ROS Publisher
-  ros::Publisher gazebo_goal_joint_position_pub_[JOINT_NUM];
+  ros::Publisher gazebo_goal_joint_position_pub_[10];
   ros::Publisher gazebo_gripper_position_pub_[2];
 
   // ROS Subscribers
@@ -88,12 +85,7 @@ class PickAndPlaceController
   // ROS Service Client
 
   // Joint states
-  Joint joint_[4];
-  Joint gripper_;
-
-//  Eigen::VectorXd present_joint_position_;
-//  Eigen::VectorXd goal_joint_position_;
-  Eigen::MatrixXd goal_trajectory_;
+  std::vector<Joint> joint_;
 
   // MoveIt! interface
   std::string planning_group_;
@@ -101,12 +93,8 @@ class PickAndPlaceController
   moveit_msgs::DisplayTrajectory trajectory_msg_;
   PlannedPathInfo planned_path_info_;
 
-  // thread
-  boost::thread* trajectory_generate_thread_;
-
   // Process state variables
-  bool is_moving_;
-  double   move_time_;
+  bool     is_moving_;
   uint16_t all_time_steps_;
 
  public:
@@ -118,8 +106,6 @@ class PickAndPlaceController
  private:
   void initPublisher(bool using_gazebo);
   void initSubscriber(bool using_gazebo);
-
-  void moveItTrajectoryGenerateThread();
 
   void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);

@@ -3,8 +3,13 @@
 <launch>
   <arg name="use_gazebo"	   default="false" />
   <arg name="use_robot_name" default="open_manipulator_chain_with_tb3"/>
+  <arg name="joint_num"      default="4" />
+  <arg name="dxl_first_id"   default="1"/>
 
   <param name="gazebo"            value="$(arg use_gazebo)" type="bool"/>
   <param name="robot_name"        value="$(arg use_robot_name)"/>
+  <param name="joint_num"         value="$(arg joint_num)"/>
+  <param name="dxl_first_id"      value="$(arg dxl_first_id)"/>
+
   <node name="open_manipulator_pick_place_ctrl" pkg="open_manipulator_position_ctrl" type="pick_place_controller" required="true" output="screen"/>
 </launch>
