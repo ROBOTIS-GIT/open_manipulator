@@ -51,12 +51,12 @@
   </joint>
 
   <!-- Transmission 1 -->
-  <transmission name="tran1">
+  <transmission name="joint1_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint1">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor1">
+    <actuator name="joint1_actuator">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
@@ -98,12 +98,12 @@
   </joint>
 
   <!-- Transmission 2 -->
-  <transmission name="tran2">
+  <transmission name="joint2_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint2">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor2">
+    <actuator name="joint2_actuator">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
@@ -145,12 +145,12 @@
   </joint>
 
   <!-- Transmission 3 -->
-  <transmission name="tran3">
+  <transmission name="joint3_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint3">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor3">
+    <actuator name="joint3_actuator">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
@@ -192,12 +192,12 @@
   </joint>
 
   <!-- Transmission 4 -->
-  <transmission name="tran4">
+  <transmission name="joint4_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint4">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor4">
+    <actuator name="joint4_actuator">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
@@ -265,12 +265,12 @@
   </joint>
 
   <!-- Transmission 5 -->
-  <transmission name="tran5">
+  <transmission name="grip_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="grip_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor7">
+    <actuator name="grip_joint_actuator">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
@@ -312,12 +312,12 @@
   </joint>
 
   <!-- Transmission 6 -->
-  <transmission name="tran6">
+  <transmission name="grip_joint_sub_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="grip_joint_sub">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor8">
+    <actuator name="grip_joint_sub_actuator">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
