@@ -39,7 +39,7 @@
   </group>
 
   <!-- OpenManipultor Position controller-->
-  <include file="$(find open_manipulator_position_ctrl)/launch/pick_place_ctrl.launch">
+  <include file="$(find open_manipulator_position_ctrl)/launch/position_controller_with_tb3.launch">
     <arg name="use_gazebo" value="$(arg use_gazebo)"/>
   </include>
 

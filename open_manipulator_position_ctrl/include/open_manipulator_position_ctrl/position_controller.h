@@ -16,8 +16,8 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#ifndef OPEN_MANIPULATOR_PICK_AND_PLACE_CONTROLLER_H
-#define OPEN_MANIPULATOR_PICK_AND_PLACE_CONTROLLER_H
+#ifndef OPEN_MANIPULATOR_POSITION_CONTROLLER_H
+#define OPEN_MANIPULATOR_POSITION_CONTROLLER_H
 
 #include <ros/ros.h>
 
@@ -44,6 +44,9 @@ namespace open_manipulator
 #define LEFT_PALM   0
 #define RIGHT_PALM  1
 
+#define ARM     0
+#define GRIPPER 1
+
 #define ITERATION_FREQUENCY 25 //Hz
 
 typedef struct
@@ -54,11 +57,12 @@ typedef struct
 
 typedef struct
 {
+  uint8_t group;
   uint16_t waypoints;                                  // planned number of via-points
   Eigen::MatrixXd planned_path_positions;              // planned position trajectory
 } PlannedPathInfo;
 
-class PickAndPlaceController
+class PositionController
 {
  private:
   // ROS NodeHandle
@@ -68,17 +72,22 @@ class PickAndPlaceController
   bool using_gazebo_;
   std::string robot_name_;
   int joint_num_;
-  int dxl_first_id_;
+  int palm_num_;
+  int first_dxl_id_;
+  int gripper_dxl_id_;
 
   // ROS Publisher
   ros::Publisher gazebo_goal_joint_position_pub_[10];
   ros::Publisher gazebo_gripper_position_pub_[2];
+  ros::Publisher gripper_onoff_pub_;
 
   // ROS Subscribers
   ros::Subscriber gazebo_present_joint_position_sub_;
   ros::Subscriber display_planned_path_sub_;
   ros::Subscriber target_joint_pose_sub_;
   ros::Subscriber target_kinematics_pose_sub_;
+  ros::Subscriber gripper_pose_sub_;
+  ros::Subscriber gripper_onoff_sub_;
 
   // ROS Service Server
 
@@ -86,11 +95,10 @@ class PickAndPlaceController
 
   // Joint states
   std::vector<Joint> joint_;
+  Joint gripper_;
 
   // MoveIt! interface
-  std::string planning_group_;
-  moveit::planning_interface::MoveGroupInterface *move_group;
-  moveit_msgs::DisplayTrajectory trajectory_msg_;
+  moveit::planning_interface::MoveGroupInterface *move_group[2];
   PlannedPathInfo planned_path_info_;
 
   // Process state variables
@@ -98,8 +106,8 @@ class PickAndPlaceController
   uint16_t all_time_steps_;
 
  public:
-  PickAndPlaceController();
-  virtual ~PickAndPlaceController();
+  PositionController();
+  virtual ~PositionController();
 
   void process(void);
 
@@ -112,7 +120,10 @@ class PickAndPlaceController
 
   void targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
   void targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
+
+  void targetGripperPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
+  void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
 };
 }
 
-#endif /*OPEN_MANIPULATOR_PICK_AND_PLACE_CONTROLLER_H*/
+#endif /*OPEN_MANIPULATOR_POSITION_CONTROLLER_H*/

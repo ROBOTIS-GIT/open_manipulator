@@ -1,3 +1,14 @@
 <launch>
+  <arg name="use_gazebo"       default="false"/>
+  <arg name="use_robot_name"   default="open_manipulator_with_tb3"/>
+  <arg name="joint_num"        default="4"/>
+  <arg name="dxl_first_id"     default="3"/>
+  <arg name="gripper_dxl_id"   default="7"/>
 
+  <param name="gazebo"              value="$(arg use_gazebo)" type="bool"/>
+  <param name="robot_name"          value="$(arg use_robot_name)"/>
+  <param name="joint_num"           value="$(arg joint_num)"/>
+  <param name="gripper_dxl_id"      value="$(arg gripper_dxl_id)"/>
+
+  <node name="position_controller" pkg="open_manipulator_position_ctrl" type="position_controller" required="true" output="screen"/>
 </launch>
