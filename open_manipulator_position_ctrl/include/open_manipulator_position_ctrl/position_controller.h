@@ -16,129 +16,103 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#ifndef OPEN_MANIPULATOR_POSITION_CONTROLLER_H
-#define OPEN_MANIPULATOR_POSITION_CONTROLLER_H
+#ifndef OPEN_MANIPULATOR_PICK_AND_PLACE_CONTROLLER_H
+#define OPEN_MANIPULATOR_PICK_AND_PLACE_CONTROLLER_H
 
 #include <ros/ros.h>
-#include <ros/callback_queue.h>
-#include <ros/package.h>
 
-#include <std_msgs/Bool.h>
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/robot_state/robot_state.h>
+#include <moveit/planning_interface/planning_interface.h>
+
+#include <moveit_msgs/DisplayTrajectory.h>
+
+#include <vector>
+
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
+
 #include <sensor_msgs/JointState.h>
+
 #include "open_manipulator_msgs/JointPose.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
 
-#include <map>
-#include <boost/thread.hpp>
-#include <yaml-cpp/yaml.h>
 #include <eigen3/Eigen/Eigen>
-#include <fstream>
-
-#include "robotis_math/robotis_math.h"
-
-#include "open_manipulator_position_ctrl/motion_planning_tool.h"
-#include "moveit_msgs/DisplayTrajectory.h"
-#include "moveit_msgs/ExecuteTrajectoryActionFeedback.h"
-#include "moveit_msgs/MoveGroupActionFeedback.h"
 
 namespace open_manipulator
 {
-#define MAX_JOINT_NUM        (4)
-#define MAX_GRIP_JOINT_NUM   (1)
-#define GRIPPER              (4)
-#define LEFT_GRIP            (0)
-#define RIGHT_GRIP           (1)
-#define ITERATION_FREQUENCY  (25)
-#define ITERATION_TIME       (0.04)
+#define LEFT_PALM   0
+#define RIGHT_PALM  1
 
-class PositionController
+#define ITERATION_FREQUENCY 25 //Hz
+
+typedef struct
+{
+  std::string name;
+  uint8_t dxl_id;
+} Joint;
+
+typedef struct
+{
+  uint16_t waypoints;                                  // planned number of via-points
+  Eigen::MatrixXd planned_path_positions;              // planned position trajectory
+} PlannedPathInfo;
+
+class PickAndPlaceController
 {
  private:
   // ROS NodeHandle
   ros::NodeHandle nh_;
-  ros::NodeHandle nh_priv_;
 
   // ROS Parameters
-  bool is_debug_;
   bool using_gazebo_;
-  bool using_moveit_;
   std::string robot_name_;
+  int joint_num_;
+  int dxl_first_id_;
 
   // ROS Publisher
-  ros::Publisher moving_pub_;
-  ros::Publisher goal_joint_position_pub_;
-  ros::Publisher gazebo_goal_joint_position_pub_[MAX_JOINT_NUM];
-  ros::Publisher gazebo_gripper_position_pub_[MAX_GRIP_JOINT_NUM+1];
+  ros::Publisher gazebo_goal_joint_position_pub_[10];
+  ros::Publisher gazebo_gripper_position_pub_[2];
 
   // ROS Subscribers
-  ros::Subscriber present_joint_position_sub_;
   ros::Subscriber gazebo_present_joint_position_sub_;
   ros::Subscriber display_planned_path_sub_;
-  ros::Subscriber move_group_feedback_sub_;
-  ros::Subscriber gripper_position_sub_;
-  ros::Subscriber joint_position_sub_;
+  ros::Subscriber target_joint_pose_sub_;
+  ros::Subscriber target_kinematics_pose_sub_;
 
   // ROS Service Server
 
   // ROS Service Client
 
-  // Process state variables
-  bool is_moving_;
-  bool moveit_execution_;
-  bool gripper_;
-
-  // Time variables
-  double move_time_;
-  int all_time_steps_;
-  int step_cnt_;
-
-  // Dynamixel position Vector and Matrix
-  Eigen::VectorXd present_joint_position_;
-  Eigen::VectorXd goal_joint_position_;
-  Eigen::VectorXd goal_gripper_position_;
-
-  Eigen::MatrixXd goal_trajectory_;
-  Eigen::MatrixXd goal_gripper_trajectory_;
-
   // Joint states
-  std::map<std::string, uint8_t> joint_id_;
+  std::vector<Joint> joint_;
 
-  // Motion Planning Tool
-  motion_planning_tool::MotionPlanningTool *motionPlanningTool_;
+  // MoveIt! interface
+  std::string planning_group_;
+  moveit::planning_interface::MoveGroupInterface *move_group;
+  moveit_msgs::DisplayTrajectory trajectory_msg_;
+  PlannedPathInfo planned_path_info_;
 
-  // thread
-  boost::thread* trajectory_generate_thread_;
+  // Process state variables
+  bool     is_moving_;
+  uint16_t all_time_steps_;
 
  public:
-  PositionController();
-  virtual ~PositionController();
+  PickAndPlaceController();
+  virtual ~PickAndPlaceController();
 
   void process(void);
 
  private:
-  bool initPositionController(void);
-  bool shutdownPositionController(void);
+  void initPublisher(bool using_gazebo);
+  void initSubscriber(bool using_gazebo);
 
-  bool initStatePublisher(bool using_gazebo);
-  bool initStateSubscriber(bool using_gazebo);
-  bool getPresentPosition(void);
-
-  void calculateGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position);
-  void gripOn(void);
-  void gripOff(void);
-
-  void moveItTragectoryGenerateThread();
-
-  void presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
-  void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
-  void jointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
-
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
-  void moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg);
+
+  void targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
+  void targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
 };
 }
 
-#endif /*OPEN_MANIPULATOR_POSITION_CONTROLLER_H*/
+#endif /*OPEN_MANIPULATOR_PICK_AND_PLACE_CONTROLLER_H*/

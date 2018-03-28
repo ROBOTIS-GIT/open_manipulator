@@ -16,439 +16,224 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#include "open_manipulator_position_ctrl/position_controller.h"
+#include "open_manipulator_position_ctrl/pick_place_controller.h"
 
 using namespace open_manipulator;
 
-PositionController::PositionController()
-    :nh_priv_("~"),
-     using_gazebo_(false),
-     using_moveit_(false),
-     is_moving_(false),
-     move_time_(0.0),
-     all_time_steps_(0.0),
-     step_cnt_(0),
-     moveit_execution_(false),
-     gripper_(false)
+PickAndPlaceController::PickAndPlaceController()
+    :using_gazebo_(false),
+     robot_name_(""),
+     joint_num_(4),
+     dxl_first_id_(1),
+     is_moving_(false)
 {
   // Init parameter
-  nh_priv_.param("is_debug", is_debug_, is_debug_);
   nh_.getParam("gazebo", using_gazebo_);
-  nh_.getParam("moveit", using_moveit_);
-  nh_.getParam("gazebo_robot_name", robot_name_);
+  nh_.getParam("robot_name", robot_name_);
+  nh_.getParam("dxl_first_id", dxl_first_id_);
+  nh_.getParam("joint_num", joint_num_);
 
-  // Init target name
-  ROS_ASSERT(initPositionController());
-}
-
-PositionController::~PositionController()
-{
-  ROS_ASSERT(shutdownPositionController());
-}
-
-bool PositionController::initPositionController(void)
-{
-  joint_id_["joint1"] = 1;
-  joint_id_["joint2"] = 2;
-  joint_id_["joint3"] = 3;
-  joint_id_["joint4"] = 4;
-
-  present_joint_position_   = Eigen::VectorXd::Zero(MAX_JOINT_NUM+MAX_GRIP_JOINT_NUM);
-  goal_joint_position_      = Eigen::VectorXd::Zero(MAX_JOINT_NUM);
-  goal_gripper_position_    = Eigen::VectorXd::Zero(MAX_GRIP_JOINT_NUM);
-
-  initStatePublisher(using_gazebo_);
-  initStateSubscriber(using_gazebo_);
-
-  if (using_moveit_)
+  for (uint8_t num = 0; num < joint_num_; num++)
   {
-    motionPlanningTool_ = new motion_planning_tool::MotionPlanningTool();
+    Joint joint;
 
-    motionPlanningTool_->init("robot_description");
+    joint.name   = "joint" + std::to_string(num+1);
+    joint.dxl_id = num + dxl_first_id_;
+
+    joint_.push_back(joint);
   }
 
-  ROS_INFO("open_manipulator_position_controller : Init OK!");
-  return true;
+  planned_path_info_.waypoints = 10;
+  planned_path_info_.planned_path_positions = Eigen::MatrixXd::Zero(planned_path_info_.waypoints, joint_num_);
+
+  planning_group_ = "arm";
+
+  move_group = new moveit::planning_interface::MoveGroupInterface(planning_group_);
+
+  initPublisher(using_gazebo_);
+  initSubscriber(using_gazebo_);
 }
 
-bool PositionController::shutdownPositionController(void)
+PickAndPlaceController::~PickAndPlaceController()
 {
   ros::shutdown();
-  return true;
+  return;
 }
 
-bool PositionController::initStatePublisher(bool using_gazebo)
+void PickAndPlaceController::initPublisher(bool using_gazebo)
 {
-  // ROS Publisher
   if (using_gazebo)
   {
-    ROS_WARN("SET Gazebo Simulation Mode");
-    for (std::map<std::string, uint8_t>::iterator state_iter = joint_id_.begin();
-         state_iter != joint_id_.end(); state_iter++)
+    ROS_INFO("SET Gazebo Simulation Mode");
+
+    for (uint8_t index = 0; index < joint_num_; index++)
     {
-      std::string joint_name = state_iter->first;
-      gazebo_goal_joint_position_pub_[joint_id_[joint_name]-1]
-        = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/" + joint_name + "_position/command", 10);
+      gazebo_goal_joint_position_pub_[index]
+        = nh_.advertise<std_msgs::Float64>("/" + joint_[index].name + "_position/command", 10);
     }
 
-    gazebo_gripper_position_pub_[LEFT_GRIP]  = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/grip_joint_position/command", 10);
-    gazebo_gripper_position_pub_[RIGHT_GRIP] = nh_.advertise<std_msgs::Float64>("/" + robot_name_ + "/grip_joint_sub_position/command", 10);
+    gazebo_gripper_position_pub_[0] = nh_.advertise<std_msgs::Float64>("/grip_joint_position/command", 10);
+    gazebo_gripper_position_pub_[1] = nh_.advertise<std_msgs::Float64>("/grip_joint_sub_position/command", 10);
   }
-  else
-  {
-    goal_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/open_manipulator/goal_joint_states", 10);
-  }
-
-  moving_pub_   = nh_.advertise<std_msgs::Bool>("/robotis/open_manipulator/moving", 10);
 }
 
-bool PositionController::initStateSubscriber(bool using_gazebo)
+void PickAndPlaceController::initSubscriber(bool using_gazebo)
 {
-  // ROS Subscriber
   if (using_gazebo)
   {
-    gazebo_present_joint_position_sub_ = nh_.subscribe("/" + robot_name_ + "/joint_states", 10,
-                                                       &PositionController::gazeboPresentJointPositionMsgCallback, this);
-  }
-  else
-  {
-    present_joint_position_sub_     = nh_.subscribe("/robotis/open_manipulator/present_joint_states", 10,
-                                                      &PositionController::presentJointPositionMsgCallback, this);
+    gazebo_present_joint_position_sub_ = nh_.subscribe("/joint_states", 10,
+                                                       &PickAndPlaceController::gazeboPresentJointPositionMsgCallback, this);
   }
 
-  move_group_feedback_sub_        = nh_.subscribe("/move_group/feedback", 10,
-                                                    &PositionController::moveGroupActionFeedbackMsgCallback, this);
-  display_planned_path_sub_       = nh_.subscribe("/move_group/display_planned_path", 10,
-                                                    &PositionController::displayPlannedPathMsgCallback, this);
+  target_joint_pose_sub_ = nh_.subscribe("/" + robot_name_ + "/target_pose", 10,
+                                         &PickAndPlaceController::targetJointPoseMsgCallback, this);
 
-  gripper_position_sub_           = nh_.subscribe("/robotis/open_manipulator/gripper", 10,
-                                                    &PositionController::gripperPositionMsgCallback, this);
+  target_kinematics_pose_sub_ = nh_.subscribe("/" + robot_name_ + "/kinematics_pose", 10,
+                                         &PickAndPlaceController::targetKinematicsPoseMsgCallback, this);
 
-  joint_position_sub_             = nh_.subscribe("/robotis/open_manipulator/joints", 10,
-                                                    &PositionController::jointPositionMsgCallback, this);
+
+  display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 10,
+                                            &PickAndPlaceController::displayPlannedPathMsgCallback, this);
 }
 
-bool PositionController::getPresentPosition()
+void PickAndPlaceController::gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  for (int it = 0; it < MAX_JOINT_NUM; it++)
-  {
-    goal_joint_position_(it)  = present_joint_position_(it);
-  }
-
-  goal_gripper_position_(0)  = present_joint_position_(GRIPPER);
+//  for (auto index = 0; index < JOINT_NUM + GRIP_NUM; index++)
+//    present_joint_position_(index) = msg->position.at(index);
 }
 
-void PositionController::gripOn(void)
+void PickAndPlaceController::targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
 {
-  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
-  Eigen::VectorXd target_position  = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
 
-  for (int it = 0; it < MAX_JOINT_NUM; it++)
-  {
-    initial_position(it)  = goal_joint_position_(it);
-    target_position(it)   = goal_joint_position_(it);
-  }
+  const robot_state::JointModelGroup *joint_model_group = move_group->getCurrentState()->getJointModelGroup(planning_group_);
 
-  initial_position(GRIPPER)  = goal_gripper_position_(0);
-  target_position(GRIPPER)   = goal_gripper_position_(0);
+  moveit::core::RobotStatePtr current_state = move_group->getCurrentState();
 
-  target_position(GRIPPER) = 75.0 * DEGREE2RADIAN;
+  std::vector<double> joint_group_positions;
+  current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
-  move_time_ = 3.0;
-  gripper_    = true;
-  calculateGoalTrajectory(initial_position, target_position);
+//  for (uint8_t index = 0; index < JOINT_NUM; index++)
+//  {
+//    if (msg->joint_name[index] == ("joint" + std::to_string((index+1))))
+//    {
+//      joint_group_positions[index] = msg->position[index];
 
-  ROS_INFO("Start Gripper Trajectory");
+//      ROS_WARN("%lf", joint_group_positions[index]);
+//    }
+//  }
+
+  joint_group_positions[0] =  0.0;                  // radians
+  joint_group_positions[1] = -70.0 * (M_PI/180.0);  // radians
+  joint_group_positions[2] =  30.0 * (M_PI/180.0);  // radians
+  joint_group_positions[3] =  40.0 * (M_PI/180.0);  // radians
+
+  move_group->setJointValueTarget(joint_group_positions);
+
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+
+  bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+  ROS_INFO("Planning (joint space goal) %s", success ? "SUCCESS" : "FAILED");
+
+  spinner.stop();
 }
 
-void PositionController::gripOff(void)
+void PickAndPlaceController::targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
 {
-  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
-  Eigen::VectorXd target_position  = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
 
-  for (int it = 0; it < MAX_JOINT_NUM; it++)
-  {
-    initial_position(it)  = goal_joint_position_(it);
-    target_position(it)   = goal_joint_position_(it);
-  }
+  geometry_msgs::Pose target_pose;
+  target_pose.orientation.w =  0.0;
+  target_pose.position.x    =  0.28;
+  target_pose.position.y    = -0.7;
+  target_pose.position.z    =  1.0;
+  move_group->setPoseTarget(target_pose);
 
-  initial_position(GRIPPER)  = goal_gripper_position_(0);
-  target_position(GRIPPER)   = goal_gripper_position_(0);
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
-  target_position(GRIPPER) = 0.0 * DEGREE2RADIAN;
+  bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-  move_time_ = 3.0;
-  gripper_    = true;
-  calculateGoalTrajectory(initial_position, target_position);
+  ROS_INFO("Planning (Cartesian space goal) %s", success ? "SUCCESS" : "FAILED");
 
-  ROS_INFO("Start Gripper Trajectory");
+  spinner.stop();
 }
 
-void PositionController::calculateGoalTrajectory(Eigen::VectorXd initial_position, Eigen::VectorXd target_position)
+void PickAndPlaceController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
 {
-  /* set movement time */
-  all_time_steps_ = int(floor((move_time_ / ITERATION_TIME) + 1.0));
-  move_time_ = double(all_time_steps_ - 1) * ITERATION_TIME;
+  ROS_INFO("Get Planned Path");
 
-  goal_trajectory_.resize(all_time_steps_, MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
+  planned_path_info_.waypoints = msg->trajectory[0].joint_trajectory.points.size();
 
-  /* calculate gripper trajectory */
-  for (int index = 0; index < MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM; index++)
+  planned_path_info_.planned_path_positions.resize(planned_path_info_.waypoints, joint_num_);
+
+  for (uint16_t point_num = 0; point_num < planned_path_info_.waypoints; point_num++)
   {
-    double init_position_value = initial_position(index);
-    double target_position_value = target_position(index);
+    for (uint8_t joint_num = 0; joint_num < joint_num_; joint_num++)
+    {
+      float joint_position = msg->trajectory[0].joint_trajectory.points[point_num].positions[joint_num];
 
-    Eigen::MatrixXd trajectory =
-        robotis_framework::calcMinimumJerkTra(init_position_value, 0.0, 0.0,
-                                              target_position_value, 0.0, 0.0,
-                                              ITERATION_TIME, move_time_);
-
-    // Block of size (p,q), starting at (i,j)
-    // block(i,j,p,q)
-    goal_trajectory_.block(0, index, all_time_steps_, 1) = trajectory;
+      planned_path_info_.planned_path_positions.coeffRef(point_num , joint_num) = joint_position;
+    }
   }
 
-  step_cnt_   = 0;
+  all_time_steps_ = planned_path_info_.waypoints - 1;
+
+  ros::WallDuration sleep_time(0.5);
+  sleep_time.sleep();
+
+  ROS_INFO("Execute");
+
   is_moving_  = true;
 }
 
-void PositionController::moveGroupActionFeedbackMsgCallback(const moveit_msgs::MoveGroupActionFeedback::ConstPtr &msg)
+void PickAndPlaceController::process(void)
 {
-  if (is_moving_ == false && msg->feedback.state == "MONITOR")
-  {
-    moveit_execution_ = true;
-  }
-}
-
-void PositionController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
-{
-  motionPlanningTool_->moveit_msg_ = *msg;
-
-  trajectory_generate_thread_ = new boost::thread(boost::bind(&PositionController::moveItTragectoryGenerateThread, this));
-  delete trajectory_generate_thread_;
-}
-
-void PositionController::moveItTragectoryGenerateThread()
-{
-  std::vector<double> via_time;
-
-  for (int _tra_index = 0; _tra_index < motionPlanningTool_->moveit_msg_.trajectory.size(); _tra_index++)
-  {
-    motionPlanningTool_->points_ = motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.points.size();
-
-    motionPlanningTool_->display_planned_path_positions_.resize(motionPlanningTool_->points_, MAX_JOINT_NUM);
-    motionPlanningTool_->display_planned_path_velocities_.resize(motionPlanningTool_->points_, MAX_JOINT_NUM);
-    motionPlanningTool_->display_planned_path_accelerations_.resize(motionPlanningTool_->points_, MAX_JOINT_NUM);
-
-    for (int _point_index = 0; _point_index < motionPlanningTool_->points_; _point_index++)
-    {
-      for(int _name_index = 0; _name_index < MAX_JOINT_NUM; _name_index++)
-      {
-        motionPlanningTool_->display_planned_path_positions_.coeffRef(_point_index, _name_index) = goal_joint_position_(_name_index);
-      }
-    }
-
-    for (int _point_index = 0; _point_index < motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.points.size(); _point_index++)
-    {
-      motionPlanningTool_->time_from_start_ = motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.points[_point_index].time_from_start;
-      via_time.push_back(motionPlanningTool_->time_from_start_.toSec());
-
-      for (int _joint_index = 0; _joint_index < motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.joint_names.size(); _joint_index++)
-      {
-        std::string _joint_name 	  = motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.joint_names[_joint_index];
-
-        double _joint_position 		  = motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.points[_point_index].positions	   [_joint_index];
-        double _joint_velocity 	   	= motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.points[_point_index].velocities	 [_joint_index];
-        double _joint_acceleration 	= motionPlanningTool_->moveit_msg_.trajectory[_tra_index].joint_trajectory.points[_point_index].accelerations[_joint_index];
-
-        motionPlanningTool_->display_planned_path_positions_.coeffRef     (_point_index , joint_id_[_joint_name]-1) = _joint_position;
-        motionPlanningTool_->display_planned_path_velocities_.coeffRef	  (_point_index , joint_id_[_joint_name]-1) = _joint_velocity;
-        motionPlanningTool_->display_planned_path_accelerations_.coeffRef (_point_index , joint_id_[_joint_name]-1) = _joint_acceleration;
-      }
-    }
-  }
-
-  move_time_ = motionPlanningTool_->time_from_start_.toSec();
-
-  all_time_steps_ = motionPlanningTool_->points_;
-
-  ros::Duration seconds(0.5);
-  seconds.sleep();
-
-
-  goal_trajectory_ = motionPlanningTool_->display_planned_path_positions_;
-  ROS_INFO("Get Joint Trajectory");
-
-  if (moveit_execution_ == true)
-  {
-    is_moving_    = true;
-    step_cnt_     = 0;
-
-    moveit_execution_ = false;
-
-    ROS_INFO("Send Motion Trajectory");
-  }
-}
-
-void PositionController::gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
-{
-  uint8_t gripper_joint_num = 0;
-
-  gripper_joint_num = MAX_GRIP_JOINT_NUM + 1;
-
- for (int index = gripper_joint_num; index < MAX_JOINT_NUM + gripper_joint_num; index++)
- {
-   present_joint_position_(index - gripper_joint_num) = msg->position.at(index);
- }
-
- for (int index = 0; index < MAX_GRIP_JOINT_NUM; index++)
- {
-   present_joint_position_(index + MAX_JOINT_NUM) = msg->position.at(index);
- }
-}
-
-void PositionController::presentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
-{
-  for (int index = 0; index < MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM; index++)
-  {
-    present_joint_position_(index) = msg->position.at(index);
-  }
-}
-
-void PositionController::gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg)
-{
-  if (msg->data == "grip_on")
-  {
-    gripOn();
-  }
-  else if (msg->data == "grip_off")
-  {
-    gripOff();
-  }
-  else
-  {
-    ROS_ERROR("If you want to grip or release something, publish 'grip_on' or 'grip_off'");
-  }
-}
-
-void PositionController::jointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
-{
-  static bool check = true;
-
-  if (check)
-  {
-    getPresentPosition();
-    check = false;
-  }
-
-  Eigen::VectorXd initial_position = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
-  Eigen::VectorXd target_position  = Eigen::VectorXd::Zero(MAX_JOINT_NUM + MAX_GRIP_JOINT_NUM);
-
-  for (int it = 0; it < MAX_JOINT_NUM; it++)
-  {
-    initial_position(it)  = goal_joint_position_(it);
-    target_position(it)   = goal_joint_position_(it);
-  }
-
-  initial_position(GRIPPER)  = goal_gripper_position_(0);
-  target_position(GRIPPER)   = goal_gripper_position_(0);
-
-  for (int it = 0; it < msg->joint_name.size(); it++)
-  {
-    target_position(joint_id_[msg->joint_name[it]]-1) = msg->position[it];
-  }
-
-  move_time_ = msg->move_time;
-  calculateGoalTrajectory(initial_position, target_position);
-
-  ROS_INFO("Start Joint Trajectory");
-}
-
-void PositionController::process(void)
-{
-  // Get Joint & Gripper State
-  // present_joint_position, present_gripper_position
-
-  if (is_moving_)
-  {
-    if (gripper_)
-    {
-      goal_gripper_position_(0) = goal_trajectory_(step_cnt_, GRIPPER);
-    }
-    else
-    {
-      for (int index = 0; index < MAX_JOINT_NUM; index++)
-      {
-        goal_joint_position_(index) = goal_trajectory_(step_cnt_, index);
-      }
-    }
-
-    step_cnt_++;
-  }
-
-  sensor_msgs::JointState send_to_joint_position;
-
-  for (std::map<std::string, uint8_t>::iterator state_iter = joint_id_.begin();
-       state_iter != joint_id_.end(); state_iter++)
-  {
-    std::string joint_name = state_iter->first;
-    send_to_joint_position.name.push_back(joint_name);
-    send_to_joint_position.position.push_back(goal_joint_position_(joint_id_[joint_name]-1));
-  }
-
-  std::string gripper_name = "grip_joint";
-  send_to_joint_position.name.push_back(gripper_name);
-  send_to_joint_position.position.push_back(goal_gripper_position_(0));
+  static uint16_t step_cnt = 0;
+  std_msgs::Float64 goal_joint_position;
 
   if (is_moving_)
   {
     if (using_gazebo_)
     {
-      for (int id = 1; id <= MAX_JOINT_NUM; id++)
+      for (uint8_t num = 0; num < joint_num_; num++)
       {
-        std_msgs::Float64 joint_position;
-        joint_position.data = send_to_joint_position.position.at(id-1);
-        gazebo_goal_joint_position_pub_[id-1].publish(joint_position);
+        goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, num);
+        gazebo_goal_joint_position_pub_[num].publish(goal_joint_position);
       }
-
-      std_msgs::Float64 gripper_position;
-      gripper_position.data = send_to_joint_position.position.at(4) * 0.01;
-      gazebo_gripper_position_pub_[LEFT_GRIP].publish(gripper_position);
-      gazebo_gripper_position_pub_[RIGHT_GRIP].publish(gripper_position);
     }
-    else
-    {
-      goal_joint_position_pub_.publish(send_to_joint_position);
-    }
-  }
 
-  if (is_moving_)
-  {
-    if (step_cnt_ >= all_time_steps_)
+    if (step_cnt >= all_time_steps_)
     {
       is_moving_ = false;
-      step_cnt_  = 0;
-      gripper_   = false;
+      step_cnt   = 0;
 
       ROS_INFO("End Trajectory");
     }
+    else
+    {
+      step_cnt++;
+    }
   }
-
-  std_msgs::Bool get_moving;
-  get_moving.data = is_moving_;
-  moving_pub_.publish(get_moving);
 }
 
 int main(int argc, char **argv)
 {
-  // Init ROS node
-  ros::init(argc, argv, "open_manipulator_position_controller");
-  PositionController position_controller;
+  ros::init(argc, argv, "pick_and_place_controller_for_OpenManipulator");
+
+  ros::WallDuration sleep_time(10.0);
+  sleep_time.sleep();
+
+  PickAndPlaceController controller;
+
   ros::Rate loop_rate(ITERATION_FREQUENCY);
 
   while (ros::ok())
   {
-    position_controller.process();
+    controller.process();
+
     ros::spinOnce();
     loop_rate.sleep();
   }
