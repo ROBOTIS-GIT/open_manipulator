@@ -1,13 +1,17 @@
 <launch>
-  <arg name="device_name"          default="/dev/ttyUSB0"/>
-  <arg name="baud_rate"            default="1000000"/>
+  <arg name="device_name"            default="/dev/ttyUSB0"/>
+  <arg name="baud_rate"              default="1000000"/>
+  <arg name="scan_range"             default="10"/>
 
-  <arg name="scan_range"           default="10"/>
+  <arg name="joint_controller"       default="position_mode"/>
+  <arg name="gripper_controller"     default="current_mode"/>
 
-  <param name="device_name"        value="$(arg device_name)"/>
-  <param name="baud_rate"          value="$(arg baud_rate)"/>
+  <param name="device_name"          value="$(arg device_name)"/>
+  <param name="baud_rate"            value="$(arg baud_rate)"/>
+  <param name="scan_range"           value="$(arg scan_range)"/>
 
-  <param name="scan_range"         value="$(arg scan_range)"/>
+  <param name="joint_controller"     value="$(arg joint_controller)"/>
+  <param name="gripper_controller"   value="$(arg gripper_controller)"/>
 
   <node name="open_manipulator_dynamixel_controller" pkg="open_manipulator_dynamixel_ctrl" type="dynamixel_controller" required="true" output="screen"/>
 </launch>
