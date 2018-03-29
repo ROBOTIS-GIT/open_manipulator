@@ -48,14 +48,18 @@ include_directories(
   ${EIGEN3_INCLUDE_DIRS}
 )
 
-add_executable(position_controller src/position_controller.cpp)
-add_dependencies(position_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(position_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+add_executable(joint_controller src/joint_controller.cpp)
+add_dependencies(joint_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(joint_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+
+add_executable(gripper_controller src/gripper_controller.cpp)
+add_dependencies(gripper_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(gripper_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS position_controller
+install(TARGETS joint_controller gripper_controller
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
