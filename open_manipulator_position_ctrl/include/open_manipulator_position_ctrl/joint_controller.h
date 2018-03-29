@@ -16,8 +16,8 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#ifndef OPEN_MANIPULATOR_POSITION_CONTROLLER_H
-#define OPEN_MANIPULATOR_POSITION_CONTROLLER_H
+#ifndef OPEN_MANIPULATOR_JOINT_CONTROLLER_H
+#define OPEN_MANIPULATOR_JOINT_CONTROLLER_H
 
 #include <ros/ros.h>
 
@@ -41,12 +41,6 @@
 
 namespace open_manipulator
 {
-#define LEFT_PALM   0
-#define RIGHT_PALM  1
-
-#define ARM     0
-#define GRIPPER 1
-
 #define ITERATION_FREQUENCY 25 //Hz
 
 typedef struct
@@ -62,7 +56,7 @@ typedef struct
   Eigen::MatrixXd planned_path_positions;              // planned position trajectory
 } PlannedPathInfo;
 
-class PositionController
+class JointController
 {
  private:
   // ROS NodeHandle
@@ -72,22 +66,16 @@ class PositionController
   bool using_gazebo_;
   std::string robot_name_;
   int joint_num_;
-  int palm_num_;
   int first_dxl_id_;
-  int gripper_dxl_id_;
 
   // ROS Publisher
   ros::Publisher gazebo_goal_joint_position_pub_[10];
-  ros::Publisher gazebo_gripper_position_pub_[2];
-  ros::Publisher gripper_onoff_pub_;
 
   // ROS Subscribers
   ros::Subscriber gazebo_present_joint_position_sub_;
   ros::Subscriber display_planned_path_sub_;
   ros::Subscriber target_joint_pose_sub_;
   ros::Subscriber target_kinematics_pose_sub_;
-  ros::Subscriber gripper_pose_sub_;
-  ros::Subscriber gripper_onoff_sub_;
 
   // ROS Service Server
 
@@ -98,7 +86,7 @@ class PositionController
   Joint gripper_;
 
   // MoveIt! interface
-  moveit::planning_interface::MoveGroupInterface *move_group[2];
+  moveit::planning_interface::MoveGroupInterface *move_group;
   PlannedPathInfo planned_path_info_;
 
   // Process state variables
@@ -106,8 +94,8 @@ class PositionController
   uint16_t all_time_steps_;
 
  public:
-  PositionController();
-  virtual ~PositionController();
+  JointController();
+  virtual ~JointController();
 
   void process(void);
 
@@ -120,10 +108,7 @@ class PositionController
 
   void targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
   void targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
-
-  void targetGripperPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
-  void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
 };
 }
 
-#endif /*OPEN_MANIPULATOR_POSITION_CONTROLLER_H*/
+#endif /*OPEN_MANIPULATOR_JOINT_CONTROLLER_H*/
