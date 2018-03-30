@@ -1,0 +1,47 @@
+<?xml version='1.0'?>
+<sdf version='1.5'>
+  <model name="small_beer">
+
+    <link name='link'>
+      <pose>0 0 0.080 0 0 0</pose>
+      <inertial>
+        <mass>0.250</mass>
+        <inertia>
+          <ixx>0.000615</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00232</iyy>
+          <iyz>0</iyz>
+          <izz>0.000945</izz>
+        </inertia>
+      </inertial>
+
+      <collision name='collision'>
+        <geometry>
+          <cylinder>
+            <radius>0.027500</radius>
+            <length>0.165000</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name='visual'>
+        <geometry>
+          <cylinder>
+            <radius>0.027500</radius>
+            <length>0.165000</length>
+          </cylinder>
+        </geometry>
+
+        <material>
+          <script>
+            <uri>model://small_beer/materials/scripts</uri>
+            <uri>model://small_beer/materials/textures</uri>
+            <name>Beer/Diffuse</name>
+          </script>
+        </material>
+      </visual>
+    </link>    
+ 
+  </model>
+</sdf>

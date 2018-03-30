@@ -10,12 +10,14 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 # Packages
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  sensor_msgs
+  gazebo_ros
   gazebo_ros_control
-  position_controllers
+  controller_manager
+  xacro
+  urdf
 )
+
+find_package(gazebo REQUIRED)
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -29,28 +31,23 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs gazebo_ros_control position_controllers
+  CATKIN_DEPENDS gazebo_ros gazebo_ros_control controller_manager xacro urdf
 )
 
 ################################################################################
 # Build
 ################################################################################
+link_directories(${GAZEBO_LIBRARY_DIRS})
+
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
 )
-
-add_executable(open_manipulator_gazebo_grip_pub src/open_manipulator_gazebo_grip_pub.cpp)
-target_link_libraries(open_manipulator_gazebo_grip_pub ${catkin_LIBRARIES})
-add_dependencies(open_manipulator_gazebo_grip_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS open_manipulator_gazebo_grip_pub
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-install(DIRECTORY launch
+install(DIRECTORY launch config models worlds
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
