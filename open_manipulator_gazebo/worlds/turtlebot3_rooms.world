@@ -34,7 +34,7 @@
 
     <!-- Load world -->
     <include>
-      <uri>model://turtlebot3_rooms2</uri>
+      <uri>model://turtlebot3_rooms</uri>
     </include>
 
     <scene>
@@ -45,7 +45,7 @@
 
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>0.8 0.0 12.0 0 1.5708 0</pose>
+        <pose>0.8 2.0 12.0 0 1.5708 1.5708</pose>
         <view_controller>orbit</view_controller>
       </camera>
     </gui>
