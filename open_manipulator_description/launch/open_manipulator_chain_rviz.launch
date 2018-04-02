@@ -1,4 +1,3 @@
-<?xml version="1.0" ?>
 <launch>
   <param name="robot_description"
          command="$(find xacro)/xacro --inorder '$(find open_manipulator_description)/urdf/open_manipulator_chain.urdf.xacro'"/>
@@ -8,10 +7,10 @@
     <param name="use_gui" value="TRUE"/>
   </node>
 
-  <!-- Combine joint values -->
+  <!-- Combine joint values to TF-->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 
   <!-- Show in Rviz -->
-   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_description)/rviz/open_manipulator.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_description)/rviz/open_manipulator.rviz"/>
 </launch>
 

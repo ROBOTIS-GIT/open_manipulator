@@ -7,6 +7,7 @@
   <!-- Send joint values -->
   <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
     <param name="use_gui" value="TRUE"/>
+    <rosparam param="source_list">["/joint_states"]</rosparam>
   </node>
 
   <!-- Combine joint values -->
