@@ -1,14 +1,12 @@
 <launch>
 
-  <node pkg="tf" type="static_transform_publisher" name="world_to_odom"
-  args="0 0 0 0 0 0 world odom 8" /> <!-- x y z yaw pitch roll frame_id child_frame_id period_in_ms-->
-
-  <node name="ar_pose" pkg="ar_pose" type="ar_single" respawn="false" output="screen">
-    <param name="marker_pattern" type="string" value="$(find ar_pose)/data/4x4/4x4_77.patt"/>
-    <param name="marker_width" type="double" value="40.0"/>
-    <param name="marker_center_x" type="double" value="0.0"/>
-    <param name="marker_center_y" type="double" value="0.0"/>
-    <param name="threshold" type="int" value="100"/>
-  </node>
+  <include file="$(find ar_track_alvar)/launch/pr2_indiv_no_kinect.launch">
+    <arg name="marker_size" value="6.0" />
+    <arg name="max_new_marker_error" value="0.08" />
+    <arg name="max_track_error" value="0.2" />
+    <arg name="cam_image_topic" value="/camera/rgb/image_raw" />
+    <arg name="cam_info_topic" value="/camera/rgb/camera_info" />
+    <arg name="output_frame" value="/base_link" />
+  </include>
 
 </launch>
