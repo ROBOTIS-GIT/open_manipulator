@@ -757,12 +757,12 @@
         <inertial>
           <mass>0.25</mass>
           <inertia>
-            <ixx>0.000615</ixx>
+            <ixx>6.1445e-04</ixx>
             <ixy>0</ixy>
             <ixz>0</ixz>
-            <iyy>0.00232</iyy>
+            <iyy>6.1445e-04</iyy>
             <iyz>0</iyz>
-            <izz>0.000945</izz>
+            <izz>9.4531e-05</izz>
           </inertia>
         </inertial>
         <collision name='collision'>
@@ -789,7 +789,7 @@
           </material>
         </visual>
       </link>
-      <pose frame=''>-1.50831 3.99994 0 0 -0 0</pose>
+      <pose frame=''>-1.50831 3.99994 0.2 0 -0 0</pose>
     </model>
     <static>1</static>
     <allow_auto_disable>0</allow_auto_disable>
