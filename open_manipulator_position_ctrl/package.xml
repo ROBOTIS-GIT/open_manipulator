@@ -14,7 +14,6 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
   <depend>moveit_msgs</depend>  
   <depend>open_manipulator_msgs</depend>
   <depend>moveit_core</depend>

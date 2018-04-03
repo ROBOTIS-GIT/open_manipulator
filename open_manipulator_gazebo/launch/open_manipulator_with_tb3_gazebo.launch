@@ -23,9 +23,12 @@
    command="$(find xacro)/xacro --inorder '$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3_$(arg model).urdf.xacro'"/>
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+  <node pkg="gazebo_ros" type="spawn_model" name="urdf_spawner" respawn="false" output="screen"
      args="-urdf -model open_manipulator_with_tb3 -x -1.5 -y 3.5 -Y 1.57 -param robot_description"/>
 
   <!-- ros_control robotis manipulator launch file -->
   <include file="$(find open_manipulator_gazebo)/launch/open_manipulator_with_tb3_controller.launch"/>
+
+  <!-- Set init pose -->
+<!--  <node pkg="open_manipulator_gazebo" type="open_manipulator_chain_init_pose_pub" name="init_pose_pub"  respawn="false" output="screen"/>-->
 </launch>
