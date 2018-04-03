@@ -10,8 +10,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 # Packages
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  sensor_msgs
+  ar_track_alvar
 )
 
 ################################################################################
@@ -26,7 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS roscpp sensor_msgs
+  CATKIN_DEPENDS ar_track_alvar
 )
 
 ################################################################################
