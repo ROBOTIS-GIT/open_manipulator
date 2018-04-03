@@ -29,9 +29,41 @@
           </sampler2D>
         </newparam>
         <technique sid="common">
-          <phong>
+          <blinn>
             <emission>
-              <color sid="emission">0 0 0 1</color>
+                <color>0.8 0.8 0.8 1</color>
+            </emission>
+            <ambient>
+                <color>0.8 0.8 0.8 1</color>
+            </ambient>
+            <diffuse>
+                <texture texture="Marker0_png" texcoord="UVMap"/>
+            </diffuse>
+            <specular>
+                <color>0.8 0.8 0.8 1</color>
+            </specular>
+            <shininess>
+                <float>0.5</float>
+            </shininess>
+            <reflective>
+                <color>0.8 0.8 0.8 1</color>
+            </reflective>
+            <reflectivity>
+                <float>0.5</float>
+            </reflectivity>
+            <transparent>
+                <color>0.8 0.8 0.8 1</color>
+            </transparent>
+            <transparency>
+                <float>0</float>
+            </transparency>
+            <index_of_refraction>
+                <float>0</float>
+            </index_of_refraction>
+          </blinn>
+<!--          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1z</color>
             </emission>
             <ambient>
               <color sid="ambient">0.9 0.9 0.9 1</color>
@@ -48,7 +80,7 @@
             <index_of_refraction>
               <float sid="index_of_refraction">1</float>
             </index_of_refraction>
-          </phong>
+          </phong>-->
         </technique>
       </profile_COMMON>
     </effect>

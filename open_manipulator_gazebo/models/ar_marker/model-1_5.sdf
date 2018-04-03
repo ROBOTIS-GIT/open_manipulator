@@ -8,7 +8,6 @@
         <geometry>
           <mesh>
             <uri>model://ar_marker/meshes/Marker0.dae</uri>
-            <scale>0.1 0.1 0.1</scale>
           </mesh>
         </geometry>
       </visual>
