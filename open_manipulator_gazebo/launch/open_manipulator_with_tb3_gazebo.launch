@@ -28,7 +28,5 @@
 
   <!-- ros_control robotis manipulator launch file -->
   <include file="$(find open_manipulator_gazebo)/launch/open_manipulator_with_tb3_controller.launch"/>
-
-  <!-- Set init pose -->
-<!--  <node pkg="open_manipulator_gazebo" type="open_manipulator_chain_init_pose_pub" name="init_pose_pub"  respawn="false" output="screen"/>-->
+  
 </launch>
