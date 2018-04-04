@@ -42,14 +42,14 @@
 
   <!-- grip_link -->
   <gazebo reference="grip_link">
-    <mu1>0.5</mu1>
+    <mu1>100.0</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <!-- grip_link_sub -->
   <gazebo reference="grip_link_sub">
-    <mu1>0.5</mu1>
+    <mu1>100.0</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/Grey</material>
   </gazebo>
