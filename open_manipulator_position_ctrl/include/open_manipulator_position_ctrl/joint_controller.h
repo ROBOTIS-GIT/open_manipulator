@@ -25,6 +25,10 @@
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/planning_interface/planning_interface.h>
 
+#include <moveit/robot_model_loader/robot_model_loader.h>
+#include <moveit/robot_model/robot_model.h>
+#include <moveit/robot_state/robot_state.h>
+
 #include <moveit_msgs/DisplayTrajectory.h>
 
 #include <vector>
@@ -37,7 +41,11 @@
 #include "open_manipulator_msgs/JointPose.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
 
+#include "open_manipulator_msgs/GetJointPose.h"
+#include "open_manipulator_msgs/GetKinematicsPose.h"
+
 #include <eigen3/Eigen/Eigen>
+#include <boost/thread.hpp>
 
 namespace open_manipulator
 {
@@ -70,6 +78,7 @@ class JointController
 
   // ROS Publisher
   ros::Publisher gazebo_goal_joint_position_pub_[10];
+  ros::Publisher target_joint_pose_pub_;
 
   // ROS Subscribers
   ros::Subscriber gazebo_present_joint_position_sub_;
@@ -78,6 +87,7 @@ class JointController
   ros::Subscriber target_kinematics_pose_sub_;
 
   // ROS Service Server
+  ros::ServiceServer get_joint_pose_server_;
 
   // ROS Service Client
 
@@ -87,6 +97,7 @@ class JointController
 
   // MoveIt! interface
   moveit::planning_interface::MoveGroupInterface *move_group;
+  robot_model_loader::RobotModelLoader *robot_model_loader;
   PlannedPathInfo planned_path_info_;
 
   // Process state variables
@@ -103,11 +114,18 @@ class JointController
   void initPublisher(bool using_gazebo);
   void initSubscriber(bool using_gazebo);
 
+  void initServer();
+
+  void initJointPose();
+
   void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
   void targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
   void targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
+
+  bool getjointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
+                                   open_manipulator_msgs::GetJointPose::Response &res);
 };
 }
 
