@@ -34,8 +34,12 @@
   </include>
 
   <!-- OpenManipultor Position controller-->
-  <include file="$(find open_manipulator_position_ctrl)/launch/position_controller.launch">
-    <arg name="use_gazebo" value="$(arg use_gazebo)"/>
+  <include file="$(find open_manipulator_position_ctrl)/launch/open_manipulator_position_controller.launch">
+    <arg name="use_gazebo"     value="$(arg use_gazebo)"/>
+    <arg name="use_robot_name" value="open_manipulator_chain"/>
+    <arg name="joint_num"      value="4"/>
+    <arg name="dxl_first_id"   value="1"/>
+    <arg name="gripper_dxl_id" value="5"/>
   </include>
 
 </launch>
