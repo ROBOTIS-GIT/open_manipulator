@@ -100,8 +100,7 @@ void GripperController::initSubscriber(bool using_gazebo)
 
 void GripperController::gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-//  for (auto index = 0; index < JOINT_NUM + GRIP_NUM; index++)
-//    present_joint_position_(index) = msg->position.at(index);
+  //TODO
 }
 
 void GripperController::targetGripperPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
@@ -118,8 +117,8 @@ void GripperController::targetGripperPoseMsgCallback(const open_manipulator_msgs
 
   for (uint8_t index = 0; index < palm_num_; index++)
   {
-    joint_group_positions[index] = msg->position[index];
-    joint_group_positions[index] = msg->position[index];
+    joint_group_positions[index] = msg->position[0];
+    joint_group_positions[index] = msg->position[0];
   }
 
   move_group->setJointValueTarget(joint_group_positions);
@@ -140,13 +139,11 @@ void GripperController::gripperPositionMsgCallback(const std_msgs::String::Const
   if (msg->data == "grip_on")
   {
     grip_pose.position.push_back(0.025); // mm
-    grip_pose.position.push_back(0.025); // mm
 
     gripper_onoff_pub_.publish(grip_pose);
   }
   else if (msg->data == "grip_off")
   {
-    grip_pose.position.push_back(0.010); // mm
     grip_pose.position.push_back(0.010); // mm
 
     gripper_onoff_pub_.publish(grip_pose);
