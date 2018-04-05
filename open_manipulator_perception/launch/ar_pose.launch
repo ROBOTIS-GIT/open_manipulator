@@ -2,7 +2,7 @@
   <arg name="marker_size"	   default="5.0" />
   <arg name="image_topic"	   default="/camera/rgb/image_raw" />
   <arg name="info_topic"     default="/camera/rgb/camera_info" />
-  <arg name="output_frame"   default="/camera_rgb_optical_frame" />
+  <arg name="output_frame"   default="/odom" />
 
   <include file="$(find ar_track_alvar)/launch/pr2_indiv_no_kinect.launch">
     <arg name="marker_size" value="$(arg marker_size)" />
