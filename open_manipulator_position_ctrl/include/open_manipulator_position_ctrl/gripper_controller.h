@@ -46,6 +46,10 @@ namespace open_manipulator
 
 #define ITERATION_FREQUENCY 25 //Hz
 
+#define GRIP_ON   0.0     // mm
+#define GRIP_OFF -0.015
+#define NEUTRAL   0.0
+
 typedef struct
 {
   std::string name;

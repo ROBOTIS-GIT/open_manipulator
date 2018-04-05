@@ -138,13 +138,19 @@ void GripperController::gripperPositionMsgCallback(const std_msgs::String::Const
 
   if (msg->data == "grip_on")
   {
-    grip_pose.position.push_back(0.025); // mm
+    grip_pose.position.push_back(GRIP_ON); 
 
     gripper_onoff_pub_.publish(grip_pose);
   }
   else if (msg->data == "grip_off")
   {
-    grip_pose.position.push_back(0.010); // mm
+    grip_pose.position.push_back(GRIP_OFF); 
+
+    gripper_onoff_pub_.publish(grip_pose);
+  }
+    else if (msg->data == "neutral")
+  {
+    grip_pose.position.push_back(NEUTRAL); 
 
     gripper_onoff_pub_.publish(grip_pose);
   }
