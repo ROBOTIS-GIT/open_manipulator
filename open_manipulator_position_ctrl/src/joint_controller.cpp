@@ -74,8 +74,8 @@ void JointController::initJointPose()
 
   joint_group_positions.position.push_back(0.0);
   joint_group_positions.position.push_back(-1.5707);
-  joint_group_positions.position.push_back(1.2566);
-  joint_group_positions.position.push_back(0.287);
+  joint_group_positions.position.push_back(1.37);
+  joint_group_positions.position.push_back(0.2258);
 
   target_joint_pose_pub_.publish(joint_group_positions);
 }
