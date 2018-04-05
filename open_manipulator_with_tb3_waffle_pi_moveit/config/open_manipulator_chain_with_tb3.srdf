@@ -33,8 +33,8 @@
     <group_state name="init_pose" group="arm">
         <joint name="joint1" value="0" />
         <joint name="joint2" value="-1.5707" />
-        <joint name="joint3" value="0.9424" />
-        <joint name="joint4" value="0.6232" />
+        <joint name="joint3" value="1.37" />
+        <joint name="joint4" value="0.2258" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="eef" parent_link="link5" group="gripper" />
