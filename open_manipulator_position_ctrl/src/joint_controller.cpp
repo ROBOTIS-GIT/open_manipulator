@@ -157,13 +157,13 @@ bool JointController::getjointPositionMsgCallback(open_manipulator_msgs::GetJoin
 
 //  std::vector<double> joint_values = move_group->getCurrentJointValues();
 
-  moveit::core::RobotStatePtr current_state = move_group->getCurrentState();
+  // moveit::core::RobotStatePtr current_state = move_group->getCurrentState();
 
-  for (std::size_t i = 0; i < joint_names.size(); ++i)
-  {
-    double *position = current_state->getJointPositions("joint1");
-    joint_values.push_back(*position);
-  }
+  // for (std::size_t i = 0; i < joint_names.size(); ++i)
+  // {
+  //   double *position = current_state->getJointPositions("joint1");
+  //   joint_values.push_back(*position);
+  // }
 //  joint_values.push_back(current_state->getJointPositions("joint2"));
 //  joint_values.push_back(current_state->getJointPositions("joint3"));
 //  joint_values.push_back(current_state->getJointPositions("joint4"));

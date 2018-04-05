@@ -4,12 +4,12 @@
 joint_limits:
   grip_joint:
     has_velocity_limits: true
-    max_velocity: 6.5
+    max_velocity: 3.5
     has_acceleration_limits: false
     max_acceleration: 0
   grip_joint_sub:
     has_velocity_limits: true
-    max_velocity: 6.5
+    max_velocity: 3.5
     has_acceleration_limits: false
     max_acceleration: 0
   joint1:

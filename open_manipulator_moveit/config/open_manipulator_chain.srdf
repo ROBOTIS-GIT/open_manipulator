@@ -18,8 +18,6 @@
     <group name="gripper">
         <link name="grip_link" />
         <link name="grip_link_sub" />
-        <joint name="grip_joint" />
-        <joint name="grip_joint_sub" />
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="zero_pose" group="arm">
@@ -28,15 +26,22 @@
         <joint name="joint3" value="0" />
         <joint name="joint4" value="0" />
     </group_state>
-    <group_state name="init_pose" group="arm">
-        <joint name="joint1" value="0" />
-        <joint name="joint2" value="-1.1122" />
-        <joint name="joint3" value="0.4772" />
-        <joint name="joint4" value="0.6079" />
+    <group_state name="grip_neutral" group="gripper">
+        <joint name="grip_joint" value="0" />
+        <joint name="grip_joint_sub" value="0" />
+    </group_state>
+    <group_state name="grip_on" group="gripper">
+        <joint name="grip_joint" value="0.01" />
+        <joint name="grip_joint_sub" value="0.01" />
+    </group_state>
+    <group_state name="grip_off" group="gripper">
+        <joint name="grip_joint" value="-0.015" />
+        <joint name="grip_joint_sub" value="-0.015" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="linear_gripper" parent_link="link5" group="gripper" />
+    <end_effector name="eef" parent_link="link5" group="gripper" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="grip_link" link2="grip_link_sub" reason="Never" />
     <disable_collisions link1="grip_link" link2="link1" reason="User" />
     <disable_collisions link1="grip_link" link2="link3" reason="Never" />
     <disable_collisions link1="grip_link" link2="link4" reason="Never" />
@@ -50,7 +55,6 @@
     <disable_collisions link1="link1" link2="link4" reason="User" />
     <disable_collisions link1="link1" link2="link5" reason="User" />
     <disable_collisions link1="link2" link2="link3" reason="Adjacent" />
-    <disable_collisions link1="link2" link2="link4" reason="Never" />
     <disable_collisions link1="link3" link2="link4" reason="Adjacent" />
     <disable_collisions link1="link3" link2="link5" reason="Never" />
     <disable_collisions link1="link4" link2="link5" reason="Adjacent" />
