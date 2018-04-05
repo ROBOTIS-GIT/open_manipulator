@@ -141,7 +141,7 @@
     <child link="link4"/>
     <origin xyz="0.024 0 0.128" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.3}" upper="${pi*0.3}" />
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.3}" upper="${pi*0.44}" />
   </joint>
 
   <!-- Transmission 3 -->
