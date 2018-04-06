@@ -29,9 +29,9 @@
     </visual>
 
     <collision>
-      <origin xyz="0.0 0.0 0.017" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.0475 0.0295 0.0340"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -76,9 +76,9 @@
     </visual>
 
     <collision>
-      <origin xyz="0.0 0.0 0.048" rpy="0 0 0"/>
+      <origin xyz="0 0 0.018" rpy="0 0 0"/>
       <geometry>
-        <box size="0.0355 0.0550 0.0515"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -123,9 +123,9 @@
     </visual>
 
     <collision>
-      <origin xyz="0.0 0 0.085" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.030 0.055 0.120"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -170,9 +170,9 @@
     </visual>
 
     <collision>
-      <origin xyz="0.065 0 0.0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.115 0.055 0.035"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -217,9 +217,9 @@
     </visual>
 
     <collision>
-      <origin xyz="0.043 0 0.005" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.048 0.120 0.0650"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -243,9 +243,9 @@
     </visual>
 
     <collision>
-      <origin xyz="0.060 0.033 0" rpy="0 0 0"/>
+      <origin xyz="0.028 0.0246 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.065 0.025 0.050"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_l.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -290,9 +290,9 @@
     </visual>
 
     <collision>
-      <origin xyz="0.060 -0.033 0" rpy="0 0 0"/>
+      <origin xyz="0.028 -0.0246 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.065 0.025 0.050"/>
+        <mesh filename="package://open_manipulator_description/meshes/chain_link_grip_r.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
