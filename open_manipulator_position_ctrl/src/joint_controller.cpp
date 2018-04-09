@@ -54,7 +54,8 @@ JointController::JointController()
 
   initServer();
 
-  initJointPose();
+  if (robot_name_ == "open_manipulator_chain_with_tb3")
+    initJointPose();
 }
 
 JointController::~JointController()
@@ -196,12 +197,20 @@ void JointController::targetJointPoseMsgCallback(const open_manipulator_msgs::Jo
 
   move_group->setJointValueTarget(joint_group_positions);
 
+  // move_group->setMaxVelocityScalingFactor(0.1);
+  // move_group->setMaxAccelerationScalingFactor(0.01);
+
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
-  bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  if (is_moving_ == false)
+  {
+    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-  if (success) move_group->move();
-  else ROS_WARN("Planning (joint space goal) is FAILED");
+    if (success) move_group->move();
+    else ROS_WARN("Planning (joint space goal) is FAILED");
+  }
+  else
+    ROS_WARN("ROBOT IS WORKING");
 
   spinner.stop();
 }
@@ -254,9 +263,7 @@ void JointController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTr
     ros::WallDuration sleep_time(0.5);
     sleep_time.sleep();
 
-    ROS_INFO("Execute");
-
-    is_moving_  = true;
+    is_moving_  = true;    
   }
 }
 

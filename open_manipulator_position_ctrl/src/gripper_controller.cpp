@@ -123,11 +123,20 @@ void GripperController::targetGripperPoseMsgCallback(const open_manipulator_msgs
 
   move_group->setJointValueTarget(joint_group_positions);
 
+  move_group->setMaxVelocityScalingFactor(0.3);
+  move_group->setMaxAccelerationScalingFactor(0.01);
+
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
-  bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  if (is_moving_ == false)
+  {
+    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-  if (success == false) ROS_WARN("Planning (joint space goal) is FAILED");
+    if (success) move_group->move();
+    else ROS_WARN("Planning (joint space goal) is FAILED");
+  }
+  else
+    ROS_WARN("ROBOT IS WORKING");
 
   spinner.stop();
 }
@@ -187,9 +196,7 @@ void GripperController::displayPlannedPathMsgCallback(const moveit_msgs::Display
     ros::WallDuration sleep_time(0.5);
     sleep_time.sleep();
 
-    ROS_INFO("Execute");
-
-    is_moving_  = true;
+    is_moving_  = true; 
   }
 }
 
