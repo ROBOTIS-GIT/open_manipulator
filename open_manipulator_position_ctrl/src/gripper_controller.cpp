@@ -55,42 +55,41 @@ void GripperController::initPublisher(bool using_gazebo)
   {
     ROS_INFO("SET Gazebo Simulation Mode(Gripper)");
 
-    if (robot_name_.find("tb3") != std::string::npos)
-    {
-      // open_manipulator chain with tb3
-      gazebo_gripper_position_pub_[LEFT_PALM]  = nh_.advertise<std_msgs::Float64>("/grip_joint_position/command", 10);
-      gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>("/grip_joint_sub_position/command", 10);
-    }
-    else
-    {
+    // if (robot_name_.find("tb3") != std::string::npos)
+    // {
+    //   // open_manipulator chain with tb3
+    //   gazebo_gripper_position_pub_[LEFT_PALM]  = nh_.advertise<std_msgs::Float64>("/grip_joint_position/command", 10);
+    //   gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>("/grip_joint_sub_position/command", 10);
+    // }
+    // else
+    // {
       gazebo_gripper_position_pub_[LEFT_PALM]  = nh_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_position/command", 10);
       gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_sub_position/command", 10);
-    }
-
+    // }
   }
 
-  gripper_onoff_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>("/robotis/" + robot_name_ + "/gripper_pose", 10);
+  gripper_onoff_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/gripper_pose", 10);
 }
 
 void GripperController::initSubscriber(bool using_gazebo)
 {
   if (using_gazebo)
   {
-    gazebo_present_joint_position_sub_ = nh_.subscribe("/joint_states", 10,
+    gazebo_present_joint_position_sub_ = nh_.subscribe(robot_name_ + "/joint_states", 10,
                                                        &GripperController::gazeboPresentJointPositionMsgCallback, this);
   }
 
-  gripper_pose_sub_ = nh_.subscribe("/robotis/" + robot_name_ + "/gripper_pose", 10,
+  gripper_pose_sub_ = nh_.subscribe(robot_name_ + "/gripper_pose", 10,
                                     &GripperController::targetGripperPoseMsgCallback, this);
 
   if (robot_name_.find("tb3") != std::string::npos)
   {
-    gripper_onoff_sub_ = nh_.subscribe("/robotis/" + robot_name_ + "/gripper", 10,
+    gripper_onoff_sub_ = nh_.subscribe(robot_name_ + "/gripper", 10,
                                        &GripperController::gripperPositionMsgCallback, this);
   }
   else
   {
-    gripper_onoff_sub_ = nh_.subscribe("/robotis/open_manipulator/gripper", 10,
+    gripper_onoff_sub_ = nh_.subscribe(robot_name_ + "/gripper", 10,
                                        &GripperController::gripperPositionMsgCallback, this);
   }
 

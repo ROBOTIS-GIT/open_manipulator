@@ -3,13 +3,13 @@
   <arg name="use_gazebo"	   default="false" />
 
   <param name="robot_description"
-         command="$(find xacro)/xacro --inorder '$(find open_manipulator_description)/urdf/open_manipulator_chain.urdf.xacro'"/>
+         command="$(find xacro)/xacro --inorder '$(find open_manipulator_description)/urdf/open_manipulator.urdf.xacro'"/>
 
   <!-- Send joint values -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="$(arg use_gui)"/>
-    <rosparam param="source_list" if="$(arg use_gazebo)">["open_manipulator_chain/joint_states"]</rosparam>
-    <rosparam param="source_list" unless="$(arg use_gazebo)">["robotis/open_manipulator/present_joint_states"]</rosparam>
+    <rosparam param="source_list" if="$(arg use_gazebo)">["open_manipulator/joint_states"]</rosparam>
+    <rosparam param="source_list" unless="$(arg use_gazebo)">["open_manipulator/present_joint_states"]</rosparam>
   </node>
 
   <!-- Combine joint values to TF-->

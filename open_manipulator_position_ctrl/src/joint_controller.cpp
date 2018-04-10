@@ -54,7 +54,7 @@ JointController::JointController()
 
   initServer();
 
-  if (robot_name_ == "open_manipulator_chain_with_tb3")
+  if (robot_name_ == "open_manipulator_with_tb3")
     initJointPose();
 }
 
@@ -87,40 +87,40 @@ void JointController::initPublisher(bool using_gazebo)
   {
     ROS_INFO("SET Gazebo Simulation Mode(Joint)");
 
-    if (robot_name_.find("tb3") != std::string::npos)
-    {
-      // open_manipulator chain with tb3
-      for (uint8_t index = 0; index < joint_num_; index++)
-      {
-        gazebo_goal_joint_position_pub_[index]
-          = nh_.advertise<std_msgs::Float64>(joint_[index].name + "_position/command", 10);
-      }
-    }
-    else
-    {
+    // if (robot_name_.find("tb3") != std::string::npos)
+    // {
+    //   // open_manipulator chain with tb3
+    //   for (uint8_t index = 0; index < joint_num_; index++)
+    //   {
+    //     gazebo_goal_joint_position_pub_[index]
+    //       = nh_.advertise<std_msgs::Float64>(joint_[index].name + "_position/command", 10);
+    //   }
+    // }
+    // else
+    // {
       for (uint8_t index = 0; index < joint_num_; index++)
       {
         gazebo_goal_joint_position_pub_[index]
           = nh_.advertise<std_msgs::Float64>(robot_name_ + "/" + joint_[index].name + "_position/command", 10);
       }
-    }
+    // }
   }
 
-  target_joint_pose_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>("/robotis/" + robot_name_ + "/joint_pose", 10);
+  target_joint_pose_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/joint_pose", 10);
 }
 
 void JointController::initSubscriber(bool using_gazebo)
 {
   if (using_gazebo)
   {
-    gazebo_present_joint_position_sub_ = nh_.subscribe("/joint_states", 10,
+    gazebo_present_joint_position_sub_ = nh_.subscribe(robot_name_  + "/joint_states", 10,
                                                        &JointController::gazeboPresentJointPositionMsgCallback, this);
   }
 
-  target_joint_pose_sub_ = nh_.subscribe("/robotis/" + robot_name_ + "/joint_pose", 10,
+  target_joint_pose_sub_ = nh_.subscribe(robot_name_ + "/joint_pose", 10,
                                          &JointController::targetJointPoseMsgCallback, this);
 
-  target_kinematics_pose_sub_ = nh_.subscribe("/robotis/" + robot_name_ + "/kinematics_pose", 10,
+  target_kinematics_pose_sub_ = nh_.subscribe(robot_name_ + "/kinematics_pose", 10,
                                          &JointController::targetKinematicsPoseMsgCallback, this);
 
   display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 10,

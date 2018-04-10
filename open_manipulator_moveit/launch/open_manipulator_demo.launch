@@ -12,8 +12,8 @@
   <!-- We do not have a robot connected, so publish fake joint states -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="$(arg use_gui)"/>
-    <rosparam param="source_list" if="$(arg use_gazebo)">["open_manipulator_chain/joint_states"]</rosparam>
-    <rosparam param="source_list" unless="$(arg use_gazebo)">["robotis/open_manipulator/present_joint_states"]</rosparam>
+    <rosparam param="source_list" if="$(arg use_gazebo)">["open_manipulator/joint_states"]</rosparam>
+    <rosparam param="source_list" unless="$(arg use_gazebo)">["open_manipulator/present_joint_states"]</rosparam>
   </node>
 
   <!-- Given the published joint states, publish tf for the robot links -->
@@ -36,7 +36,7 @@
   <!-- OpenManipultor Position controller-->
   <include file="$(find open_manipulator_position_ctrl)/launch/open_manipulator_position_controller.launch">
     <arg name="use_gazebo"     value="$(arg use_gazebo)"/>
-    <arg name="use_robot_name" value="open_manipulator_chain"/>
+    <arg name="use_robot_name" value="open_manipulator"/>
     <arg name="joint_num"      value="4"/>
     <arg name="dxl_first_id"   value="1"/>
     <arg name="gripper_dxl_id" value="5"/>

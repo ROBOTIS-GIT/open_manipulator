@@ -5,7 +5,7 @@
   <arg name="open_rviz"      default="false" />
 
   <param name="robot_description"
-         command="$(find xacro)/xacro --inorder '$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3_$(arg model).urdf.xacro'"/>
+         command="$(find xacro)/xacro --inorder '$(find open_manipulator_with_tb3)/urdf/open_manipulator_with_tb3_$(arg model).urdf.xacro'"/>
 
   <!-- Send joint values -->
   <group if="$(arg use_gazebo)">

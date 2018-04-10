@@ -32,13 +32,13 @@
   </include>
 
   <group if="$(arg open_rviz)">
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_position_ctrl)/rviz/open_manipulator_chain_with_tb3_demo.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_position_ctrl)/rviz/open_manipulator_with_tb3_demo.rviz"/>
   </group>
 
   <!-- OpenManipultor Position controller-->
   <include file="$(find open_manipulator_position_ctrl)/launch/open_manipulator_position_controller.launch">
     <arg name="use_gazebo"     value="$(arg use_gazebo)"/>
-    <arg name="use_robot_name" value="open_manipulator_chain_with_tb3"/>
+    <arg name="use_robot_name" value="open_manipulator_with_tb3"/>
     <arg name="joint_num"      value="4"/>
     <arg name="dxl_first_id"   value="3"/>
     <arg name="gripper_dxl_id" value="7"/>
@@ -46,6 +46,4 @@
 
   <include file="$(find open_manipulator_perception)/launch/ar_pose.launch">
   </include>
-
-<!--  <node pkg="open_manipulator_position_ctrl" type="open_manipulator_init_pose_pub" name="open_manipulator_init_pose_pub"/>-->
 </launch>

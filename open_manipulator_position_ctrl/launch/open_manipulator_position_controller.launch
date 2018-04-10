@@ -1,6 +1,6 @@
 <launch>
   <arg name="use_gazebo"       default="false"/>
-  <arg name="use_robot_name"   default="open_manipulator_chain"/>
+  <arg name="use_robot_name"   default="open_manipulator"/>
   <arg name="joint_num"        default="4"/>
   <arg name="dxl_first_id"     default="1"/>
   <arg name="gripper_dxl_id"   default="5"/>

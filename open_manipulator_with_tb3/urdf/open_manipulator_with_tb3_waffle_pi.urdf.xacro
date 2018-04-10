@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!-- Open_Manipulator Chain -->
-<robot name="open_manipulator_chain_with_tb3" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="open_manipulator_with_tb3" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Include TurtleBot3 Waffle URDF -->
-  <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle_naked.urdf.xacro" />
+  <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle_pi_naked.urdf.xacro" />
 
   <!-- Include OpenManipulator Chain Gazebo Parameter -->
-  <xacro:include filename="$(find open_manipulator_with_tb3)/urdf/open_manipulator_chain_with_tb3.gazebo.xacro" />
+  <xacro:include filename="$(find open_manipulator_with_tb3)/urdf/open_manipulator_with_tb3.gazebo.xacro" />
 
   <!-- Base fixed joint -->
   <joint name="base_fixed" type="fixed">
@@ -223,9 +223,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.141" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="1" ixy="0.0" ixz="0.0"
+               iyy="1" iyz="0.0"
+               izz="1" />
     </inertial>
   </link>
 
@@ -249,9 +249,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.017" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="1" ixy="0.0" ixz="0.0"
+               iyy="1" iyz="0.0"
+               izz="1" />
     </inertial>
   </link>
 
@@ -261,7 +261,7 @@
     <child link="grip_link"/>
     <origin xyz="0.0536 0.0 0.0" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
-    <limit velocity="3.5" effort="100" lower="-0.015" upper="0.0105" />
+    <limit velocity="13.5" effort="10000" lower="-0.015" upper="0.0105" />
   </joint>
 
   <!-- Transmission 5 -->
@@ -308,7 +308,7 @@
     <child link="grip_link_sub"/>
     <origin xyz="0.0536 0 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
-    <limit velocity="3.5" effort="100" lower="-0.015" upper="0.0105" />
+    <limit velocity="13.5" effort="10000" lower="-0.015" upper="0.0105" />
   </joint>
 
   <!-- Transmission 6 -->
