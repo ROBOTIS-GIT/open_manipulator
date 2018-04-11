@@ -38,9 +38,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.082" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01" />
     </inertial>
 
     <!-- <inertial>
@@ -93,9 +93,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.098" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01" />
     </inertial>
 
     <!-- <inertial>
@@ -148,9 +148,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.136" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01" />
     </inertial>
 
     <!-- <inertial>
@@ -203,9 +203,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.131" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01" />
     </inertial>
 
     <!-- <inertial>
@@ -258,9 +258,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.141" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01" />
     </inertial>
 
     <!-- <inertial>
@@ -292,9 +292,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.017" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01" />
     </inertial>
 
     <!-- <inertial>
@@ -347,9 +347,9 @@
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.017" />
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0"
-               iyy="0.1" iyz="0.0"
-               izz="0.1" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01" />
     </inertial>
 
     <!-- <inertial>
