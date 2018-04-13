@@ -12,6 +12,8 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  sensor_msgs
+  geometry_msgs
   moveit_msgs
   open_manipulator_msgs
   moveit_core
@@ -34,7 +36,7 @@ find_package(Eigen3 REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs moveit_msgs open_manipulator_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs moveit_msgs open_manipulator_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
   DEPENDS EIGEN3
 )
 
