@@ -37,6 +37,7 @@
 #include <std_msgs/String.h>
 
 #include <sensor_msgs/JointState.h>
+#include <geometry_msgs/PoseStamped.h>
 
 #include "open_manipulator_msgs/JointPose.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
@@ -88,6 +89,7 @@ class JointController
 
   // ROS Service Server
   ros::ServiceServer get_joint_pose_server_;
+  ros::ServiceServer get_kinematics_pose_server_;
 
   // ROS Service Client
 
@@ -97,7 +99,6 @@ class JointController
 
   // MoveIt! interface
   moveit::planning_interface::MoveGroupInterface *move_group;
-  robot_model_loader::RobotModelLoader *robot_model_loader;
   PlannedPathInfo planned_path_info_;
 
   // Process state variables
@@ -124,8 +125,11 @@ class JointController
   void targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
   void targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
 
-  bool getjointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
+  bool getJointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
                                    open_manipulator_msgs::GetJointPose::Response &res);
+
+  bool getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
+                                    open_manipulator_msgs::GetKinematicsPose::Response &res);
 };
 }
 
