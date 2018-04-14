@@ -8,7 +8,7 @@
   <param name="gazebo"              value="$(arg use_gazebo)" type="bool"/>
   <param name="robot_name"          value="$(arg use_robot_name)"/>
 
-  <node name="joint_controller" pkg="open_manipulator_position_ctrl" type="joint_controller" required="true" output="screen">
+  <node name="arm_controller" pkg="open_manipulator_position_ctrl" type="arm_controller" required="true" output="screen">
     <param name="joint_num"         value="$(arg joint_num)"/>
     <param name="dxl_first_id"      value="$(arg dxl_first_id)"/>
   </node>
