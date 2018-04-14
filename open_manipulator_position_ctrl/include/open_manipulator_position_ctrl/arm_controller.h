@@ -16,8 +16,8 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#ifndef OPEN_MANIPULATOR_JOINT_CONTROLLER_H
-#define OPEN_MANIPULATOR_JOINT_CONTROLLER_H
+#ifndef OPEN_MANIPULATOR_ARM_CONTROLLER_H
+#define OPEN_MANIPULATOR_ARM_CONTROLLER_H
 
 #include <ros/ros.h>
 
@@ -41,6 +41,7 @@
 
 #include "open_manipulator_msgs/JointPose.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
+#include "open_manipulator_msgs/State.h"
 
 #include "open_manipulator_msgs/GetJointPose.h"
 #include "open_manipulator_msgs/GetKinematicsPose.h"
@@ -65,7 +66,7 @@ typedef struct
   Eigen::MatrixXd planned_path_positions;              // planned position trajectory
 } PlannedPathInfo;
 
-class JointController
+class ArmController
 {
  private:
   // ROS NodeHandle
@@ -79,10 +80,10 @@ class JointController
 
   // ROS Publisher
   ros::Publisher gazebo_goal_joint_position_pub_[10];
-  ros::Publisher target_joint_pose_pub_;
+  ros::Publisher target_joint_position_pub_;
+  ros::Publisher arm_state_pub_;
 
   // ROS Subscribers
-  ros::Subscriber gazebo_present_joint_position_sub_;
   ros::Subscriber display_planned_path_sub_;
   ros::Subscriber target_joint_pose_sub_;
   ros::Subscriber target_kinematics_pose_sub_;
@@ -106,8 +107,8 @@ class JointController
   uint16_t all_time_steps_;
 
  public:
-  JointController();
-  virtual ~JointController();
+  ArmController();
+  virtual ~ArmController();
 
   void process(void);
 
@@ -117,9 +118,8 @@ class JointController
 
   void initServer();
 
-  void initJointPose();
+  void initJointPosition();
 
-  void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
   void targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
@@ -133,4 +133,4 @@ class JointController
 };
 }
 
-#endif /*OPEN_MANIPULATOR_JOINT_CONTROLLER_H*/
+#endif /*OPEN_MANIPULATOR_ARM_CONTROLLER_H*/
