@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
   geometry_msgs
+  ar_track_alvar_msgs
   moveit_msgs
   open_manipulator_msgs
   moveit_core
@@ -36,7 +37,7 @@ find_package(Eigen3 REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs moveit_msgs open_manipulator_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs ar_track_alvar_msgs geometry_msgs moveit_msgs open_manipulator_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
   DEPENDS EIGEN3
 )
 
@@ -49,18 +50,22 @@ include_directories(
   ${EIGEN3_INCLUDE_DIRS}
 )
 
-add_executable(joint_controller src/joint_controller.cpp)
-add_dependencies(joint_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(joint_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+add_executable(arm_controller src/arm_controller.cpp)
+add_dependencies(arm_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(arm_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
 add_executable(gripper_controller src/gripper_controller.cpp)
 add_dependencies(gripper_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(gripper_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
+add_executable(pick_and_place src/pick_and_place.cpp)
+add_dependencies(pick_and_place ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pick_and_place ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS joint_controller gripper_controller
+install(TARGETS arm_controller gripper_controller pick_and_place
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
