@@ -60,6 +60,8 @@ void GripperController::initPublisher(bool using_gazebo)
   }
 
   gripper_onoff_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/gripper_pose", 10);
+
+  gripper_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/state", 10);
 }
 
 void GripperController::initSubscriber(bool using_gazebo)
@@ -194,6 +196,7 @@ void GripperController::process(void)
 {
   static uint16_t step_cnt = 0;
   std_msgs::Float64 goal_joint_position;
+  open_manipulator_msgs::State state;
 
   if (is_moving_)
   {
@@ -217,6 +220,16 @@ void GripperController::process(void)
     {
       step_cnt++;
     }
+
+    state.arm = state.STOPPED;
+    state.gripper = state.IS_MOVING;
+    gripper_state_pub_.publish(state);
+  }
+  else
+  {
+    state.arm = state.STOPPED;
+    state.gripper = state.STOPPED;
+    gripper_state_pub_.publish(state);
   }
 }
 
