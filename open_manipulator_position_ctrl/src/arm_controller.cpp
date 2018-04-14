@@ -16,11 +16,11 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#include "open_manipulator_position_ctrl/joint_controller.h"
+#include "open_manipulator_position_ctrl/arm_controller.h"
 
 using namespace open_manipulator;
 
-JointController::JointController()
+ArmController::ArmController()
     :using_gazebo_(false),
      robot_name_(""),
      joint_num_(4),
@@ -54,33 +54,33 @@ JointController::JointController()
   initServer();
 
   if (robot_name_ == "open_manipulator_with_tb3")
-    initJointPose();
+    initJointPosition();
 }
 
-JointController::~JointController()
+ArmController::~ArmController()
 {
   ros::shutdown();
   return;
 }
 
-void JointController::initJointPose()
+void ArmController::initJointPosition()
 {
-  open_manipulator_msgs::JointPose joint_group_positions;
+  open_manipulator_msgs::JointPose joint_positions;
 
-  joint_group_positions.joint_name.push_back("joint1");
-  joint_group_positions.joint_name.push_back("joint2");
-  joint_group_positions.joint_name.push_back("joint3");
-  joint_group_positions.joint_name.push_back("joint4");
+  joint_positions.joint_name.push_back("joint1");
+  joint_positions.joint_name.push_back("joint2");
+  joint_positions.joint_name.push_back("joint3");
+  joint_positions.joint_name.push_back("joint4");
 
-  joint_group_positions.position.push_back(0.0);
-  joint_group_positions.position.push_back(-1.5707);
-  joint_group_positions.position.push_back(1.37);
-  joint_group_positions.position.push_back(0.2258);
+  joint_positions.position.push_back(0.0);
+  joint_positions.position.push_back(-1.5707);
+  joint_positions.position.push_back(1.37);
+  joint_positions.position.push_back(0.2258);
 
-  target_joint_pose_pub_.publish(joint_group_positions);
+  target_joint_position_pub_.publish(joint_positions);
 }
 
-void JointController::initPublisher(bool using_gazebo)
+void ArmController::initPublisher(bool using_gazebo)
 {
   if (using_gazebo)
   {
@@ -93,40 +93,31 @@ void JointController::initPublisher(bool using_gazebo)
     }
   }
 
-  target_joint_pose_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/joint_pose", 10);
+  target_joint_position_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/joint_pose", 10);
+
+  arm_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/state", 10);
 }
 
-void JointController::initSubscriber(bool using_gazebo)
+void ArmController::initSubscriber(bool using_gazebo)
 {
-  if (using_gazebo)
-  {
-    gazebo_present_joint_position_sub_ = nh_.subscribe(robot_name_  + "/joint_states", 10,
-                                                       &JointController::gazeboPresentJointPositionMsgCallback, this);
-  }
-
   target_joint_pose_sub_ = nh_.subscribe(robot_name_ + "/joint_pose", 10,
-                                         &JointController::targetJointPoseMsgCallback, this);
+                                         &ArmController::targetJointPoseMsgCallback, this);
 
   target_kinematics_pose_sub_ = nh_.subscribe(robot_name_ + "/kinematics_pose", 10,
-                                         &JointController::targetKinematicsPoseMsgCallback, this);
+                                         &ArmController::targetKinematicsPoseMsgCallback, this);
 
   display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 10,
-                                            &JointController::displayPlannedPathMsgCallback, this);
+                                            &ArmController::displayPlannedPathMsgCallback, this);
 }
 
-void JointController::initServer()
+void ArmController::initServer()
 {
-  get_joint_pose_server_      = nh_.advertiseService(robot_name_ + "/get_joint_pose", &JointController::getJointPositionMsgCallback, this);
-  get_kinematics_pose_server_ = nh_.advertiseService(robot_name_ + "/get_kinematics_pose", & JointController::getKinematicsPoseMsgCallback, this);
+  get_joint_pose_server_      = nh_.advertiseService(robot_name_ + "/get_joint_pose", &ArmController::getJointPositionMsgCallback, this);
+  get_kinematics_pose_server_ = nh_.advertiseService(robot_name_ + "/get_kinematics_pose", & ArmController::getKinematicsPoseMsgCallback, this);
 }
 
-void JointController::gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg)
-{
-  //TODO
-}
-
-bool JointController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
-                                                  open_manipulator_msgs::GetJointPose::Response &res)
+bool ArmController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
+                                                open_manipulator_msgs::GetJointPose::Response &res)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -145,8 +136,8 @@ bool JointController::getJointPositionMsgCallback(open_manipulator_msgs::GetJoin
   spinner.stop();
 }
 
-bool JointController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
-                                                   open_manipulator_msgs::GetKinematicsPose::Response &res)
+bool ArmController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
+                                                 open_manipulator_msgs::GetKinematicsPose::Response &res)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -160,15 +151,16 @@ bool JointController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKin
   ROS_INFO("P: %f",joint_values[1]);
   ROS_INFO("Y: %f",joint_values[2]);
 
-  geometry_msgs::PointStamped current_pose = move_group->getCurrentPose();
+  geometry_msgs::PoseStamped current_pose = move_group->getCurrentPose();
 
-  res.header               = current_pose.header;
-  res.kinematics_pose.pose = current_pose.pose;
+  res.header                     = current_pose.header;
+  res.kinematics_pose.group_name = "arm";
+  res.kinematics_pose.pose       = current_pose.pose;
 
   spinner.stop();
 }
 
-void JointController::targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
+void ArmController::targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -208,28 +200,56 @@ void JointController::targetJointPoseMsgCallback(const open_manipulator_msgs::Jo
   spinner.stop();
 }
 
-void JointController::targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
+void ArmController::targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
 {
-//  ros::AsyncSpinner spinner(1);
-//  spinner.start();
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
 
-//  geometry_msgs::Pose target_pose;
-//  target_pose.orientation.w =  0.0;
-//  target_pose.position.x    =  0.28;
-//  target_pose.position.y    = -0.7;
-//  target_pose.position.z    =  1.0;
-//  move_group->setPoseTarget(target_pose);
+//  const robot_state::JointModelGroup *joint_model_group = move_group->getCurrentState()->getJointModelGroup("arm");
 
-//  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+//  moveit::core::RobotStatePtr current_state = move_group->getCurrentState();
 
-//  bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+//  std::vector<double> joint_group_positions;
+//  current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
-//  ROS_INFO("Planning (Cartesian space goal) %s", success ? "SUCCESS" : "FAILED");
+//  geometry_msgs::Pose target_pose = msg->pose;
 
-//  spinner.stop();
+//x: -1.50741324645
+//y: 2.88172450297
+//z: 0.224672337579
+//orientation:
+//x: -0.00890373524503
+//y: 0.00911380245469
+//z: 0.698758375403
+//w: 0.715244290371
+
+  geometry_msgs::Pose target_pose;
+
+  target_pose.position.x = -1.50;
+  target_pose.position.y = 2.88;
+  target_pose.position.z = 0.42;
+
+  move_group->setPoseTarget(target_pose);
+
+  // move_group->setMaxVelocityScalingFactor(0.1);
+  // move_group->setMaxAccelerationScalingFactor(0.01);
+
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+
+  if (is_moving_ == false)
+  {
+    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+    if (success) move_group->move();
+    else ROS_WARN("Planning (cartesian space goal) is FAILED");
+  }
+  else
+    ROS_WARN("ROBOT IS WORKING");
+
+  spinner.stop();
 }
 
-void JointController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
+void ArmController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
 {
   // Can't find 'grip'
   if (msg->trajectory[0].joint_trajectory.joint_names[0].find("grip") == std::string::npos)
@@ -260,10 +280,11 @@ void JointController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTr
   }
 }
 
-void JointController::process(void)
+void ArmController::process(void)
 {
   static uint16_t step_cnt = 0;
   std_msgs::Float64 goal_joint_position;
+  open_manipulator_msgs::State state;
 
   if (is_moving_)
   {
@@ -287,6 +308,16 @@ void JointController::process(void)
     {
       step_cnt++;
     }
+
+    state.gripper = state.STOPPED;
+    state.arm = state.IS_MOVING;
+    arm_state_pub_.publish(state);
+  }
+  else
+  {
+    state.gripper = state.STOPPED;
+    state.arm = state.STOPPED;
+    arm_state_pub_.publish(state);
   }
 }
 
@@ -297,7 +328,7 @@ int main(int argc, char **argv)
   ros::WallDuration sleep_time(3.0);
   sleep_time.sleep();
 
-  JointController controller;
+  ArmController controller;
 
   ros::Rate loop_rate(ITERATION_FREQUENCY);
 
