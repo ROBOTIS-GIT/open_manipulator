@@ -1,4 +1,11 @@
-string first_name
-string last_name
-uint8 age
-uint32 score
+########################################
+# CONSTANTS
+########################################
+string IS_MOVING = "IS_MOVING"
+string STOPPED = "STOPPED"
+
+########################################
+# Messages
+########################################
+string gripper
+string arm
