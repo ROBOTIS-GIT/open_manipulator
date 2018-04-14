@@ -20,12 +20,14 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    JointPose.msg
    KinematicsPose.msg
+   State.msg
  )
 
  add_service_files(
    FILES
    GetJointPose.srv
    GetKinematicsPose.srv
+   Pick.srv
  )
 
 generate_messages(
