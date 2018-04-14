@@ -575,7 +575,7 @@
           </geometry>
         </visual>
       </link>
-      <pose frame=''>-1.50846 3.95866 0.066445 0 0 -1.5708</pose>
+      <pose frame=''>-1.50846 3.95866 0.166445 0 0 -1.5708</pose>
     </model>
     <model name='ar_marker_clone'>
       <static>1</static>
