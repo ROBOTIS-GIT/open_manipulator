@@ -37,6 +37,8 @@
 #include "open_manipulator_msgs/JointPose.h"
 #include "open_manipulator_msgs/KinematicsPose.h"
 
+#include "open_manipulator_msgs/State.h"
+
 #include <eigen3/Eigen/Eigen>
 
 namespace open_manipulator
@@ -77,6 +79,7 @@ class GripperController
   // ROS Publisher
   ros::Publisher gazebo_gripper_position_pub_[2];
   ros::Publisher gripper_onoff_pub_;
+  ros::Publisher gripper_state_pub_;
 
   // ROS Subscribers
   ros::Subscriber gazebo_present_joint_position_sub_;
