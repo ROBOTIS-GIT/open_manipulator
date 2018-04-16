@@ -4,14 +4,6 @@ controller_list:
       - world_joint
   - name: fake_arm_controller
     joints:
-      - joint1
-      - joint2
-      - joint3
-      - joint4
-  - name: fake_whole_body_controller
-    joints:
-      - world_joint
-      - joint1
       - joint2
       - joint3
       - joint4
@@ -19,3 +11,9 @@ controller_list:
     joints:
       - grip_joint
       - grip_joint_sub
+  - name: fake_whole_body_controller
+    joints:
+      - world_joint
+      - joint2
+      - joint3
+      - joint4
