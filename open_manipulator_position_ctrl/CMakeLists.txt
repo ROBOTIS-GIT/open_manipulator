@@ -58,14 +58,14 @@ add_executable(gripper_controller src/gripper_controller.cpp)
 add_dependencies(gripper_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(gripper_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
-add_executable(pick_and_place src/pick_and_place.cpp)
-add_dependencies(pick_and_place ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(pick_and_place ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+add_executable(pick src/pick.cpp)
+add_dependencies(pick ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pick ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS arm_controller gripper_controller pick_and_place
+install(TARGETS arm_controller gripper_controller pick
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
