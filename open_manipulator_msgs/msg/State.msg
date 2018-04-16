@@ -7,5 +7,4 @@ string STOPPED = "STOPPED"
 ########################################
 # Messages
 ########################################
-string gripper
-string arm
+string robot
