@@ -20,7 +20,7 @@
         <geometry>
           <cylinder>
             <radius>0.0775932</radius>
-            <length>0.0514503</length>
+            <length>0.0814503</length>
           </cylinder>
         </geometry>
         <material>
@@ -44,7 +44,7 @@
         <geometry>
           <cylinder>
             <radius>0.077593</radius>
-            <length>0.05145</length>
+            <length>0.08145</length>
           </cylinder>
         </geometry>
         <surface>
@@ -113,7 +113,7 @@
         <geometry>
           <cylinder>
             <radius>0.0775932</radius>
-            <length>0.0514503</length>
+            <length>0.0814503</length>
           </cylinder>
         </geometry>
         <material>
@@ -138,7 +138,7 @@
         <geometry>
           <cylinder>
             <radius>0.077593</radius>
-            <length>0.05145</length>
+            <length>0.08145</length>
           </cylinder>
         </geometry>
         <surface>
@@ -575,7 +575,7 @@
           </geometry>
         </visual>
       </link>
-      <pose frame=''>-1.50846 3.95866 0.166445 0 0 -1.5708</pose>
+      <pose frame=''>-1.5 3.99994 0.066 0 0 -1.5708</pose>
     </model>
     <model name='ar_marker_clone'>
       <static>1</static>
@@ -755,28 +755,28 @@
       <link name='link'>
         <pose>0 0 0.080 0 0 0</pose>
         <inertial>
-          <mass>0.050</mass>
+          <mass>0.010</mass>
           <inertia>
-            <ixx>1.1167e-004</ixx>
+            <ixx>1.1072e-004</ixx>
             <ixy>0</ixy>
             <ixz>0</ixz>
-            <iyy>1.1167e-004</iyy>
+            <iyy>1.1072e-004</iyy>
             <iyz>0</iyz>
-            <izz>1.0000e-005</izz>
+            <izz>8.1000e-006</izz>
           </inertia>
         </inertial>
         <collision name='collision'>
           <geometry>
             <cylinder>
-              <radius>0.020000</radius>
+              <radius>0.018000</radius>
               <length>0.160000</length>
             </cylinder>
           </geometry>
           <surface>
             <friction>
               <ode>
-                <mu>100000.0</mu>
-                <mu2>1000.0</mu2>
+                <mu>1000000.0</mu>
+                <mu2>10000.0</mu2>
               </ode>
             </friction>
             <contact>
@@ -792,7 +792,7 @@
         <visual name='visual'>
           <geometry>
             <cylinder>
-              <radius>0.020000</radius>
+              <radius>0.018000</radius>
               <length>0.160000</length>
             </cylinder>
           </geometry>
@@ -805,7 +805,7 @@
           </material>
         </visual>
       </link>
-      <pose frame=''>-1.50831 3.99994 0.2 0 -0 0</pose>
+      <pose frame=''>-1.5 4.03 0.05 0 -0 0</pose>
     </model>
     <static>1</static>
     <allow_auto_disable>0</allow_auto_disable>
