@@ -49,7 +49,7 @@ namespace open_manipulator
 #define ITERATION_FREQUENCY 25 //Hz
 
 #define GRIP_ON   0.01    // mm
-#define GRIP_OFF -0.015
+#define GRIP_OFF -0.01
 #define NEUTRAL   0.0
 
 typedef struct
@@ -82,7 +82,6 @@ class GripperController
   ros::Publisher gripper_state_pub_;
 
   // ROS Subscribers
-  ros::Subscriber gazebo_present_joint_position_sub_;
   ros::Subscriber display_planned_path_sub_;
   ros::Subscriber gripper_pose_sub_;
   ros::Subscriber gripper_onoff_sub_;
@@ -112,7 +111,6 @@ class GripperController
   void initPublisher(bool using_gazebo);
   void initSubscriber(bool using_gazebo);
 
-  void gazeboPresentJointPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
   void targetGripperPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
