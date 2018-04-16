@@ -77,6 +77,9 @@ void ArmController::initJointPosition()
   joint_positions.position.push_back(1.37);
   joint_positions.position.push_back(0.2258);
 
+  joint_positions.max_velocity_scaling_factor = 0.2;
+  joint_positions.max_accelerations_scaling_factor = 0.5;
+
   target_joint_position_pub_.publish(joint_positions);
 }
 
@@ -95,13 +98,13 @@ void ArmController::initPublisher(bool using_gazebo)
 
   target_joint_position_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/joint_pose", 10);
 
-  arm_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/state", 10);
+  arm_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/arm_state", 10);
 }
 
 void ArmController::initSubscriber(bool using_gazebo)
 {
-  target_joint_pose_sub_ = nh_.subscribe(robot_name_ + "/joint_pose", 10,
-                                         &ArmController::targetJointPoseMsgCallback, this);
+  target_joint_position_sub_ = nh_.subscribe(robot_name_ + "/joint_pose", 10,
+                                         &ArmController::targetJointPositionMsgCallback, this);
 
   target_kinematics_pose_sub_ = nh_.subscribe(robot_name_ + "/kinematics_pose", 10,
                                          &ArmController::targetKinematicsPoseMsgCallback, this);
@@ -145,12 +148,6 @@ bool ArmController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinem
   const std::string &pose_reference_frame = move_group->getPoseReferenceFrame();
   ROS_INFO("Pose Reference Frame = %s", pose_reference_frame.c_str());
 
-  std::vector<double> joint_values = move_group->getCurrentRPY();
-
-  ROS_INFO("R: %f",joint_values[0]);
-  ROS_INFO("P: %f",joint_values[1]);
-  ROS_INFO("Y: %f",joint_values[2]);
-
   geometry_msgs::PoseStamped current_pose = move_group->getCurrentPose();
 
   res.header                     = current_pose.header;
@@ -160,7 +157,7 @@ bool ArmController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinem
   spinner.stop();
 }
 
-void ArmController::targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
+void ArmController::targetJointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -182,8 +179,8 @@ void ArmController::targetJointPoseMsgCallback(const open_manipulator_msgs::Join
 
   move_group->setJointValueTarget(joint_group_positions);
 
-  // move_group->setMaxVelocityScalingFactor(0.1);
-  // move_group->setMaxAccelerationScalingFactor(0.01);
+  move_group->setMaxVelocityScalingFactor(msg->max_velocity_scaling_factor);
+  move_group->setMaxAccelerationScalingFactor(msg->max_accelerations_scaling_factor);
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
@@ -205,34 +202,12 @@ void ArmController::targetKinematicsPoseMsgCallback(const open_manipulator_msgs:
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-//  const robot_state::JointModelGroup *joint_model_group = move_group->getCurrentState()->getJointModelGroup("arm");
-
-//  moveit::core::RobotStatePtr current_state = move_group->getCurrentState();
-
-//  std::vector<double> joint_group_positions;
-//  current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
-
-//  geometry_msgs::Pose target_pose = msg->pose;
-
-//x: -1.50741324645
-//y: 2.88172450297
-//z: 0.224672337579
-//orientation:
-//x: -0.00890373524503
-//y: 0.00911380245469
-//z: 0.698758375403
-//w: 0.715244290371
-
-  geometry_msgs::Pose target_pose;
-
-  target_pose.position.x = -1.50;
-  target_pose.position.y = 2.88;
-  target_pose.position.z = 0.42;
+  geometry_msgs::Pose target_pose = msg->pose;
 
   move_group->setPoseTarget(target_pose);
 
-  // move_group->setMaxVelocityScalingFactor(0.1);
-  // move_group->setMaxAccelerationScalingFactor(0.01);
+  move_group->setMaxVelocityScalingFactor(msg->max_velocity_scaling_factor);
+  move_group->setMaxAccelerationScalingFactor(msg->max_accelerations_scaling_factor);
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
@@ -241,7 +216,7 @@ void ArmController::targetKinematicsPoseMsgCallback(const open_manipulator_msgs:
     bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
     if (success) move_group->move();
-    else ROS_WARN("Planning (cartesian space goal) is FAILED");
+    else ROS_WARN("Planning (task space goal) is FAILED");
   }
   else
     ROS_WARN("ROBOT IS WORKING");
@@ -309,14 +284,12 @@ void ArmController::process(void)
       step_cnt++;
     }
 
-    state.gripper = state.STOPPED;
-    state.arm = state.IS_MOVING;
+    state.robot = state.IS_MOVING;
     arm_state_pub_.publish(state);
   }
   else
   {
-    state.gripper = state.STOPPED;
-    state.arm = state.STOPPED;
+    state.robot = state.STOPPED;
     arm_state_pub_.publish(state);
   }
 }
