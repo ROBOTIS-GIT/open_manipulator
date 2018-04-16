@@ -85,7 +85,7 @@ class ArmController
 
   // ROS Subscribers
   ros::Subscriber display_planned_path_sub_;
-  ros::Subscriber target_joint_pose_sub_;
+  ros::Subscriber target_joint_position_sub_;
   ros::Subscriber target_kinematics_pose_sub_;
 
   // ROS Service Server
@@ -122,7 +122,7 @@ class ArmController
 
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
-  void targetJointPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
+  void targetJointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
   void targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
 
   bool getJointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
