@@ -20,7 +20,7 @@
         <geometry>
           <cylinder>
             <radius>0.0775932</radius>
-            <length>0.0814503</length>
+            <length>0.0914503</length>
           </cylinder>
         </geometry>
         <material>
@@ -44,7 +44,7 @@
         <geometry>
           <cylinder>
             <radius>0.077593</radius>
-            <length>0.08145</length>
+            <length>0.09145</length>
           </cylinder>
         </geometry>
         <surface>
@@ -113,7 +113,7 @@
         <geometry>
           <cylinder>
             <radius>0.0775932</radius>
-            <length>0.0814503</length>
+            <length>0.0914503</length>
           </cylinder>
         </geometry>
         <material>
@@ -138,7 +138,7 @@
         <geometry>
           <cylinder>
             <radius>0.077593</radius>
-            <length>0.08145</length>
+            <length>0.09145</length>
           </cylinder>
         </geometry>
         <surface>
@@ -757,19 +757,19 @@
         <inertial>
           <mass>0.010</mass>
           <inertia>
-            <ixx>1.1072e-004</ixx>
+            <ixx>1.4893e-005</ixx>
             <ixy>0</ixy>
             <ixz>0</ixz>
-            <iyy>1.1072e-004</iyy>
+            <iyy>1.4893e-005</iyy>
             <iyz>0</iyz>
-            <izz>8.1000e-006</izz>
+            <izz>1.6200e-006 </izz>
           </inertia>
         </inertial>
         <collision name='collision'>
           <geometry>
             <cylinder>
               <radius>0.018000</radius>
-              <length>0.160000</length>
+              <length>0.130000</length>
             </cylinder>
           </geometry>
           <surface>
@@ -793,7 +793,7 @@
           <geometry>
             <cylinder>
               <radius>0.018000</radius>
-              <length>0.160000</length>
+              <length>0.130000</length>
             </cylinder>
           </geometry>
           <material>
@@ -805,7 +805,7 @@
           </material>
         </visual>
       </link>
-      <pose frame=''>-1.5 4.03 0.05 0 -0 0</pose>
+      <pose frame=''>-1.5 4.03 0.1 0 -0 0</pose>
     </model>
     <static>1</static>
     <allow_auto_disable>0</allow_auto_disable>
