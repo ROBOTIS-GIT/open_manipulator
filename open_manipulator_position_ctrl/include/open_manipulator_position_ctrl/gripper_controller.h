@@ -34,9 +34,7 @@
 
 #include <sensor_msgs/JointState.h>
 
-#include "open_manipulator_msgs/JointPose.h"
-#include "open_manipulator_msgs/KinematicsPose.h"
-
+#include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/State.h"
 
 #include <eigen3/Eigen/Eigen>
@@ -78,15 +76,14 @@ class GripperController
 
   // ROS Publisher
   ros::Publisher gazebo_gripper_position_pub_[2];
-  ros::Publisher gripper_onoff_pub_;
   ros::Publisher gripper_state_pub_;
 
   // ROS Subscribers
   ros::Subscriber display_planned_path_sub_;
-  ros::Subscriber gripper_pose_sub_;
   ros::Subscriber gripper_onoff_sub_;
 
   // ROS Service Server
+  ros::ServiceServer set_gripper_position_server_;
 
   // ROS Service Client
 
@@ -111,10 +108,16 @@ class GripperController
   void initPublisher(bool using_gazebo);
   void initSubscriber(bool using_gazebo);
 
+  void initServer();
+
+  bool calcPlannedPath(open_manipulator_msgs::JointPosition msg);
+
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
-  void targetGripperPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
-  void gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg);
+  bool setGripperPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
+                                     open_manipulator_msgs::SetJointPosition::Response &res);
+
+  void gripperOnOffMsgCallback(const std_msgs::String::ConstPtr &msg);
 };
 }
 

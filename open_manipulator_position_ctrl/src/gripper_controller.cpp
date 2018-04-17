@@ -41,6 +41,8 @@ GripperController::GripperController()
 
   initPublisher(using_gazebo_);
   initSubscriber(using_gazebo_);
+
+  initServer();
 }
 
 GripperController::~GripperController()
@@ -59,27 +61,36 @@ void GripperController::initPublisher(bool using_gazebo)
     gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_sub_position/command", 10);
   }
 
-  gripper_onoff_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/gripper_pose", 10);
-
   gripper_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/gripper_state", 10);
 }
 
 void GripperController::initSubscriber(bool using_gazebo)
 {
-  gripper_pose_sub_ = nh_.subscribe(robot_name_ + "/gripper_pose", 10,
-                                    &GripperController::targetGripperPoseMsgCallback, this);
-
   gripper_onoff_sub_ = nh_.subscribe(robot_name_ + "/gripper", 10,
-                                     &GripperController::gripperPositionMsgCallback, this);
+                                     &GripperController::gripperOnOffMsgCallback, this);
 
   display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 10,
                                             &GripperController::displayPlannedPathMsgCallback, this);
 }
 
-void GripperController::targetGripperPoseMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
+void GripperController::initServer()
+{
+  set_gripper_position_server_ = nh_.advertiseService(robot_name_ + "/set_gripper_position", &GripperController::setGripperPositionMsgCallback, this);
+}
+
+bool GripperController::setGripperPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
+                                                      open_manipulator_msgs::SetJointPosition::Response &res)
+{
+  open_manipulator_msgs::JointPosition msg = req.joint_position;
+  res.isPlanned = calcPlannedPath(msg);
+}
+
+bool GripperController::calcPlannedPath(open_manipulator_msgs::JointPosition msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
+
+  bool isPlanned = false;
 
   const robot_state::JointModelGroup *joint_model_group = move_group->getCurrentState()->getJointModelGroup("gripper");
 
@@ -88,16 +99,19 @@ void GripperController::targetGripperPoseMsgCallback(const open_manipulator_msgs
   std::vector<double> joint_group_positions;
   current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
+  msg.joint_name.push_back("grip_joint");
+  msg.joint_name.push_back("grip_joint_sub");
+
   for (uint8_t index = 0; index < palm_num_; index++)
   {
-    joint_group_positions[index] = msg->position[0];
-    joint_group_positions[index] = msg->position[0];
+    joint_group_positions[index] = msg.position[0];
+    joint_group_positions[index] = msg.position[0];
   }
 
   move_group->setJointValueTarget(joint_group_positions);
 
-  move_group->setMaxVelocityScalingFactor(msg->max_velocity_scaling_factor);
-  move_group->setMaxAccelerationScalingFactor(msg->max_accelerations_scaling_factor);
+  move_group->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
+  move_group->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
@@ -105,39 +119,49 @@ void GripperController::targetGripperPoseMsgCallback(const open_manipulator_msgs
   {
     bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-    if (success) move_group->move();
-    else ROS_WARN("Planning (joint space goal) is FAILED");
+    if (success)
+    {
+      move_group->move();
+      isPlanned = true;
+    }
+    else
+    {
+      ROS_WARN("Planning (joint space goal) is FAILED");
+      isPlanned = false;
+    }
   }
   else
+  {
     ROS_WARN("ROBOT IS WORKING");
+    isPlanned = false;
+  }
 
   spinner.stop();
+
+  return isPlanned;
 }
 
-void GripperController::gripperPositionMsgCallback(const std_msgs::String::ConstPtr &msg)
+void GripperController::gripperOnOffMsgCallback(const std_msgs::String::ConstPtr &msg)
 {
-  open_manipulator_msgs::JointPose grip_position;
+  open_manipulator_msgs::JointPosition joint_msg;
 
-  grip_position.max_velocity_scaling_factor = 0.3;
-  grip_position.max_accelerations_scaling_factor = 0.01;
+  joint_msg.max_velocity_scaling_factor = 0.3;
+  joint_msg.max_accelerations_scaling_factor = 0.01;
 
   if (msg->data == "grip_on")
   {
-    grip_position.position.push_back(GRIP_ON);
-
-    gripper_onoff_pub_.publish(grip_position);
+    joint_msg.position.push_back(GRIP_ON);
+    calcPlannedPath(joint_msg);
   }
   else if (msg->data == "grip_off")
   {
-    grip_position.position.push_back(GRIP_OFF);
-
-    gripper_onoff_pub_.publish(grip_position);
+    joint_msg.position.push_back(GRIP_OFF);
+    calcPlannedPath(joint_msg);
   }
     else if (msg->data == "neutral")
   {
-    grip_position.position.push_back(NEUTRAL);
-
-    gripper_onoff_pub_.publish(grip_position);
+    joint_msg.position.push_back(NEUTRAL);
+    calcPlannedPath(joint_msg);
   }
   else
   {

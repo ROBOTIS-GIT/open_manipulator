@@ -65,22 +65,22 @@ ArmController::~ArmController()
 
 void ArmController::initJointPosition()
 {
-  open_manipulator_msgs::JointPose joint_positions;
+  open_manipulator_msgs::JointPosition msg;
 
-  joint_positions.joint_name.push_back("joint1");
-  joint_positions.joint_name.push_back("joint2");
-  joint_positions.joint_name.push_back("joint3");
-  joint_positions.joint_name.push_back("joint4");
+  msg.joint_name.push_back("joint1");
+  msg.joint_name.push_back("joint2");
+  msg.joint_name.push_back("joint3");
+  msg.joint_name.push_back("joint4");
 
-  joint_positions.position.push_back(0.0);
-  joint_positions.position.push_back(-1.5707);
-  joint_positions.position.push_back(1.37);
-  joint_positions.position.push_back(0.2258);
+  msg.position.push_back(0.0);
+  msg.position.push_back(-1.5707);
+  msg.position.push_back(1.37);
+  msg.position.push_back(0.2258);
 
-  joint_positions.max_velocity_scaling_factor = 0.2;
-  joint_positions.max_accelerations_scaling_factor = 0.5;
+  msg.max_velocity_scaling_factor = 0.2;
+  msg.max_accelerations_scaling_factor = 0.5;
 
-  target_joint_position_pub_.publish(joint_positions);
+  calcPlannedPath(msg);
 }
 
 void ArmController::initPublisher(bool using_gazebo)
@@ -96,31 +96,25 @@ void ArmController::initPublisher(bool using_gazebo)
     }
   }
 
-  target_joint_position_pub_ = nh_.advertise<open_manipulator_msgs::JointPose>(robot_name_ + "/joint_pose", 10);
-
   arm_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/arm_state", 10);
 }
 
 void ArmController::initSubscriber(bool using_gazebo)
 {
-  target_joint_position_sub_ = nh_.subscribe(robot_name_ + "/joint_pose", 10,
-                                         &ArmController::targetJointPositionMsgCallback, this);
-
-  target_kinematics_pose_sub_ = nh_.subscribe(robot_name_ + "/kinematics_pose", 10,
-                                         &ArmController::targetKinematicsPoseMsgCallback, this);
-
   display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 10,
                                             &ArmController::displayPlannedPathMsgCallback, this);
 }
 
 void ArmController::initServer()
 {
-  get_joint_pose_server_      = nh_.advertiseService(robot_name_ + "/get_joint_pose", &ArmController::getJointPositionMsgCallback, this);
-  get_kinematics_pose_server_ = nh_.advertiseService(robot_name_ + "/get_kinematics_pose", & ArmController::getKinematicsPoseMsgCallback, this);
+  get_joint_position_server_  = nh_.advertiseService(robot_name_ + "/get_joint_position", &ArmController::getJointPositionMsgCallback, this);
+  get_kinematics_pose_server_ = nh_.advertiseService(robot_name_ + "/get_kinematics_pose", &ArmController::getKinematicsPoseMsgCallback, this);
+  set_joint_position_server_  = nh_.advertiseService(robot_name_ + "/set_joint_position", &ArmController::setJointPositionMsgCallback, this);
+  set_kinematics_pose_server_ = nh_.advertiseService(robot_name_ + "/set_kinematics_pose", &ArmController::setKinematicsPoseMsgCallback, this);
 }
 
-bool ArmController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
-                                                open_manipulator_msgs::GetJointPose::Response &res)
+bool ArmController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
+                                                open_manipulator_msgs::GetJointPosition::Response &res)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -132,8 +126,8 @@ bool ArmController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointP
   {
     ROS_INFO("%s: %f", joint_names[i].c_str(), joint_values[i]);
 
-    res.joint_pose.joint_name.push_back(joint_names[i]);
-    res.joint_pose.position.push_back(joint_values[i]);
+    res.joint_position.joint_name.push_back(joint_names[i]);
+    res.joint_position.position.push_back(joint_values[i]);
   }
 
   spinner.stop();
@@ -157,10 +151,69 @@ bool ArmController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinem
   spinner.stop();
 }
 
-void ArmController::targetJointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg)
+bool ArmController::setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
+                                                open_manipulator_msgs::SetJointPosition::Response &res)
+{
+  open_manipulator_msgs::JointPosition msg = req.joint_position;
+  res.isPlanned = calcPlannedPath(msg);
+}
+
+bool ArmController::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
+                                                 open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  open_manipulator_msgs::KinematicsPose msg = req.kinematics_pose;
+  res.isPlanned = calcPlannedPath(msg);
+}
+
+bool ArmController::calcPlannedPath(open_manipulator_msgs::KinematicsPose msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
+
+  bool isPlanned = false;
+  geometry_msgs::Pose target_pose = msg.pose;
+
+  move_group->setPoseTarget(target_pose);
+
+  move_group->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
+  move_group->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
+
+  move_group->setGoalTolerance(msg.tolerance);
+
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+
+  if (is_moving_ == false)
+  {
+    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+    if (success)
+    {
+      move_group->move();
+      isPlanned = true;
+    }
+    else
+    {
+      ROS_WARN("Planning (task space goal) is FAILED");
+      isPlanned = false;
+    }
+  }
+  else
+  {
+    ROS_WARN("ROBOT IS WORKING");
+    isPlanned = false;
+  }
+
+  spinner.stop();
+
+  return isPlanned;
+}
+
+bool ArmController::calcPlannedPath(open_manipulator_msgs::JointPosition msg)
+{
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+
+  bool isPlanned = false;
 
   const robot_state::JointModelGroup *joint_model_group = move_group->getCurrentState()->getJointModelGroup("arm");
 
@@ -171,16 +224,16 @@ void ArmController::targetJointPositionMsgCallback(const open_manipulator_msgs::
 
   for (uint8_t index = 0; index < joint_num_; index++)
   {
-    if (msg->joint_name[index] == ("joint" + std::to_string((index+1))))
+    if (msg.joint_name[index] == ("joint" + std::to_string((index+1))))
     {
-      joint_group_positions[index] = msg->position[index];
+      joint_group_positions[index] = msg.position[index];
     }
   }
 
   move_group->setJointValueTarget(joint_group_positions);
 
-  move_group->setMaxVelocityScalingFactor(msg->max_velocity_scaling_factor);
-  move_group->setMaxAccelerationScalingFactor(msg->max_accelerations_scaling_factor);
+  move_group->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
+  move_group->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
@@ -188,40 +241,26 @@ void ArmController::targetJointPositionMsgCallback(const open_manipulator_msgs::
   {
     bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
-    if (success) move_group->move();
-    else ROS_WARN("Planning (joint space goal) is FAILED");
+    if (success)
+    {
+      move_group->move();
+      isPlanned = true;
+    }
+    else
+    {
+      ROS_WARN("Planning (joint space goal) is FAILED");
+      isPlanned = false;
+    }
   }
   else
-    ROS_WARN("ROBOT IS WORKING");
-
-  spinner.stop();
-}
-
-void ArmController::targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
-{
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  geometry_msgs::Pose target_pose = msg->pose;
-
-  move_group->setPoseTarget(target_pose);
-
-  move_group->setMaxVelocityScalingFactor(msg->max_velocity_scaling_factor);
-  move_group->setMaxAccelerationScalingFactor(msg->max_accelerations_scaling_factor);
-
-  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-
-  if (is_moving_ == false)
   {
-    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
-    if (success) move_group->move();
-    else ROS_WARN("Planning (task space goal) is FAILED");
-  }
-  else
     ROS_WARN("ROBOT IS WORKING");
+    isPlanned = false;
+  }
 
   spinner.stop();
+
+  return isPlanned;
 }
 
 void ArmController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)

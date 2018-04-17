@@ -39,12 +39,13 @@
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/PoseStamped.h>
 
-#include "open_manipulator_msgs/JointPose.h"
-#include "open_manipulator_msgs/KinematicsPose.h"
 #include "open_manipulator_msgs/State.h"
 
-#include "open_manipulator_msgs/GetJointPose.h"
+#include "open_manipulator_msgs/GetJointPosition.h"
 #include "open_manipulator_msgs/GetKinematicsPose.h"
+
+#include "open_manipulator_msgs/SetJointPosition.h"
+#include "open_manipulator_msgs/SetKinematicsPose.h"
 
 #include <eigen3/Eigen/Eigen>
 #include <boost/thread.hpp>
@@ -80,17 +81,16 @@ class ArmController
 
   // ROS Publisher
   ros::Publisher gazebo_goal_joint_position_pub_[10];
-  ros::Publisher target_joint_position_pub_;
   ros::Publisher arm_state_pub_;
 
   // ROS Subscribers
   ros::Subscriber display_planned_path_sub_;
-  ros::Subscriber target_joint_position_sub_;
-  ros::Subscriber target_kinematics_pose_sub_;
 
   // ROS Service Server
-  ros::ServiceServer get_joint_pose_server_;
+  ros::ServiceServer get_joint_position_server_;
   ros::ServiceServer get_kinematics_pose_server_;
+  ros::ServiceServer set_joint_position_server_;
+  ros::ServiceServer set_kinematics_pose_server_;
 
   // ROS Service Client
 
@@ -120,13 +120,19 @@ class ArmController
 
   void initJointPosition();
 
+  bool calcPlannedPath(open_manipulator_msgs::JointPosition msg);
+  bool calcPlannedPath(open_manipulator_msgs::KinematicsPose msg);
+
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
-  void targetJointPositionMsgCallback(const open_manipulator_msgs::JointPose::ConstPtr &msg);
-  void targetKinematicsPoseMsgCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
+  bool setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
+                                   open_manipulator_msgs::SetJointPosition::Response &res);
 
-  bool getJointPositionMsgCallback(open_manipulator_msgs::GetJointPose::Request &req,
-                                   open_manipulator_msgs::GetJointPose::Response &res);
+  bool setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
+                                    open_manipulator_msgs::SetKinematicsPose::Response &res);
+
+  bool getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
+                                   open_manipulator_msgs::GetJointPosition::Response &res);
 
   bool getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
                                     open_manipulator_msgs::GetKinematicsPose::Response &res);
