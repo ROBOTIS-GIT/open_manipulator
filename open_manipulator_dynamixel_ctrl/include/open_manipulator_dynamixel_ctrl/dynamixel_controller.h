@@ -23,7 +23,6 @@
 
 #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
 #include <sensor_msgs/JointState.h>
-#include <open_manipulator_msgs/JointPose.h>
 
 namespace dynamixel
 {
