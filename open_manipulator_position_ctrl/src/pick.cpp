@@ -318,7 +318,7 @@ void pick()
 
         eef_pose.request.kinematics_pose.group_name = "arm";
         eef_pose.request.kinematics_pose.pose = ar_marker_pose.pose;
-        eef_pose.request.kinematics_pose.max_velocity_scaling_factor = 0.3;
+        eef_pose.request.kinematics_pose.max_velocity_scaling_factor = 0.1;
         eef_pose.request.kinematics_pose.max_accelerations_scaling_factor = 0.5;
         eef_pose.request.kinematics_pose.tolerance = tolerance;
 
@@ -337,7 +337,7 @@ void pick()
           else
           {
             planning_cnt++;
-            tolerance += 0.01;
+            tolerance += 0.005;
             ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
 
             task = MOVE_ARM;
@@ -370,7 +370,7 @@ void pick()
         eef_pose.request.kinematics_pose.pose = object_pose.pose;
 
         eef_pose.request.kinematics_pose.max_velocity_scaling_factor = 0.1;
-        eef_pose.request.kinematics_pose.max_accelerations_scaling_factor = 0.5;
+        eef_pose.request.kinematics_pose.max_accelerations_scaling_factor = 0.1;
         eef_pose.request.kinematics_pose.tolerance = tolerance;
 
         if (kinematics_pose_command_client.call(eef_pose))
@@ -388,7 +388,7 @@ void pick()
           else
           {
             planning_cnt++;
-            tolerance += 0.01;
+            tolerance += 0.005;
             ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
 
             task = CLOSE_TO_OBJECT;
