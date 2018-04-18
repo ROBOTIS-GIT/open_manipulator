@@ -2,7 +2,7 @@
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [waffle, waffle_pi]"/>
 
   <!-- These are the arguments you can pass this launch file, for example paused:=true -->
-  <arg name="paused" default="false"/>
+  <arg name="paused" default="true"/>
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
@@ -24,7 +24,10 @@
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node pkg="gazebo_ros" type="spawn_model" name="urdf_spawner" respawn="false" output="screen"
-     args="-urdf -model open_manipulator_with_tb3 -x -1.5 -y 3.81 -Y 1.5708 -param robot_description"/>
+     args="-urdf -model open_manipulator_with_tb3 -x -1.5 -y 3.75 -Y 1.5708 -J joint2 -1.5707 -J joint3 1.37 -J joint4 0.2258 -param robot_description"/>
+
+<!--  <node pkg="gazebo_ros" type="spawn_model" name="urdf_spawner" respawn="false" output="screen"
+     args="-urdf -model open_manipulator_with_tb3 -x 0.0 -y 0.0 -Y 1.5708 -J joint2 -1.5707 -J joint3 1.37 -J joint4 0.2258 -param robot_description"/>-->
 
   <!-- ros_control robotis manipulator launch file -->
   <include file="$(find open_manipulator_gazebo)/launch/open_manipulator_with_tb3_controller.launch"/>
