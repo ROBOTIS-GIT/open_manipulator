@@ -188,7 +188,6 @@ bool ArmController::calcPlannedPath(open_manipulator_msgs::KinematicsPose msg)
 
     if (success)
     {
-      move_group->move();
       isPlanned = true;
     }
     else
@@ -243,7 +242,6 @@ bool ArmController::calcPlannedPath(open_manipulator_msgs::JointPosition msg)
 
     if (success)
     {
-      move_group->move();
       isPlanned = true;
     }
     else

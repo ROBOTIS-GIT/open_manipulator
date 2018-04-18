@@ -121,7 +121,6 @@ bool GripperController::calcPlannedPath(open_manipulator_msgs::JointPosition msg
 
     if (success)
     {
-      move_group->move();
       isPlanned = true;
     }
     else
