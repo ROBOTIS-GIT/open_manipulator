@@ -21,15 +21,10 @@
 #define ON  true
 #define OFF false
 
-const uint8_t is_moving = 0;
-const uint8_t stopped   = 1;
+const uint8_t IS_MOVING = 0;
+const uint8_t STOPPED   = 1;
 
 #define MARKER_ID 8
-
-#define DIST_OBJECT_TO_ARMARKER 0.010
-#define DIST_EDGE_TO_CENTER_OF_PALM 0.030
-#define DIST_GRIPPER_TO_JOINT4  0.135
-#define OFFSET_FOR_GRIP_HEIGHT  0.060
 
 enum
 {
@@ -57,7 +52,9 @@ typedef struct
   bool marker;
 } State;
 
-geometry_msgs::PoseStamped ar_marker_pose;
+ar_track_alvar_msgs::AlvarMarker ar_marker_pose;
+geometry_msgs::PoseStamped desired_pose;
+
 State state = {false, false, false};
 
 uint8_t task = 0, pre_task = 0;
@@ -150,10 +147,54 @@ bool gripper(bool onoff)
   }
 }
 
+geometry_msgs::PoseStamped calcDesiredPose(ar_track_alvar_msgs::AlvarMarker marker)
+{
+  const double DIST_GRIPPER_TO_JOINT4 = 0.145;
+  const double OFFSET_FOR_GRIP_HEIGHT = 0.150;
+
+  geometry_msgs::PoseStamped get_pose;
+
+  if (marker.id == MARKER_ID)
+  {
+    get_pose = marker.pose;
+
+    get_pose.pose.position.x = marker.pose.pose.position.x - DIST_GRIPPER_TO_JOINT4;
+    get_pose.pose.position.y = 0.0;
+    get_pose.pose.position.z = marker.pose.pose.position.z + OFFSET_FOR_GRIP_HEIGHT;
+
+    double dist = sqrt((marker.pose.pose.position.x * marker.pose.pose.position.x) +
+                       (marker.pose.pose.position.y * marker.pose.pose.position.y));
+
+    if (marker.pose.pose.position.y > 0) yaw =        acos(marker.pose.pose.position.x/dist);
+    else                                 yaw = (-1) * acos(marker.pose.pose.position.x/dist);
+
+    double cy = cos(yaw * 0.5);
+    double sy = sin(yaw * 0.5);
+    double cr = cos(roll * 0.5);
+    double sr = sin(roll * 0.5);
+    double cp = cos(pitch * 0.5);
+    double sp = sin(pitch * 0.5);
+
+    get_pose.pose.orientation.w = cy * cr * cp + sy * sr * sp;
+    get_pose.pose.orientation.x = cy * sr * cp - sy * cr * sp;
+    get_pose.pose.orientation.y = cy * cr * sp + sy * sr * cp;
+    get_pose.pose.orientation.z = sy * cr * cp - cy * sr * sp;
+
+    state.marker = true;
+  }
+  else
+  {
+    state.marker = false;
+  }
+
+  return get_pose;
+}
+
+
 bool pickMsgCallback(open_manipulator_msgs::Pick::Request &req,
                      open_manipulator_msgs::Pick::Response &res)
 {
-  if ((state.arm == stopped) && (state.gripper == stopped))
+  if ((state.arm == STOPPED) && (state.gripper == STOPPED))
   {
     res.result = "START PICK TASK!";
     task = CHECK_AR_MARKER_POSE;
@@ -170,9 +211,9 @@ void armStateMsgCallback(const open_manipulator_msgs::State::ConstPtr &msg)
   std::string get_arm_state = msg->robot;
 
   if (get_arm_state == msg->STOPPED)
-    state.arm = stopped;
+    state.arm = STOPPED;
   else if (get_arm_state == msg->IS_MOVING)
-    state.arm = is_moving;
+    state.arm = IS_MOVING;
 }
 
 void gripperStateMsgCallback(const open_manipulator_msgs::State::ConstPtr &msg)
@@ -180,9 +221,9 @@ void gripperStateMsgCallback(const open_manipulator_msgs::State::ConstPtr &msg)
   std::string get_gripper_state = msg->robot;
 
   if (get_gripper_state == msg->STOPPED)
-    state.gripper = stopped;
+    state.gripper = STOPPED;
   else if (get_gripper_state == msg->IS_MOVING)
-    state.gripper = is_moving;
+    state.gripper = IS_MOVING;
 }
 
 void arMarkerPoseMsgCallback(const ar_track_alvar_msgs::AlvarMarkers::ConstPtr &msg)
@@ -190,40 +231,7 @@ void arMarkerPoseMsgCallback(const ar_track_alvar_msgs::AlvarMarkers::ConstPtr &
   if (msg->markers.size() == 0)
     return;
 
-  ar_track_alvar_msgs::AlvarMarker marker = msg->markers[0];
-
-  if (marker.id == MARKER_ID)
-  {
-    ar_marker_pose = marker.pose;
-
-    ar_marker_pose.pose.position.x = marker.pose.pose.position.x - DIST_GRIPPER_TO_JOINT4;
-    ar_marker_pose.pose.position.y = 0.0;
-    ar_marker_pose.pose.position.z = marker.pose.pose.position.z + OFFSET_FOR_GRIP_HEIGHT;
-
-    double dist = sqrt((ar_marker_pose.pose.position.x * ar_marker_pose.pose.position.x) +
-                       (marker.pose.pose.position.y * marker.pose.pose.position.y));
-
-    if (marker.pose.pose.position.y > 0) yaw =        acos(ar_marker_pose.pose.position.x/dist);
-    else                                 yaw = (-1) * acos(ar_marker_pose.pose.position.x/dist);
-
-    double cy = cos(yaw * 0.5);
-    double sy = sin(yaw * 0.5);
-    double cr = cos(roll * 0.5);
-    double sr = sin(roll * 0.5);
-    double cp = cos(pitch * 0.5);
-    double sp = sin(pitch * 0.5);
-
-    ar_marker_pose.pose.orientation.w = cy * cr * cp + sy * sr * sp;
-    ar_marker_pose.pose.orientation.x = cy * sr * cp - sy * cr * sp;
-    ar_marker_pose.pose.orientation.y = cy * cr * sp + sy * sr * cp;
-    ar_marker_pose.pose.orientation.z = sy * cr * cp - cy * sr * sp;
-
-    state.marker = true;
-  }
-  else
-  {
-    state.marker = false;
-  }
+  ar_marker_pose = msg->markers[0];
 }
 
 void pick()
@@ -236,6 +244,7 @@ void pick()
   switch (task)
   {
     case CHECK_AR_MARKER_POSE:
+      desired_pose = calcDesiredPose(ar_marker_pose);
       if (state.marker == true)
       {
         ROS_WARN("SAVE POSE OF AR MARKER");
@@ -249,7 +258,7 @@ void pick()
      break;
 
     case INIT_POSITION:
-      if (state.arm == stopped)
+      if (state.arm == STOPPED)
       {
         ROS_WARN("SET INIT POSITION");
 
@@ -275,7 +284,7 @@ void pick()
      break;
 
     case GRIPPER_OFF:
-      if (state.gripper == stopped)
+      if (state.gripper == STOPPED)
       {
         ROS_WARN("OPEN GRIPPER");
 
@@ -301,23 +310,23 @@ void pick()
      break;
 
     case MOVE_ARM:
-      if (state.arm == stopped)
+      if (state.arm == STOPPED)
       {
         ROS_WARN("MOVE ARM TO PICK");
 
-        ROS_INFO("x = %.3f", ar_marker_pose.pose.position.x);
-        ROS_INFO("y = %.3f", ar_marker_pose.pose.position.y);
-        ROS_INFO("z = %.3f", ar_marker_pose.pose.position.z);
+        ROS_INFO("x = %.3f", desired_pose.pose.position.x);
+        ROS_INFO("y = %.3f", desired_pose.pose.position.y);
+        ROS_INFO("z = %.3f", desired_pose.pose.position.z);
 
-        ROS_INFO("qx = %.3f", ar_marker_pose.pose.orientation.x);
-        ROS_INFO("qy = %.3f", ar_marker_pose.pose.orientation.y);
-        ROS_INFO("qz = %.3f", ar_marker_pose.pose.orientation.z);
-        ROS_INFO("qw = %.3f", ar_marker_pose.pose.orientation.w);
+        ROS_INFO("qx = %.3f", desired_pose.pose.orientation.x);
+        ROS_INFO("qy = %.3f", desired_pose.pose.orientation.y);
+        ROS_INFO("qz = %.3f", desired_pose.pose.orientation.z);
+        ROS_INFO("qw = %.3f", desired_pose.pose.orientation.w);
 
         ROS_INFO("yaw = %.3f", yaw * RAD2DEG);
 
         eef_pose.request.kinematics_pose.group_name = "arm";
-        eef_pose.request.kinematics_pose.pose = ar_marker_pose.pose;
+        eef_pose.request.kinematics_pose.pose = desired_pose.pose;
         eef_pose.request.kinematics_pose.max_velocity_scaling_factor = 0.1;
         eef_pose.request.kinematics_pose.max_accelerations_scaling_factor = 0.5;
         eef_pose.request.kinematics_pose.tolerance = tolerance;
@@ -347,13 +356,16 @@ void pick()
      break;
 
     case CLOSE_TO_OBJECT:
-      if (state.arm == stopped)
+      if (state.arm == STOPPED)
       {
         ROS_WARN("CLOSE TO OBJECT");
 
-        geometry_msgs::PoseStamped object_pose = ar_marker_pose;
+        geometry_msgs::PoseStamped object_pose = desired_pose;
 
-        object_pose.pose.position.x = object_pose.pose.position.x + (DIST_EDGE_TO_CENTER_OF_PALM + DIST_OBJECT_TO_ARMARKER);
+        const double DIST_OBJECT_TO_AR_MARKER    = 0.040;
+        const double DIST_EDGE_TO_CENTER_OF_PALM = 0.030;
+
+        object_pose.pose.position.x = object_pose.pose.position.x + (DIST_EDGE_TO_CENTER_OF_PALM + DIST_OBJECT_TO_AR_MARKER);
 
         ROS_INFO("x = %.3f", object_pose.pose.position.x);
         ROS_INFO("y = %.3f", object_pose.pose.position.y);
@@ -398,7 +410,7 @@ void pick()
      break;
 
     case GRIP_OBJECT:
-      if (state.gripper == stopped)
+      if (state.gripper == STOPPED)
       {
         ROS_WARN("GRIP OBJECT");
 
@@ -424,7 +436,7 @@ void pick()
      break;
 
     case PICK_OBJECT_UP:
-      if (state.arm == stopped)
+      if (state.arm == STOPPED)
       {
         ROS_WARN("PICK OBJECT UP");
 
@@ -436,7 +448,7 @@ void pick()
      break;
 
     case WAITING_FOR_STOP:
-      if ((state.arm == stopped) && (state.gripper == stopped))
+      if ((state.arm == STOPPED) && (state.gripper == STOPPED))
       {
         tolerance = 0.01;
         planning_cnt = 0;
