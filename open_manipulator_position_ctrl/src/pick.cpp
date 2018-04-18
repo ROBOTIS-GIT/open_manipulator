@@ -18,15 +18,18 @@
 #define DEG2RAD 0.01745329251
 #define RAD2DEG 57.2957795131
 
+#define ON  true
+#define OFF false
+
 const uint8_t is_moving = 0;
 const uint8_t stopped   = 1;
 
 #define MARKER_ID 8
 
-#define DIST_OBJECT_TO_ARMARKER 0.030
+#define DIST_OBJECT_TO_ARMARKER 0.010
 #define DIST_EDGE_TO_CENTER_OF_PALM 0.030
-#define DIST_GRIPPER_TO_JOINT4  0.145
-#define OFFSET_FOR_GRIP_HEIGHT  0.08
+#define DIST_GRIPPER_TO_JOINT4  0.135
+#define OFFSET_FOR_GRIP_HEIGHT  0.060
 
 enum
 {
@@ -43,6 +46,7 @@ enum
 
 ros::ServiceClient joint_position_command_client;
 ros::ServiceClient kinematics_pose_command_client;
+ros::ServiceClient gripper_position_command_client;
 
 ros::Publisher grip_pub;
 
@@ -64,7 +68,7 @@ double tolerance = 0.01;
 
 ar_track_alvar_msgs::AlvarMarker markers;
 
-bool init_joint_position()
+bool initJointPosition()
 {
   open_manipulator_msgs::SetJointPosition msg;
 
@@ -86,7 +90,64 @@ bool init_joint_position()
     return msg.response.isPlanned;
   }
   else
+  {
     ROS_ERROR("FAILED TO CALL SERVER");
+    return false;
+  }
+}
+
+bool pickUpJointPosition()
+{
+  open_manipulator_msgs::SetJointPosition msg;
+
+  msg.request.joint_position.joint_name.push_back("joint1");
+  msg.request.joint_position.joint_name.push_back("joint2");
+  msg.request.joint_position.joint_name.push_back("joint3");
+  msg.request.joint_position.joint_name.push_back("joint4");
+
+  msg.request.joint_position.position.push_back( 0.0);
+  msg.request.joint_position.position.push_back(-0.95);
+  msg.request.joint_position.position.push_back( 0.95);
+  msg.request.joint_position.position.push_back( 0.0);
+
+  msg.request.joint_position.max_velocity_scaling_factor = 0.1;
+  msg.request.joint_position.max_accelerations_scaling_factor = 0.5;
+
+  if (joint_position_command_client.call(msg))
+  {
+    return msg.response.isPlanned;
+  }
+  else
+  {
+    ROS_ERROR("FAILED TO CALL SERVER");
+    return false;
+  }
+}
+
+bool gripper(bool onoff)
+{
+  open_manipulator_msgs::SetJointPosition msg;
+
+  msg.request.joint_position.joint_name.push_back("grip_joint");
+  msg.request.joint_position.joint_name.push_back("grip_joint_sub");
+
+  if (onoff == true)
+    msg.request.joint_position.position.push_back(0.01);
+  else
+    msg.request.joint_position.position.push_back(-0.01);
+
+  msg.request.joint_position.max_velocity_scaling_factor = 0.3;
+  msg.request.joint_position.max_accelerations_scaling_factor = 0.01;
+
+  if (gripper_position_command_client.call(msg))
+  {
+    return msg.response.isPlanned;
+  }
+  else
+  {
+    ROS_ERROR("FAILED TO CALL SERVER");
+    return false;
+  }
 }
 
 bool pickMsgCallback(open_manipulator_msgs::Pick::Request &req,
@@ -126,46 +187,51 @@ void gripperStateMsgCallback(const open_manipulator_msgs::State::ConstPtr &msg)
 
 void arMarkerPoseMsgCallback(const ar_track_alvar_msgs::AlvarMarkers::ConstPtr &msg)
 {  
-//  ar_track_alvar_msgs::AlvarMarker marker = msg->markers[0];
+  if (msg->markers.size() == 0)
+    return;
 
-//  if (marker.id == MARKER_ID)
-//  {
-//    ar_marker_pose = marker.pose;
+  ar_track_alvar_msgs::AlvarMarker marker = msg->markers[0];
 
-//    ar_marker_pose.pose.position.x = marker.pose.pose.position.x - DIST_GRIPPER_TO_JOINT4;
-//    ar_marker_pose.pose.position.y = 0.0;
-//    ar_marker_pose.pose.position.z = marker.pose.pose.position.z + OFFSET_FOR_GRIP_HEIGHT;
+  if (marker.id == MARKER_ID)
+  {
+    ar_marker_pose = marker.pose;
 
-//    double dist = sqrt((ar_marker_pose.pose.position.x * ar_marker_pose.pose.position.x) +
-//                       (marker.pose.pose.position.y * marker.pose.pose.position.y));
+    ar_marker_pose.pose.position.x = marker.pose.pose.position.x - DIST_GRIPPER_TO_JOINT4;
+    ar_marker_pose.pose.position.y = 0.0;
+    ar_marker_pose.pose.position.z = marker.pose.pose.position.z + OFFSET_FOR_GRIP_HEIGHT;
 
-//    if (marker.pose.pose.position.y > 0) yaw =        acos(ar_marker_pose.pose.position.x/dist);
-//    else                                 yaw = (-1) * acos(ar_marker_pose.pose.position.x/dist);
+    double dist = sqrt((ar_marker_pose.pose.position.x * ar_marker_pose.pose.position.x) +
+                       (marker.pose.pose.position.y * marker.pose.pose.position.y));
 
-//    double cy = cos(yaw * 0.5);
-//    double sy = sin(yaw * 0.5);
-//    double cr = cos(roll * 0.5);
-//    double sr = sin(roll * 0.5);
-//    double cp = cos(pitch * 0.5);
-//    double sp = sin(pitch * 0.5);
+    if (marker.pose.pose.position.y > 0) yaw =        acos(ar_marker_pose.pose.position.x/dist);
+    else                                 yaw = (-1) * acos(ar_marker_pose.pose.position.x/dist);
 
-//    ar_marker_pose.pose.orientation.w = cy * cr * cp + sy * sr * sp;
-//    ar_marker_pose.pose.orientation.x = cy * sr * cp - sy * cr * sp;
-//    ar_marker_pose.pose.orientation.y = cy * cr * sp + sy * sr * cp;
-//    ar_marker_pose.pose.orientation.z = sy * cr * cp - cy * sr * sp;
+    double cy = cos(yaw * 0.5);
+    double sy = sin(yaw * 0.5);
+    double cr = cos(roll * 0.5);
+    double sr = sin(roll * 0.5);
+    double cp = cos(pitch * 0.5);
+    double sp = sin(pitch * 0.5);
 
-//    state.marker = true;
-//  }
-//  else
-//  {
-//    state.marker = false;
-//  }
+    ar_marker_pose.pose.orientation.w = cy * cr * cp + sy * sr * sp;
+    ar_marker_pose.pose.orientation.x = cy * sr * cp - sy * cr * sp;
+    ar_marker_pose.pose.orientation.y = cy * cr * sp + sy * sr * cp;
+    ar_marker_pose.pose.orientation.z = sy * cr * cp - cy * sr * sp;
+
+    state.marker = true;
+  }
+  else
+  {
+    state.marker = false;
+  }
 }
 
 void pick()
 {
   open_manipulator_msgs::SetKinematicsPose eef_pose;
   std_msgs::String grip;
+
+  static uint8_t planning_cnt = 0;
 
   switch (task)
   {
@@ -187,7 +253,7 @@ void pick()
       {
         ROS_WARN("SET INIT POSITION");
 
-        bool result = init_joint_position();
+        bool result = initJointPosition();
 
         if (result)
         {
@@ -201,7 +267,8 @@ void pick()
         }
         else
         {
-          ROS_ERROR("PLANNING IS FAILED");
+          planning_cnt++;
+          ROS_ERROR("PLANNING IS FAILED (%d)", planning_cnt);
           task = INIT_POSITION;
         }
       }
@@ -212,14 +279,24 @@ void pick()
       {
         ROS_WARN("OPEN GRIPPER");
 
-        grip.data = "grip_off";
-        grip_pub.publish(grip);
+        bool result = gripper(OFF);
 
-        ros::WallDuration sleep_time(1.0);
-        sleep_time.sleep();
+        if (result)
+        {
+          ROS_INFO("PLANNING IS SUCCESSED");
 
-        pre_task = GRIPPER_OFF;
-        task = WAITING_FOR_STOP;
+          ros::WallDuration sleep_time(1.0);
+          sleep_time.sleep();
+
+          pre_task = GRIPPER_OFF;
+          task = WAITING_FOR_STOP;
+        }
+        else
+        {
+          planning_cnt++;
+          ROS_ERROR("PLANNING IS FAILED (%d)", planning_cnt);
+          task = INIT_POSITION;
+        }
       }
      break;
 
@@ -259,8 +336,10 @@ void pick()
           }
           else
           {
-            ROS_ERROR("PLANNING IS FAILED");
+            planning_cnt++;
             tolerance += 0.01;
+            ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
+
             task = MOVE_ARM;
           }
         }
@@ -274,7 +353,18 @@ void pick()
 
         geometry_msgs::PoseStamped object_pose = ar_marker_pose;
 
-        object_pose.pose.position.x = object_pose.pose.position.x - (DIST_EDGE_TO_CENTER_OF_PALM + DIST_OBJECT_TO_ARMARKER);
+        object_pose.pose.position.x = object_pose.pose.position.x + (DIST_EDGE_TO_CENTER_OF_PALM + DIST_OBJECT_TO_ARMARKER);
+
+        ROS_INFO("x = %.3f", object_pose.pose.position.x);
+        ROS_INFO("y = %.3f", object_pose.pose.position.y);
+        ROS_INFO("z = %.3f", object_pose.pose.position.z);
+
+        ROS_INFO("qx = %.3f", object_pose.pose.orientation.x);
+        ROS_INFO("qy = %.3f", object_pose.pose.orientation.y);
+        ROS_INFO("qz = %.3f", object_pose.pose.orientation.z);
+        ROS_INFO("qw = %.3f", object_pose.pose.orientation.w);
+
+        ROS_INFO("yaw = %.3f", yaw * RAD2DEG);
 
         eef_pose.request.kinematics_pose.group_name = "arm";
         eef_pose.request.kinematics_pose.pose = object_pose.pose;
@@ -297,7 +387,10 @@ void pick()
           }
           else
           {
-            ROS_ERROR("PLANNING IS FAILED");
+            planning_cnt++;
+            tolerance += 0.01;
+            ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
+
             task = CLOSE_TO_OBJECT;
           }
         }
@@ -309,14 +402,24 @@ void pick()
       {
         ROS_WARN("GRIP OBJECT");
 
-        grip.data = "grip_on";
-        grip_pub.publish(grip);
+        bool result = gripper(ON);
 
-        ros::WallDuration sleep_time(1.0);
-        sleep_time.sleep();
+        if (result)
+        {
+          ROS_INFO("PLANNING IS SUCCESSED");
 
-        pre_task = GRIP_OBJECT;
-        task = WAITING_FOR_STOP;
+          ros::WallDuration sleep_time(1.0);
+          sleep_time.sleep();
+
+          pre_task = GRIP_OBJECT;
+          task = WAITING_FOR_STOP;
+        }
+        else
+        {
+          planning_cnt++;
+          ROS_ERROR("PLANNING IS FAILED (%d)", planning_cnt);
+          task = INIT_POSITION;
+        }
       }
      break;
 
@@ -325,7 +428,7 @@ void pick()
       {
         ROS_WARN("PICK OBJECT UP");
 
-        init_joint_position();
+        pickUpJointPosition();
 
         pre_task = PICK_OBJECT_UP;
         task = WAITING_FOR_STOP;
@@ -336,6 +439,7 @@ void pick()
       if ((state.arm == stopped) && (state.gripper == stopped))
       {
         tolerance = 0.01;
+        planning_cnt = 0;
 
         if (pre_task == PICK_OBJECT_UP)
         {
@@ -345,10 +449,6 @@ void pick()
         else
           task = pre_task + 1;
 
-      }
-      else
-      {
-        ROS_INFO("WAITING FOR ROBOT HAS STOPPED");
       }
      break;
 
@@ -367,19 +467,12 @@ int main(int argc, char **argv)
   joint_position_command_client = nh.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/set_joint_position");
   kinematics_pose_command_client = nh.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name + "/set_kinematics_pose");
 
-  grip_pub = nh.advertise<std_msgs::String>(robot_name + "/gripper", 10);
+  gripper_position_command_client = nh.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/set_gripper_position");
 
   ros::Subscriber arm_state_sub = nh.subscribe(robot_name + "/arm_state", 10, armStateMsgCallback);
   ros::Subscriber gripper_state_sub = nh.subscribe(robot_name + "/gripper_state", 10, gripperStateMsgCallback);
 
-//  ar_track_alvar_msgs::AlvarMarkers am;
-//  ar_track_alvar_msgs::AlvarMarkersConstPtr msg = ros::topic::waitForMessage<ar_track_alvar_msgs::AlvarMarkers>(markers, ros::Duration(25));
-//  if (msg == NULL)
-//      ROS_INFO("No point clound messages received");
-//  else
-//      am = * msg;
-
-//  ros::Subscriber ar_marker_pose_sub = nh.subscribe("/ar_pose_marker", 10, arMarkerPoseMsgCallback);
+  ros::Subscriber ar_marker_pose_sub = nh.subscribe("/ar_pose_marker", 10, arMarkerPoseMsgCallback);
 
   ros::ServiceServer pick_server = nh.advertiseService(robot_name + "/pick", pickMsgCallback);
 
