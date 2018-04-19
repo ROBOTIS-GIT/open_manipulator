@@ -43,6 +43,8 @@ ros::ServiceClient joint_position_command_client;
 ros::ServiceClient kinematics_pose_command_client;
 ros::ServiceClient gripper_position_command_client;
 
+ros::ServiceClient pick_result_client;
+
 ros::Publisher grip_pub;
 
 typedef struct
@@ -147,6 +149,23 @@ bool gripper(bool onoff)
   }
 }
 
+bool result(std_msgs::String result_msg)
+{
+  open_manipulator_msgs::Pick msg;
+
+  msg.request.state = result_msg.data;
+
+  if (pick_result_client.call(msg))
+  {
+    return true;
+  }
+  else
+  {
+    ROS_ERROR("FAILED TO CALL SERVER");
+    return false;
+  }
+}
+
 geometry_msgs::PoseStamped calcDesiredPose(ar_track_alvar_msgs::AlvarMarker marker)
 {
   const double DIST_GRIPPER_TO_JOINT4 = 0.145;
@@ -237,6 +256,7 @@ void arMarkerPoseMsgCallback(const ar_track_alvar_msgs::AlvarMarkers::ConstPtr &
 void pick()
 {
   open_manipulator_msgs::SetKinematicsPose eef_pose;
+  std_msgs::String result_msg;
   std_msgs::String grip;
 
   static uint8_t planning_cnt = 0;
@@ -457,6 +477,9 @@ void pick()
         {
           task = WAITING_FOR_SIGNAL;
           ROS_WARN("SUCCESS TO PICK UP");
+
+          result_msg.data = "Success";
+          result(result_msg);
         }
         else
           task = pre_task + 1;
@@ -480,6 +503,8 @@ int main(int argc, char **argv)
   kinematics_pose_command_client = nh.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name + "/set_kinematics_pose");
 
   gripper_position_command_client = nh.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/set_gripper_position");
+
+  pick_result_client = nh.serviceClient<open_manipulator_msgs::Pick>(robot_name + "/result");
 
   ros::Subscriber arm_state_sub = nh.subscribe(robot_name + "/arm_state", 10, armStateMsgCallback);
   ros::Subscriber gripper_state_sub = nh.subscribe(robot_name + "/gripper_state", 10, gripperStateMsgCallback);
