@@ -13,7 +13,7 @@
     <mu2>30.0</mu2>
     <maxVel>1.0</maxVel>
     <minDepth>0.001</minDepth>
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- Link2 -->
@@ -24,7 +24,7 @@
     <mu2>30.0</mu2>
     <maxVel>1.0</maxVel>
     <minDepth>0.001</minDepth>
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- Link3 -->
@@ -35,7 +35,7 @@
     <mu2>30.0</mu2>
     <maxVel>1.0</maxVel>
     <minDepth>0.001</minDepth>
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- Link4 -->
@@ -46,7 +46,7 @@
     <mu2>30.0</mu2>
     <maxVel>1.0</maxVel>
     <minDepth>0.001</minDepth>
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- Link5 -->
@@ -57,7 +57,7 @@
     <mu2>30.0</mu2>
     <maxVel>1.0</maxVel>
     <minDepth>0.001</minDepth>
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- grip_link -->
@@ -68,7 +68,7 @@
     <mu2>30.0</mu2>
     <maxVel>1.0</maxVel>
     <minDepth>0.001</minDepth>
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- grip_link_sub -->
@@ -79,7 +79,7 @@
     <mu2>30.0</mu2>
     <maxVel>1.0</maxVel>
     <minDepth>0.001</minDepth>
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
 
   <!-- ros_control plugin -->
