@@ -1,0 +1,197 @@
+#!/usr/bin/env python
+
+#################################################################################
+# Copyright 2018 ROBOTIS CO., LTD.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#################################################################################
+
+# Authors: Taehun Lim(Darby)
+
+import rospy, roslaunch
+import os
+
+from std_msgs.msg import String
+from geometry_msgs.msg import PoseStamped
+from move_base_msgs.msg import MoveBaseActionResult
+from open_manipulator_msgs.srv import Pick
+
+from enum import Enum
+
+ON  = 1
+OFF = 0 
+
+GOAL_REACHED = 3
+
+class NodeController():
+    def __init__(self):
+        self.getParam()
+        self.getPackagePath()
+        self.setROSLaunch()
+
+        self.initPublisher()
+        self.initSubscriber()
+
+        self.navigationLaunched(ON)
+
+        self.StepOfPickAndPlace = Enum('StepOfPickAndPlace', 'waiting_signal move_to_pose_in_front_up_the_beer_can pick_beer_can_up move_to_pose_in_front_up_the_box place_beer_in_box exit')
+        self.pre_step = 0
+        self.step = self.StepOfPickAndPlace.move_to_pose_in_front_up_the_beer_can.value
+
+        self.is_trigger = False
+        
+        loop_rate = rospy.Rate(10) # 10hz
+        while not rospy.is_shutdown():
+            if self.is_trigger == True:                
+                self.controller()
+
+            loop_rate.sleep()
+
+    def initPublisher(self):
+        self.tb3_goal_pose_pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
+
+    def initSubscriber(self):
+        self.node_control_trigger_sub = rospy.Subscriber(self.robot_name + '/node_control_trigger', String, self.triggerMsgCallback, queue_size=10)
+        self.arrive_goal_pose_sub     = rospy.Subscriber("/move_base/result", MoveBaseActionResult, self.checkActionMsgCallback, queue_size=10)
+
+    def initServer(self):
+        self.pick_server = rospy.Service(self.robot_name + '/result', Pick, resultMsgCallback)
+
+    def initClient(self):
+        self.pick_client = rospy.ServiceProxy(self.robot_name + '/pick', Pick)
+
+    def resultMsgCallback(self):
+        rospy.logwarn("Success to Pick up")
+
+        if self.pre_step == StepOfPickAndPlace.pick_beer_can_up.value:
+            self.step = StepOfPickAndPlace.move_to_pose_in_front_up_the_box.value
+
+    def triggerMsgCallback(self, trigger_msg):
+        if trigger_msg.data == "start":
+            self.is_trigger = True
+        else:
+            self.is_trigger = False
+
+    def checkActionMsgCallback(self, action_msg):
+        if action_msg.status.status == GOAL_REACHED:
+            rospy.logwarn("Arrive at the goal pose")
+
+            if self.pre_step == StepOfPickAndPlace.move_to_pose_in_front_up_the_beer_can.value:
+                self.step = StepOfPickAndPlace.pick_beer_can_up.value
+            elif self.pre_step == StepOfPickAndPlace.move_to_pose_in_front_up_the_box.value:
+                self.step = StepOfPickAndPlace.place_beer_in_box.value            
+
+    def getParam(self):
+        self.robot_name = rospy.get_param("/robot_name")
+
+        self.goalPoseInFrontUpTheBeerCan = PoseStamped()
+
+        self.goalPoseInFrontUpTheBeerCan.header.frame_id = "map"
+        self.goalPoseInFrontUpTheBeerCan.header.stamp = rospy.Time.now()
+        
+        self.goalPoseInFrontUpTheBeerCan.pose.position.x = rospy.get_param("/position_x_in_front_up_the_beer_can")
+        self.goalPoseInFrontUpTheBeerCan.pose.position.y = rospy.get_param("/position_y_in_front_up_the_beer_can")
+        self.goalPoseInFrontUpTheBeerCan.pose.position.z = rospy.get_param("/position_z_in_front_up_the_beer_can")
+        
+        self.goalPoseInFrontUpTheBeerCan.pose.orientation.w = rospy.get_param("/orientation_w_in_front_up_the_beer_can")
+        self.goalPoseInFrontUpTheBeerCan.pose.orientation.x = rospy.get_param("/orientation_x_in_front_up_the_beer_can")
+        self.goalPoseInFrontUpTheBeerCan.pose.orientation.y = rospy.get_param("/orientation_y_in_front_up_the_beer_can")
+        self.goalPoseInFrontUpTheBeerCan.pose.orientation.z = rospy.get_param("/orientation_z_in_front_up_the_beer_can")
+
+        self.goalPoseInFrontUpTheBox = PoseStamped()
+
+        self.goalPoseInFrontUpTheBox.header.frame_id = "map"
+        self.goalPoseInFrontUpTheBox.header.stamp = rospy.Time.now()
+        
+        self.goalPoseInFrontUpTheBox.pose.position.x = rospy.get_param("/position_x_in_front_up_the_box")
+        self.goalPoseInFrontUpTheBox.pose.position.y = rospy.get_param("/position_y_in_front_up_the_box")
+        self.goalPoseInFrontUpTheBox.pose.position.z = rospy.get_param("/position_z_in_front_up_the_box")
+        
+        self.goalPoseInFrontUpTheBox.pose.orientation.w = rospy.get_param("/orientation_w_in_front_up_the_box")
+        self.goalPoseInFrontUpTheBox.pose.orientation.x = rospy.get_param("/orientation_x_in_front_up_the_box")
+        self.goalPoseInFrontUpTheBox.pose.orientation.y = rospy.get_param("/orientation_y_in_front_up_the_box")
+        self.goalPoseInFrontUpTheBox.pose.orientation.z = rospy.get_param("/orientation_z_in_front_up_the_box")
+
+    def getPackagePath(self):
+        self.ros_package_path = os.path.dirname(os.path.realpath(__file__))
+        self.ros_package_path = self.ros_package_path.replace('nodes', 'launch')
+
+    def setROSLaunch(self):
+        self.uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        roslaunch.configure_logging(self.uuid)
+
+        self.launch_navigation   = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "/open_manipulator_with_tb3_navigation.launch"])
+        self.launch_manipulation = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "/open_manipulator_with_tb3_manipulation.launch"])
+        self.launch_pick_task    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "/open_manipulator_with_tb3_pick.launch"])
+    
+    def navigationLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_navigation.start()
+        else:
+            self.launch_navigation.shutdown()
+
+        rospy.sleep(5.)
+
+    def manipulationlaunched(self, onoff):
+        if onoff == ON:
+            self.launch_manipulation.start()
+        else:
+            self.launch_manipulation.shutdown()
+
+        rospy.sleep(7.)
+
+    def pickLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_pick_task.start()
+        else:
+            self.launch_pick_task.shutdown()
+
+        rospy.sleep(1.)
+
+    def controller(self):  
+        if self.step == self.StepOfPickAndPlace.move_to_pose_in_front_up_the_beer_can.value:
+            rospy.logwarn("Move to pose in front up the beer can")
+
+            self.tb3_goal_pose_pub.publish(self.goalPoseInFrontUpTheBeerCan)
+            
+            self.pre_step = self.StepOfPickAndPlace.move_to_pose_in_front_up_the_beer_can.value
+            self.step = self.StepOfPickAndPlace.waiting_signal.value
+        
+        elif self.step == self.StepOfPickAndPlace.pick_beer_can_up.value:
+            rospy.logwarn("Ready to Manipulation")
+
+            self.manipulationlaunched(ON)
+
+            try:
+                self.res = pick_client("")
+                rospy.logwarn(res)
+            except rospy.ServiceException, e:
+                print "Service call failed: %s"%e
+
+            self.pre_step = self.StepOfPickAndPlace.pick_beer_can_up.value
+            self.step = self.StepOfPickAndPlace.waiting_signal.value
+
+        elif self.step == self.StepOfPickAndPlace.waiting_signal.value:
+            pass
+
+        else:
+            pass
+            
+
+    def main(self):
+        rospy.spin()
+
+if __name__ == '__main__':
+    rospy.init_node('node_controller_for_pick_and_place')
+    node = NodeController()
+    node.main()
