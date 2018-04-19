@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="open_manipulator_with_tb3_tools" type="pick" name="pick" respawn="false" output="screen"/>
+</launch>
