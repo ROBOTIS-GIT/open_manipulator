@@ -16,7 +16,6 @@
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
-  <depend>ar_track_alvar_msgs</depend>
   <depend>moveit_msgs</depend>  
   <depend>open_manipulator_msgs</depend>
   <depend>moveit_core</depend>

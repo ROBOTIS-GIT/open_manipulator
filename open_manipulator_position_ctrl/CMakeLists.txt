@@ -14,7 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
   geometry_msgs
-  ar_track_alvar_msgs
   moveit_msgs
   open_manipulator_msgs
   moveit_core
@@ -37,7 +36,7 @@ find_package(Eigen3 REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs ar_track_alvar_msgs geometry_msgs moveit_msgs open_manipulator_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs moveit_msgs open_manipulator_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
   DEPENDS EIGEN3
 )
 
@@ -58,14 +57,10 @@ add_executable(gripper_controller src/gripper_controller.cpp)
 add_dependencies(gripper_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(gripper_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
-add_executable(pick src/pick.cpp)
-add_dependencies(pick ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(pick ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
-
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS arm_controller gripper_controller pick
+install(TARGETS arm_controller gripper_controller
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
