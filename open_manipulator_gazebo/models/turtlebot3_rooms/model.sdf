@@ -368,7 +368,6 @@
         </surface>
       </collision>
     </link>
-    <model name='turtlebot3_rooms'>
       <link name='link_0'>
         <pose frame=''>-1.50431 3.99994 0 0 -0 0</pose>
         <inertial>
@@ -1084,8 +1083,5 @@
       <static>1</static>
       <allow_auto_disable>0</allow_auto_disable>
       <pose frame=''>-0 1e-06 0 0 -0 0</pose>
-    </model>
-    <static>0</static>
-    <allow_auto_disable>1</allow_auto_disable>
   </model>
 </sdf>
