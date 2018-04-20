@@ -149,11 +149,11 @@ bool gripper(bool onoff)
   }
 }
 
-bool result(std_msgs::String result_msg)
+bool resultOfPickUp(std_msgs::String res_msg)
 {
   open_manipulator_msgs::Pick msg;
 
-  msg.request.state = result_msg.data;
+  msg.request.state = res_msg.data;
 
   if (pick_result_client.call(msg))
   {
@@ -257,7 +257,6 @@ void pick()
 {
   open_manipulator_msgs::SetKinematicsPose eef_pose;
   std_msgs::String result_msg;
-  std_msgs::String grip;
 
   static uint8_t planning_cnt = 0;
 
@@ -365,11 +364,23 @@ void pick()
           }
           else
           {
-            planning_cnt++;
-            tolerance += 0.005;
-            ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
+            if (planning_cnt > 5)
+            {
+              result_msg.data = "Failed to plan";
+              resultOfPickUp(result_msg);
 
-            task = MOVE_ARM;
+              planning_cnt = 0;
+              task = WAITING_FOR_SIGNAL;
+            }
+            else
+            {
+              planning_cnt++;
+
+              tolerance += 0.005;
+              ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
+
+              task = MOVE_ARM;
+            }
           }
         }
       }
@@ -419,11 +430,22 @@ void pick()
           }
           else
           {
-            planning_cnt++;
-            tolerance += 0.005;
-            ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
+            if (planning_cnt > 5)
+            {
+              result_msg.data = "Failed to plan";
+              resultOfPickUp(result_msg);
 
-            task = CLOSE_TO_OBJECT;
+              planning_cnt = 0;
+              task = WAITING_FOR_SIGNAL;
+            }
+            else
+            {
+              planning_cnt++;
+              tolerance += 0.005;
+              ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
+
+              task = CLOSE_TO_OBJECT;
+            }
           }
         }
       }
@@ -479,7 +501,7 @@ void pick()
           ROS_WARN("SUCCESS TO PICK UP");
 
           result_msg.data = "Success";
-          result(result_msg);
+          resultOfPickUp(result_msg);
         }
         else
           task = pre_task + 1;
@@ -504,7 +526,7 @@ int main(int argc, char **argv)
 
   gripper_position_command_client = nh.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/set_gripper_position");
 
-  pick_result_client = nh.serviceClient<open_manipulator_msgs::Pick>(robot_name + "/result");
+  pick_result_client = nh.serviceClient<open_manipulator_msgs::Pick>(robot_name + "/result_of_pick_up");
 
   ros::Subscriber arm_state_sub = nh.subscribe(robot_name + "/arm_state", 10, armStateMsgCallback);
   ros::Subscriber gripper_state_sub = nh.subscribe(robot_name + "/gripper_state", 10, gripperStateMsgCallback);

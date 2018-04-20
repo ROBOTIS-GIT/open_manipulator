@@ -44,7 +44,13 @@ class NodeController():
 
         self.navigationLaunched(ON)
 
-        self.StepOfPickAndPlace = Enum('StepOfPickAndPlace', 'waiting_signal move_to_pose_in_front_up_the_beer_can pick_beer_can_up move_to_pose_in_front_up_the_box place_beer_in_box exit')
+        self.StepOfPickAndPlace = Enum('StepOfPickAndPlace',
+                                       'waiting_signal \
+                                       move_to_pose_in_front_up_the_beer_can \
+                                       pick_beer_can_up \
+                                       move_to_pose_in_front_up_the_box \
+                                       place_beer_in_box \
+                                       exit')
         self.pre_step = 0
         self.step = self.StepOfPickAndPlace.move_to_pose_in_front_up_the_beer_can.value
 
@@ -65,7 +71,7 @@ class NodeController():
         self.arrive_goal_pose_sub     = rospy.Subscriber("/move_base/result", MoveBaseActionResult, self.checkActionMsgCallback, queue_size=10)
 
     def initServer(self):
-        self.pick_server = rospy.Service(self.robot_name + '/result', Pick, resultMsgCallback)
+        self.pick_server = rospy.Service(self.robot_name + '/result_of_pick_up', Pick, resultMsgCallback)
 
     def initClient(self):
         self.pick_client = rospy.ServiceProxy(self.robot_name + '/pick', Pick)
@@ -73,8 +79,8 @@ class NodeController():
     def resultMsgCallback(self):
         rospy.logwarn("Success to Pick up")
 
-        if self.pre_step == StepOfPickAndPlace.pick_beer_can_up.value:
-            self.step = StepOfPickAndPlace.move_to_pose_in_front_up_the_box.value
+        if self.pre_step == self.StepOfPickAndPlace.pick_beer_can_up.value:
+            self.step = self.StepOfPickAndPlace.move_to_pose_in_front_up_the_box.value
 
     def triggerMsgCallback(self, trigger_msg):
         if trigger_msg.data == "start":
@@ -86,10 +92,10 @@ class NodeController():
         if action_msg.status.status == GOAL_REACHED:
             rospy.logwarn("Arrive at the goal pose")
 
-            if self.pre_step == StepOfPickAndPlace.move_to_pose_in_front_up_the_beer_can.value:
-                self.step = StepOfPickAndPlace.pick_beer_can_up.value
-            elif self.pre_step == StepOfPickAndPlace.move_to_pose_in_front_up_the_box.value:
-                self.step = StepOfPickAndPlace.place_beer_in_box.value            
+            if self.pre_step == self.StepOfPickAndPlace.move_to_pose_in_front_up_the_beer_can.value:
+                self.step = self.StepOfPickAndPlace.pick_beer_can_up.value
+            elif self.pre_step == self.StepOfPickAndPlace.move_to_pose_in_front_up_the_box.value:
+                self.step = self.StepOfPickAndPlace.place_beer_in_box.value            
 
     def getParam(self):
         self.robot_name = rospy.get_param("/robot_name")
