@@ -1,0 +1,41 @@
+<launch>
+  <arg name="position_x_in_front_up_the_beer_can"  default="-1.393"/>
+  <arg name="position_y_in_front_up_the_beer_can"  default="3.551"/>
+  <arg name="position_z_in_front_up_the_beer_can"  default="0.0"/>
+
+  <arg name="orientation_w_in_front_up_the_beer_can"  default="0.705"/>
+  <arg name="orientation_x_in_front_up_the_beer_can"  default="0.0"/>
+  <arg name="orientation_y_in_front_up_the_beer_can"  default="0.0"/>
+  <arg name="orientation_z_in_front_up_the_beer_can"  default="0.709"/>
+
+  <arg name="position_x_in_front_up_the_box"  default="-1.5"/>
+  <arg name="position_y_in_front_up_the_box"  default="-1.5"/>
+  <arg name="position_z_in_front_up_the_box"  default="0.0"/>
+
+  <arg name="orientation_w_in_front_up_the_box"  default="0.707"/>
+  <arg name="orientation_x_in_front_up_the_box"  default="0.0"/>
+  <arg name="orientation_y_in_front_up_the_box"  default="0.0"/>
+  <arg name="orientation_z_in_front_up_the_box"  default="0.707"/>
+
+  <param name="position_x_in_front_up_the_beer_can"     value="$(arg position_x_in_front_up_the_beer_can)"/>
+  <param name="position_y_in_front_up_the_beer_can"     value="$(arg position_y_in_front_up_the_beer_can)"/>
+  <param name="position_z_in_front_up_the_beer_can"     value="$(arg position_z_in_front_up_the_beer_can)"/>
+  
+  <param name="orientation_w_in_front_up_the_beer_can"     value="$(arg orientation_w_in_front_up_the_beer_can)"/>
+  <param name="orientation_x_in_front_up_the_beer_can"     value="$(arg orientation_x_in_front_up_the_beer_can)"/>
+  <param name="orientation_y_in_front_up_the_beer_can"     value="$(arg orientation_y_in_front_up_the_beer_can)"/>
+  <param name="orientation_z_in_front_up_the_beer_can"     value="$(arg orientation_z_in_front_up_the_beer_can)"/>
+
+  <param name="position_x_in_front_up_the_box"     value="$(arg position_x_in_front_up_the_box)"/>
+  <param name="position_y_in_front_up_the_box"     value="$(arg position_y_in_front_up_the_box)"/>
+  <param name="position_z_in_front_up_the_box"     value="$(arg position_z_in_front_up_the_box)"/>
+
+  <param name="orientation_w_in_front_up_the_box"     value="$(arg orientation_w_in_front_up_the_box)"/>
+  <param name="orientation_x_in_front_up_the_box"     value="$(arg orientation_x_in_front_up_the_box)"/>
+  <param name="orientation_y_in_front_up_the_box"     value="$(arg orientation_y_in_front_up_the_box)"/>
+  <param name="orientation_z_in_front_up_the_box"     value="$(arg orientation_z_in_front_up_the_box)"/>
+
+  <param name="robot_name"  value="open_manipulator_with_tb3"/>
+
+  <node pkg="open_manipulator_with_tb3_tools" type="controller_for_pick_and_place" name="controller_for_pick_and_place" output="screen" />
+</launch>
