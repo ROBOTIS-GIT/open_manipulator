@@ -1,8 +1,9 @@
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="use_gazebo"	   default="true" />
+  <arg name="use_gazebo"	   default="true"  />
   <arg name="open_model"     default="false" />
   <arg name="open_rviz"      default="false" />
+  <arg name="use_ar_marker"  default="false" />
   <arg name="use_gui"        default="false" />
   <arg name="debug"          default="false" />
 
@@ -44,5 +45,7 @@
     <arg name="gripper_dxl_id" value="7"/>
   </include>
 
-  <include file="$(find open_manipulator_perception)/launch/ar_pose.launch"/>
+  <group if="$(arg use_ar_marker)">
+    <include file="$(find open_manipulator_perception)/launch/ar_pose.launch"/>
+  </group>
 </launch>
