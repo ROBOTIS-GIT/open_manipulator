@@ -91,8 +91,16 @@ void ArmController::initPublisher(bool using_gazebo)
 
     for (uint8_t index = 0; index < joint_num_; index++)
     {
-      gazebo_goal_joint_position_pub_[index]
-        = nh_.advertise<std_msgs::Float64>(robot_name_ + "/" + joint_[index].name + "_position/command", 10);
+      if (robot_name_ == "open_manipulator")
+      {
+        gazebo_goal_joint_position_pub_[index]
+          = nh_.advertise<std_msgs::Float64>(robot_name_ + "/" + joint_[index].name + "_position/command", 10);
+      }
+      else
+      {
+        gazebo_goal_joint_position_pub_[index]
+          = nh_.advertise<std_msgs::Float64>(joint_[index].name + "_position/command", 10);
+      }
     }
   }
 

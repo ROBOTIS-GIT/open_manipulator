@@ -57,8 +57,16 @@ void GripperController::initPublisher(bool using_gazebo)
   {
     ROS_INFO("SET Gazebo Simulation Mode(Gripper)");
 
-    gazebo_gripper_position_pub_[LEFT_PALM]  = nh_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_position/command", 10);
-    gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_sub_position/command", 10);
+    if (robot_name_ == "open_manipulator")
+    {
+      gazebo_gripper_position_pub_[LEFT_PALM]  = nh_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_position/command", 10);
+      gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_sub_position/command", 10);
+    }
+    else
+    {
+      gazebo_gripper_position_pub_[LEFT_PALM]  = nh_.advertise<std_msgs::Float64>("/grip_joint_position/command", 10);
+      gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>("/grip_joint_sub_position/command", 10);
+    }
   }
 
   gripper_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/gripper_state", 10);
