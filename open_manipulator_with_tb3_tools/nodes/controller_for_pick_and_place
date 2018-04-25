@@ -43,7 +43,7 @@ GOAL_REACHED = 3
 
 MARKER_ID = 8
 
-DISTANCE_BTW_BASE_TO_AR_MARKER = 0.200
+DISTANCE_BTW_BASE_TO_AR_MARKER = 0.205
 ROTATION_ANGLE_AFTER_PICK_UP = 175.0
 
 class NodeController():
@@ -81,7 +81,7 @@ class NodeController():
     def __init__(self):
         self.getParam()
         self.getPackagePath()
-        self.setROSLaunch()
+        # self.setROSLaunch()
 
         self.initPublisher()
         self.initSubscriber()
@@ -130,17 +130,16 @@ class NodeController():
 
     def resultMsgCallback(self, req):
         if req.state == "Success":
-
             rospy.sleep(5.)
 
             self.arMarkerLaunched(OFF)
             self.pickLaunched(OFF)
-            self.manipulationlaunched(OFF)            
+            self.manipulationLaunched(OFF)            
 
             if self.pre_step == self.StepOfPickAndPlace.pick_object_up.value:
                 self.step = self.StepOfPickAndPlace.turn_around.value
         else:
-            rospy.logwarn("Failed to Pick up, Please retry step")
+            rospy.logwarn("Failed to Pick up, Please retry step") # TODO
 
     def triggerMsgCallback(self, trigger_msg):
         if trigger_msg.data == "start":
@@ -153,9 +152,8 @@ class NodeController():
             rospy.logwarn("Arrive at the goal pose")
 
             self.arMarkerLaunched(ON)
-            rospy.sleep(1.)
 
-            if self.pre_step == self.StepOfPickAndPlace.move_to_pose_in_front_up_an_object.value:
+            if self.pre_step == self.StepOfPickAndPlace.move_to_pose_in_front_up_an_object.value:                
                 self.step = self.StepOfPickAndPlace.get_closer_to_an_object.value
             elif self.pre_step == self.StepOfPickAndPlace.move_to_pose_in_front_up_a_box.value: 
                 self.step = self.StepOfPickAndPlace.get_closer_to_the_box.value            
@@ -189,6 +187,8 @@ class NodeController():
         self.launch_ar_marker    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_perception/launch/ar_pose.launch"])
     
     def navigationLaunched(self, onoff):
+        self.setROSLaunch()
+
         if onoff == ON:
             self.launch_navigation.start()
         else:
@@ -196,7 +196,7 @@ class NodeController():
 
         rospy.sleep(5.)
 
-    def manipulationlaunched(self, onoff):
+    def manipulationLaunched(self, onoff):
         self.setROSLaunch()
 
         if onoff == ON:
@@ -204,7 +204,7 @@ class NodeController():
         else:
             self.launch_manipulation.shutdown()
 
-        rospy.sleep(6.)
+        rospy.sleep(8.)
 
     def pickLaunched(self, onoff):
         self.setROSLaunch()
@@ -260,12 +260,16 @@ class NodeController():
                     pass
                     
             else:
-                pass
+                twist.linear.x  = 0.0; twist.linear.y  = 0.0; twist.linear.z  = 0.0
+                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+            
+                self.tb3_cmd_vel_pub.publish(twist)
+                self.step = self.StepOfPickAndPlace.pick_object_up.value
         
         elif self.step == self.StepOfPickAndPlace.pick_object_up.value:
             rospy.logwarn("Ready to Manipulation")
 
-            self.manipulationlaunched(ON)
+            self.manipulationLaunched(ON)
             self.pickLaunched(ON)
 
             rospy.wait_for_service(self.robot_name + '/pick')
@@ -333,12 +337,16 @@ class NodeController():
                     pass
                     
             else:
-                pass
+                twist.linear.x  = 0.0; twist.linear.y  = 0.0; twist.linear.z  = 0.0
+                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+            
+                self.tb3_cmd_vel_pub.publish(twist)
+                self.step = self.StepOfPickAndPlace.pick_object_up.value
 
         elif self.step == self.StepOfPickAndPlace.place_object_in_the_box.value:
             rospy.logwarn("Ready to Manipulation")
 
-            self.manipulationlaunched(ON)
+            self.manipulationLaunched(ON)
             self.pickLaunched(ON)
 
             rospy.wait_for_service(self.robot_name + '/place')
@@ -360,15 +368,6 @@ class NodeController():
     # reference https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_Code_2
     def quaternion_to_yaw_angle(self, w, x, y, z):
         ysqr = y * y
-        
-        # t0 = +2.0 * (w * x + y * z)
-        # t1 = +1.0 - 2.0 * (x * x + ysqr)
-        # X = math.degrees(math.atan2(t0, t1))
-        
-        # t2 = +2.0 * (w * y - z * x)
-        # t2 = +1.0 if t2 > +1.0 else t2
-        # t2 = -1.0 if t2 < -1.0 else t2
-        # Y = math.degrees(math.asin(t2))
         
         t3 = +2.0 * (w * z + x * y)
         t4 = +1.0 - 2.0 * (ysqr + z * z)
