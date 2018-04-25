@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   geometry_msgs
+  nav_msgs
   open_manipulator_msgs
   ar_track_alvar_msgs
 )
@@ -35,7 +36,7 @@ catkin_python_setup()
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS rospy roscpp std_msgs geometry_msgs open_manipulator_msgs ar_track_alvar_msgs
+  CATKIN_DEPENDS rospy roscpp std_msgs geometry_msgs nav_msgs open_manipulator_msgs ar_track_alvar_msgs
 )
 
 ################################################################################

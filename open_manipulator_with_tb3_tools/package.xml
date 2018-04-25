@@ -17,6 +17,7 @@
   <depend>roslaunch</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
   <depend>open_manipulator_msgs</depend>
   <depend>ar_track_alvar_msgs</depend>
   <exec_depend>joint_state_publisher</exec_depend>
