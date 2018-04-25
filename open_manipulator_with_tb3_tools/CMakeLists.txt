@@ -54,7 +54,7 @@ target_link_libraries(pick ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 # Install
 ################################################################################
 catkin_install_python(PROGRAMS
-  nodes/node_controller_for_pick_and_place
+  nodes/controller_for_pick_and_place
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
