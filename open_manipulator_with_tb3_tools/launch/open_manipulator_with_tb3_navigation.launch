@@ -50,7 +50,7 @@
     <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
-    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
 
     <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
     <remap from="odom" to="$(arg odom_topic)"/>
@@ -59,6 +59,6 @@
 
   <!-- Show in Rviz -->
   <group if="$(arg open_rviz)">
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_with_tb3_tools)/rviz/open_manipulator_with_tb3_navigation.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_with_tb3_tools)/rviz/open_manipulator_with_tb3_navigation.rviz" output="screen"/>
   </group>
 </launch>
