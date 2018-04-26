@@ -30,6 +30,7 @@ find_package(catkin REQUIRED COMPONENTS
    SetJointPosition.srv
    SetKinematicsPose.srv
    Pick.srv
+   Place.srv
  )
 
 generate_messages(
