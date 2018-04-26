@@ -1,6 +1,6 @@
 <launch>
   <arg name="position_x_in_front_up_an_object"  default="-1.393"/>
-  <arg name="position_y_in_front_up_an_object"  default="3.551"/>
+  <arg name="position_y_in_front_up_an_object"  default="3.545"/>
   <arg name="position_z_in_front_up_an_object"  default="0.0"/>
 
   <arg name="orientation_w_in_front_up_an_object"  default="0.705"/>
@@ -9,7 +9,7 @@
   <arg name="orientation_z_in_front_up_an_object"  default="0.709"/>
 
   <arg name="position_x_in_front_up_a_box"  default="0.720"/>
-  <arg name="position_y_in_front_up_a_box"  default="3.790"/>
+  <arg name="position_y_in_front_up_a_box"  default="3.835"/>
   <arg name="position_z_in_front_up_a_box"  default="0.0"/>
 
   <arg name="orientation_w_in_front_up_a_box"  default="0.705"/>
