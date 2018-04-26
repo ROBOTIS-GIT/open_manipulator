@@ -51,6 +51,10 @@ add_executable(pick src/pick.cpp)
 add_dependencies(pick ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(pick ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
+add_executable(place src/place.cpp)
+add_dependencies(place ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(place ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+
 ################################################################################
 # Install
 ################################################################################
