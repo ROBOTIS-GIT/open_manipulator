@@ -144,7 +144,7 @@ bool resultOfPlace(std_msgs::String res_msg)
 geometry_msgs::PoseStamped calcDesiredPose(ar_track_alvar_msgs::AlvarMarker marker)
 {
   const double DIST_GRIPPER_TO_JOINT4 = 0.145;
-  const double OFFSET_FOR_GRIP_HEIGHT = 0.180;
+  const double OFFSET_FOR_GRIP_HEIGHT = 0.190;
 
   geometry_msgs::PoseStamped get_pose;
 
