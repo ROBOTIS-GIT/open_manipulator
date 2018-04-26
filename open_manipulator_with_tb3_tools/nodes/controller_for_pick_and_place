@@ -33,6 +33,7 @@ from ar_track_alvar_msgs.msg import AlvarMarker
 from ar_track_alvar_msgs.msg import AlvarMarkers
 
 from open_manipulator_msgs.srv import Pick
+from open_manipulator_msgs.srv import Place
 
 from enum import Enum
 
@@ -43,7 +44,8 @@ GOAL_REACHED = 3
 
 MARKER_ID = 8
 
-DISTANCE_BTW_BASE_TO_AR_MARKER = 0.205
+DISTANCE_BTW_BASE_TO_AR_MARKER_BEFORE_PICK_UP = 0.190
+DISTANCE_BTW_BASE_TO_AR_MARKER_BEFORE_PLACE = 0.170
 ROTATION_ANGLE_AFTER_PICK_UP = 175.0
 
 class NodeController():
@@ -81,7 +83,7 @@ class NodeController():
     def __init__(self):
         self.getParam()
         self.getPackagePath()
-        # self.setROSLaunch()
+        self.setROSLaunch()
 
         self.initPublisher()
         self.initSubscriber()
@@ -123,23 +125,39 @@ class NodeController():
         self.odom_sub = rospy.Subscriber("/odom", Odometry, self.getOdomMsgCallback, queue_size=10)
 
     def initServer(self):
-        self.pick_server = rospy.Service(self.robot_name + '/result_of_pick_up', Pick, self.resultMsgCallback)
+        self.pick_server = rospy.Service(self.robot_name + '/result_of_pick_up', Pick, self.resultOfPickUpMsgCallback)
+        self.place_server = rospy.Service(self.robot_name + '/result_of_place', Place, self.resultOfPlaceMsgCallback)
 
     def initClient(self):
         self.pick_client = rospy.ServiceProxy(self.robot_name + '/pick', Pick)
+        self.place_client = rospy.ServiceProxy(self.robot_name + '/place', Pick)
 
-    def resultMsgCallback(self, req):
+    def resultOfPickUpMsgCallback(self, req):
         if req.state == "Success":
-            rospy.sleep(5.)
+            rospy.logwarn("Success to pick up")
 
             self.arMarkerLaunched(OFF)
             self.pickLaunched(OFF)
-            self.manipulationLaunched(OFF)            
+            self.manipulationLaunched(OFF)       
 
             if self.pre_step == self.StepOfPickAndPlace.pick_object_up.value:
                 self.step = self.StepOfPickAndPlace.turn_around.value
         else:
             rospy.logwarn("Failed to Pick up, Please retry step") # TODO
+
+    def resultOfPlaceMsgCallback(self, req):
+        if req.state == "Success":
+            rospy.logwarn("Success to place")
+
+            self.arMarkerLaunched(OFF)
+            self.placeLaunched(OFF)
+            self.manipulationLaunched(OFF)   
+            self.navigationLaunched(OFF)         
+
+            if self.pre_step == self.StepOfPickAndPlace.place_object_in_the_box.value:
+                self.step = self.StepOfPickAndPlace.exit.value
+        else:
+            rospy.logwarn("Failed to Place, Please retry step") # TODO
 
     def triggerMsgCallback(self, trigger_msg):
         if trigger_msg.data == "start":
@@ -160,6 +178,7 @@ class NodeController():
 
     def getARmarkerPoseMsgCallback(self, ar_marker_pose_msg):
         if len(ar_marker_pose_msg.markers) == 0:
+            self.ar_marker_pose = False
             return;
         
         self.ar_marker_pose = AlvarMarker()
@@ -174,57 +193,56 @@ class NodeController():
 
     def setROSLaunch(self):
         self.uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
-        roslaunch.configure_logging(self.uuid)
 
-        self.launch_navigation   = roslaunch.scriptapi.ROSLaunch()
-        self.launch_manipulation = roslaunch.scriptapi.ROSLaunch()
-        self.launch_pick_task    = roslaunch.scriptapi.ROSLaunch()
-        self.launch_ar_marker    = roslaunch.scriptapi.ROSLaunch()
-
-        self.launch_navigation   = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_navigation.launch"])
-        self.launch_manipulation = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_manipulation.launch"])
-        self.launch_pick_task    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_pick.launch"])
-        self.launch_ar_marker    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_perception/launch/ar_pose.launch"])
-    
     def navigationLaunched(self, onoff):
-        self.setROSLaunch()
-
         if onoff == ON:
+            self.launch_navigation   = roslaunch.scriptapi.ROSLaunch()
+            self.launch_navigation   = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_navigation.launch"])
             self.launch_navigation.start()
-        else:
-            self.launch_navigation.shutdown()
 
-        rospy.sleep(5.)
+            rospy.sleep(3.)
+        else:
+            self.launch_navigation.shutdown()        
 
     def manipulationLaunched(self, onoff):
-        self.setROSLaunch()
-
         if onoff == ON:
+            self.launch_manipulation = roslaunch.scriptapi.ROSLaunch()
+            self.launch_manipulation = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_manipulation.launch"])
             self.launch_manipulation.start()
-        else:
-            self.launch_manipulation.shutdown()
 
-        rospy.sleep(8.)
+            rospy.sleep(8.)
+        else:
+            self.launch_manipulation.shutdown()        
 
     def pickLaunched(self, onoff):
-        self.setROSLaunch()
-
         if onoff == ON:
+            self.launch_pick_task    = roslaunch.scriptapi.ROSLaunch()
+            self.launch_pick_task    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_pick.launch"])
             self.launch_pick_task.start()
-        else:
-            self.launch_pick_task.shutdown()
 
-        rospy.sleep(2.)
+            rospy.sleep(2.)
+        else:
+            self.launch_pick_task.shutdown()        
+
+    def placeLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_place_task    = roslaunch.scriptapi.ROSLaunch()
+            self.launch_place_task    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_place.launch"])
+            self.launch_place_task.start()
+
+            rospy.sleep(2.)   
+        else:
+            self.launch_place_task.shutdown()        
 
     def arMarkerLaunched(self, onoff):
-        self.setROSLaunch()
-
         if onoff == ON:
+            self.launch_ar_marker    = roslaunch.scriptapi.ROSLaunch()
+            self.launch_ar_marker    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_perception/launch/ar_pose.launch"])
             self.launch_ar_marker.start()
-        else:
-            self.launch_ar_marker.shutdown()
 
-        rospy.sleep(3.)
+            rospy.sleep(3.)
+        else:
+            self.launch_ar_marker.shutdown()        
 
     def controller(self):  
         if self.step == self.StepOfPickAndPlace.move_to_pose_in_front_up_an_object.value:
@@ -241,7 +259,21 @@ class NodeController():
             get_pose = PoseStamped()
             twist = Twist()
 
-            if self.ar_marker_pose.id == MARKER_ID:
+            if self.ar_marker_pose == False:
+                twist.linear.x  = -0.01; twist.linear.y  = 0.0; twist.linear.z  = 0.0
+                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+            
+                self.tb3_cmd_vel_pub.publish(twist)
+
+                rospy.sleep(1.)
+
+                twist.linear.x  = 0.0; twist.linear.y  = 0.0; twist.linear.z  = 0.0
+                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+            
+                self.tb3_cmd_vel_pub.publish(twist)
+                self.step = self.StepOfPickAndPlace.pick_object_up.value
+
+            elif self.ar_marker_pose.id == MARKER_ID:
                 get_pose = self.ar_marker_pose.pose                
                 rospy.logwarn("x = %.3f", get_pose.pose.position.x)
 
@@ -250,7 +282,7 @@ class NodeController():
                 
                 self.tb3_cmd_vel_pub.publish(twist)
 
-                if get_pose.pose.position.x < DISTANCE_BTW_BASE_TO_AR_MARKER:
+                if get_pose.pose.position.x < DISTANCE_BTW_BASE_TO_AR_MARKER_BEFORE_PICK_UP:
                     twist.linear.x  = 0.0; twist.linear.y  = 0.0; twist.linear.z  = 0.0
                     twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
                 
@@ -260,11 +292,7 @@ class NodeController():
                     pass
                     
             else:
-                twist.linear.x  = 0.0; twist.linear.y  = 0.0; twist.linear.z  = 0.0
-                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
-            
-                self.tb3_cmd_vel_pub.publish(twist)
-                self.step = self.StepOfPickAndPlace.pick_object_up.value
+                pass                
         
         elif self.step == self.StepOfPickAndPlace.pick_object_up.value:
             rospy.logwarn("Ready to Manipulation")
@@ -318,7 +346,21 @@ class NodeController():
             get_pose = PoseStamped()
             twist = Twist()
 
-            if self.ar_marker_pose.id == MARKER_ID:
+            if self.ar_marker_pose == False:
+                twist.linear.x  = -0.01; twist.linear.y  = 0.0; twist.linear.z  = 0.0
+                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+            
+                self.tb3_cmd_vel_pub.publish(twist)
+
+                rospy.sleep(1.)
+
+                twist.linear.x  = 0.0; twist.linear.y  = 0.0; twist.linear.z  = 0.0
+                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+            
+                self.tb3_cmd_vel_pub.publish(twist)
+                self.step = self.StepOfPickAndPlace.place_object_in_the_box.value
+
+            elif self.ar_marker_pose.id == MARKER_ID:
                 get_pose = self.ar_marker_pose.pose                
                 rospy.logwarn("x = %.3f", get_pose.pose.position.x)
 
@@ -327,7 +369,7 @@ class NodeController():
                 
                 self.tb3_cmd_vel_pub.publish(twist)
 
-                if get_pose.pose.position.x < DISTANCE_BTW_BASE_TO_AR_MARKER:
+                if get_pose.pose.position.x < DISTANCE_BTW_BASE_TO_AR_MARKER_BEFORE_PLACE:
                     twist.linear.x  = 0.0;  twist.linear.y  = 0.0; twist.linear.z  = 0.0
                     twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
                 
@@ -337,21 +379,17 @@ class NodeController():
                     pass
                     
             else:
-                twist.linear.x  = 0.0; twist.linear.y  = 0.0; twist.linear.z  = 0.0
-                twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
-            
-                self.tb3_cmd_vel_pub.publish(twist)
-                self.step = self.StepOfPickAndPlace.pick_object_up.value
+                pass
 
         elif self.step == self.StepOfPickAndPlace.place_object_in_the_box.value:
             rospy.logwarn("Ready to Manipulation")
 
             self.manipulationLaunched(ON)
-            self.pickLaunched(ON)
+            self.placeLaunched(ON)
 
             rospy.wait_for_service(self.robot_name + '/place')
             try:                
-                self.res = self.pick_client("start")
+                self.res = self.place_client("start")
                 rospy.logwarn(self.res)
             except rospy.ServiceException, e:
                 print "Service call failed: %s"%e
