@@ -10,7 +10,7 @@
 
 #include <open_manipulator_msgs/State.h>
 
-#include <open_manipulator_msgs/Pick.h>
+#include <open_manipulator_msgs/Place.h>
 
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
 #include <ar_track_alvar_msgs/AlvarMarker.h>
@@ -30,12 +30,10 @@ enum
 {
   WAITING_FOR_SIGNAL = 1,
   CHECK_AR_MARKER_POSE,
-  INIT_POSITION,
-  GRIPPER_OFF,
   MOVE_ARM,
-  CLOSE_TO_OBJECT,
-  GRIP_OBJECT,
-  PICK_OBJECT_UP,
+  CLOSE_TO_BOX,
+  PLACE_OBJECT,
+  INIT_POSITION,
   WAITING_FOR_STOP
 };
 
@@ -43,7 +41,7 @@ ros::ServiceClient joint_position_command_client;
 ros::ServiceClient kinematics_pose_command_client;
 ros::ServiceClient gripper_position_command_client;
 
-ros::ServiceClient pick_result_client;
+ros::ServiceClient place_result_client;
 
 ros::Publisher grip_pub;
 
@@ -79,40 +77,11 @@ bool initJointPosition()
   msg.request.joint_position.joint_name.push_back("joint4");
 
   msg.request.joint_position.position.push_back( 0.0);
-  msg.request.joint_position.position.push_back(-0.65);
-  msg.request.joint_position.position.push_back( 1.20);
-  msg.request.joint_position.position.push_back(-0.54);
+  msg.request.joint_position.position.push_back(-1.5707);
+  msg.request.joint_position.position.push_back( 1.37);
+  msg.request.joint_position.position.push_back(0.2258);
 
   msg.request.joint_position.max_velocity_scaling_factor = 0.3;
-  msg.request.joint_position.max_accelerations_scaling_factor = 0.5;
-
-  ros::service::waitForService(robot_name + "/set_joint_position");
-  if (joint_position_command_client.call(msg))
-  {
-    return msg.response.isPlanned;
-  }
-  else
-  {
-    ROS_ERROR("FAILED TO CALL SERVER");
-    return false;
-  }
-}
-
-bool pickUpJointPosition()
-{
-  open_manipulator_msgs::SetJointPosition msg;
-
-  msg.request.joint_position.joint_name.push_back("joint1");
-  msg.request.joint_position.joint_name.push_back("joint2");
-  msg.request.joint_position.joint_name.push_back("joint3");
-  msg.request.joint_position.joint_name.push_back("joint4");
-
-  msg.request.joint_position.position.push_back( 0.0);
-  msg.request.joint_position.position.push_back(-0.95);
-  msg.request.joint_position.position.push_back( 0.95);
-  msg.request.joint_position.position.push_back(-0.20);
-
-  msg.request.joint_position.max_velocity_scaling_factor = 0.1;
   msg.request.joint_position.max_accelerations_scaling_factor = 0.5;
 
   ros::service::waitForService(robot_name + "/set_joint_position");
@@ -154,14 +123,14 @@ bool gripper(bool onoff)
   }
 }
 
-bool resultOfPickUp(std_msgs::String res_msg)
+bool resultOfPlace(std_msgs::String res_msg)
 {
-  open_manipulator_msgs::Pick msg;
+  open_manipulator_msgs::Place msg;
 
   msg.request.state = res_msg.data;
 
-  ros::service::waitForService(robot_name + "/result_of_pick_up");
-  if (pick_result_client.call(msg))
+  ros::service::waitForService(robot_name + "/result_of_place");
+  if (place_result_client.call(msg))
   {
     return true;
   }
@@ -175,7 +144,7 @@ bool resultOfPickUp(std_msgs::String res_msg)
 geometry_msgs::PoseStamped calcDesiredPose(ar_track_alvar_msgs::AlvarMarker marker)
 {
   const double DIST_GRIPPER_TO_JOINT4 = 0.145;
-  const double OFFSET_FOR_GRIP_HEIGHT = 0.150;
+  const double OFFSET_FOR_GRIP_HEIGHT = 0.180;
 
   geometry_msgs::PoseStamped get_pose;
 
@@ -216,12 +185,12 @@ geometry_msgs::PoseStamped calcDesiredPose(ar_track_alvar_msgs::AlvarMarker mark
 }
 
 
-bool pickMsgCallback(open_manipulator_msgs::Pick::Request &req,
-                     open_manipulator_msgs::Pick::Response &res)
+bool placeMsgCallback(open_manipulator_msgs::Place::Request &req,
+                      open_manipulator_msgs::Place::Response &res)
 {
   if ((state.arm == STOPPED) && (state.gripper == STOPPED))
   {
-    res.result = "START PICK TASK!";
+    res.result = "START PLACE TASK!";
     task = CHECK_AR_MARKER_POSE;
   }
   else
@@ -259,7 +228,7 @@ void arMarkerPoseMsgCallback(const ar_track_alvar_msgs::AlvarMarkers::ConstPtr &
   ar_marker_pose = msg->markers[0];
 }
 
-void pick()
+void place()
 {
   open_manipulator_msgs::SetKinematicsPose eef_pose;
   std_msgs::String result_msg;
@@ -273,7 +242,7 @@ void pick()
       if (state.marker == true)
       {
         ROS_WARN("SAVE POSE OF AR MARKER");
-        task = INIT_POSITION;
+        task = MOVE_ARM;
       }
       else
       {
@@ -282,62 +251,10 @@ void pick()
       }
      break;
 
-    case INIT_POSITION:
-      if (state.arm == STOPPED)
-      {
-        ROS_WARN("SET INIT POSITION");
-
-        bool result = initJointPosition();
-
-        if (result)
-        {
-          ROS_INFO("PLANNING IS SUCCESSED");
-
-          ros::WallDuration sleep_time(1.0);
-          sleep_time.sleep();
-
-          pre_task = INIT_POSITION;
-          task = WAITING_FOR_STOP;
-        }
-        else
-        {
-          planning_cnt++;
-          ROS_ERROR("PLANNING IS FAILED (%d)", planning_cnt);
-          task = INIT_POSITION;
-        }
-      }
-     break;
-
-    case GRIPPER_OFF:
-      if (state.gripper == STOPPED)
-      {
-        ROS_WARN("OPEN GRIPPER");
-
-        bool result = gripper(OFF);
-
-        if (result)
-        {
-          ROS_INFO("PLANNING IS SUCCESSED");
-
-          ros::WallDuration sleep_time(1.0);
-          sleep_time.sleep();
-
-          pre_task = GRIPPER_OFF;
-          task = WAITING_FOR_STOP;
-        }
-        else
-        {
-          planning_cnt++;
-          ROS_ERROR("PLANNING IS FAILED (%d)", planning_cnt);
-          task = GRIPPER_OFF;
-        }
-      }
-     break;
-
     case MOVE_ARM:
       if (state.arm == STOPPED)
       {
-        ROS_WARN("MOVE ARM TO PICK");
+        ROS_WARN("MOVE ARM TO PLACE");
 
         ROS_INFO("x = %.3f", desired_pose.pose.position.x);
         ROS_INFO("y = %.3f", desired_pose.pose.position.y);
@@ -374,7 +291,7 @@ void pick()
             if (planning_cnt > 10)
             {
               result_msg.data = "Failed to plan";
-              resultOfPickUp(result_msg);
+              resultOfPlace(result_msg);
 
               planning_cnt = 0;
               task = WAITING_FOR_SIGNAL;
@@ -393,17 +310,17 @@ void pick()
       }
      break;
 
-    case CLOSE_TO_OBJECT:
+    case CLOSE_TO_BOX:
       if (state.arm == STOPPED)
       {
-        ROS_WARN("CLOSE TO OBJECT");
+        ROS_WARN("CLOSE TO BOX");
 
         geometry_msgs::PoseStamped object_pose = desired_pose;
 
-        const double DIST_OBJECT_TO_AR_MARKER    = 0.040;
-        const double DIST_EDGE_TO_CENTER_OF_PALM = 0.025;
+        const double DIST_BOX_TO_AR_MARKER       = 0.040;
+        const double DIST_EDGE_TO_CENTER_OF_PALM = 0.030;
 
-        object_pose.pose.position.x = object_pose.pose.position.x + (DIST_EDGE_TO_CENTER_OF_PALM + DIST_OBJECT_TO_AR_MARKER);
+        object_pose.pose.position.x = object_pose.pose.position.x + (DIST_EDGE_TO_CENTER_OF_PALM + DIST_BOX_TO_AR_MARKER);
 
         ROS_INFO("x = %.3f", object_pose.pose.position.x);
         ROS_INFO("y = %.3f", object_pose.pose.position.y);
@@ -433,7 +350,7 @@ void pick()
             ros::WallDuration sleep_time(1.0);
             sleep_time.sleep();
 
-            pre_task = CLOSE_TO_OBJECT;
+            pre_task = CLOSE_TO_BOX;
             task = WAITING_FOR_STOP;
           }
           else
@@ -441,7 +358,7 @@ void pick()
             if (planning_cnt > 10)
             {
               result_msg.data = "Failed to plan";
-              resultOfPickUp(result_msg);
+              resultOfPlace(result_msg);
 
               planning_cnt = 0;
               task = WAITING_FOR_SIGNAL;
@@ -452,19 +369,19 @@ void pick()
               tolerance += 0.005;
               ROS_ERROR("PLANNING IS FAILED (%d, tolerance : %.2f)", planning_cnt, tolerance);
 
-              task = CLOSE_TO_OBJECT;
+              task = CLOSE_TO_BOX;
             }
           }
         }
       }
      break;
 
-    case GRIP_OBJECT:
+    case PLACE_OBJECT:
       if (state.gripper == STOPPED)
       {
-        ROS_WARN("GRIP OBJECT");
+        ROS_WARN("PLACE OBJECT IN THE BOX");
 
-        bool result = gripper(ON);
+        bool result = gripper(OFF);
 
         if (result)
         {
@@ -473,24 +390,24 @@ void pick()
           ros::WallDuration sleep_time(1.0);
           sleep_time.sleep();
 
-          pre_task = GRIP_OBJECT;
+          pre_task = PLACE_OBJECT;
           task = WAITING_FOR_STOP;
         }
         else
         {
           planning_cnt++;
           ROS_ERROR("PLANNING IS FAILED (%d)", planning_cnt);
-          task = GRIP_OBJECT;
+          task = PLACE_OBJECT;
         }
       }
      break;
 
-    case PICK_OBJECT_UP:
+    case INIT_POSITION:
       if (state.arm == STOPPED)
       {
-        ROS_WARN("PICK OBJECT UP");
+        ROS_WARN("SET INIT POSITION");
 
-        bool result = pickUpJointPosition();
+        bool result = initJointPosition();
 
         if (result)
         {
@@ -499,14 +416,14 @@ void pick()
           ros::WallDuration sleep_time(1.0);
           sleep_time.sleep();
 
-          pre_task = PICK_OBJECT_UP;
+          pre_task = INIT_POSITION;
           task = WAITING_FOR_STOP;
         }
         else
         {
           planning_cnt++;
           ROS_ERROR("PLANNING IS FAILED (%d)", planning_cnt);
-          task = PICK_OBJECT_UP;
+          task = INIT_POSITION;
         }
       }
      break;
@@ -517,12 +434,12 @@ void pick()
         tolerance = 0.01;
         planning_cnt = 0;
 
-        if (pre_task == PICK_OBJECT_UP)
+        if (pre_task == INIT_POSITION)
         {
           task = WAITING_FOR_SIGNAL;
 
           result_msg.data = "Success";
-          resultOfPickUp(result_msg);
+          resultOfPlace(result_msg);
         }
         else
           task = pre_task + 1;
@@ -537,7 +454,7 @@ void pick()
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "pick");
+  ros::init(argc, argv, "place");
   ros::NodeHandle nh;
 
   nh.getParam("robot_name", robot_name);
@@ -547,22 +464,22 @@ int main(int argc, char **argv)
 
   gripper_position_command_client = nh.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/set_gripper_position");
 
-  pick_result_client = nh.serviceClient<open_manipulator_msgs::Pick>(robot_name + "/result_of_pick_up");
+  place_result_client = nh.serviceClient<open_manipulator_msgs::Place>(robot_name + "/result_of_place");
 
   ros::Subscriber arm_state_sub = nh.subscribe(robot_name + "/arm_state", 10, armStateMsgCallback);
   ros::Subscriber gripper_state_sub = nh.subscribe(robot_name + "/gripper_state", 10, gripperStateMsgCallback);
 
   ros::Subscriber ar_marker_pose_sub = nh.subscribe("/ar_pose_marker", 10, arMarkerPoseMsgCallback);
 
-  ros::ServiceServer pick_server = nh.advertiseService(robot_name + "/pick", pickMsgCallback);
+  ros::ServiceServer place_server = nh.advertiseService(robot_name + "/place", placeMsgCallback);
 
-  ROS_INFO("Ready to PICK UP Task");
+  ROS_INFO("Ready to Place Task");
 
   ros::Rate loop_rate(25);
 
   while (ros::ok())
   {
-    pick();
+    place();
 
     ros::spinOnce();
     loop_rate.sleep();
