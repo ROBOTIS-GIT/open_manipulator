@@ -23,6 +23,7 @@ using namespace open_manipulator;
 ArmController::ArmController()
     :using_gazebo_(false),
      robot_name_(""),
+     init_position_(false),
      joint_num_(4),
      first_dxl_id_(1),
      is_moving_(false)
@@ -30,6 +31,7 @@ ArmController::ArmController()
   // Init parameter
   nh_.getParam("gazebo", using_gazebo_);
   nh_.getParam("robot_name", robot_name_);
+  nh_.getParam("init_position", init_position_);
   nh_.getParam("first_dxl_id", first_dxl_id_);
   nh_.getParam("joint_num", joint_num_);
 
@@ -53,7 +55,7 @@ ArmController::ArmController()
 
   initServer();
 
-  if (robot_name_ == "open_manipulator_with_tb3")
+  if (init_position_ == true)
     initJointPosition();
 }
 

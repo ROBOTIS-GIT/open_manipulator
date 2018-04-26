@@ -40,6 +40,7 @@
   <include file="$(find open_manipulator_position_ctrl)/launch/open_manipulator_position_controller.launch">
     <arg name="use_gazebo"     value="$(arg use_gazebo)"/>
     <arg name="use_robot_name" value="open_manipulator_with_tb3"/>
+    <arg name="init_position"  value="false"/>
     <arg name="joint_num"      value="4"/>
     <arg name="dxl_first_id"   value="3"/>
     <arg name="gripper_dxl_id" value="7"/>

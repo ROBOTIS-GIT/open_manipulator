@@ -78,6 +78,7 @@ class ArmController
   std::string robot_name_;
   int joint_num_;
   int first_dxl_id_;
+  bool init_position_;
 
   // ROS Publisher
   ros::Publisher gazebo_goal_joint_position_pub_[10];
