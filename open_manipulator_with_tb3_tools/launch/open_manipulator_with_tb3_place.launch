@@ -1,7 +1,7 @@
 <launch>
   <arg name="use_robot_name"  default="open_manipulator_with_tb3"/>
 
-  <node pkg="open_manipulator_with_tb3_tools" type="pick" name="pick" respawn="false" output="screen">
+  <node pkg="open_manipulator_with_tb3_tools" type="place" name="place" respawn="false" output="screen">
     <param name="robot_name"  value="$(arg use_robot_name)"/>
   </node>
 </launch>
