@@ -69,6 +69,10 @@ void GripperController::initPublisher(bool using_gazebo)
       gazebo_gripper_position_pub_[RIGHT_PALM] = nh_.advertise<std_msgs::Float64>("/grip_joint_sub_position/command", 10);
     }
   }
+  else
+  {
+    gripper_position_pub_ = nh_.advertise<sensor_msgs::JointState>(robot_name_ + "/goal_gripper_position", 10);
+  }
 
   gripper_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/gripper_state", 10);
 }
@@ -211,18 +215,26 @@ void GripperController::displayPlannedPathMsgCallback(const moveit_msgs::Display
 void GripperController::process(void)
 {
   static uint16_t step_cnt = 0;
-  std_msgs::Float64 goal_joint_position;
+  std_msgs::Float64 gazebo_goal_gripper_position;
+  sensor_msgs::JointState goal_gripper_position;
   open_manipulator_msgs::State state;
 
   if (is_moving_)
   {
     if (using_gazebo_)
     {
-      goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, 0);
-      gazebo_gripper_position_pub_[LEFT_PALM].publish(goal_joint_position);
+      gazebo_goal_gripper_position.data = planned_path_info_.planned_path_positions(step_cnt, 0);
+      gazebo_gripper_position_pub_[LEFT_PALM].publish(gazebo_goal_gripper_position);
 
-      goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, 1);
-      gazebo_gripper_position_pub_[RIGHT_PALM].publish(goal_joint_position);
+      gazebo_goal_gripper_position.data = planned_path_info_.planned_path_positions(step_cnt, 1);
+      gazebo_gripper_position_pub_[RIGHT_PALM].publish(gazebo_goal_gripper_position);
+    }
+    else
+    {
+      goal_gripper_position.position.push_back(planned_path_info_.planned_path_positions(step_cnt, 0));
+      goal_gripper_position.position.push_back(planned_path_info_.planned_path_positions(step_cnt, 1));
+
+      gripper_position_pub_.publish(goal_gripper_position);
     }
 
     if (step_cnt >= all_time_steps_)

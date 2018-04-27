@@ -83,6 +83,7 @@ class ArmController
 
   // ROS Publisher
   ros::Publisher gazebo_goal_joint_position_pub_[10];
+  ros::Publisher goal_joint_position_pub_;
   ros::Publisher arm_state_pub_;
 
   // ROS Subscribers

@@ -106,6 +106,10 @@ void ArmController::initPublisher(bool using_gazebo)
       }
     }
   }
+  else
+  {
+    goal_joint_position_pub_ = nh_.advertise<sensor_msgs::JointState>(robot_name_ + "/goal_joint_position", 10);
+  }
 
   arm_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/arm_state", 10);
 }
@@ -306,7 +310,8 @@ void ArmController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTraj
 void ArmController::process(void)
 {
   static uint16_t step_cnt = 0;
-  std_msgs::Float64 goal_joint_position;
+  std_msgs::Float64 gazebo_goal_joint_position;
+  sensor_msgs::JointState goal_joint_position;
   open_manipulator_msgs::State state;
 
   if (is_moving_)
@@ -315,9 +320,18 @@ void ArmController::process(void)
     {
       for (uint8_t num = 0; num < joint_num_; num++)
       {
-        goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, num);
-        gazebo_goal_joint_position_pub_[num].publish(goal_joint_position);
+        gazebo_goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, num);
+        gazebo_goal_joint_position_pub_[num].publish(gazebo_goal_joint_position);
       }
+    }
+    else
+    {
+      for (uint8_t num = 0; num < joint_num_; num++)
+      {
+        goal_joint_position.position.push_back(planned_path_info_.planned_path_positions(step_cnt, num));
+      }
+
+      goal_joint_position_pub_.publish(goal_joint_position);
     }
 
     if (step_cnt >= all_time_steps_)

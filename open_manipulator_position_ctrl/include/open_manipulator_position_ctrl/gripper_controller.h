@@ -77,6 +77,7 @@ class GripperController
 
   // ROS Publisher
   ros::Publisher gazebo_gripper_position_pub_[2];
+  ros::Publisher gripper_position_pub_;
   ros::Publisher gripper_state_pub_;
 
   // ROS Subscribers
