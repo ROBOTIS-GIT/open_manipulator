@@ -24,7 +24,8 @@
 const uint8_t IS_MOVING = 0;
 const uint8_t STOPPED   = 1;
 
-#define MARKER_ID 8
+#define DIST_GRIPPER_TO_JOINT4       0.145
+#define DIST_EDGE_TO_CENTER_OF_PALM  0.025
 
 enum
 {
@@ -66,6 +67,9 @@ double tolerance = 0.01;
 ar_track_alvar_msgs::AlvarMarker markers;
 
 std::string robot_name;
+double offset_for_object_height, dist_ar_marker_to_box;
+
+int get_marker_id;
 
 bool initJointPosition()
 {
@@ -143,18 +147,15 @@ bool resultOfPlace(std_msgs::String res_msg)
 
 geometry_msgs::PoseStamped calcDesiredPose(ar_track_alvar_msgs::AlvarMarker marker)
 {
-  const double DIST_GRIPPER_TO_JOINT4 = 0.145;
-  const double OFFSET_FOR_GRIP_HEIGHT = 0.190;
-
   geometry_msgs::PoseStamped get_pose;
 
-  if (marker.id == MARKER_ID)
+  if (marker.id == get_marker_id)
   {
     get_pose = marker.pose;
 
     get_pose.pose.position.x = marker.pose.pose.position.x - DIST_GRIPPER_TO_JOINT4;
     get_pose.pose.position.y = 0.0;
-    get_pose.pose.position.z = marker.pose.pose.position.z + OFFSET_FOR_GRIP_HEIGHT;
+    get_pose.pose.position.z = marker.pose.pose.position.z + offset_for_object_height;
 
     double dist = sqrt((marker.pose.pose.position.x * marker.pose.pose.position.x) +
                        (marker.pose.pose.position.y * marker.pose.pose.position.y));
@@ -317,10 +318,7 @@ void place()
 
         geometry_msgs::PoseStamped object_pose = desired_pose;
 
-        const double DIST_BOX_TO_AR_MARKER       = 0.040;
-        const double DIST_EDGE_TO_CENTER_OF_PALM = 0.030;
-
-        object_pose.pose.position.x = object_pose.pose.position.x + (DIST_EDGE_TO_CENTER_OF_PALM + DIST_BOX_TO_AR_MARKER);
+        object_pose.pose.position.x = object_pose.pose.position.x + (DIST_EDGE_TO_CENTER_OF_PALM + dist_ar_marker_to_box);
 
         ROS_INFO("x = %.3f", object_pose.pose.position.x);
         ROS_INFO("y = %.3f", object_pose.pose.position.y);
@@ -456,8 +454,12 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "place");
   ros::NodeHandle nh;
+  ros::NodeHandle priv_nh("~");
 
-  nh.getParam("robot_name", robot_name);
+  priv_nh.getParam("robot_name", robot_name);
+  priv_nh.getParam("marker_id", get_marker_id);
+  priv_nh.getParam("offset_for_object_height", offset_for_object_height);
+  priv_nh.getParam("dist_ar_marker_to_box", dist_ar_marker_to_box);
 
   joint_position_command_client = nh.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/set_joint_position");
   kinematics_pose_command_client = nh.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name + "/set_kinematics_pose");
