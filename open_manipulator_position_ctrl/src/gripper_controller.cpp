@@ -21,7 +21,8 @@
 using namespace open_manipulator;
 
 GripperController::GripperController()
-    :using_gazebo_(false),
+    :priv_nh_("~"),
+     using_gazebo_(false),
      robot_name_(""),
      palm_num_(2),
      is_moving_(false)
@@ -29,7 +30,7 @@ GripperController::GripperController()
   // Init parameter
   nh_.getParam("gazebo", using_gazebo_);
   nh_.getParam("robot_name", robot_name_);
-  nh_.getParam("gripper_dxl_id", gripper_dxl_id_);
+  priv_nh_.getParam("gripper_dxl_id", gripper_dxl_id_);
 
   gripper_.name = "gripper";
   gripper_.dxl_id = gripper_dxl_id_;

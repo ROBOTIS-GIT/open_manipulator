@@ -21,7 +21,8 @@
 using namespace open_manipulator;
 
 ArmController::ArmController()
-    :using_gazebo_(false),
+    :priv_nh_("~"),
+     using_gazebo_(false),
      robot_name_(""),
      init_position_(false),
      joint_num_(4),
@@ -31,9 +32,9 @@ ArmController::ArmController()
   // Init parameter
   nh_.getParam("gazebo", using_gazebo_);
   nh_.getParam("robot_name", robot_name_);
-  nh_.getParam("init_position", init_position_);
-  nh_.getParam("first_dxl_id", first_dxl_id_);
-  nh_.getParam("joint_num", joint_num_);
+  priv_nh_.getParam("init_position", init_position_);
+  priv_nh_.getParam("first_dxl_id", first_dxl_id_);
+  priv_nh_.getParam("joint_num", joint_num_);
 
   for (uint8_t num = 0; num < joint_num_; num++)
   {
