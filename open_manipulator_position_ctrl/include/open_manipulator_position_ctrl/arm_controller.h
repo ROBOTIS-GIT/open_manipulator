@@ -72,6 +72,7 @@ class ArmController
  private:
   // ROS NodeHandle
   ros::NodeHandle nh_;
+  ros::NodeHandle priv_nh_;
 
   // ROS Parameters
   bool using_gazebo_;
