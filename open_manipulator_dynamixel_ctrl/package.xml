@@ -16,6 +16,5 @@
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>dynamixel_sdk</depend>
-  <depend>open_manipulator_msgs</depend>
   <depend>dynamixel_workbench_toolbox</depend>
 </package>
