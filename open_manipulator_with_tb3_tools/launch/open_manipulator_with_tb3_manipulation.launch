@@ -1,6 +1,6 @@
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="use_gazebo"	   default="true"  />
+  <arg name="use_gazebo"	   default="false" />
   <arg name="open_model"     default="false" />
   <arg name="open_rviz"      default="false" />
   <arg name="use_ar_marker"  default="false" />
@@ -41,9 +41,6 @@
     <arg name="use_gazebo"     value="$(arg use_gazebo)"/>
     <arg name="use_robot_name" value="open_manipulator_with_tb3"/>
     <arg name="init_position"  value="false"/>
-    <arg name="joint_num"      value="4"/>
-    <arg name="dxl_first_id"   value="3"/>
-    <arg name="gripper_dxl_id" value="7"/>
   </include>
 
   <group if="$(arg use_ar_marker)">
