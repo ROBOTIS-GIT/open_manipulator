@@ -53,12 +53,7 @@
 namespace open_manipulator
 {
 #define ITERATION_FREQUENCY 25 //Hz
-
-typedef struct
-{
-  std::string name;
-  uint8_t dxl_id;
-} Joint;
+#define JOINT_NUM 4
 
 typedef struct
 {
@@ -78,7 +73,6 @@ class ArmController
   bool using_gazebo_;
   std::string robot_name_;
   int joint_num_;
-  int first_dxl_id_;
   bool init_position_;
 
   // ROS Publisher
@@ -96,10 +90,6 @@ class ArmController
   ros::ServiceServer set_kinematics_pose_server_;
 
   // ROS Service Client
-
-  // Joint states
-  std::vector<Joint> joint_;
-  Joint gripper_;
 
   // MoveIt! interface
   moveit::planning_interface::MoveGroupInterface *move_group;

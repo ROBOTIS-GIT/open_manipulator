@@ -2,20 +2,13 @@
   <arg name="use_gazebo"       default="false"/>
   <arg name="use_robot_name"   default="open_manipulator"/>
   <arg name="init_position"    default="false"/>
-  <arg name="joint_num"        default="4"/>
-  <arg name="dxl_first_id"     default="1"/>
-  <arg name="gripper_dxl_id"   default="5"/>
 
   <param name="gazebo"              value="$(arg use_gazebo)" type="bool"/>
   <param name="robot_name"          value="$(arg use_robot_name)"/>
 
   <node name="arm_controller" pkg="open_manipulator_position_ctrl" type="arm_controller" required="true" output="screen">
-    <param name="joint_num"         value="$(arg joint_num)"/>
-    <param name="dxl_first_id"      value="$(arg dxl_first_id)"/>
-    <param name="init_position"     value="$(arg init_position)"/>
+    <param name="init_position"         value="$(arg init_position)"/>
   </node>
 
-  <node name="gripper_controller" pkg="open_manipulator_position_ctrl" type="gripper_controller" required="true" output="screen">
-    <param name="gripper_dxl_id"      value="$(arg gripper_dxl_id)"/>
-  </node>
+  <node name="gripper_controller" pkg="open_manipulator_position_ctrl" type="gripper_controller" required="true" output="screen"/>
 </launch>

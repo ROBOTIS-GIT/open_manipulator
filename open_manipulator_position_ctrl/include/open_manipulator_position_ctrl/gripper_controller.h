@@ -52,12 +52,6 @@ namespace open_manipulator
 
 typedef struct
 {
-  std::string name;
-  uint8_t dxl_id;
-} Gripper;
-
-typedef struct
-{
   uint16_t waypoints;                                  // planned number of via-points
   Eigen::MatrixXd planned_path_positions;              // planned position trajectory
 } PlannedPathInfo;
@@ -88,9 +82,6 @@ class GripperController
   ros::ServiceServer set_gripper_position_server_;
 
   // ROS Service Client
-
-  // Gripper states
-  Gripper gripper_;
 
   // MoveIt! interface
   moveit::planning_interface::MoveGroupInterface *move_group;

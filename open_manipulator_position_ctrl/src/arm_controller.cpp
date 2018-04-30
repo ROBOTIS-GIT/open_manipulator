@@ -26,25 +26,14 @@ ArmController::ArmController()
      robot_name_(""),
      init_position_(false),
      joint_num_(4),
-     first_dxl_id_(1),
      is_moving_(false)
 {
   // Init parameter
   nh_.getParam("gazebo", using_gazebo_);
   nh_.getParam("robot_name", robot_name_);
   priv_nh_.getParam("init_position", init_position_);
-  priv_nh_.getParam("first_dxl_id", first_dxl_id_);
-  priv_nh_.getParam("joint_num", joint_num_);
 
-  for (uint8_t num = 0; num < joint_num_; num++)
-  {
-    Joint joint;
-
-    joint.name   = "joint" + std::to_string(num+1);
-    joint.dxl_id = num + first_dxl_id_;
-
-    joint_.push_back(joint);
-  }
+  joint_num_ = JOINT_NUM;
 
   planned_path_info_.waypoints = 10;
   planned_path_info_.planned_path_positions = Eigen::MatrixXd::Zero(planned_path_info_.waypoints, joint_num_);
@@ -92,17 +81,19 @@ void ArmController::initPublisher(bool using_gazebo)
   {
     ROS_INFO("SET Gazebo Simulation Mode(Joint)");
 
+    std::string joint_name[joint_num_] = {"joint1", "joint2", "joint3", "joint4"};
+
     for (uint8_t index = 0; index < joint_num_; index++)
     {
       if (robot_name_ == "open_manipulator")
       {
         gazebo_goal_joint_position_pub_[index]
-          = nh_.advertise<std_msgs::Float64>(robot_name_ + "/" + joint_[index].name + "_position/command", 10);
+          = nh_.advertise<std_msgs::Float64>(robot_name_ + joint_name[index] + "_position/command", 10);
       }
       else
       {
         gazebo_goal_joint_position_pub_[index]
-          = nh_.advertise<std_msgs::Float64>(joint_[index].name + "_position/command", 10);
+          = nh_.advertise<std_msgs::Float64>(joint_name[index] + "_position/command", 10);
       }
     }
   }

@@ -30,10 +30,6 @@ GripperController::GripperController()
   // Init parameter
   nh_.getParam("gazebo", using_gazebo_);
   nh_.getParam("robot_name", robot_name_);
-  priv_nh_.getParam("gripper_dxl_id", gripper_dxl_id_);
-
-  gripper_.name = "gripper";
-  gripper_.dxl_id = gripper_dxl_id_;
 
   planned_path_info_.waypoints = 10;
   planned_path_info_.planned_path_positions = Eigen::MatrixXd::Zero(planned_path_info_.waypoints, 2);
