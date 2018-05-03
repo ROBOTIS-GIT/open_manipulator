@@ -10,8 +10,7 @@
 
   <!-- Base fixed joint -->
   <joint name="base_fixed" type="fixed">
-<!--    <origin xyz="-0.005 0.0 0.091" rpy="0 0 0"/>-->
-    <origin xyz="-0.084 0.0 0.091" rpy="0 0 0"/>
+    <origin xyz="-0.092 0.0 0.091" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="link1"/>
   </joint>
