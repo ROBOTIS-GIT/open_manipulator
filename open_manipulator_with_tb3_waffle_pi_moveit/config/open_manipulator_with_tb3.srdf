@@ -9,9 +9,6 @@
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
-    <group name="base">
-        <joint name="world_joint" />
-    </group>
     <group name="arm">
         <chain base_link="link1" tip_link="link5" />
     </group>
@@ -19,18 +16,14 @@
         <link name="grip_link" />
         <link name="grip_link_sub" />
     </group>
-    <group name="whole_body">
-        <group name="base" />
-        <group name="arm" />
-    </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="zero_pose" group="arm">
+    <group_state name="zero" group="arm">
         <joint name="joint1" value="0" />
         <joint name="joint2" value="0" />
         <joint name="joint3" value="0" />
         <joint name="joint4" value="0" />
     </group_state>
-    <group_state name="init_pose" group="arm">
+    <group_state name="init" group="arm">
         <joint name="joint1" value="0" />
         <joint name="joint2" value="-1.5707" />
         <joint name="joint3" value="1.37" />
@@ -38,10 +31,6 @@
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="eef" parent_link="link5" group="gripper" />
-    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="world_joint" type="fixed" parent_frame="odom" child_link="base_footprint" />
-    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
-    <passive_joint name="world_joint" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base_link" link2="base_scan" reason="Adjacent" />
     <disable_collisions link1="base_link" link2="camera_link" reason="Adjacent" />
@@ -56,6 +45,7 @@
     <disable_collisions link1="base_scan" link2="caster_back_left_link" reason="Never" />
     <disable_collisions link1="base_scan" link2="caster_back_right_link" reason="Never" />
     <disable_collisions link1="base_scan" link2="link1" reason="Never" />
+    <disable_collisions link1="base_scan" link2="link2" reason="Never" />
     <disable_collisions link1="base_scan" link2="wheel_left_link" reason="Never" />
     <disable_collisions link1="base_scan" link2="wheel_right_link" reason="Never" />
     <disable_collisions link1="camera_link" link2="caster_back_left_link" reason="Never" />
