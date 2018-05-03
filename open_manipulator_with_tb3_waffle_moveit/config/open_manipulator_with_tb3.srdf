@@ -1,0 +1,106 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="open_manipulator_with_tb3">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="arm">
+        <chain base_link="link1" tip_link="link5" />
+    </group>
+    <group name="gripper">
+        <link name="grip_link" />
+        <link name="grip_link_sub" />
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="zero" group="arm">
+        <joint name="joint1" value="0" />
+        <joint name="joint2" value="0" />
+        <joint name="joint3" value="0" />
+        <joint name="joint4" value="0" />
+    </group_state>
+    <group_state name="init" group="arm">
+        <joint name="joint1" value="0" />
+        <joint name="joint2" value="-1.5707" />
+        <joint name="joint3" value="1.37" />
+        <joint name="joint4" value="0.2258" />
+    </group_state>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="eef" parent_link="link5" group="gripper" />
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="base_link" link2="base_scan" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="camera_link" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="caster_back_left_link" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="caster_back_right_link" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="link1" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="link2" reason="Never" />
+    <disable_collisions link1="base_link" link2="link3" reason="Never" />
+    <disable_collisions link1="base_link" link2="wheel_left_link" reason="Adjacent" />
+    <disable_collisions link1="base_link" link2="wheel_right_link" reason="Adjacent" />
+    <disable_collisions link1="base_scan" link2="camera_link" reason="Never" />
+    <disable_collisions link1="base_scan" link2="caster_back_left_link" reason="Never" />
+    <disable_collisions link1="base_scan" link2="caster_back_right_link" reason="Never" />
+    <disable_collisions link1="base_scan" link2="link1" reason="Never" />
+    <disable_collisions link1="base_scan" link2="link2" reason="Never" />
+    <disable_collisions link1="base_scan" link2="wheel_left_link" reason="Never" />
+    <disable_collisions link1="base_scan" link2="wheel_right_link" reason="Never" />
+    <disable_collisions link1="camera_link" link2="caster_back_left_link" reason="Never" />
+    <disable_collisions link1="camera_link" link2="caster_back_right_link" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link1" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link2" reason="Never" />
+    <disable_collisions link1="camera_link" link2="link3" reason="Never" />
+    <disable_collisions link1="camera_link" link2="wheel_left_link" reason="Never" />
+    <disable_collisions link1="camera_link" link2="wheel_right_link" reason="Never" />
+    <disable_collisions link1="caster_back_left_link" link2="caster_back_right_link" reason="Never" />
+    <disable_collisions link1="caster_back_left_link" link2="grip_link" reason="User" />
+    <disable_collisions link1="caster_back_left_link" link2="grip_link_sub" reason="User" />
+    <disable_collisions link1="caster_back_left_link" link2="link1" reason="Never" />
+    <disable_collisions link1="caster_back_left_link" link2="link2" reason="Never" />
+    <disable_collisions link1="caster_back_left_link" link2="link3" reason="Never" />
+    <disable_collisions link1="caster_back_left_link" link2="link4" reason="User" />
+    <disable_collisions link1="caster_back_left_link" link2="link5" reason="User" />
+    <disable_collisions link1="caster_back_left_link" link2="wheel_left_link" reason="Never" />
+    <disable_collisions link1="caster_back_left_link" link2="wheel_right_link" reason="Never" />
+    <disable_collisions link1="caster_back_right_link" link2="grip_link" reason="User" />
+    <disable_collisions link1="caster_back_right_link" link2="grip_link_sub" reason="User" />
+    <disable_collisions link1="caster_back_right_link" link2="link1" reason="Never" />
+    <disable_collisions link1="caster_back_right_link" link2="link2" reason="Never" />
+    <disable_collisions link1="caster_back_right_link" link2="link3" reason="Never" />
+    <disable_collisions link1="caster_back_right_link" link2="link4" reason="User" />
+    <disable_collisions link1="caster_back_right_link" link2="link5" reason="User" />
+    <disable_collisions link1="caster_back_right_link" link2="wheel_left_link" reason="Never" />
+    <disable_collisions link1="caster_back_right_link" link2="wheel_right_link" reason="Never" />
+    <disable_collisions link1="grip_link" link2="grip_link_sub" reason="Never" />
+    <disable_collisions link1="grip_link" link2="link1" reason="User" />
+    <disable_collisions link1="grip_link" link2="link4" reason="Never" />
+    <disable_collisions link1="grip_link" link2="link5" reason="Adjacent" />
+    <disable_collisions link1="grip_link" link2="wheel_left_link" reason="User" />
+    <disable_collisions link1="grip_link" link2="wheel_right_link" reason="User" />
+    <disable_collisions link1="grip_link_sub" link2="link1" reason="User" />
+    <disable_collisions link1="grip_link_sub" link2="link4" reason="Never" />
+    <disable_collisions link1="grip_link_sub" link2="link5" reason="Adjacent" />
+    <disable_collisions link1="grip_link_sub" link2="wheel_left_link" reason="User" />
+    <disable_collisions link1="grip_link_sub" link2="wheel_right_link" reason="User" />
+    <disable_collisions link1="link1" link2="link2" reason="Adjacent" />
+    <disable_collisions link1="link1" link2="link3" reason="Never" />
+    <disable_collisions link1="link1" link2="link4" reason="User" />
+    <disable_collisions link1="link1" link2="link5" reason="User" />
+    <disable_collisions link1="link1" link2="wheel_left_link" reason="Never" />
+    <disable_collisions link1="link1" link2="wheel_right_link" reason="Never" />
+    <disable_collisions link1="link2" link2="link3" reason="Adjacent" />
+    <disable_collisions link1="link2" link2="wheel_left_link" reason="Never" />
+    <disable_collisions link1="link2" link2="wheel_right_link" reason="Never" />
+    <disable_collisions link1="link3" link2="link4" reason="Adjacent" />
+    <disable_collisions link1="link3" link2="wheel_left_link" reason="Never" />
+    <disable_collisions link1="link3" link2="wheel_right_link" reason="Never" />
+    <disable_collisions link1="link4" link2="link5" reason="Adjacent" />
+    <disable_collisions link1="link4" link2="wheel_left_link" reason="User" />
+    <disable_collisions link1="link4" link2="wheel_right_link" reason="User" />
+    <disable_collisions link1="link5" link2="wheel_left_link" reason="User" />
+    <disable_collisions link1="link5" link2="wheel_right_link" reason="User" />
+    <disable_collisions link1="wheel_left_link" link2="wheel_right_link" reason="Never" />
+</robot>
