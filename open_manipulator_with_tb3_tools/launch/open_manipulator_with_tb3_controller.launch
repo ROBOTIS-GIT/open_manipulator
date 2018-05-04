@@ -3,7 +3,6 @@
 
   <arg name="marker_id"       default="8"/>
 
-  <arg name="angle_range_to_align_with_ar_marker"  default="0.05"/>
   <arg name="distance_btw_base_to_ar_marker"       default="0.170"/>
   <arg name="rotate_after_pick_up"                 default="175.0"/>
 
@@ -30,7 +29,6 @@
 
     <param name="marker_id"  value="$(arg marker_id)"/>
 
-    <param name="angle_range_to_align_with_ar_marker"  value="$(arg angle_range_to_align_with_ar_marker)"/>
     <param name="distance_btw_base_to_ar_marker"       value="$(arg distance_btw_base_to_ar_marker)"/>
     <param name="rotate_after_pick_up"                 value="$(arg rotate_after_pick_up)"/>
   </node>
