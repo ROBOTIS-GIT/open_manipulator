@@ -1,8 +1,8 @@
 <launch>
-  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="use_gazebo"	   default="false" />
-  <arg name="open_model"     default="false" />
-  <arg name="open_rviz"      default="false" />
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [waffle, waffle_pi]"/>
+  <arg name="use_gazebo"	   default="true" />
+  <arg name="open_model"     default="true" />
+  <arg name="open_rviz"      default="true" />
   <arg name="use_ar_marker"  default="false" />
   <arg name="use_gui"        default="false" />
   <arg name="debug"          default="false" />
@@ -11,9 +11,6 @@
   <include file="$(find open_manipulator_with_tb3_waffle_pi_moveit)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
-
-  <!-- If needed, broadcast static tf for robot root -->
-  <!-- <node pkg="tf" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 odom base_footprint 100" /> -->
 
   <group if="$(arg open_model)">
     <include file="$(find open_manipulator_with_tb3)/launch/open_manipulator_with_tb3_model.launch">
@@ -25,12 +22,23 @@
   </group>
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
-  <include file="$(find open_manipulator_with_tb3_waffle_pi_moveit)/launch/move_group.launch">
-    <arg name="allow_trajectory_execution" value="false"/>
-    <arg name="fake_execution" value="false"/>
-    <arg name="info" value="false"/>
-    <arg name="debug" value="$(arg debug)"/>
-  </include>
+  <group if="$(eval model == 'pi')">
+    <include file="$(find open_manipulator_with_tb3_waffle_pi_moveit)/launch/move_group.launch">
+      <arg name="allow_trajectory_execution" value="false"/>
+      <arg name="fake_execution" value="false"/>
+      <arg name="info" value="false"/>
+      <arg name="debug" value="$(arg debug)"/>
+    </include>
+  </group>
+  
+  <group unless="$(eval model == 'pi')">
+      <include file="$(find open_manipulator_with_tb3_waffle_moveit)/launch/move_group.launch">
+      <arg name="allow_trajectory_execution" value="false"/>
+      <arg name="fake_execution" value="false"/>
+      <arg name="info" value="false"/>
+      <arg name="debug" value="$(arg debug)"/>
+    </include>
+  </group>
 
   <group if="$(arg open_rviz)">
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_with_tb3_tools)/rviz/open_manipulator_with_tb3_manipulation.rviz"/>
