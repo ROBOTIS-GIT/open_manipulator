@@ -42,6 +42,8 @@ OFF = 0
 
 GOAL_REACHED = 3
 
+ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER = 0.05
+
 class NodeController():
     def getParam(self):
         self.robot_name = rospy.get_param("~robot_name")
@@ -75,7 +77,6 @@ class NodeController():
         self.goalPoseInFrontUpABox.pose.orientation.z = rospy.get_param("~orientation_z_in_front_up_a_box")
 
         self.MARKER_ID                           = rospy.get_param("~marker_id")
-        self.ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER = rospy.get_param("~angle_range_to_align_with_ar_marker")
         self.DISTANCE_BTW_BASE_TO_AR_MARKER      = rospy.get_param("~distance_btw_base_to_ar_marker")
         self.ROTATE_AFTER_PICK_UP                = rospy.get_param("~rotate_after_pick_up")
 
@@ -306,9 +307,9 @@ class NodeController():
                 align = math.atan2(get_pose.pose.position.y, get_pose.pose.position.x)
                 rospy.logwarn("radian btw robot and marker= %.3f", align)
 
-                if align < -self.ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                if align < -ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
                     self.turnRight(0.1)
-                elif align > self.ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                elif align > ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
                     self.turnLeft(0.1)
                 else:
                     self.stop()
@@ -389,9 +390,9 @@ class NodeController():
                 align = math.atan2(get_pose.pose.position.y, get_pose.pose.position.x)
                 rospy.logwarn("radian btw robot and marker = %.3f", align)
 
-                if align < -self.ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                if align < -ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
                     self.turnRight(0.1)
-                elif align > self.ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                elif align > ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
                     self.turnLeft(0.1)
                 else:
                     self.stop()
