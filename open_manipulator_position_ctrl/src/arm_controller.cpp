@@ -88,7 +88,7 @@ void ArmController::initPublisher(bool using_gazebo)
       if (robot_name_ == "open_manipulator")
       {
         gazebo_goal_joint_position_pub_[index]
-          = nh_.advertise<std_msgs::Float64>(robot_name_ + joint_name[index] + "_position/command", 10);
+          = nh_.advertise<std_msgs::Float64>(robot_name_ + "/" + joint_name[index] + "_position/command", 10);
       }
       else
       {
