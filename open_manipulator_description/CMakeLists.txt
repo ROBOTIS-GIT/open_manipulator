@@ -7,12 +7,7 @@ project(open_manipulator_description)
 ################################################################################
 # Packages
 ################################################################################
-find_package(catkin REQUIRED COMPONENTS
-  joint_state_publisher
-  robot_state_publisher
-  xacro
-  urdf
-)
+find_package(catkin REQUIRED)
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -25,9 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 # Catkin specific configuration
 ################################################################################
-catkin_package(
-  CATKIN_DEPENDS joint_state_publisher robot_state_publisher xacro urdf
-)
+catkin_package()
 
 ################################################################################
 # Build
