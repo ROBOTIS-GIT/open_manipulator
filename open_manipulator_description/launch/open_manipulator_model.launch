@@ -1,6 +1,6 @@
 <launch>
-  <arg name="use_gui"        default="false" />
   <arg name="use_gazebo"	   default="false" />
+  <arg name="open_rviz"	     default="false" />
 
   <param name="robot_description"
          command="$(find xacro)/xacro --inorder '$(find open_manipulator_description)/urdf/open_manipulator.urdf.xacro'"/>
@@ -8,7 +8,6 @@
   <!-- Send joint values -->
   <group if="$(arg use_gazebo)">
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
-      <param name="/use_gui" value="$(arg use_gui)"/>
       <rosparam param="source_list">["open_manipulator/joint_states"]</rosparam>
     </node>
   </group>
@@ -17,5 +16,7 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 
   <!-- Show in Rviz -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_description)/rviz/open_manipulator.rviz"/>  
+  <group if="$(arg open_rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_description)/rviz/open_manipulator.rviz"/>  
+  </group>
 </launch>

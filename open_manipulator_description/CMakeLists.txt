@@ -4,12 +4,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(open_manipulator_description)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
-
 ################################################################################
 # Packages
 ################################################################################
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  joint_state_publisher
+  robot_state_publisher
+  xacro
+)
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -22,7 +24,9 @@ find_package(catkin REQUIRED)
 ################################################################################
 # Catkin specific configuration
 ################################################################################
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS joint_state_publisher robot_state_publisher xacro
+)
 
 ################################################################################
 # Build
