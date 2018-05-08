@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   joint_state_publisher
   robot_state_publisher
   xacro
+  urdf
 )
 
 ################################################################################
@@ -25,7 +26,7 @@ find_package(catkin REQUIRED COMPONENTS
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS joint_state_publisher robot_state_publisher xacro
+  CATKIN_DEPENDS joint_state_publisher robot_state_publisher xacro urdf
 )
 
 ################################################################################
