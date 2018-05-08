@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(open_manipulator_gazebo)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+add_compile_options(-std=c++11)
 
 ################################################################################
 # Packages
@@ -47,7 +47,7 @@ include_directories(
 ################################################################################
 # Install
 ################################################################################
-install(DIRECTORY launch config models worlds
+install(DIRECTORY config launch models worlds
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
