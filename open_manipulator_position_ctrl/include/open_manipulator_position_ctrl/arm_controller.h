@@ -48,7 +48,6 @@
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 
 #include <eigen3/Eigen/Eigen>
-#include <boost/thread.hpp>
 
 namespace open_manipulator
 {
