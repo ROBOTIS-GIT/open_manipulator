@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   joint_state_publisher
   robot_state_publisher
   xacro
+  urdf
 )
 
 ################################################################################
@@ -32,7 +33,7 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS moveit_ros_move_group moveit_kinematics moveit_planners_ompl moveit_ros_visualization joint_state_publisher robot_state_publisher xacro
+  CATKIN_DEPENDS moveit_ros_move_group moveit_kinematics moveit_planners_ompl moveit_ros_visualization joint_state_publisher robot_state_publisher xacro urdf
 )
 
 ################################################################################

@@ -7,7 +7,12 @@ project(open_manipulator_with_tb3)
 ################################################################################
 # Packages
 ################################################################################
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  joint_state_publisher
+  robot_state_publisher
+  xacro
+  urdf
+)
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -20,7 +25,9 @@ find_package(catkin REQUIRED)
 ################################################################################
 # Catkin specific configuration
 ################################################################################
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS joint_state_publisher robot_state_publisher xacro urdf
+)
 
 ################################################################################
 # Build

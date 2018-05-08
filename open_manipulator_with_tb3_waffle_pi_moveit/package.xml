@@ -19,4 +19,5 @@
   <depend>joint_state_publisher</depend>
   <depend>robot_state_publisher</depend>
   <depend>xacro</depend>
+  <depend>urdf</depend>
 </package>
