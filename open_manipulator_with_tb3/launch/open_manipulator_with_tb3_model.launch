@@ -1,6 +1,5 @@
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [waffle, waffle_pi]"/>
-  <arg name="use_gui"        default="false" />
   <arg name="use_gazebo"	   default="false" />
   <arg name="open_rviz"      default="false" />
 
@@ -10,7 +9,6 @@
   <!-- Send joint values -->
   <group if="$(arg use_gazebo)">
     <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
-      <param name="/use_gui" value="$(arg use_gui)"/>
       <rosparam param="source_list">["/joint_states"]</rosparam>
     </node>
   </group>
