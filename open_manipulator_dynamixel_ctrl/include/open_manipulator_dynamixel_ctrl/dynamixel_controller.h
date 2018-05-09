@@ -21,36 +21,52 @@
 
 #include <ros/ros.h>
 
+#include <vector>
+#include <string>
+
 #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
 #include <sensor_msgs/JointState.h>
-#include <open_manipulator_msgs/JointPose.h>
 
 namespace dynamixel
 {
 #define ITERATION_FREQUENCY  (25)
+#define JOINT_NUM   4
+#define GRIPPER_NUM 1
+#define DXL_NUM     5
+#define PALM_NUM    2
 
 class DynamixelController
 {
  private:
   // ROS NodeHandle
   ros::NodeHandle node_handle_;
+  ros::NodeHandle priv_node_handle_;
 
   // ROS Parameters
 
   // ROS Topic Publisher
-  ros::Publisher present_states_pub_;
+  ros::Publisher joint_states_pub_;
 
   // ROS Topic Subscriber
-  ros::Subscriber goal_states_sub_;
+  ros::Subscriber goal_joint_states_sub_;
+  ros::Subscriber goal_gripper_states_sub_;
 
   // ROS Service Server
 
   // ROS Service Client
 
   // Dynamixel Workbench Parameters
-  DynamixelWorkbench *dxl_wb_;
-  uint8_t dxl_id_[16];
-  uint8_t dxl_cnt_;
+  std::string robot_name_;
+  float protocol_version_;
+
+  DynamixelWorkbench *joint_controller_;
+  DynamixelWorkbench *gripper_controller_;
+
+  std::vector<uint8_t> joint_id_;
+  std::vector<uint8_t> gripper_id_;
+
+  std::string joint_mode_;
+  std::string gripper_mode_;
 
  public:
   DynamixelController();
@@ -62,9 +78,15 @@ class DynamixelController
 
   void initPublisher();
   void initSubscriber();
-  void readDynamixelState();
+  void getDynamixelInst();
+  void setOperatingMode();
+  void setSyncFunction();
+  void readPosition(double *value);
+  void readVelocity(double *value);
+  void updateJointStates();
 
-  void goalPositionMsgCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void goalJointPositionCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void goalGripperPositionCallback(const sensor_msgs::JointState::ConstPtr &msg);
 };
 }
 

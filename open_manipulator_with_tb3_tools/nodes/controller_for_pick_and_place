@@ -1,0 +1,467 @@
+#!/usr/bin/env python
+
+#################################################################################
+# Copyright 2018 ROBOTIS CO., LTD.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#################################################################################
+
+# Authors: Taehun Lim(Darby)
+
+import rospy, roslaunch
+import os
+import math
+
+from std_msgs.msg import String
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseStamped
+from move_base_msgs.msg import MoveBaseActionResult
+from nav_msgs.msg import Odometry
+
+from ar_track_alvar_msgs.msg import AlvarMarker
+from ar_track_alvar_msgs.msg import AlvarMarkers
+
+from open_manipulator_msgs.srv import Pick
+from open_manipulator_msgs.srv import Place
+
+from enum import Enum
+
+ON  = 1
+OFF = 0 
+
+GOAL_REACHED = 3
+
+ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER = 0.05
+
+class NodeController():
+    def getParam(self):
+        self.robot_name = rospy.get_param("~robot_name")
+
+        self.goalPoseInFrontUpAnObject = PoseStamped()
+
+        self.goalPoseInFrontUpAnObject.header.frame_id = "map"
+        self.goalPoseInFrontUpAnObject.header.stamp = rospy.Time.now()
+        
+        self.goalPoseInFrontUpAnObject.pose.position.x = rospy.get_param("~position_x_in_front_up_an_object")
+        self.goalPoseInFrontUpAnObject.pose.position.y = rospy.get_param("~position_y_in_front_up_an_object")
+        self.goalPoseInFrontUpAnObject.pose.position.z = rospy.get_param("~position_z_in_front_up_an_object")
+        
+        self.goalPoseInFrontUpAnObject.pose.orientation.w = rospy.get_param("~orientation_w_in_front_up_an_object")
+        self.goalPoseInFrontUpAnObject.pose.orientation.x = rospy.get_param("~orientation_x_in_front_up_an_object")
+        self.goalPoseInFrontUpAnObject.pose.orientation.y = rospy.get_param("~orientation_y_in_front_up_an_object")
+        self.goalPoseInFrontUpAnObject.pose.orientation.z = rospy.get_param("~orientation_z_in_front_up_an_object")
+
+        self.goalPoseInFrontUpABox = PoseStamped()
+
+        self.goalPoseInFrontUpABox.header.frame_id = "map"
+        self.goalPoseInFrontUpABox.header.stamp = rospy.Time.now()
+        
+        self.goalPoseInFrontUpABox.pose.position.x = rospy.get_param("~position_x_in_front_up_a_box")
+        self.goalPoseInFrontUpABox.pose.position.y = rospy.get_param("~position_y_in_front_up_a_box")
+        self.goalPoseInFrontUpABox.pose.position.z = rospy.get_param("~position_z_in_front_up_a_box")
+        
+        self.goalPoseInFrontUpABox.pose.orientation.w = rospy.get_param("~orientation_w_in_front_up_a_box")
+        self.goalPoseInFrontUpABox.pose.orientation.x = rospy.get_param("~orientation_x_in_front_up_a_box")
+        self.goalPoseInFrontUpABox.pose.orientation.y = rospy.get_param("~orientation_y_in_front_up_a_box")
+        self.goalPoseInFrontUpABox.pose.orientation.z = rospy.get_param("~orientation_z_in_front_up_a_box")
+
+        self.MARKER_ID                           = rospy.get_param("~marker_id")
+        self.DISTANCE_BTW_BASE_TO_AR_MARKER      = rospy.get_param("~distance_btw_base_to_ar_marker")
+        self.ROTATE_AFTER_PICK_UP                = rospy.get_param("~rotate_after_pick_up")
+
+    def __init__(self):
+        self.getParam()
+        self.getPackagePath()
+        self.setROSLaunch()
+
+        self.initPublisher()
+        self.initSubscriber()
+        self.initServer()
+        self.initClient()
+
+        self.navigationLaunched(ON)
+
+        self.StepOfPickAndPlace = Enum('StepOfPickAndPlace',
+                                       'waiting_signal \
+                                        move_to_pose_in_front_up_an_object \
+                                        align_ar_marker_in_front_up_an_object \
+                                        get_closer_to_an_object \
+                                        pick_object_up \
+                                        turn_around \
+                                        move_to_pose_in_front_up_a_box \
+                                        align_ar_marker_in_front_up_the_box \
+                                        get_closer_to_the_box \
+                                        place_object_in_the_box \
+                                        exit')
+        self.pre_step = 0
+        self.step = self.StepOfPickAndPlace.move_to_pose_in_front_up_an_object.value
+
+        self.is_trigger = False
+        
+        loop_rate = rospy.Rate(10) # 10hz
+        while not rospy.is_shutdown():
+            if self.is_trigger == True:                
+                self.controller()
+
+            loop_rate.sleep()
+
+    def initPublisher(self):
+        self.tb3_goal_pose_pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
+        self.tb3_cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+
+    def initSubscriber(self):
+        self.node_control_trigger_sub = rospy.Subscriber(self.robot_name + '/node_control_trigger', String, self.triggerMsgCallback, queue_size=10)
+        self.arrive_goal_pose_sub = rospy.Subscriber("/move_base/result", MoveBaseActionResult, self.checkActionMsgCallback, queue_size=10)
+        self.ar_marker_pose_sub = rospy.Subscriber("/ar_pose_marker", AlvarMarkers, self.getARmarkerPoseMsgCallback, queue_size=10)
+        self.odom_sub = rospy.Subscriber("/odom", Odometry, self.getOdomMsgCallback, queue_size=10)
+
+    def initServer(self):
+        self.pick_server = rospy.Service(self.robot_name + '/result_of_pick_up', Pick, self.resultOfPickUpMsgCallback)
+        self.place_server = rospy.Service(self.robot_name + '/result_of_place', Place, self.resultOfPlaceMsgCallback)
+
+    def initClient(self):
+        self.pick_client = rospy.ServiceProxy(self.robot_name + '/pick', Pick)
+        self.place_client = rospy.ServiceProxy(self.robot_name + '/place', Pick)
+
+    def resultOfPickUpMsgCallback(self, req):
+        if req.state == "Success":
+            rospy.logwarn("Success to pick up")
+
+            self.arMarkerLaunched(OFF)
+            self.pickLaunched(OFF)
+            self.manipulationLaunched(OFF)       
+
+            if self.pre_step == self.StepOfPickAndPlace.pick_object_up.value:
+                self.step = self.StepOfPickAndPlace.turn_around.value
+        else:
+            rospy.logwarn("Failed to Pick up, Please retry step") # TODO
+
+    def resultOfPlaceMsgCallback(self, req):
+        if req.state == "Success":
+            rospy.logwarn("Success to place")
+
+            self.arMarkerLaunched(OFF)
+            self.placeLaunched(OFF)
+            self.manipulationLaunched(OFF)   
+            self.navigationLaunched(OFF)         
+
+            if self.pre_step == self.StepOfPickAndPlace.place_object_in_the_box.value:
+                self.step = self.StepOfPickAndPlace.exit.value
+        else:
+            rospy.logwarn("Failed to Place, Please retry step") # TODO
+
+    def triggerMsgCallback(self, trigger_msg):
+        if trigger_msg.data == "start":
+            self.is_trigger = True
+        else:
+            self.is_trigger = False
+
+    def checkActionMsgCallback(self, action_msg):
+        if action_msg.status.status == GOAL_REACHED:
+            rospy.logwarn("Arrive at the goal pose")
+
+            self.arMarkerLaunched(ON)
+
+            if self.pre_step == self.StepOfPickAndPlace.move_to_pose_in_front_up_an_object.value:                
+                self.step = self.StepOfPickAndPlace.align_ar_marker_in_front_up_an_object.value
+            elif self.pre_step == self.StepOfPickAndPlace.move_to_pose_in_front_up_a_box.value: 
+                self.step = self.StepOfPickAndPlace.align_ar_marker_in_front_up_the_box.value            
+
+    def getARmarkerPoseMsgCallback(self, ar_marker_pose_msg):
+        if len(ar_marker_pose_msg.markers) == 0:
+            self.ar_marker_pose = False
+            return;
+        
+        self.ar_marker_pose = AlvarMarker()
+        self.ar_marker_pose = ar_marker_pose_msg.markers[0]
+
+    def getOdomMsgCallback(self, odom_msg):
+        self.tb3_current_yaw = self.quaternion_to_yaw_angle(odom_msg.pose.pose.orientation.w, odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y, odom_msg.pose.pose.orientation.z)
+
+    def getPackagePath(self):
+        self.ros_package_path = os.path.dirname(os.path.realpath(__file__))
+        self.ros_package_path = self.ros_package_path.replace('open_manipulator_with_tb3_tools/nodes', '')
+
+    def setROSLaunch(self):
+        self.uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+
+    def navigationLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_navigation   = roslaunch.scriptapi.ROSLaunch()
+            self.launch_navigation   = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_navigation.launch"])
+            self.launch_navigation.start()
+
+            rospy.sleep(3.)
+        else:
+            self.launch_navigation.shutdown()        
+
+    def manipulationLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_manipulation = roslaunch.scriptapi.ROSLaunch()
+            self.launch_manipulation = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_manipulation.launch"])
+            self.launch_manipulation.start()
+
+            rospy.sleep(7.)
+        else:
+            self.launch_manipulation.shutdown()        
+
+    def pickLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_pick_task    = roslaunch.scriptapi.ROSLaunch()
+            self.launch_pick_task    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_pick.launch"])
+            self.launch_pick_task.start()
+
+            rospy.sleep(2.)
+        else:
+            self.launch_pick_task.shutdown()        
+
+    def placeLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_place_task    = roslaunch.scriptapi.ROSLaunch()
+            self.launch_place_task    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_with_tb3_tools/launch/open_manipulator_with_tb3_place.launch"])
+            self.launch_place_task.start()
+
+            rospy.sleep(2.)   
+        else:
+            self.launch_place_task.shutdown()        
+
+    def arMarkerLaunched(self, onoff):
+        if onoff == ON:
+            self.launch_ar_marker    = roslaunch.scriptapi.ROSLaunch()
+            self.launch_ar_marker    = roslaunch.parent.ROSLaunchParent(self.uuid, [self.ros_package_path + "open_manipulator_perception/launch/ar_pose.launch"])
+            self.launch_ar_marker.start()
+
+            rospy.sleep(3.)
+        else:
+            self.launch_ar_marker.shutdown()   
+
+    def forward(self,vel):
+        twist = Twist()
+
+        twist.linear.x  = vel;  twist.linear.y  = 0.0; twist.linear.z  = 0.0
+        twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+    
+        self.tb3_cmd_vel_pub.publish(twist)    
+
+    def backward(self,vel):
+        twist = Twist()
+
+        twist.linear.x  = -vel;  twist.linear.y  = 0.0; twist.linear.z  = 0.0
+        twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+    
+        self.tb3_cmd_vel_pub.publish(twist)         
+
+    def turnLeft(self, vel):
+        twist = Twist()
+
+        twist.linear.x  = 0.0;  twist.linear.y  = 0.0; twist.linear.z  = 0.0
+        twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = vel
+    
+        self.tb3_cmd_vel_pub.publish(twist)
+
+    def turnRight(self, vel):
+        twist = Twist()
+
+        twist.linear.x  = 0.0;  twist.linear.y  = 0.0; twist.linear.z  = 0.0
+        twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = -vel
+    
+        self.tb3_cmd_vel_pub.publish(twist)
+
+    def stop(self):
+        twist = Twist()
+
+        twist.linear.x  = 0.0;  twist.linear.y  = 0.0; twist.linear.z  = 0.0
+        twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.0
+    
+        self.tb3_cmd_vel_pub.publish(twist)
+        rospy.sleep(1.)
+
+    def controller(self):  
+        if self.step == self.StepOfPickAndPlace.move_to_pose_in_front_up_an_object.value:
+            rospy.logwarn("Move to pose in front up an object")
+
+            self.tb3_goal_pose_pub.publish(self.goalPoseInFrontUpAnObject)
+            
+            self.pre_step = self.StepOfPickAndPlace.move_to_pose_in_front_up_an_object.value
+            self.step = self.StepOfPickAndPlace.waiting_signal.value
+
+        elif self.step == self.StepOfPickAndPlace.align_ar_marker_in_front_up_an_object.value:
+            get_pose = PoseStamped()
+            align = 0.0
+
+            if self.ar_marker_pose == False:
+                pass
+            elif self.ar_marker_pose.id == self.MARKER_ID:
+                get_pose = self.ar_marker_pose.pose
+                align = math.atan2(get_pose.pose.position.y, get_pose.pose.position.x)
+                rospy.logwarn("radian btw robot and marker= %.3f", align)
+
+                if align < -ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                    self.turnRight(0.1)
+                elif align > ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                    self.turnLeft(0.1)
+                else:
+                    self.stop()
+                    self.step = self.StepOfPickAndPlace.get_closer_to_an_object.value
+
+        elif self.step == self.StepOfPickAndPlace.get_closer_to_an_object.value:
+            if self.ar_marker_pose == False:
+                self.backward(0.01)
+                rospy.sleep(1.)
+
+                self.stop()
+                self.step = self.StepOfPickAndPlace.pick_object_up.value
+
+            elif self.ar_marker_pose.id == self.MARKER_ID:
+                get_pose = self.ar_marker_pose.pose                
+                rospy.logwarn("x = %.3f", get_pose.pose.position.x)
+
+                self.forward(0.02)
+
+                if get_pose.pose.position.x < self.DISTANCE_BTW_BASE_TO_AR_MARKER:
+                    self.stop()
+                    self.step = self.StepOfPickAndPlace.pick_object_up.value
+                else:
+                    pass
+                    
+            else:
+                pass                
+        
+        elif self.step == self.StepOfPickAndPlace.pick_object_up.value:
+            rospy.logwarn("Ready to Manipulation")
+
+            self.manipulationLaunched(ON)
+            self.pickLaunched(ON)
+
+            rospy.wait_for_service(self.robot_name + '/pick')
+            try:                
+                self.res = self.pick_client("start")
+                rospy.logwarn(self.res)
+            except rospy.ServiceException, e:
+                print "Service call failed: %s"%e
+
+            self.pre_step = self.StepOfPickAndPlace.pick_object_up.value
+            self.step = self.StepOfPickAndPlace.waiting_signal.value
+
+        elif self.step == self.StepOfPickAndPlace.turn_around.value:
+            rospy.logwarn("Turn Around")
+
+            twist = Twist()          
+            rospy.logwarn("yaw = %.3f", self.tb3_current_yaw)
+
+            twist.linear.x  = -0.02;  twist.linear.y  = 0.0; twist.linear.z  = 0.0
+            twist.angular.x = 0.0;  twist.angular.y = 0.0; twist.angular.z = 0.3
+            
+            self.tb3_cmd_vel_pub.publish(twist)
+
+            if self.tb3_current_yaw > self.ROTATE_AFTER_PICK_UP:
+                self.stop()
+                self.step = self.StepOfPickAndPlace.move_to_pose_in_front_up_a_box.value
+            else:
+                pass
+
+        elif self.step == self.StepOfPickAndPlace.move_to_pose_in_front_up_a_box.value:
+            rospy.logwarn("Move to pose in front up an object")
+
+            self.tb3_goal_pose_pub.publish(self.goalPoseInFrontUpABox)
+            
+            self.pre_step = self.StepOfPickAndPlace.move_to_pose_in_front_up_a_box.value
+            self.step = self.StepOfPickAndPlace.waiting_signal.value
+
+        elif self.step == self.StepOfPickAndPlace.align_ar_marker_in_front_up_the_box.value:
+            get_pose = PoseStamped()
+            align = 0.0
+
+            if self.ar_marker_pose == False:
+                  pass
+            elif self.ar_marker_pose.id == self.MARKER_ID:
+                get_pose = self.ar_marker_pose.pose
+                align = math.atan2(get_pose.pose.position.y, get_pose.pose.position.x)
+                rospy.logwarn("radian btw robot and marker = %.3f", align)
+
+                if align < -ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                    self.turnRight(0.1)
+                elif align > ANGLE_RANGE_TO_ALIGN_WITH_AR_MARKER:
+                    self.turnLeft(0.1)
+                else:
+                    self.stop()
+                    self.step = self.StepOfPickAndPlace.get_closer_to_the_box.value
+
+        elif self.step == self.StepOfPickAndPlace.get_closer_to_the_box.value:
+            rospy.logwarn("Get closer to the box")
+
+            get_pose = PoseStamped()
+            twist = Twist()
+
+            if self.ar_marker_pose == False:
+                self.backward(0.01)
+                rospy.sleep(1.)
+
+                self.stop()
+                self.step = self.StepOfPickAndPlace.place_object_in_the_box.value
+
+            elif self.ar_marker_pose.id == self.MARKER_ID:
+                get_pose = self.ar_marker_pose.pose                
+                rospy.logwarn("x = %.3f", get_pose.pose.position.x)
+
+                self.forward(0.04)
+
+                if get_pose.pose.position.x < self.DISTANCE_BTW_BASE_TO_AR_MARKER:
+                    self.stop()
+                    self.step = self.StepOfPickAndPlace.place_object_in_the_box.value
+                else:
+                    pass
+                    
+            else:
+                pass
+
+        elif self.step == self.StepOfPickAndPlace.place_object_in_the_box.value:
+            rospy.logwarn("Ready to Manipulation")
+
+            self.manipulationLaunched(ON)
+            self.placeLaunched(ON)
+
+            rospy.wait_for_service(self.robot_name + '/place')
+            try:                
+                self.res = self.place_client("start")
+                rospy.logwarn(self.res)
+            except rospy.ServiceException, e:
+                print "Service call failed: %s"%e
+
+            self.pre_step = self.StepOfPickAndPlace.place_object_in_the_box.value
+            self.step = self.StepOfPickAndPlace.waiting_signal.value
+
+        elif self.step == self.StepOfPickAndPlace.waiting_signal.value:
+            pass
+
+        else:
+            pass
+
+    # reference https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_Code_2
+    def quaternion_to_yaw_angle(self, w, x, y, z):
+        ysqr = y * y
+        
+        t3 = +2.0 * (w * z + x * y)
+        t4 = +1.0 - 2.0 * (ysqr + z * z)
+        yaw = math.degrees(math.atan2(t3, t4))
+        
+        return yaw            
+
+    def main(self):
+        rospy.spin()
+
+if __name__ == '__main__':
+    rospy.init_node('node_controller_for_pick_and_place')
+    node = NodeController()
+    node.main()

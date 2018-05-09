@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(open_manipulator_dynamixel_ctrl)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+add_compile_options(-std=c++11)
 
 ################################################################################
 # Packages
@@ -12,7 +12,6 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
-  open_manipulator_msgs
   dynamixel_sdk
   dynamixel_workbench_toolbox
 )
@@ -30,7 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp sensor_msgs open_manipulator_msgs dynamixel_sdk dynamixel_workbench_toolbox
+  CATKIN_DEPENDS roscpp sensor_msgs dynamixel_sdk dynamixel_workbench_toolbox
 )
 
 ################################################################################

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>open_manipulator_with_tb3_tools</name>
+  <version>0.1.1</version>
+  <description>
+    The tools package(SLAM, Navigation, Manipulation) for OpenManipulator and TurtleBot3
+  </description>
+  <license>Apache 2.0</license>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="website">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>roscpp</depend>
+  <depend>roslaunch</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>open_manipulator_msgs</depend>
+  <depend>ar_track_alvar_msgs</depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>gmapping</exec_depend>
+  <exec_depend>amcl</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>move_base</exec_depend>
+</package>

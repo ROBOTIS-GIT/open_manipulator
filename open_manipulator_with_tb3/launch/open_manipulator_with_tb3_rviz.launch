@@ -1,0 +1,18 @@
+<launch>
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [waffle, waffle_pi]"/>
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder '$(find open_manipulator_with_tb3)/urdf/open_manipulator_with_tb3_$(arg model).urdf.xacro'"/>
+
+  <!-- Send joint values -->
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
+    <param name="/use_gui" value="true"/>
+  </node>
+
+  <!-- Combine joint values -->
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher"/>
+
+  <!-- Show in Rviz -->
+   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_with_tb3)/rviz/open_manipulator_with_tb3.rviz"/>
+</launch>
+

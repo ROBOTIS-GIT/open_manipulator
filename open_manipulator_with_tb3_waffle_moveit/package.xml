@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>open_manipulator_with_tb3_waffle_moveit</name>
+  <version>0.1.1</version>
+  <description>
+     An automatically generated package with all the configuration and launch files for using the open_manipulator_chain with the MoveIt! Motion Planning Framework.
+  </description>
+  <license>Apache 2.0</license>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="website">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>moveit_ros_move_group</depend>
+  <depend>moveit_kinematics</depend>
+  <depend>moveit_planners_ompl</depend>
+  <depend>moveit_ros_visualization</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>xacro</depend>
+  <depend>urdf</depend>
+</package>

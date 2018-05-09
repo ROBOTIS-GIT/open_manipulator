@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>open_manipulator_perception</name>
+  <version>0.1.1</version>
+  <description>
+    Perception tools for the OpenManipulator
+  </description>
+  <license>Apache 2.0</license>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="website">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>ar_track_alvar</depend>
+</package>

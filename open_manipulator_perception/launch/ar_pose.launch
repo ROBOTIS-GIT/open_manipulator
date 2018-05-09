@@ -1,0 +1,17 @@
+<launch>
+  <arg name="marker_size"	   default="5.0" />
+  <arg name="image_topic"	   default="/camera/rgb/image_raw" />
+  <arg name="info_topic"     default="/camera/rgb/camera_info" />
+  <arg name="output_frame"   default="/base_footprint" />
+
+  <include file="$(find ar_track_alvar)/launch/pr2_indiv_no_kinect.launch">
+    <arg name="marker_size" value="$(arg marker_size)" />
+    <arg name="max_new_marker_error" value="0.08" />
+    <arg name="max_track_error" value="0.2" />
+    <arg name="cam_image_topic" value="$(arg image_topic)" />
+    <arg name="cam_info_topic" value="$(arg info_topic)" />
+    <arg name="output_frame" value="$(arg output_frame)" />
+  </include>
+</launch>
+
+

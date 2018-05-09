@@ -1,0 +1,64 @@
+<launch>
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="use_gazebo"	   default="true" />
+  <arg name="open_model"     default="false" />
+  <arg name="open_rviz"      default="true" />
+  <arg name="use_gui"        default="false" />
+
+  <arg name="map_file"       default="$(find open_manipulator_with_tb3_tools)/maps/map.yaml"/>
+
+  <arg name="scan_topic"     default="scan_filtered"/>
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="1.57"/>
+
+  <group if="$(arg open_model)">
+    <include file="$(find open_manipulator_with_tb3)/launch/open_manipulator_with_tb3_model.launch">
+      <arg name="model"      value="$(arg model)" />
+      <arg name="use_gazebo" value="$(arg use_gazebo)" />
+      <arg name="open_rviz"  value="false" />
+      <arg name="use_gui"    value="$(arg use_gui)" />
+    </include>
+  </group>
+
+  <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter" output="screen" >
+    <remap from="scan" to="/scan" />
+    <remap from="scan_filtered" to="/scan_filtered" />
+    <rosparam command="load" file="$(find open_manipulator_with_tb3_tools)/config/scan_data_filter.yaml" />
+  </node>
+
+  <!-- Map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- AMCL -->
+  <include file="$(find turtlebot3_navigation)/launch/amcl.launch.xml">
+    <arg name="scan_topic"      value="$(arg scan_topic)" />
+    <arg name="initial_pose_x"  value="$(arg initial_pose_x)" />
+    <arg name="initial_pose_y"  value="initial_pose_y" />
+    <arg name="initial_pose_a"  value="$(arg initial_pose_a)" />
+  </include>
+
+  <!-- move_base -->
+  <arg name="cmd_vel_topic" default="/cmd_vel" />
+  <arg name="odom_topic" default="odom" />
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+
+    <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find turtlebot3_navigation)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+    <remap from="scan" to="$(arg scan_topic)"/>
+  </node>
+
+  <!-- Show in Rviz -->
+  <group if="$(arg open_rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find open_manipulator_with_tb3_tools)/rviz/open_manipulator_with_tb3_navigation.rviz" output="screen"/>
+  </group>
+</launch>

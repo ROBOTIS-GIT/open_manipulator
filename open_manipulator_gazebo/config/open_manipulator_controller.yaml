@@ -1,0 +1,36 @@
+open_manipulator:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 125
+
+  # Position Controllers ---------------------------------------
+  joint1_position:
+    type: effort_controllers/JointPositionController
+    joint: joint1
+    pid: {p: 100.0, i: 0.0, d: 10.0}
+
+  joint2_position:
+    type: effort_controllers/JointPositionController
+    joint: joint2
+    pid: {p: 500.0, i: 0.0, d: 15.0}
+
+  joint3_position:
+    type: effort_controllers/JointPositionController
+    joint: joint3
+    pid: {p: 500.0, i: 0.0, d: 6.0}
+
+  joint4_position:
+    type: effort_controllers/JointPositionController
+    joint: joint4
+    pid: {p: 500.0, i: 0.0, d: 5.0}
+
+  grip_joint_position:
+    type: effort_controllers/JointPositionController
+    joint: grip_joint
+    pid: {p: 50.0, i: 0.0, d: 5.0}
+
+  grip_joint_sub_position:
+    type: effort_controllers/JointPositionController
+    joint: grip_joint_sub
+    pid: {p: 50.0, i: 0.0, d: 5.0}

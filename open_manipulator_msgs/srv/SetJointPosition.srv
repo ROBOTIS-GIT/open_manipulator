@@ -1,0 +1,3 @@
+JointPosition joint_position
+---
+bool isPlanned

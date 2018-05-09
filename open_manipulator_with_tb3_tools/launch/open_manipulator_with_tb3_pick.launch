@@ -1,0 +1,17 @@
+<launch>
+  <arg name="use_robot_name"  default="open_manipulator_with_tb3"/>
+
+  <arg name="marker_id"       default="8"/>
+
+  <arg name="offset_for_object_height"     default="0.150"/>
+  <arg name="dist_ar_marker_to_object"     default="0.040"/>
+
+  <node pkg="open_manipulator_with_tb3_tools" type="pick" name="pick" respawn="false" output="screen">
+    <param name="robot_name"  value="$(arg use_robot_name)"/>
+
+    <param name="marker_id"  value="$(arg marker_id)"/>
+
+    <param name="offset_for_object_height"  value="$(arg offset_for_object_height)"/>
+    <param name="dist_ar_marker_to_object"  value="$(arg dist_ar_marker_to_object)"/>
+  </node>
+</launch>

@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='small_beer'>
+    <link name='link'>
+      <pose>0 0 0.080 0 0 0</pose>
+      <inertial>
+        <mass>0.010</mass>
+        <inertia>
+          <ixx>4.7583e-005</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.7583e-005</iyy>
+          <iyz>0</iyz>
+          <izz>3.1250e-006</izz>
+        </inertia>
+      </inertial>
+      <collision name='collision'>
+        <geometry>
+          <cylinder>
+            <radius>0.025000</radius>
+            <length>0.235000</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1000000.0</mu>
+              <mu2>10000.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1000000.0</kp>
+              <kd>100.0</kd>
+              <max_vel>1.0</max_vel>
+              <min_depth>0.002</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='visual'>
+        <geometry>
+          <cylinder>
+            <radius>0.025000</radius>
+            <length>0.235000</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://small_beer/materials/scripts</uri>
+            <uri>model://small_beer/materials/textures</uri>
+            <name>Beer/Diffuse</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+    <pose frame=''>-1.5 3.96 0.195 0 0 0</pose>
+  </model>
+</sdf>

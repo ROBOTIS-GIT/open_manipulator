@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: open_manipulator_with_tb3
+    relative_path: urdf/open_manipulator_with_tb3_waffle.urdf.xacro
+  SRDF:
+    relative_path: config/open_manipulator_with_tb3.srdf
+  CONFIG:
+    author_name: Darby Lim
+    author_email: thlim@robotis.com
+    generated_timestamp: 1525346395

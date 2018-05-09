@@ -26,3 +26,6 @@
   <rosparam command="load" file="$(find open_manipulator_moveit)/config/smoothing_filter_params.yaml"/>
 
 </launch>
+
+
+
