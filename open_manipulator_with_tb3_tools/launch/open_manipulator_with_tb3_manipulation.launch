@@ -4,7 +4,6 @@
   <arg name="open_model"     default="false" />
   <arg name="open_rviz"      default="false" />
   <arg name="use_ar_marker"  default="false" />
-  <arg name="use_gui"        default="false" />
   <arg name="debug"          default="false" />
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
@@ -17,7 +16,6 @@
       <arg name="model"      value="$(arg model)" />
       <arg name="use_gazebo" value="$(arg use_gazebo)" />
       <arg name="open_rviz"  value="false" />
-      <arg name="use_gui"    value="$(arg use_gui)" />
     </include>
   </group>
 

@@ -3,7 +3,6 @@
   <arg name="use_gazebo"	   default="true" />
   <arg name="open_model"     default="false" />
   <arg name="open_rviz"      default="true" />
-  <arg name="use_gui"        default="false" />
 
   <arg name="map_file"       default="$(find open_manipulator_with_tb3_tools)/maps/map.yaml"/>
 
@@ -17,7 +16,6 @@
       <arg name="model"      value="$(arg model)" />
       <arg name="use_gazebo" value="$(arg use_gazebo)" />
       <arg name="open_rviz"  value="false" />
-      <arg name="use_gui"    value="$(arg use_gui)" />
     </include>
   </group>
 

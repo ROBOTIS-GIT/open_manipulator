@@ -2,7 +2,6 @@
 
   <arg name="use_gazebo"	   default="false" />
   <arg name="debug"          default="false" />
-  <arg name="use_gui"        default="false" />
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
   <include file="$(find open_manipulator_moveit)/launch/planning_context.launch">
@@ -11,7 +10,7 @@
 
   <!-- We do not have a robot connected, so publish fake joint states -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="$(arg use_gui)"/>
+    <param name="/use_gui" value="false"/>
     <rosparam param="source_list">["open_manipulator/joint_states"]</rosparam>
   </node>
 
