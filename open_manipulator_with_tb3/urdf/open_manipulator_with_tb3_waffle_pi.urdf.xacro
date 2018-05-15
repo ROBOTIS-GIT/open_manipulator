@@ -3,7 +3,7 @@
 <robot name="open_manipulator_with_tb3" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Include TurtleBot3 Waffle URDF -->
-  <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle_pi_naked.urdf.xacro" />
+  <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle_pi_for_open_manipulator.urdf.xacro" />
 
   <!-- Include OpenManipulator Chain Gazebo Parameter -->
   <xacro:include filename="$(find open_manipulator_with_tb3)/urdf/open_manipulator_with_tb3.gazebo.xacro" />
@@ -13,7 +13,7 @@
     <origin xyz="-0.092 0.0 0.091" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="link1"/>
-  </joint>
+  </joint>f
 
   <!-- Link 1 -->
   <link name="link1">
