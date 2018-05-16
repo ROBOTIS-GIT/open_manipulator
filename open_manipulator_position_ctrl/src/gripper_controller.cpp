@@ -173,7 +173,7 @@ void GripperController::gripperOnOffMsgCallback(const std_msgs::String::ConstPtr
   }
   else
   {
-    ROS_ERROR("If you want to grip or release something, publish 'grip_on' or 'grip_off'");
+    ROS_ERROR("If you want to grip or release something, publish 'grip_on', 'grip_off' or 'neutral'");
   }
 }
 

@@ -72,7 +72,7 @@ DynamixelController::~DynamixelController()
 
 void DynamixelController::initPublisher()
 {
-  joint_states_pub_ = node_handle_.advertise<sensor_msgs::JointState>("/joint_states", 10);
+  joint_states_pub_ = node_handle_.advertise<sensor_msgs::JointState>(robot_name_ + "/joint_states", 10);
 }
 
 void DynamixelController::initSubscriber()

@@ -1,5 +1,4 @@
 <launch>
-
   <arg name="use_gazebo"	   default="false" />
   <arg name="debug"          default="false" />
 
