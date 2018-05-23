@@ -3,7 +3,7 @@
   <name>open_manipulator_position_ctrl</name>
   <version>0.1.1</version>
   <description>
-    The position contrloller package for OpenManipulator
+    This packages based on MoveIt! framework to manipulate OpenManipulator
   </description>
   <license>Apache 2.0</license>
   <author email="thlim@robotis.com">Darby Lim</author>

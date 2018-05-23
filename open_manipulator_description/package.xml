@@ -3,7 +3,7 @@
   <name>open_manipulator_description</name>
   <version>0.1.1</version>
   <description>
-    3D models of the OpenManipulator description for simulation and visualization
+    OpenManipulator 3D model description for visualization and simulation 
   </description>
   <license>Apache 2.0</license>
   <author email="thlim@robotis.com">Darby Lim</author>
