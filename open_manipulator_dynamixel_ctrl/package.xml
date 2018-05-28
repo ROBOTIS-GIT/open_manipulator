@@ -3,7 +3,7 @@
   <name>open_manipulator_dynamixel_ctrl</name>
   <version>0.1.1</version>
   <description>
-    The Dynamixel ctroller package for OpenManipulator
+    The Dynamixel controller package based on Dynamixel-Workbench for OpenManipulator.
   </description>
   <license>Apache 2.0</license>
   <author email="thlim@robotis.com">Darby Lim</author>
