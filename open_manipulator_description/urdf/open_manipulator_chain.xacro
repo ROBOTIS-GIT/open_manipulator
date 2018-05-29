@@ -4,6 +4,28 @@
 
   <!-- some parameters -->
   <xacro:property name="pi" value="3.141592654" />
+  <xacro:property name="M_PI" value="3.141592654" />
+
+  <!-- for kinect -->
+	<xacro:property name="cam_px" value="-0.3150" />
+	<xacro:property name="cam_py" value="0.11" />
+	<xacro:property name="cam_pz" value="0.63" />
+	<xacro:property name="cam_or" value="0" />
+	<xacro:property name="cam_op" value="${pi * 30 / 180}" /> <!-- 25 deg  -->
+	<xacro:property name="cam_oy" value="${-pi * 0 / 180}" />
+
+    <xacro:include filename="$(find realsense_ros_camera)/urdf/_r430.urdf.xacro"/>
+	<xacro:include filename="$(find cube_description)/urdf/sensors/kinect.urdf.xacro"/>
+	<xacro:include filename="$(find cube_description)/urdf/common_properties.urdf.xacro"/>
+
+  <!-- realsense-->
+    <!-- <xacro:sensor_r430 parent="world">                                                 -->
+		  <!-- <origin xyz="${cam_px} ${cam_py} ${cam_pz}" rpy="${cam_or} ${cam_op} ${cam_oy}" /> -->
+    <!-- </xacro:sensor_r430>                                                               -->
+
+  <!-- kinect -->
+    <xacro:sensor_kinect parent="world">
+    </xacro:sensor_kinect>
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator_chain.gazebo.xacro" />
