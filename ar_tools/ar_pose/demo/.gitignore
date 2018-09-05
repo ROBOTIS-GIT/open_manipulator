@@ -1,8 +1,0 @@
-build/
-bin/
-lib/
-ar_data/
-*~
-Makefile
-*.bag
-*.tar.gz

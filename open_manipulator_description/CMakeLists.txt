@@ -1,16 +1,17 @@
 ################################################################################
-# CMake
+# Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 2.8.3)
 project(open_manipulator_description)
 
 ################################################################################
-# Packages
+# Find catkin packages and libraries for catkin and system dependencies
 ################################################################################
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-)
+find_package(catkin REQUIRED)
+
+################################################################################
+# Setup for python modules and scripts
+################################################################################
 
 ################################################################################
 # Declare ROS messages, services and actions
@@ -21,14 +22,9 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 
 ################################################################################
-# Catkin specific configuration
+# Declare catkin specific configuration to be passed to dependent projects
 ################################################################################
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES open_manipulator_description
-  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
-)
+catkin_package()
 
 ################################################################################
 # Build
@@ -37,13 +33,12 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(open_manipulator_chain_rviz_pub src/open_manipulator_chain_rviz_pub.cpp)
-add_dependencies(open_manipulator_chain_rviz_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(open_manipulator_chain_rviz_pub ${catkin_LIBRARIES})
-
 ################################################################################
 # Install
 ################################################################################
+install(DIRECTORY launch meshes rviz urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 ################################################################################
 # Test

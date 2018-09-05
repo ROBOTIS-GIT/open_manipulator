@@ -1,20 +1,35 @@
 <launch>
-  <node name="open_manipulator_dynamixel_controller" pkg="open_manipulator_dynamixel_ctrl" type="dynamixel_controller" required="true" output="screen">
-    <rosparam>
-      device_name: "/dev/ttyUSB0"
-      baud_rate: 3000000
-      motor_model: "XM430_W350_R"
-      protocol_version: 2.0
-      joint1:
-        id: 1
-      joint2:
-        id: 2
-      joint3:
-        id: 3
-      joint4:
-        id: 4
-      gripper:
-        id: 5
-    </rosparam>
+  <arg name="use_robot_name"         default="open_manipulator"/>
+  <arg name="device_name"            default="/dev/ttyUSB0"/>
+  <arg name="baud_rate"              default="1000000"/>
+  <arg name="protocol_version"       default="2.0"/>
+
+  <arg name="joint_controller"       default="position_mode"/>
+
+  <arg name="joint1_id"              default="1"/>
+  <arg name="joint2_id"              default="2"/>
+  <arg name="joint3_id"              default="3"/>
+  <arg name="joint4_id"              default="4"/>
+
+  <arg name="gripper_controller"     default="current_mode"/>
+
+  <arg name="gripper_id"             default="5"/>
+
+  <node pkg="open_manipulator_dynamixel_ctrl" type="dynamixel_controller" name="dynamixel_controller" required="true" output="screen">
+    <param name="robot_name"           value="$(arg use_robot_name)"/>
+    <param name="device_name"          value="$(arg device_name)"/>
+    <param name="baud_rate"            value="$(arg baud_rate)"/>
+    <param name="protocol_version"     value="$(arg protocol_version)"/>
+
+    <param name="joint_controller"     value="$(arg joint_controller)"/>
+
+    <param name="joint1_id"            value="$(arg joint1_id)"/>
+    <param name="joint2_id"            value="$(arg joint2_id)"/>
+    <param name="joint3_id"            value="$(arg joint3_id)"/>
+    <param name="joint4_id"            value="$(arg joint4_id)"/>
+
+    <param name="gripper_controller"   value="$(arg gripper_controller)"/>
+
+    <param name="gripper_id"           value="$(arg gripper_id)"/>
   </node>
 </launch>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>open_manipulator</name>
+  <version>1.0.0</version>
+  <description>
+    ROS-enabled OpenManipulator is a full open robot platform consisting of OpenSoftware​, OpenHardware and OpenCR(Embedded board)​.
+    The OpenManipulator is allowed users to control it more easily by linking with the MoveIt! package. Moreover it has full hardware compatibility with TurtleBot3​. 
+    Even if you do not have a real robot, you can control the robot in the Gazebo simulator​.
+  </description>
+  <license>Apache 2.0</license>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <url type="website">http://wiki.ros.org/open_manipulator</url>
+  <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>open_manipulator_description</exec_depend>
+  <exec_depend>open_manipulator_dynamixel_ctrl</exec_depend>
+  <exec_depend>open_manipulator_moveit</exec_depend>
+  <exec_depend>open_manipulator_position_ctrl</exec_depend>
+  <export><metapackage/></export>
+</package>

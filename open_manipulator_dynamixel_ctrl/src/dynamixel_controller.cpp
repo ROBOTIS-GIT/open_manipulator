@@ -14,434 +14,270 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Taehoon Lim (Darby) */
+/* Authors: Taehun Lim (Darby) */
 
 #include "open_manipulator_dynamixel_ctrl/dynamixel_controller.h"
 
-using namespace open_manipulator_dynamixel_controller;
+using namespace dynamixel;
+
+double mapd(double x, double in_min, double in_max, double out_min, double out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 DynamixelController::DynamixelController()
-    :nh_priv_("~"),
-     is_debug_(false),
-     device_name_(""),
-     baud_rate_(0),
-     motor_model_(""),
-     protocol_version_(0.0)
+    :node_handle_(""),
+     priv_node_handle_("~")
 {
-  // Init parameter
-  nh_.param("is_debug", is_debug_, is_debug_);
-  nh_priv_.getParam("device_name", device_name_);
-  nh_priv_.getParam("baud_rate", baud_rate_);
-  nh_priv_.getParam("motor_model", motor_model_);
-  nh_priv_.getParam("protocol_version", protocol_version_);
+  robot_name_   = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
 
-  // Initialize PortHandler instance
-  // Set the port path
-  // Get methods and members of PortHandlerLinux
-  portHandler_ = dynamixel::PortHandler::getPortHandler(device_name_.c_str());
+  std::string device_name   = priv_node_handle_.param<std::string>("device_name", "/dev/ttyUSB0");
+  uint32_t dxl_baud_rate    = priv_node_handle_.param<int>("baud_rate", 1000000);
+  protocol_version_         = priv_node_handle_.param<float>("protocol_version", 2.0);
 
-  // Initialize PacketHandler instance
-  // Set the protocol version
-  // Get methods and members of Protocol 2.0 PacketHandler
-  packetHandler_ = dynamixel::PacketHandler::getPacketHandler(protocol_version_);
+  joint_mode_   = priv_node_handle_.param<std::string>("joint_controller", "position_mode");
 
-  // ROS Publisher
-  present_joint_position_pub_   = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/present_joint_states", 10);
-  present_gripper_position_pub_ = nh_.advertise<sensor_msgs::JointState>("/robotis/dynamixel/present_gripper_states", 10);
+  joint_id_.push_back(priv_node_handle_.param<int>("joint1_id", 1));
+  joint_id_.push_back(priv_node_handle_.param<int>("joint2_id", 2));
+  joint_id_.push_back(priv_node_handle_.param<int>("joint3_id", 3));
+  joint_id_.push_back(priv_node_handle_.param<int>("joint4_id", 4));
 
-  // ROS Subscriber
-  goal_joint_position_sub_   = nh_.subscribe("/robotis/dynamixel/goal_joint_states", 10,
-                                          &DynamixelController::goalJointPosition, this);
-  goal_gripper_position_sub_ = nh_.subscribe("/robotis/dynamixel/goal_gripper_states", 10,
-                                          &DynamixelController::goalGripperPosition, this);
+  gripper_mode_ = priv_node_handle_.param<std::string>("gripper_controller", "current_mode");
 
-  // Open port
-  if (portHandler_->openPort())
-  {
-    ROS_INFO("Succeeded to open the port(%s)!", device_name_.c_str());
-  }
-  else
-  {
-    ROS_ERROR("Failed to open the port!");
-    ROS_ASSERT(shutdownDynamixelController());
-  }
+  gripper_id_.push_back(priv_node_handle_.param<int>("gripper_id", 5));
 
-  // Set port baudrate
-  if (portHandler_->setBaudRate(baud_rate_))
-  {
-    ROS_INFO("Succeeded to change the baudrate(%d)\n!", portHandler_->getBaudRate());
-  }
-  else
-  {
-    ROS_ERROR("Failed to change the baudrate!");
-    ROS_ASSERT(shutdownDynamixelController());
-  }
+  joint_controller_   = new DynamixelWorkbench;
+  gripper_controller_ = new DynamixelWorkbench;
 
-  // Init target name
-  ROS_ASSERT(initDynamixelController());
+  joint_controller_->begin(device_name.c_str(), dxl_baud_rate);
+  gripper_controller_->begin(device_name.c_str(), dxl_baud_rate);
+
+  getDynamixelInst();
+
+  initPublisher();
+  initSubscriber();
+
+  ROS_INFO("open_manipulator_dynamixel_controller : Init OK!");
 }
 
 DynamixelController::~DynamixelController()
 {
-  ROS_ASSERT(shutdownDynamixelController());
-}
+  for (uint8_t num = 0; num < JOINT_NUM; num++)
+    joint_controller_->itemWrite(joint_id_.at(num), "Torque_Enable", false);
 
-bool DynamixelController::initDynamixelController(void)
-{
-  // Init dynamixel
-  nh_priv_.getParam("joint1/id", joint_id_[0]);
-  initMotor(motor_model_, joint_id_[0], protocol_version_);
+  gripper_controller_->itemWrite(gripper_id_.at(0), "Torque_Enable", false);
 
-  nh_priv_.getParam("joint2/id", joint_id_[1]);
-  initMotor(motor_model_, joint_id_[1], protocol_version_);
-
-  nh_priv_.getParam("joint3/id", joint_id_[2]);
-  initMotor(motor_model_, joint_id_[2], protocol_version_);
-
-  nh_priv_.getParam("joint4/id", joint_id_[3]);
-  initMotor(motor_model_, joint_id_[3], protocol_version_);
-
-  nh_priv_.getParam("gripper/id", gripper_id_);
-  initMotor(motor_model_, gripper_id_, protocol_version_);
-
-  // Init SyncWrite
-  dynamixel_[joint_id_[0]]->item_ = dynamixel_[joint_id_[0]]->ctrl_table_["torque_enable"];
-  jointTorqueSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
-                                                        packetHandler_,
-                                                        dynamixel_[joint_id_[0]]->item_->address,
-                                                        dynamixel_[joint_id_[0]]->item_->data_length);
-
-  dynamixel_[joint_id_[0]]->item_ = dynamixel_[joint_id_[0]]->ctrl_table_["goal_position"];
-  jointGoalPositionSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
-                                                          packetHandler_,
-                                                          dynamixel_[joint_id_[0]]->item_->address,
-                                                          dynamixel_[joint_id_[0]]->item_->data_length);
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["torque_enable"];
-  gripperTorqueSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
-                                                          packetHandler_,
-                                                          dynamixel_[gripper_id_]->item_->address,
-                                                          dynamixel_[gripper_id_]->item_->data_length);
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["goal_position"];
-  gripperGoalPositionSyncWrite_ = new dynamixel::GroupSyncWrite(portHandler_,
-                                                            packetHandler_,
-                                                            dynamixel_[gripper_id_]->item_->address,
-                                                            dynamixel_[gripper_id_]->item_->data_length);
-
-  // Init SyncRead
-  dynamixel_[joint_id_[0]]->item_ = dynamixel_[joint_id_[0]]->ctrl_table_["present_position"];
-  jointPresentPositionSyncRead_ = new dynamixel::GroupSyncRead(portHandler_,
-                                                        packetHandler_,
-                                                        dynamixel_[joint_id_[0]]->item_->address,
-                                                        dynamixel_[joint_id_[0]]->item_->data_length);
-
-  for (int joint_index = joint_id_[0]; joint_index <= MAX_JOINT_NUM; joint_index++)
-  {
-    if (jointPresentPositionSyncRead_->addParam(joint_index) != true)
-    {
-      fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", joint_index);
-      return 0;
-    }
-  }
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["present_position"];
-  gripperPresentPositionSyncRead_ = new dynamixel::GroupSyncRead(portHandler_,
-                                                          packetHandler_,
-                                                          dynamixel_[gripper_id_]->item_->address,
-                                                          dynamixel_[gripper_id_]->item_->data_length);
-
-  if (gripperPresentPositionSyncRead_->addParam(gripper_id_) != true)
-  {
-    fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", gripper_id_);
-    return 0;
-  }
-
-  ROS_INFO("open_manipulator_dynamixel_controller : Init OK!");
-  return true;
-}
-
-bool DynamixelController::shutdownDynamixelController(void)
-{
-  //jointTorque(false);
-  //gripperTorque(false);
-  portHandler_->closePort();
   ros::shutdown();
-  return true;
 }
 
-bool DynamixelController::initMotor(std::string motor_model, uint8_t motor_id, float protocol_version)
+void DynamixelController::initPublisher()
 {
-  dynamixel_tool::DynamixelTool *dynamixel_motor = new dynamixel_tool::DynamixelTool(motor_id, motor_model, protocol_version);
-  dynamixel_[motor_id] = dynamixel_motor;
+  joint_states_pub_ = node_handle_.advertise<sensor_msgs::JointState>(robot_name_ + "/joint_states", 10);
 }
 
-bool DynamixelController::moveJoints(int64_t joint_position[MAX_JOINT_NUM])
+void DynamixelController::initSubscriber()
 {
-  bool dynamixel_addparam_result;
-  int8_t dynamixel_comm_result;
+  goal_joint_states_sub_    = node_handle_.subscribe(robot_name_ + "/goal_joint_position", 10, &DynamixelController::goalJointPositionCallback, this);
+  goal_gripper_states_sub_  = node_handle_.subscribe(robot_name_ + "/goal_gripper_position", 10, &DynamixelController::goalGripperPositionCallback, this);
+}
 
-  int8_t index = 0;
-
-  while(index < MAX_JOINT_NUM)
+void DynamixelController::getDynamixelInst()
+{
+  uint16_t get_model_number;
+  for (uint8_t index = 0; index < JOINT_NUM; index++)
   {
-    dynamixel_addparam_result = jointGoalPositionSyncWrite_->addParam(joint_id_[index], (uint8_t*)&joint_position[index]);
 
-    if (dynamixel_addparam_result != true)
+    if (joint_controller_->ping(joint_id_.at(index), &get_model_number) != true)
     {
-      ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", joint_id_[index]);
-      return false;
+      ROS_ERROR("Not found Joints, Please check id and baud rate");
+
+      ros::shutdown();
+      return;
     }
-
-    index++;
   }
 
-  dynamixel_comm_result = jointGoalPositionSyncWrite_->txPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
+  if (gripper_controller_->ping(gripper_id_.at(0), &get_model_number) != true)
   {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return false;
+    ROS_ERROR("Not found Grippers, Please check id and baud rate");
+
+    ros::shutdown();
+    return;
   }
 
-  jointGoalPositionSyncWrite_->clearParam();
-  return true;
+  setOperatingMode();
+  setSyncFunction();
 }
 
-bool DynamixelController::moveGripper(int64_t gripper_position)
+void DynamixelController::setOperatingMode()
 {
-  bool dynamixel_addparam_result;
-  int8_t dynamixel_comm_result;
-
-
-  dynamixel_addparam_result = gripperGoalPositionSyncWrite_->addParam(gripper_id_, (uint8_t*)&gripper_position);
-
-  if (dynamixel_addparam_result != true)
+  if (joint_mode_ == "position_mode")
   {
-    ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", gripper_id_);
-    return false;
+    for (uint8_t num = 0; num < JOINT_NUM; num++)
+      joint_controller_->jointMode(joint_id_.at(num));
   }
-
-  dynamixel_comm_result = gripperGoalPositionSyncWrite_->txPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
+  else if (joint_mode_ == "current_mode")
   {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return false;
-  }
-
-  gripperGoalPositionSyncWrite_->clearParam();
-  return true;
-}
-
-bool DynamixelController::jointTorque(bool onoff)
-{
-  bool dynamixel_addparam_result;
-  int8_t dynamixel_comm_result;
-
-  int8_t index = 0;
-
-  while (index < MAX_JOINT_NUM)
-  {
-    dynamixel_addparam_result = jointTorqueSyncWrite_->addParam(joint_id_[index], (uint8_t*)&onoff);
-
-    if (dynamixel_addparam_result != true)
-    {
-      ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", joint_id_[index]);
-      return 0;
-    }
-
-    index++;
-  }
-
-  dynamixel_comm_result = jointTorqueSyncWrite_->txPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
-  {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return 0;
-  }
-
-  jointTorqueSyncWrite_->clearParam();
-  return true;
-}
-
-bool DynamixelController::gripperTorque(bool onoff)
-{
-  bool dynamixel_addparam_result;
-  int8_t dynamixel_comm_result;
-
-  dynamixel_addparam_result = gripperTorqueSyncWrite_->addParam(gripper_id_, (uint8_t*)&onoff);
-
-  if (dynamixel_addparam_result != true)
-  {
-    ROS_ERROR("[ID:%03d] groupSyncWrite addparam failed", gripper_id_);
-    return 0;
-  }
-
-  dynamixel_comm_result = gripperTorqueSyncWrite_->txPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
-  {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return 0;
-  }
-
-  gripperTorqueSyncWrite_->clearParam();
-  return true;
-}
-
-bool DynamixelController::jointPresentPosition(void)
-{
-  bool dxl_getdata_result;
-  int8_t dynamixel_comm_result;
-
-  sensor_msgs::JointState joint_position;
-  int32_t present_joint_position;
-
-  dynamixel_comm_result = jointPresentPositionSyncRead_->txRxPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
-  {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return 0;
-  }
-
-  for (int joint_index = joint_id_[0]; joint_index <= MAX_JOINT_NUM; joint_index++)
-  {
-    dynamixel_[joint_index]->item_ = dynamixel_[joint_index]->ctrl_table_["present_position"];
-    dxl_getdata_result = jointPresentPositionSyncRead_->isAvailable(joint_index, dynamixel_[joint_index]->item_->address, dynamixel_[joint_index]->item_->data_length);
-    if (dxl_getdata_result != true)
-    {
-      fprintf(stderr, "[ID:%03d] groupSyncRead getdata failed\n", joint_index);
-      return 0;
-    }
-
-    std::stringstream joint_num;
-    joint_num << "joint" << joint_index;
-    present_joint_position = jointPresentPositionSyncRead_->getData(joint_index,
-                                                             dynamixel_[joint_index]->item_->address,
-                                                             dynamixel_[joint_index]->item_->data_length);
-
-    joint_position.name.push_back(joint_num.str());
-    joint_position.position.push_back(convertValue2Radian(present_joint_position));
-  }
-
-  present_joint_position_pub_.publish(joint_position);
-}
-
-bool DynamixelController::gripperPresentPosition(void)
-{
-  bool dxl_getdata_result;
-  int8_t dynamixel_comm_result;
-
-  sensor_msgs::JointState gripper_position;
-  int32_t gripper_joint_position;
-
-  dynamixel_comm_result = gripperPresentPositionSyncRead_->txRxPacket();
-  if (dynamixel_comm_result != COMM_SUCCESS)
-  {
-    packetHandler_->printTxRxResult(dynamixel_comm_result);
-    return 0;
-  }
-
-  dynamixel_[gripper_id_]->item_ = dynamixel_[gripper_id_]->ctrl_table_["present_position"];
-  dxl_getdata_result = gripperPresentPositionSyncRead_->isAvailable(gripper_id_, dynamixel_[gripper_id_]->item_->address, dynamixel_[gripper_id_]->item_->data_length);
-  if (dxl_getdata_result != true)
-  {
-    fprintf(stderr, "[ID:%03d] groupSyncRead getdata failed\n", gripper_id_);
-    return 0;
-  }
-
-  gripper_joint_position = gripperPresentPositionSyncRead_->getData(gripper_id_, dynamixel_[gripper_id_]->item_->address, dynamixel_[gripper_id_]->item_->data_length);
-
-  gripper_position.name.push_back("grip_joint");
-  gripper_position.position.push_back(convertValue2Radian(gripper_joint_position));
-
-  present_gripper_position_pub_.publish(gripper_position);
-}
-
-bool DynamixelController::subscribePosition(void)
-{
-  // Read & Publish Dynamixel position
-  jointPresentPosition();
-  gripperPresentPosition();
-}
-
-void DynamixelController::goalJointPosition(const sensor_msgs::JointState::ConstPtr &msg)
-{
-  int64_t goal_joint_position[MAX_JOINT_NUM] = {0,};
-
-  for (int joint_num = joint_id_[0]; joint_num <= MAX_JOINT_NUM; joint_num++)
-  {
-    goal_joint_position[joint_num-1] = convertRadian2Value(msg->position.at(joint_num-1));
-
-    ROS_INFO("goal_joint_position[%d] : %lf", joint_num-1, msg->position.at(joint_num-1));
-  }
-
-  moveJoints(goal_joint_position);
-}
-
-void DynamixelController::goalGripperPosition(const sensor_msgs::JointState::ConstPtr &msg)
-{
-  int64_t goal_gripper_position = 0;
-
-  goal_gripper_position = convertRadian2Value(msg->position.at(0));
-
-  moveGripper(goal_gripper_position);
-}
-
-int64_t DynamixelController::convertRadian2Value(double radian)
-{
-  int64_t value = 0;
-  if (radian > 0)
-  {
-    if (dynamixel_[joint_id_[0]]->value_of_max_radian_position_ <= dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
-      return dynamixel_[joint_id_[0]]->value_of_max_radian_position_;
-
-    value = (radian * (dynamixel_[joint_id_[0]]->value_of_max_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) / dynamixel_[joint_id_[0]]->max_radian_)
-                + dynamixel_[joint_id_[0]]->value_of_0_radian_position_;
-  }
-  else if (radian < 0)
-  {
-    if (dynamixel_[joint_id_[0]]->value_of_min_radian_position_ >= dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
-      return dynamixel_[joint_id_[0]]->value_of_min_radian_position_;
-
-    value = (radian * (dynamixel_[joint_id_[0]]->value_of_min_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) / dynamixel_[joint_id_[0]]->min_radian_)
-                + dynamixel_[joint_id_[0]]->value_of_0_radian_position_;
+    for (uint8_t num = 0; num < JOINT_NUM; num++)
+      joint_controller_->currentMode(joint_id_.at(num));
   }
   else
-    value = dynamixel_[joint_id_[0]]->value_of_0_radian_position_;
+  {
+    for (uint8_t num = 0; num < JOINT_NUM; num++)
+      joint_controller_->jointMode(joint_id_.at(num));
+  }
 
-  if (value > dynamixel_[joint_id_[0]]->value_of_max_radian_position_)
-    return dynamixel_[joint_id_[0]]->value_of_max_radian_position_;
-  else if (value < dynamixel_[joint_id_[0]]->value_of_min_radian_position_)
-    return dynamixel_[joint_id_[0]]->value_of_min_radian_position_;
-
-  return value;
+  if (gripper_mode_ == "position_mode")
+    gripper_controller_->jointMode(gripper_id_.at(0));
+  else if (gripper_mode_ == "current_mode" && protocol_version_ == 2.0)
+    gripper_controller_->currentMode(gripper_id_.at(0), 30);
+  else
+    gripper_controller_->jointMode(gripper_id_.at(0));
 }
 
-double DynamixelController::convertValue2Radian(int32_t value)
+void DynamixelController::setSyncFunction()
 {
-  double radian = 0.0;
-  if (value > dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
+  joint_controller_->addSyncWrite("Goal_Position");
+
+  if (protocol_version_ == 2.0)
   {
-    if (dynamixel_[joint_id_[0]]->max_radian_ <= 0)
-      return dynamixel_[joint_id_[0]]->max_radian_;
-
-    radian = (double) (value - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) * dynamixel_[joint_id_[0]]->max_radian_
-               / (double) (dynamixel_[joint_id_[0]]->value_of_max_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_);
+    joint_controller_->addSyncRead("Present_Position");
+    joint_controller_->addSyncRead("Present_Velocity");
   }
-  else if (value < dynamixel_[joint_id_[0]]->value_of_0_radian_position_)
+}
+
+void DynamixelController::readPosition(double *value)
+{
+  int32_t* get_joint_present_position = NULL;
+
+  if (protocol_version_ == 2.0)
+    get_joint_present_position = joint_controller_->syncRead("Present_Position");
+  else if (protocol_version_ == 1.0)
   {
-    if (dynamixel_[joint_id_[0]]->min_radian_ >= 0)
-      return dynamixel_[joint_id_[0]]->min_radian_;
-
-    radian = (double) (value - dynamixel_[joint_id_[0]]->value_of_0_radian_position_) * dynamixel_[joint_id_[0]]->min_radian_
-               / (double) (dynamixel_[joint_id_[0]]->value_of_min_radian_position_ - dynamixel_[joint_id_[0]]->value_of_0_radian_position_);
+    for (int index = 0; index < JOINT_NUM; index++)
+      get_joint_present_position[index] = joint_controller_->itemRead(joint_id_.at(index), "Present_Position");
   }
 
-  if (radian > dynamixel_[joint_id_[0]]->max_radian_)
-    return dynamixel_[joint_id_[0]]->max_radian_;
-  else if (radian < dynamixel_[joint_id_[0]]->min_radian_)
-    return dynamixel_[joint_id_[0]]->min_radian_;
+  int32_t get_gripper_present_position = gripper_controller_->itemRead(gripper_id_.at(0), "Present_Position");
+  int32_t present_position[DXL_NUM] = {0, };
 
-  return radian;
+  for (int index = 0; index < JOINT_NUM; index++)
+    present_position[index] = get_joint_present_position[index];
+
+  present_position[DXL_NUM-1] = get_gripper_present_position;
+
+  for (int index = 0; index < JOINT_NUM; index++)
+  {
+    value[index] = joint_controller_->convertValue2Radian(joint_id_.at(index), present_position[index]);
+  }
+
+  value[DXL_NUM-1] = gripper_controller_->convertValue2Radian(gripper_id_.at(0), present_position[DXL_NUM-1]);
+}
+
+void DynamixelController::readVelocity(double *value)
+{
+  int32_t* get_joint_present_velocity = NULL;
+
+  if (protocol_version_ == 2.0)
+    get_joint_present_velocity = joint_controller_->syncRead("Present_Velocity");
+  else if (protocol_version_ == 1.0)
+  {
+    for (int index = 0; index < JOINT_NUM; index++)
+      get_joint_present_velocity[index] = joint_controller_->itemRead(joint_id_.at(index), "Present_Velocity");
+  }
+
+  int32_t get_gripper_present_velocity = gripper_controller_->itemRead(gripper_id_.at(0), "Present_Velocity");
+  int32_t present_velocity[DXL_NUM] = {0, };
+
+  for (int index = 0; index < JOINT_NUM; index++)
+    present_velocity[index] = get_joint_present_velocity[index];
+
+  present_velocity[DXL_NUM-1] = get_gripper_present_velocity;
+
+  for (int index = 0; index < JOINT_NUM; index++)
+  {
+    value[index] = joint_controller_->convertValue2Velocity(joint_id_.at(index), present_velocity[index]);
+  }
+
+  value[DXL_NUM-1] = gripper_controller_->convertValue2Velocity(gripper_id_.at(0), present_velocity[DXL_NUM-1]);
+}
+
+void DynamixelController::updateJointStates()
+{
+  sensor_msgs::JointState joint_state;
+
+  float joint_states_pos[JOINT_NUM + PALM_NUM] = {0.0, };
+  float joint_states_vel[JOINT_NUM + PALM_NUM] = {0.0, };
+  float joint_states_eff[JOINT_NUM + PALM_NUM] = {0.0, };
+
+  double get_joint_position[JOINT_NUM + GRIPPER_NUM] = {0.0, };
+  double get_joint_velocity[JOINT_NUM + GRIPPER_NUM] = {0.0, };
+
+  readPosition(get_joint_position);
+  readVelocity(get_joint_velocity);
+
+  joint_state.header.frame_id = "world";
+  joint_state.header.stamp    = ros::Time::now();
+
+  joint_state.name.push_back("joint1");
+  joint_state.name.push_back("joint2");
+  joint_state.name.push_back("joint3");
+  joint_state.name.push_back("joint4");
+  joint_state.name.push_back("grip_joint");
+  joint_state.name.push_back("grip_joint_sub");
+
+  joint_states_pos[0] = get_joint_position[0];
+  joint_states_pos[1] = get_joint_position[1];
+  joint_states_pos[2] = get_joint_position[2];
+  joint_states_pos[3] = get_joint_position[3];
+  joint_states_pos[4] = mapd(get_joint_position[4], 0.90, -0.80, -0.01, 0.01);
+  joint_states_pos[5] = joint_states_pos[4];
+
+  joint_states_vel[0] = get_joint_velocity[0];
+  joint_states_vel[1] = get_joint_velocity[1];
+  joint_states_vel[2] = get_joint_velocity[2];
+  joint_states_vel[3] = get_joint_velocity[3];
+  joint_states_vel[4] = get_joint_velocity[4];
+  joint_states_vel[5] = joint_states_vel[4];
+
+  for (int index = 0; index < JOINT_NUM + PALM_NUM; index++)
+  {
+    joint_state.position.push_back(joint_states_pos[index]);
+    joint_state.velocity.push_back(joint_states_vel[index]);
+    joint_state.effort.push_back(joint_states_eff[index]);
+  }
+
+  joint_states_pub_.publish(joint_state);
+}
+
+void DynamixelController::goalJointPositionCallback(const sensor_msgs::JointState::ConstPtr &msg)
+{
+  double goal_joint_position[JOINT_NUM] = {0.0, 0.0, 0.0, 0.0};
+
+  for (int index = 0; index < JOINT_NUM; index++)
+    goal_joint_position[index] = msg->position.at(index);
+
+  int32_t goal_position[JOINT_NUM] = {0, };
+
+  for (int index = 0; index < JOINT_NUM; index++)
+  {
+    goal_position[index] = joint_controller_->convertRadian2Value(joint_id_.at(index), goal_joint_position[index]);
+  }
+
+  joint_controller_->syncWrite("Goal_Position", goal_position);
+}
+
+void DynamixelController::goalGripperPositionCallback(const sensor_msgs::JointState::ConstPtr &msg)
+{
+  double goal_gripper_position = msg->position[0];
+  goal_gripper_position = mapd(goal_gripper_position, -0.01, 0.01, 0.90, -0.80);
+
+  gripper_controller_->itemWrite(gripper_id_.at(0), "Goal_Position", gripper_controller_->convertRadian2Value(gripper_id_.at(0), goal_gripper_position));
+}
+
+bool DynamixelController::control_loop()
+{
+  // Read & Publish Dynamixel position
+  updateJointStates();
 }
 
 int main(int argc, char **argv)
@@ -451,12 +287,9 @@ int main(int argc, char **argv)
   DynamixelController dynamixel_controller;
   ros::Rate loop_rate(ITERATION_FREQUENCY);
 
-  dynamixel_controller.jointTorque(true);
-  dynamixel_controller.gripperTorque(true);
-
   while (ros::ok())
   {
-    dynamixel_controller.subscribePosition();
+    dynamixel_controller.control_loop();
     ros::spinOnce();
     loop_rate.sleep();
   }
