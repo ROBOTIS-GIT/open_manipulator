@@ -311,7 +311,7 @@
     <parent link="link5"/>
     <child link="grip_link"/>
     <origin xyz="0.0536 0.0 0.0" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
+    <axis xyz="0 1 0"/>
     <limit velocity="3.5" effort="100" lower="-0.015" upper="0.0105" />
   </joint>
 
@@ -366,7 +366,7 @@
     <parent link="link5"/>
     <child link="grip_link_sub"/>
     <origin xyz="0.0536 0 0" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
     <limit velocity="3.5" effort="100" lower="-0.015" upper="0.0105" />
   </joint>
 
