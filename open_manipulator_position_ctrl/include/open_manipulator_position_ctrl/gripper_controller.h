@@ -46,8 +46,8 @@ namespace open_manipulator
 
 #define ITERATION_FREQUENCY 25 //Hz
 
-#define GRIP_ON   0.1    // mm
-#define GRIP_OFF -0.1
+#define GRIP_ON   0.008    // mm
+#define GRIP_OFF -0.008
 #define NEUTRAL   0.0
 
 typedef struct
