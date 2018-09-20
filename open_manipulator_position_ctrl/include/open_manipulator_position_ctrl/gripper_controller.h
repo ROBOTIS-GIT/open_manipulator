@@ -44,7 +44,7 @@ namespace open_manipulator
 #define LEFT_PALM   0
 #define RIGHT_PALM  1
 
-#define ITERATION_FREQUENCY 25 //Hz
+#define ITERATION_FREQUENCY 30 //Hz
 
 #define GRIP_ON   0.008    // mm
 #define GRIP_OFF -0.008

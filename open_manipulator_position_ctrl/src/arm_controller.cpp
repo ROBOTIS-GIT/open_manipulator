@@ -141,6 +141,8 @@ bool ArmController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointP
   }
 
   spinner.stop();
+
+  return true;
 }
 
 bool ArmController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
@@ -159,6 +161,7 @@ bool ArmController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinem
   res.kinematics_pose.pose       = current_pose.pose;
 
   spinner.stop();
+  return true;
 }
 
 bool ArmController::setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
@@ -166,6 +169,7 @@ bool ArmController::setJointPositionMsgCallback(open_manipulator_msgs::SetJointP
 {
   open_manipulator_msgs::JointPosition msg = req.joint_position;
   res.isPlanned = calcPlannedPath(msg);
+  return true;
 }
 
 bool ArmController::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
@@ -173,6 +177,7 @@ bool ArmController::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinem
 {
   open_manipulator_msgs::KinematicsPose msg = req.kinematics_pose;
   res.isPlanned = calcPlannedPath(msg);
+  return true;
 }
 
 bool ArmController::calcPlannedPath(open_manipulator_msgs::KinematicsPose msg)
@@ -389,7 +394,7 @@ void ArmController::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTraj
       }
     }
 
-    all_time_steps_ = planned_path_info_.waypoints - 1;
+    all_time_steps_ = planned_path_info_.waypoints;
 
     ros::WallDuration sleep_time(0.5);
     sleep_time.sleep();
@@ -403,6 +408,7 @@ void ArmController::process(void)
   static uint16_t step_cnt = 0;
   std_msgs::Float64 gazebo_goal_joint_position;
   sensor_msgs::JointState goal_joint_position;
+  goal_joint_position.header.stamp = ros::Time::now();
   open_manipulator_msgs::State state;
 
   if (is_moving_)
@@ -413,6 +419,7 @@ void ArmController::process(void)
       {
         gazebo_goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, num);
         gazebo_goal_joint_position_pub_[num].publish(gazebo_goal_joint_position);
+        step_cnt++;
       }
     }
     else
@@ -423,6 +430,7 @@ void ArmController::process(void)
       }
 
       goal_joint_position_pub_.publish(goal_joint_position);
+      step_cnt++;
     }
 
     if (step_cnt >= all_time_steps_)
@@ -431,10 +439,6 @@ void ArmController::process(void)
       step_cnt   = 0;
 
       ROS_INFO("Complete Execution");
-    }
-    else
-    {
-      step_cnt++;
     }
 
     state.robot = state.IS_MOVING;
@@ -501,7 +505,7 @@ void ArmController::demo(void)
       msg.position.push_back(0.0);
       msg.position.push_back(0.28);
       msg.position.push_back(0.81);
-      msg.position.push_back(-1.20);
+      msg.position.push_back(-1.00);
       wait_time_ = 2;
       gettimeofday(&start, NULL);
       calcPlannedPath(msg);
@@ -571,7 +575,7 @@ void ArmController::demo(void)
       msg.position.push_back(0.0);
       msg.position.push_back(0.28);
       msg.position.push_back(0.81);
-      msg.position.push_back(-1.20);
+      msg.position.push_back(-1.00);
       wait_time_ = 3;
       gettimeofday(&start, NULL);
       calcPlannedPath(msg);

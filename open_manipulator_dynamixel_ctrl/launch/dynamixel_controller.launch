@@ -1,6 +1,6 @@
 <launch>
   <arg name="use_robot_name"         default="open_manipulator"/>
-  <arg name="device_name"            default="/dev/ttyACM0"/>
+  <arg name="device_name"            default="/dev/ttyUSB0"/>
   <arg name="baud_rate"              default="1000000"/>
   <arg name="protocol_version"       default="2.0"/>
 

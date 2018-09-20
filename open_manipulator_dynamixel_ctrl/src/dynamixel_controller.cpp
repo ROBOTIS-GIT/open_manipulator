@@ -213,7 +213,7 @@ void DynamixelController::updateJointStates()
   double get_joint_velocity[JOINT_NUM + GRIPPER_NUM] = {0.0, };
 
   readPosition(get_joint_position);
-  readVelocity(get_joint_velocity);
+  // readVelocity(get_joint_velocity);
 
   joint_state.header.frame_id = "world";
   joint_state.header.stamp    = ros::Time::now();
