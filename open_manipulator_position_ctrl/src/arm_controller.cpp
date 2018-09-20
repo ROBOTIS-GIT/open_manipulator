@@ -468,8 +468,8 @@ void ArmController::demo(void)
     msg.joint_name.push_back("joint2");
     msg.joint_name.push_back("joint3");
     msg.joint_name.push_back("joint4");
-    msg.max_velocity_scaling_factor = 1;
-    msg.max_accelerations_scaling_factor = 1;
+    msg.max_velocity_scaling_factor = 0.1;
+    msg.max_accelerations_scaling_factor = 0.1;
 
     demo_count_ ++;
     if(demo_count_ > 13)
