@@ -154,8 +154,8 @@ void GripperController::gripperOnOffMsgCallback(const std_msgs::String::ConstPtr
 {
   open_manipulator_msgs::JointPosition joint_msg;
 
-  joint_msg.max_velocity_scaling_factor = 0.3;
-  joint_msg.max_accelerations_scaling_factor = 0.01;
+  joint_msg.max_velocity_scaling_factor = 5.0;
+  joint_msg.max_accelerations_scaling_factor = 2.0;
 
   if (msg->data == "grip_on")
   {

@@ -129,7 +129,7 @@ void DynamixelController::setOperatingMode()
   if (gripper_mode_ == "position_mode")
     gripper_controller_->jointMode(gripper_id_.at(0));
   else if (gripper_mode_ == "current_mode" && protocol_version_ == 2.0)
-    gripper_controller_->currentMode(gripper_id_.at(0), 30);
+    gripper_controller_->currentMode(gripper_id_.at(0), 50);
   else
     gripper_controller_->jointMode(gripper_id_.at(0));
 }

@@ -20,7 +20,7 @@
   <param name="request_adapters" value="$(arg planning_adapters)" />
   <param name="start_state_max_bounds_error" value="$(arg start_state_max_bounds_error)" />
 
-  <param name="sample_duration" value="0.04" />
+  <param name="sample_duration" value="0.010" />
 
   <rosparam command="load" file="$(find open_manipulator_moveit)/config/ompl_planning.yaml"/>
   <rosparam command="load" file="$(find open_manipulator_moveit)/config/smoothing_filter_params.yaml"/>
