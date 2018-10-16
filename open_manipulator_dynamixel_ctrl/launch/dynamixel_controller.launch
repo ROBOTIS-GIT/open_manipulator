@@ -6,14 +6,14 @@
 
   <arg name="joint_controller"       default="position_mode"/>
 
-  <arg name="joint1_id"              default="1"/>
-  <arg name="joint2_id"              default="2"/>
-  <arg name="joint3_id"              default="3"/>
-  <arg name="joint4_id"              default="4"/>
+  <arg name="joint1_id"              default="11"/>
+  <arg name="joint2_id"              default="12"/>
+  <arg name="joint3_id"              default="13"/>
+  <arg name="joint4_id"              default="14"/>
 
   <arg name="gripper_controller"     default="current_mode"/>
 
-  <arg name="gripper_id"             default="5"/>
+  <arg name="gripper_id"             default="15"/>
 
   <node pkg="open_manipulator_dynamixel_ctrl" type="dynamixel_controller" name="dynamixel_controller" required="true" output="screen">
     <param name="robot_name"           value="$(arg use_robot_name)"/>

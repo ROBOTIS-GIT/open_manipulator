@@ -51,7 +51,7 @@
 
 namespace open_manipulator
 {
-#define ITERATION_FREQUENCY 25 //Hz
+#define ITERATION_FREQUENCY 100 //Hz
 #define JOINT_NUM 4
 
 typedef struct

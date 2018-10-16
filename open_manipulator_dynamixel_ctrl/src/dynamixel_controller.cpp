@@ -129,7 +129,7 @@ void DynamixelController::setOperatingMode()
   if (gripper_mode_ == "position_mode")
     gripper_controller_->jointMode(gripper_id_.at(0));
   else if (gripper_mode_ == "current_mode" && protocol_version_ == 2.0)
-    gripper_controller_->currentMode(gripper_id_.at(0), 30);
+    gripper_controller_->currentMode(gripper_id_.at(0), 50);
   else
     gripper_controller_->jointMode(gripper_id_.at(0));
 }
@@ -147,10 +147,16 @@ void DynamixelController::setSyncFunction()
 
 void DynamixelController::readPosition(double *value)
 {
-  int32_t* get_joint_present_position = NULL;
+  int32_t get_joint_present_position[DXL_NUM];
+  int32_t *get_position_ptr = NULL;
 
   if (protocol_version_ == 2.0)
-    get_joint_present_position = joint_controller_->syncRead("Present_Position");
+  {
+    get_position_ptr = joint_controller_->syncRead("Present_Position");
+
+    for (int index = 0; index < JOINT_NUM; index++)
+      get_joint_present_position[index] = get_position_ptr[index];
+  }
   else if (protocol_version_ == 1.0)
   {
     for (int index = 0; index < JOINT_NUM; index++)
@@ -158,27 +164,29 @@ void DynamixelController::readPosition(double *value)
   }
 
   int32_t get_gripper_present_position = gripper_controller_->itemRead(gripper_id_.at(0), "Present_Position");
-  int32_t present_position[DXL_NUM] = {0, };
 
-  for (int index = 0; index < JOINT_NUM; index++)
-    present_position[index] = get_joint_present_position[index];
-
-  present_position[DXL_NUM-1] = get_gripper_present_position;
+  get_joint_present_position[DXL_NUM-1] = get_gripper_present_position;
 
   for (int index = 0; index < JOINT_NUM; index++)
   {
-    value[index] = joint_controller_->convertValue2Radian(joint_id_.at(index), present_position[index]);
+    value[index] = joint_controller_->convertValue2Radian(joint_id_.at(index), get_joint_present_position[index]);
   }
 
-  value[DXL_NUM-1] = gripper_controller_->convertValue2Radian(gripper_id_.at(0), present_position[DXL_NUM-1]);
+  value[DXL_NUM-1] = gripper_controller_->convertValue2Radian(gripper_id_.at(0), get_joint_present_position[DXL_NUM-1]);
 }
 
 void DynamixelController::readVelocity(double *value)
 {
-  int32_t* get_joint_present_velocity = NULL;
+  int32_t get_joint_present_velocity[DXL_NUM];
+  int32_t *get_velocity_ptr = NULL;
 
   if (protocol_version_ == 2.0)
-    get_joint_present_velocity = joint_controller_->syncRead("Present_Velocity");
+  {
+    get_velocity_ptr = joint_controller_->syncRead("Present_Velocity");
+
+    for (int index = 0; index < JOINT_NUM; index++)
+      get_joint_present_velocity[index] = get_velocity_ptr[index];
+  }
   else if (protocol_version_ == 1.0)
   {
     for (int index = 0; index < JOINT_NUM; index++)
@@ -186,19 +194,15 @@ void DynamixelController::readVelocity(double *value)
   }
 
   int32_t get_gripper_present_velocity = gripper_controller_->itemRead(gripper_id_.at(0), "Present_Velocity");
-  int32_t present_velocity[DXL_NUM] = {0, };
 
-  for (int index = 0; index < JOINT_NUM; index++)
-    present_velocity[index] = get_joint_present_velocity[index];
-
-  present_velocity[DXL_NUM-1] = get_gripper_present_velocity;
+  get_joint_present_velocity[DXL_NUM-1] = get_gripper_present_velocity;
 
   for (int index = 0; index < JOINT_NUM; index++)
   {
-    value[index] = joint_controller_->convertValue2Velocity(joint_id_.at(index), present_velocity[index]);
+    value[index] = joint_controller_->convertValue2Velocity(joint_id_.at(index), get_joint_present_velocity[index]);
   }
 
-  value[DXL_NUM-1] = gripper_controller_->convertValue2Velocity(gripper_id_.at(0), present_velocity[DXL_NUM-1]);
+  value[DXL_NUM-1] = gripper_controller_->convertValue2Velocity(gripper_id_.at(0), get_joint_present_velocity[DXL_NUM-1]);
 }
 
 void DynamixelController::updateJointStates()
@@ -213,7 +217,7 @@ void DynamixelController::updateJointStates()
   double get_joint_velocity[JOINT_NUM + GRIPPER_NUM] = {0.0, };
 
   readPosition(get_joint_position);
-  readVelocity(get_joint_velocity);
+  // readVelocity(get_joint_velocity);
 
   joint_state.header.frame_id = "world";
   joint_state.header.stamp    = ros::Time::now();

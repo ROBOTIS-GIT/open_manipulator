@@ -78,7 +78,7 @@ void GripperController::initSubscriber(bool using_gazebo)
   gripper_onoff_sub_ = nh_.subscribe(robot_name_ + "/gripper", 10,
                                      &GripperController::gripperOnOffMsgCallback, this);
 
-  display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 10,
+  display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 100,
                                             &GripperController::displayPlannedPathMsgCallback, this);
 }
 
@@ -92,6 +92,7 @@ bool GripperController::setGripperPositionMsgCallback(open_manipulator_msgs::Set
 {
   open_manipulator_msgs::JointPosition msg = req.joint_position;
   res.isPlanned = calcPlannedPath(msg);
+  return true;
 }
 
 bool GripperController::calcPlannedPath(open_manipulator_msgs::JointPosition msg)
@@ -153,8 +154,8 @@ void GripperController::gripperOnOffMsgCallback(const std_msgs::String::ConstPtr
 {
   open_manipulator_msgs::JointPosition joint_msg;
 
-  joint_msg.max_velocity_scaling_factor = 0.3;
-  joint_msg.max_accelerations_scaling_factor = 0.01;
+  joint_msg.max_velocity_scaling_factor = 5.0;
+  joint_msg.max_accelerations_scaling_factor = 2.0;
 
   if (msg->data == "grip_on")
   {
@@ -224,6 +225,8 @@ void GripperController::process(void)
 
       gazebo_goal_gripper_position.data = planned_path_info_.planned_path_positions(step_cnt, 1);
       gazebo_gripper_position_pub_[RIGHT_PALM].publish(gazebo_goal_gripper_position);
+
+      step_cnt++;
     }
     else
     {
@@ -231,6 +234,8 @@ void GripperController::process(void)
       goal_gripper_position.position.push_back(planned_path_info_.planned_path_positions(step_cnt, 1));
 
       gripper_position_pub_.publish(goal_gripper_position);
+
+      step_cnt++;
     }
 
     if (step_cnt >= all_time_steps_)
@@ -239,10 +244,6 @@ void GripperController::process(void)
       step_cnt   = 0;
 
       ROS_INFO("Complete Execution");
-    }
-    else
-    {
-      step_cnt++;
     }
 
     state.robot = state.IS_MOVING;

@@ -29,7 +29,7 @@
 
 namespace dynamixel
 {
-#define ITERATION_FREQUENCY  (25)
+#define ITERATION_FREQUENCY  (100)
 #define JOINT_NUM   4
 #define GRIPPER_NUM 1
 #define DXL_NUM     5
