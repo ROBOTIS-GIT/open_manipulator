@@ -1,4 +1,4 @@
-<launch>
+﻿<launch>
   <arg name="use_robot_name"         default="open_manipulator"/>
   <arg name="device_name"            default="/dev/ttyUSB0"/>
   <arg name="baud_rate"              default="1000000"/>
@@ -11,7 +11,7 @@
   <arg name="joint3_id"              default="13"/>
   <arg name="joint4_id"              default="14"/>
 
-  <arg name="gripper_controller"     default="current_mode"/>
+  <arg name="gripper_controller"     default="position_mode"/>
 
   <arg name="gripper_id"             default="15"/>
 

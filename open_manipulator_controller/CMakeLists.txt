@@ -2,7 +2,7 @@
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 2.8.3)
-project(open_manipulator_dynamixel_ctrl)
+project(open_manipulator_controller)
 
 add_compile_options(-std=c++11)
 
@@ -10,12 +10,15 @@ add_compile_options(-std=c++11)
 # Find catkin packages and libraries for catkin and system dependencies
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  sensor_msgs
-  dynamixel_sdk
-  dynamixel_workbench_toolbox
-  open_manipulator_msgs
+    roscpp
+    std_msgs
+    sensor_msgs
+    open_manipulator_msgs
+    robotis_manipulator
+    open_manipulator_libs
+    cmake_modules
 )
+find_package(Eigen3 REQUIRED)
 
 ################################################################################
 # Setup for python modules and scripts
@@ -34,7 +37,7 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp sensor_msgs dynamixel_sdk dynamixel_workbench_toolbox
+  DEPENDS EIGEN3
 )
 
 ################################################################################
@@ -42,17 +45,22 @@ catkin_package(
 ################################################################################
 include_directories(
   include
+  ${Eigen_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(dynamixel_controller src/dynamixel_controller.cpp)
-add_dependencies(dynamixel_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(dynamixel_controller ${catkin_LIBRARIES})
+#file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
+
+add_executable(open_manipulator_controller src/open_manipulator_controller.cpp)
+add_dependencies(open_manipulator_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(open_manipulator_controller ${catkin_LIBRARIES} robotis_manipulator open_manipulator_libs)
+
+
 
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS dynamixel_controller
+install(TARGETS open_manipulator_controller
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

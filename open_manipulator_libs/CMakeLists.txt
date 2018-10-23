@@ -2,7 +2,7 @@
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 2.8.3)
-project(open_manipulator_dynamixel_ctrl)
+project(open_manipulator_libs)
 
 add_compile_options(-std=c++11)
 
@@ -10,12 +10,11 @@ add_compile_options(-std=c++11)
 # Find catkin packages and libraries for catkin and system dependencies
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  sensor_msgs
-  dynamixel_sdk
-  dynamixel_workbench_toolbox
-  open_manipulator_msgs
+    roscpp
+    cmake_modules
+    robotis_manipulator
 )
+find_package(Eigen3 REQUIRED)
 
 ################################################################################
 # Setup for python modules and scripts
@@ -34,7 +33,7 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp sensor_msgs dynamixel_sdk dynamixel_workbench_toolbox
+  DEPENDS EIGEN3
 )
 
 ################################################################################
@@ -45,25 +44,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(dynamixel_controller src/dynamixel_controller.cpp)
-add_dependencies(dynamixel_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(dynamixel_controller ${catkin_LIBRARIES})
-
-################################################################################
-# Install
-################################################################################
-install(TARGETS dynamixel_controller
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+add_library(open_manipulator_libs
+  src/OMKinematics.cpp
+  src/OMPath.cpp
 )
 
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
+add_dependencies(open_manipulator_libs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+target_link_libraries(open_manipulator_libs
+  ${catkin_LIBRARIES}
 )
-
-################################################################################
-# Test
-################################################################################

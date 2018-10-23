@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>open_manipulator_teleop</name>
+  <version>1.1.0</version>
+  <description>
+    Provides teleoperation using keyboard for OpenManipulator.
+  </description>
+  <license>BSD</license>
+  <author>Melonee Wise</author>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+</package>

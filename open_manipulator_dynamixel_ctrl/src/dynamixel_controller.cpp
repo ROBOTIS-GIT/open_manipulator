@@ -1,21 +1,4 @@
-/*******************************************************************************
-* Copyright 2016 ROBOTIS CO., LTD.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*******************************************************************************/
-
-/* Authors: Taehun Lim (Darby) */
-
+﻿
 #include "open_manipulator_dynamixel_ctrl/dynamixel_controller.h"
 
 using namespace dynamixel;
@@ -37,14 +20,14 @@ DynamixelController::DynamixelController()
 
   joint_mode_   = priv_node_handle_.param<std::string>("joint_controller", "position_mode");
 
-  joint_id_.push_back(priv_node_handle_.param<int>("joint1_id", 1));
-  joint_id_.push_back(priv_node_handle_.param<int>("joint2_id", 2));
-  joint_id_.push_back(priv_node_handle_.param<int>("joint3_id", 3));
-  joint_id_.push_back(priv_node_handle_.param<int>("joint4_id", 4));
+  joint_id_.push_back(priv_node_handle_.param<int>("joint1_id", 11));
+  joint_id_.push_back(priv_node_handle_.param<int>("joint2_id", 12));
+  joint_id_.push_back(priv_node_handle_.param<int>("joint3_id", 13));
+  joint_id_.push_back(priv_node_handle_.param<int>("joint4_id", 14));
 
   gripper_mode_ = priv_node_handle_.param<std::string>("gripper_controller", "current_mode");
 
-  gripper_id_.push_back(priv_node_handle_.param<int>("gripper_id", 5));
+  gripper_id_.push_back(priv_node_handle_.param<int>("gripper_id", 15));
 
   joint_controller_   = new DynamixelWorkbench;
   gripper_controller_ = new DynamixelWorkbench;
@@ -129,9 +112,12 @@ void DynamixelController::setOperatingMode()
   if (gripper_mode_ == "position_mode")
     gripper_controller_->jointMode(gripper_id_.at(0));
   else if (gripper_mode_ == "current_mode" && protocol_version_ == 2.0)
-    gripper_controller_->currentMode(gripper_id_.at(0), 30);
+    gripper_controller_->currentMode(gripper_id_.at(0), 200);
   else
     gripper_controller_->jointMode(gripper_id_.at(0));
+
+  gripper_controller_->itemWrite(gripper_id_.at(0),"Profile_Velocity", 100);
+  gripper_controller_->itemWrite(gripper_id_.at(0),"Profile_Acceleration", 10);
 }
 
 void DynamixelController::setSyncFunction()
@@ -213,7 +199,7 @@ void DynamixelController::updateJointStates()
   double get_joint_velocity[JOINT_NUM + GRIPPER_NUM] = {0.0, };
 
   readPosition(get_joint_position);
-  // readVelocity(get_joint_velocity);
+  readVelocity(get_joint_velocity);
 
   joint_state.header.frame_id = "world";
   joint_state.header.stamp    = ros::Time::now();
@@ -229,7 +215,7 @@ void DynamixelController::updateJointStates()
   joint_states_pos[1] = get_joint_position[1];
   joint_states_pos[2] = get_joint_position[2];
   joint_states_pos[3] = get_joint_position[3];
-  joint_states_pos[4] = mapd(get_joint_position[4], 0.90, -0.80, -0.01, 0.01);
+  joint_states_pos[4] = -mapd(get_joint_position[4], 0.90, -0.80, -0.01, 0.01);
   joint_states_pos[5] = joint_states_pos[4];
 
   joint_states_vel[0] = get_joint_velocity[0];
@@ -268,7 +254,8 @@ void DynamixelController::goalJointPositionCallback(const sensor_msgs::JointStat
 
 void DynamixelController::goalGripperPositionCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
-  double goal_gripper_position = msg->position[0];
+  ROS_INFO("sub. gripper");
+  double goal_gripper_position = msg->position.at(0);
   goal_gripper_position = mapd(goal_gripper_position, -0.01, 0.01, 0.90, -0.80);
 
   gripper_controller_->itemWrite(gripper_id_.at(0), "Goal_Position", gripper_controller_->convertRadian2Value(gripper_id_.at(0), goal_gripper_position));
