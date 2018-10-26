@@ -14,10 +14,8 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Darby Lim, Hye-Jong KIM */
-
-#ifndef OMPATH_H_
-#define OMPATH_H_
+#ifndef OM_CHAIN_DRAWING_H_
+#define OM_CHAIN_DRAWING_H_
 
 
 #include <eigen3/Eigen/Eigen>
@@ -27,15 +25,12 @@
 #include <math.h>
 #include <vector>
 
-#include "robotis_manipulator/OpenManipulator.h"
+#include "robotis_manipulator/robotis_manipulator.h"
 
-#define PI 3.141592
-using namespace Eigen;
-
-namespace OM_PATH
+namespace OM_CHAIN_DRAWING
 {
-
-class Line : public OPEN_MANIPULATOR::Draw
+using namespace Eigen;
+class Line : public ROBOTIS_MANIPULATOR::Drawing
 {
 private:
   Pose start_pose_;
@@ -61,10 +56,10 @@ public:
   virtual void setAngularStartPosition(double start_angular_position);
 };
 
-class Circle : public OPEN_MANIPULATOR::Draw
+class Circle : public ROBOTIS_MANIPULATOR::Drawing
 {
 private:
-  RM_TRAJECTORY::MinimumJerk path_generator_;
+  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
   MatrixXf coefficient_;
 
   uint8_t joint_num_;
@@ -94,10 +89,10 @@ public:
 };
 
 
-class Rhombus : public OPEN_MANIPULATOR::Draw
+class Rhombus : public ROBOTIS_MANIPULATOR::Drawing
 {
 private:
-  RM_TRAJECTORY::MinimumJerk path_generator_;
+  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
   MatrixXf coefficient_;
 
   uint8_t joint_num_;
@@ -128,10 +123,10 @@ public:
 };
 
 
-class Heart : public OPEN_MANIPULATOR::Draw
+class Heart : public ROBOTIS_MANIPULATOR::Drawing
 {
 private:
-  RM_TRAJECTORY::MinimumJerk path_generator_;
+  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
   MatrixXf coefficient_;
 
   uint8_t joint_num_;
@@ -162,8 +157,8 @@ public:
 };
 
 
-} // namespace OM_PATH
-#endif // OMPATH_H_
+} // namespace OM_CHAIN_DRAWING
+#endif // OM_CHAIN_DRAWING_H_
 
 
 

@@ -43,12 +43,13 @@ public Q_SLOTS:
   void on_btn_timer_start_clicked(void);
   void on_btn_init_pose_clicked(void);
   void on_btn_home_pose_clicked(void);
-  void on_btn_gripper_off_clicked(void);
-  void on_btn_gripper_on_clicked(void);
+  void on_btn_gripper_open_clicked(void);
+  void on_btn_gripper_close_clicked(void);
   void on_btn_read_joint_angle_clicked(void);
   void on_btn_send_joint_angle_clicked(void);
   void on_btn_read_kinematic_pose_clicked(void);
   void on_btn_send_kinematic_pose_clicked(void);
+  void on_btn_set_gripper_clicked(void);
   void tabSelected();
 
 private:

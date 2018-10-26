@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
     open_manipulator_libs
     cmake_modules
 )
-find_package(Eigen3 REQUIRED)
+find_package(Boost REQUIRED)
 
 ################################################################################
 # Setup for python modules and scripts
@@ -37,7 +37,7 @@ find_package(Eigen3 REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  DEPENDS EIGEN3
+  DEPENDS Boost
 )
 
 ################################################################################
@@ -45,15 +45,15 @@ catkin_package(
 ################################################################################
 include_directories(
   include
-  ${Eigen_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 
 #file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
 
 add_executable(open_manipulator_controller src/open_manipulator_controller.cpp)
 add_dependencies(open_manipulator_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(open_manipulator_controller ${catkin_LIBRARIES} robotis_manipulator open_manipulator_libs)
+target_link_libraries(open_manipulator_controller ${catkin_LIBRARIES} ${Boost_LIBRARIES} robotis_manipulator open_manipulator_libs)
 
 
 

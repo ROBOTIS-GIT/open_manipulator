@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     cmake_modules
     robotis_manipulator
+    dynamixel_sdk
+    dynamixel_workbench_toolbox
 )
 find_package(Eigen3 REQUIRED)
 
@@ -45,8 +47,11 @@ include_directories(
 )
 
 add_library(open_manipulator_libs
-  src/OMKinematics.cpp
-  src/OMPath.cpp
+  src/om_chain_drawing.cpp
+  src/om_chain_actuator.cpp
+  src/om_chain_kinematics.cpp
+  src/om_chain_tool.cpp
+  src/om_chain.cpp
 )
 
 add_dependencies(open_manipulator_libs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

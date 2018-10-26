@@ -14,10 +14,8 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Hye-Jong KIM, Darby Lim */
-
-#ifndef OMKINEMATICS_H_
-#define OMKINEMATICS_H_
+#ifndef OM_CHAIN_KINEMATICS_H_
+#define OM_CHAIN_KINEMATICS_H_
 
 #include <eigen3/Eigen/Eigen>
 #include <eigen3/Eigen/LU>
@@ -27,32 +25,33 @@
 #include <vector>
 #include <map>
 #include <stdio.h>
-#include "robotis_manipulator/RMAPI.h"
+#include "robotis_manipulator/robotis_manipulator_manager.h"
+#include "robotis_manipulator/robotis_manipulator.h"
 
 #define PI 3.141592
 
 using namespace Eigen;
 
-namespace OM_KINEMATICS
+namespace OM_CHAIN_KINEMATICS
 {
-class Chain : public OPEN_MANIPULATOR::Kinematics
+class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 {
 public:
   Chain(){};
   virtual ~Chain(){};
 
-  virtual MatrixXf jacobian(RM_MANAGER::Manipulator *manipulator, Name tool_name);
+  virtual MatrixXf jacobian(Manipulator *manipulator, Name tool_name);
 
-  virtual void forward(RM_MANAGER::Manipulator *manipulator, Name component_name);
-  virtual void forward(RM_MANAGER::Manipulator *manipulator);
+  virtual void forward(Manipulator *manipulator, Name component_name);
+  virtual void forward(Manipulator *manipulator);
 
-  virtual std::vector<double> inverse(RM_MANAGER::Manipulator *manipulator, Name tool_name, Pose target_pose);
+  virtual std::vector<double> inverse(Manipulator *manipulator, Name tool_name, Pose target_pose);
 
-  std::vector<double> inverseKinematics(RM_MANAGER::Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> srInverseKinematics(RM_MANAGER::Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> positionOnlyInverseKinematics(RM_MANAGER::Manipulator *manipulator, Name tool_name, Pose target_pose);
+  std::vector<double> inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
+  std::vector<double> srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
+  std::vector<double> positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
 };
 
-} // namespace OM_KINEMATICS
+} // namespace OM_CHAIN_KINEMATICS
 
-#endif // OMKINEMATICS_HPP_
+#endif // OM_CHAIN_KINEMATICS_H_

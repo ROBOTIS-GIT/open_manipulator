@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>909</width>
-    <height>591</height>
+    <height>578</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -398,7 +398,7 @@
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>182</y>
+      <y>190</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -414,22 +414,22 @@
     <property name="geometry">
      <rect>
       <x>740</x>
-      <y>182</y>
+      <y>190</y>
       <width>151</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Home Pose</string>
+     <string>Home pose</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_18">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>10</y>
+      <y>7</y>
       <width>59</width>
-      <height>14</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -440,52 +440,52 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>40</y>
+      <y>37</y>
       <width>531</width>
-      <height>501</height>
+      <height>481</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_gripper_off">
+   <widget class="QPushButton" name="btn_gripper_close">
     <property name="enabled">
      <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>740</x>
-      <y>217</y>
+      <y>230</y>
       <width>151</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Gripper Off</string>
+     <string>Gripper close</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_gripper_on">
+   <widget class="QPushButton" name="btn_gripper_open">
     <property name="enabled">
      <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>217</y>
+      <y>230</y>
       <width>151</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Gripper on</string>
+     <string>Gripper open</string>
     </property>
    </widget>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>291</y>
+      <y>270</y>
       <width>321</width>
       <height>221</height>
      </rect>
@@ -1018,43 +1018,11 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QPushButton" name="btn_torque_off">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>252</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Torque off</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_torque_on">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>252</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Torque on</string>
-    </property>
-   </widget>
    <widget class="QDoubleSpinBox" name="doubleSpinBox_gripper">
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>520</y>
+      <y>503</y>
       <width>71</width>
       <height>23</height>
      </rect>
@@ -1063,23 +1031,23 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
     <property name="minimum">
-     <double>-3.140000000000000</double>
+     <double>-1.000000000000000</double>
     </property>
     <property name="maximum">
-     <double>10.000000000000000</double>
-    </property>
-    <property name="singleStep">
      <double>0.500000000000000</double>
     </property>
+    <property name="singleStep">
+     <double>0.100000000000000</double>
+    </property>
     <property name="value">
-     <double>2.000000000000000</double>
+     <double>0.000000000000000</double>
     </property>
    </widget>
    <widget class="QLabel" name="label_37">
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>525</y>
+      <y>508</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -1095,7 +1063,7 @@
     <property name="geometry">
      <rect>
       <x>740</x>
-      <y>517</y>
+      <y>500</y>
       <width>141</width>
       <height>31</height>
      </rect>

@@ -48,8 +48,8 @@ bool QNode::init() {
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
 	ros::NodeHandle n;
 	// Add your ros communications here.
-  joint_states_sub_ = n.subscribe("open_manipulator/joint_states", 10, &QNode::jointStatesCallback, this);
-  present_kinematics_pose_sub_ = n.subscribe("open_manipulator/present_kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
+  chain_joint_states_sub_ = n.subscribe("open_manipulator/chain_joint_states", 10, &QNode::jointStatesCallback, this);
+  chain_kinematics_pose_sub_ = n.subscribe("open_manipulator/chain_kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
 
   goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_joint_space_path");
   goal_task_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>("open_manipulator/goal_task_space_path");
@@ -72,29 +72,20 @@ void QNode::run() {
 }
 
 
-void QNode::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg)
+void QNode::jointStatesCallback(const open_manipulator_msgs::JointPosition::ConstPtr &msg)
 {
-
-//  for(int i = 0; i < msg->name.size(); i ++)
-//  {
-//    present_joint_states.name[i] = msg->name.at(i);
-//    present_joint_states.position[i] = msg->position.at(i);
-//    present_joint_states.velocity[i] = msg->velocity.at(i);
-//    present_joint_states.effort[i] = msg->effort.at(i);
-//  }
   std::vector<double> temp_angle;
   for(int i = 0; i < NUM_OF_JOINT; i ++) temp_angle.push_back(msg->position.at(i));
   present_joint_angle = temp_angle;
-
-  present_gripper_angle.push_back(msg->position.at(NUM_OF_JOINT));
 }
 
 void QNode::kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
 {
-  present_kinematic_position.clear();
-  present_kinematic_position.push_back(msg->pose.position.x);
-  present_kinematic_position.push_back(msg->pose.position.y);
-  present_kinematic_position.push_back(msg->pose.position.z);
+  std::vector<double> temp_position;
+  temp_position.push_back(msg->pose.position.x);
+  temp_position.push_back(msg->pose.position.y);
+  temp_position.push_back(msg->pose.position.z);
+  present_kinematic_position = temp_position;
 }
 
 std::vector<double> QNode::getPresentJointAngle()

@@ -75,14 +75,15 @@ void MainWindow::on_btn_timer_start_clicked(void)
 
   writeLog("QTimer start : 100ms");
   ui.btn_timer_start->setEnabled(false);
-  ui.btn_gripper_off->setEnabled(true);
-  ui.btn_gripper_on->setEnabled(true);
+  ui.btn_gripper_close->setEnabled(true);
+  ui.btn_gripper_open->setEnabled(true);
   ui.btn_home_pose->setEnabled(true);
   ui.btn_init_pose->setEnabled(true);
   ui.btn_read_joint_angle->setEnabled(true);
   ui.btn_read_kinematic_pose->setEnabled(true);
   ui.btn_send_joint_angle->setEnabled(true);
   ui.btn_send_kinematic_pose->setEnabled(true);
+  ui.btn_set_gripper->setEnabled(true);
 }
 
 void MainWindow::on_btn_init_pose_clicked(void)
@@ -97,7 +98,7 @@ void MainWindow::on_btn_init_pose_clicked(void)
 
   qnode.setJointSpacePath(joint_name, joint_angle, path_time);
 
-  writeLog("Send joint angle to init. pose.");
+  writeLog("Send joint angle to init. pose");
 }
 
 void MainWindow::on_btn_home_pose_clicked(void)
@@ -113,25 +114,25 @@ void MainWindow::on_btn_home_pose_clicked(void)
 
   qnode.setJointSpacePath(joint_name, joint_angle, path_time);
 
-  writeLog("Send joint angle to home pose.");
+  writeLog("Send joint angle to home pose");
 }
 
-void MainWindow::on_btn_gripper_off_clicked(void)
+void MainWindow::on_btn_gripper_open_clicked(void)
 {
   std::vector<double> joint_angle;
-  joint_angle.push_back(-0.01);
+  joint_angle.push_back(-1.0);
   qnode.setToolControl(joint_angle);
 
-  writeLog("Send gripper off");
+  writeLog("Send gripper open");
 }
 
-void MainWindow::on_btn_gripper_on_clicked(void)
+void MainWindow::on_btn_gripper_close_clicked(void)
 {
   std::vector<double> joint_angle;
-  joint_angle.push_back(0.015);
+  joint_angle.push_back(0.5);
   qnode.setToolControl(joint_angle);
 
-  writeLog("Send gripper on");
+  writeLog("Send gripper close");
 }
 
 
@@ -142,6 +143,8 @@ void MainWindow::on_btn_read_joint_angle_clicked(void)
   ui.doubleSpinBox_j2->setValue(joint_angle.at(1));
   ui.doubleSpinBox_j3->setValue(joint_angle.at(2));
   ui.doubleSpinBox_j4->setValue(joint_angle.at(3));
+
+  writeLog("Read joint angle");
 }
 void MainWindow::on_btn_send_joint_angle_clicked(void)
 {
@@ -156,7 +159,7 @@ void MainWindow::on_btn_send_joint_angle_clicked(void)
 
   qnode.setJointSpacePath(joint_name, joint_angle, path_time);
 
-  writeLog("Send joint angle to home pose.");
+  writeLog("Send joint angle");
 }
 void MainWindow::on_btn_read_kinematic_pose_clicked(void)
 {
@@ -164,6 +167,8 @@ void MainWindow::on_btn_read_kinematic_pose_clicked(void)
   ui.doubleSpinBox_x->setValue(position.at(0));
   ui.doubleSpinBox_y->setValue(position.at(1));
   ui.doubleSpinBox_z->setValue(position.at(2));
+
+  writeLog("Read task pose");
 }
 void MainWindow::on_btn_send_kinematic_pose_clicked(void)
 {
@@ -176,7 +181,16 @@ void MainWindow::on_btn_send_kinematic_pose_clicked(void)
 
   qnode.setTaskSpacePath(kinematics_pose, path_time);
 
-  writeLog("Send joint angle to home pose.");
+  writeLog("Send task pose");
+}
+void MainWindow::on_btn_set_gripper_clicked(void)
+{
+  std::vector<double> joint_angle;
+  joint_angle.push_back(ui.doubleSpinBox_gripper->value());
+  qnode.setToolControl(joint_angle);
+
+  writeLog("Send gripper value");
+
 }
 
 

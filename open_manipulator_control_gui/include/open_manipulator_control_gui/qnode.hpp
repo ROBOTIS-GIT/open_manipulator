@@ -64,7 +64,7 @@ public:
 	QStringListModel* loggingModel() { return &logging_model; }
 	void log( const LogLevel &level, const std::string &msg);
 
-  void jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void jointStatesCallback(const open_manipulator_msgs::JointPosition::ConstPtr &msg);
   void kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
 
   std::vector<double> getPresentJointAngle();
@@ -80,8 +80,8 @@ private:
 	char** init_argv;
   QStringListModel logging_model;
 
-  ros::Subscriber joint_states_sub_;
-  ros::Subscriber present_kinematics_pose_sub_;
+  ros::Subscriber chain_joint_states_sub_;
+  ros::Subscriber chain_kinematics_pose_sub_;
 
   ros::ServiceClient goal_joint_space_path_client_;
   ros::ServiceClient goal_task_space_path_client_;

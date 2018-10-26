@@ -14,11 +14,9 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Darby Lim, Hye-Jong KIM */
+#include "open_manipulator_libs/om_chain_drawing.h"
 
-#include "open_manipulator_libs/OMPath.h"
-
-using namespace OM_PATH;
+using namespace OM_CHAIN_DRAWING;
 using namespace Eigen;
 
 
@@ -282,7 +280,7 @@ Pose Rhombus::getPose(double tick)
 //-------------------- Heart --------------------//
 
 Heart::Heart() {}
-Heart::~Heart() {}   // why like this..??
+Heart::~Heart() {}
 
 void Heart::init(double move_time, double control_time)
 {
