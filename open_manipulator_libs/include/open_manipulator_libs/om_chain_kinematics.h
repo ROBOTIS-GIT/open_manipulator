@@ -31,20 +31,21 @@
 #define PI 3.141592
 
 using namespace Eigen;
+using namespace ROBOTIS_MANIPULATOR;
 
 namespace OM_CHAIN_KINEMATICS
 {
-class Chain : public ROBOTIS_MANIPULATOR::Kinematics
+class Chain : public ROBOTIS_MANIPULATOR:: Kinematics
 {
 public:
   Chain(){};
   virtual ~Chain(){};
 
-  virtual MatrixXf jacobian(Manipulator *manipulator, Name tool_name);
+  virtual void updatePassiveJointValue(Manipulator *manipulator);
+  virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
 
-  virtual void forward(Manipulator *manipulator, Name component_name);
   virtual void forward(Manipulator *manipulator);
-
+  virtual void forward(Manipulator *manipulator, Name component_name);
   virtual std::vector<double> inverse(Manipulator *manipulator, Name tool_name, Pose target_pose);
 
   std::vector<double> inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);

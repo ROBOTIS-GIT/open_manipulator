@@ -12,9 +12,11 @@
 
   <build_depend>roscpp</build_depend>
   <build_depend>cmake_modules</build_depend>
+  <build_depend>robotis_manipulator</build_depend>
   
   <run_depend>roscpp</run_depend>
   <run_depend>cmake_modules</run_depend>
+  <run_depend>robotis_manipulator</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

@@ -27,7 +27,7 @@
 namespace OM_CHAIN_TOOL
 {
 
-class ToolDynamixel : public ROBOTIS_MANIPULATOR::Actuator
+class ToolDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
 {
 private:
   DynamixelWorkbench *gripper_controller_;

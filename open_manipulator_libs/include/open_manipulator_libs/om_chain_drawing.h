@@ -27,10 +27,13 @@
 
 #include "robotis_manipulator/robotis_manipulator.h"
 
+using namespace ROBOTIS_MANIPULATOR;
+using namespace Eigen;
+
 namespace OM_CHAIN_DRAWING
 {
-using namespace Eigen;
-class Line : public ROBOTIS_MANIPULATOR::Drawing
+
+class Line : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
   Pose start_pose_;
@@ -56,7 +59,7 @@ public:
   virtual void setAngularStartPosition(double start_angular_position);
 };
 
-class Circle : public ROBOTIS_MANIPULATOR::Drawing
+class Circle : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
@@ -89,7 +92,7 @@ public:
 };
 
 
-class Rhombus : public ROBOTIS_MANIPULATOR::Drawing
+class Rhombus : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
@@ -123,7 +126,7 @@ public:
 };
 
 
-class Heart : public ROBOTIS_MANIPULATOR::Drawing
+class Heart : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;

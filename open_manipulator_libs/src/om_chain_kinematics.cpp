@@ -22,9 +22,9 @@ using namespace Eigen;
 using namespace ROBOTIS_MANIPULATOR;
 using namespace OM_CHAIN_KINEMATICS;
 
-MatrixXf Chain::jacobian(Manipulator *manipulator, Name tool_name)
+MatrixXd Chain::jacobian(Manipulator *manipulator, Name tool_name)
 {
-  MatrixXf jacobian = MatrixXf::Identity(6, manipulator->getDOF());
+  MatrixXd jacobian = MatrixXd::Identity(6, manipulator->getDOF());
 
   Vector3f joint_axis = ZERO_VECTOR;
 
@@ -116,7 +116,7 @@ std::vector<double> Chain::inverseKinematics(Manipulator *manipulator, Name tool
 
   Manipulator _manipulator = *manipulator;
 
-  MatrixXf jacobian = MatrixXf::Identity(6, _manipulator.getDOF());
+  MatrixXd jacobian = MatrixXd::Identity(6, _manipulator.getDOF());
 
   VectorXf pose_changed = VectorXf::Zero(6);
   VectorXf angle_changed = VectorXf::Zero(_manipulator.getDOF());
@@ -132,7 +132,7 @@ std::vector<double> Chain::inverseKinematics(Manipulator *manipulator, Name tool
     if (pose_changed.norm() < 1E-6)
       return _manipulator.getAllActiveJointAngle();
 
-    ColPivHouseholderQR<MatrixXf> dec(jacobian);
+    ColPivHouseholderQR<MatrixXd> dec(jacobian);
     angle_changed = lambda * dec.solve(pose_changed);
 
     std::vector<double> set_angle_changed;
@@ -153,8 +153,8 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
 
   Manipulator _manipulator = *manipulator;
 
-  MatrixXf jacobian = MatrixXf::Identity(6, _manipulator.getDOF());
-  MatrixXf updated_jacobian = MatrixXf::Identity(_manipulator.getDOF(), _manipulator.getDOF());
+  MatrixXd jacobian = MatrixXd::Identity(6, _manipulator.getDOF());
+  MatrixXd updated_jacobian = MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
   VectorXf pose_changed = VectorXf::Zero(_manipulator.getDOF());
   VectorXf angle_changed = VectorXf::Zero(_manipulator.getDOF());
   VectorXf gerr(_manipulator.getDOF());
@@ -164,7 +164,7 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
   double Ek = 0.0;
   double Ek2 = 0.0;
 
-  MatrixXf We(6, 6);
+  MatrixXd We(6, 6);
   We << wn_pos, 0, 0, 0, 0, 0,
       0, wn_pos, 0, 0, 0, 0,
       0, 0, wn_pos, 0, 0, 0,
@@ -172,7 +172,7 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
       0, 0, 0, 0, wn_ang, 0,
       0, 0, 0, 0, 0, wn_ang;
 
-  MatrixXf Wn = MatrixXf::Identity(_manipulator.getDOF(), _manipulator.getDOF());
+  MatrixXd Wn = MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
 
   forward(&_manipulator, _manipulator.getIteratorBegin()->first);
   pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name),
@@ -187,7 +187,7 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
     updated_jacobian = (jacobian.transpose() * We * jacobian) + (lambda * Wn);
     gerr = jacobian.transpose() * We * pose_changed;
 
-    ColPivHouseholderQR<MatrixXf> dec(updated_jacobian);
+    ColPivHouseholderQR<MatrixXd> dec(updated_jacobian);
     angle_changed = dec.solve(gerr);
 
     std::vector<double> set_angle_changed;
@@ -233,9 +233,9 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
 
   Manipulator _manipulator = *manipulator;
 
-  MatrixXf jacobian = MatrixXf::Identity(6, _manipulator.getDOF());
-  MatrixXf position_jacobian = MatrixXf::Identity(3, _manipulator.getDOF());
-  MatrixXf updated_jacobian = MatrixXf::Identity(_manipulator.getDOF(), _manipulator.getDOF());
+  MatrixXd jacobian = MatrixXd::Identity(6, _manipulator.getDOF());
+  MatrixXd position_jacobian = MatrixXd::Identity(3, _manipulator.getDOF());
+  MatrixXd updated_jacobian = MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
   VectorXf position_changed = VectorXf::Zero(3);
   VectorXf angle_changed = VectorXf::Zero(_manipulator.getDOF());
   VectorXf gerr(_manipulator.getDOF());
@@ -245,12 +245,12 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
   double Ek = 0.0;
   double Ek2 = 0.0;
 
-  MatrixXf We(3, 3);
+  MatrixXd We(3, 3);
   We << wn_pos, 0, 0,
       0, wn_pos, 0,
       0, 0, wn_pos;
 
-  MatrixXf Wn = MatrixXf::Identity(_manipulator.getDOF(), _manipulator.getDOF());
+  MatrixXd Wn = MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
 
   forward(&_manipulator, _manipulator.getIteratorBegin()->first);
   position_changed = RM_MATH::positionDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name));
@@ -267,7 +267,7 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
     updated_jacobian = (position_jacobian.transpose() * We * jacobian) + (lambda * Wn);
     gerr = position_jacobian.transpose() * We * position_changed;
 
-    ColPivHouseholderQR<MatrixXf> dec(updated_jacobian);
+    ColPivHouseholderQR<MatrixXd> dec(updated_jacobian);
     angle_changed = dec.solve(gerr);
 
     std::vector<double> set_angle_changed;

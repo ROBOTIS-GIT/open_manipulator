@@ -25,7 +25,7 @@
 namespace OM_CHAIN_ACTUATOR
 {
 
-class JointDynamixel : public ROBOTIS_MANIPULATOR::Actuator
+class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
 {
 private:
   DynamixelWorkbench *joint_controller_;

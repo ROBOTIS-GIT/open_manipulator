@@ -37,7 +37,7 @@ void OM_CHAIN::initManipulator()
                WORLD,
                COMP2,
                RM_MATH::makeVector3(-0.278, 0.0, 0.017),
-               Eigen::Matrix3f::Identity(3, 3),
+               RM_MATH::convertRPYToQuaternion(0.0, 0.0, 0.0),
                Z_AXIS,
                11);
 
@@ -45,7 +45,7 @@ void OM_CHAIN::initManipulator()
                COMP1,
                COMP3,
                RM_MATH::makeVector3(0.0, 0.0, 0.058),
-               Eigen::Matrix3f::Identity(3, 3),
+               RM_MATH::convertRPYToQuaternion(0.0, 0.0, 0.0),
                Y_AXIS,
                12);
 
@@ -53,7 +53,7 @@ void OM_CHAIN::initManipulator()
                COMP2,
                COMP4,
                RM_MATH::makeVector3(0.024, 0.0, 0.128),
-               Eigen::Matrix3f::Identity(3, 3),
+               RM_MATH::convertRPYToQuaternion(0.0, 0.0, 0.0),
                Y_AXIS,
                13);
 
@@ -61,14 +61,14 @@ void OM_CHAIN::initManipulator()
                COMP3,
                TOOL,
                RM_MATH::makeVector3(0.124, 0.0, 0.0),
-               Eigen::Matrix3f::Identity(3, 3),
+               RM_MATH::convertRPYToQuaternion(0.0, 0.0, 0.0),
                Y_AXIS,
                14);
 
   addTool(TOOL,
           COMP4,
           RM_MATH::makeVector3(0.130, 0.0, 0.0),
-          Eigen::Matrix3f::Identity(3, 3),
+          RM_MATH::convertRPYToQuaternion(0.0, 0.0, 0.0),
           15,
           1.0f); // Change unit from `meter` to `radian`
 
