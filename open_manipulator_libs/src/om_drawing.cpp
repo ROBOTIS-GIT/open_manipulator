@@ -16,7 +16,7 @@
 
 #include "open_manipulator_libs/om_drawing.h"
 
-using namespace OM_CHAIN_DRAWING;
+using namespace OM_DRAWING;
 using namespace Eigen;
 
 //-------------------- Line --------------------//
@@ -131,6 +131,7 @@ void Circle::initCircle(double move_time, double control_time, std::vector<WayPo
 
 std::vector<WayPoint> Circle::drawCircle(double tick)
 {
+  // get time variable
   double get_time_var = 0.0;
 
   get_time_var = coefficient_(0) +
@@ -140,6 +141,7 @@ std::vector<WayPoint> Circle::drawCircle(double tick)
                  coefficient_(4) * pow(tick, 4) +
                  coefficient_(5) * pow(tick, 5);
 
+  // set drawing trajectory
   std::vector<WayPoint> pose;
   pose.resize(6);
   double diff_pose[2];
@@ -167,12 +169,10 @@ std::vector<WayPoint> Circle::getTaskWayPoint(double tick)
   return drawCircle(tick);
 }
 
-
 void Circle::init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg)
 {
-  get_arg_ = (double *)arg;
-
-  init(get_arg_[0], get_arg_[1]);
+  double *get_arg_ = (double *)arg;
+  initCircle(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
 
 //-------------------- Rhombus --------------------//
@@ -180,172 +180,124 @@ void Circle::init(double move_time, double control_time, std::vector<WayPoint> s
 Rhombus::Rhombus() {}
 Rhombus::~Rhombus() {}  
 
-void Rhombus::init(double move_time, double control_time)
+void Rhombus::initRhombus(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  Trajectory start;
-  Trajectory goal;
+  output_way_point_type_ = TASK;
 
-  start.position = 0.0;    
-  start.velocity = 0.0;
-  start.acceleration = 0.0;
+  start_pose_ = start;
 
-  goal.position = 2.03 * M_PI; 
-  goal.velocity = 0.0;
-  goal.acceleration = 0.0;
+  radius_ = radius;
+  revolution_ = revolution;
+  start_angular_position_ = start_angular_position;
 
-  path_generator_.calcCoefficient(start,
-                                  goal,
-                                  move_time,
-                                  control_time);
+  WayPoint drawingStart, drawingGoal;
 
+  drawingStart.value = 0.0;
+  drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
+
+  drawingGoal.value = revolution_ * M_PI;
+  drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
+
+  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
   coefficient_ = path_generator_.getCoefficient();
 }
 
-Pose Rhombus::rhombus(double time_var)
+
+std::vector<WayPoint> Rhombus::drawRhombus(double tick)
 {
-  Pose pose;
+  // get time variable
+  double get_time_var = 0.0;
 
+  get_time_var = coefficient_(0) +
+                 coefficient_(1) * pow(tick, 1) +
+                 coefficient_(2) * pow(tick, 2) +
+                 coefficient_(3) * pow(tick, 3) +
+                 coefficient_(4) * pow(tick, 4) +
+                 coefficient_(5) * pow(tick, 5);
 
-  double traj[2];
+  // set drawing trajectory
+  std::vector<WayPoint> pose;
+  pose.resize(6);
   double diff_pose[2];
+  double traj[2];
 
-  if (time_var >= 0 && time_var < PI/2){
-    traj[0] = - time_var / (PI/2) * radius_;
-    traj[1] = - time_var / (PI/2) * radius_;
-  } else if (time_var >= PI/2 && time_var < PI){ 
-    traj[0] = - time_var / (PI/2) * radius_;
-    traj[1] = time_var / (PI/2) * radius_ - 2 * radius_;
-  } else if (time_var >= PI && time_var < PI*3/2){ 
-    traj[0] = time_var / (PI/2) * radius_ - 4 * radius_;
-    traj[1] = time_var / (PI/2) * radius_ - 2 * radius_;
+  if (get_time_var >= 0 && get_time_var < PI/2){
+    traj[0] = - get_time_var / (PI/2) * radius_;
+    traj[1] = - get_time_var / (PI/2) * radius_;
+  } else if (get_time_var >= PI/2 && get_time_var < PI){
+    traj[0] = - get_time_var / (PI/2) * radius_;
+    traj[1] = get_time_var / (PI/2) * radius_ - 2 * radius_;
+  } else if (get_time_var >= PI && get_time_var < PI*3/2){
+    traj[0] = get_time_var / (PI/2) * radius_ - 4 * radius_;
+    traj[1] = get_time_var / (PI/2) * radius_ - 2 * radius_;
   } else {
-    traj[0] = time_var / (PI/2) * radius_ - 4 * radius_;
-    traj[1] = - time_var / (PI/2) * radius_ + 4 * radius_;
+    traj[0] = get_time_var / (PI/2) * radius_ - 4 * radius_;
+    traj[1] = - get_time_var / (PI/2) * radius_ + 4 * radius_;
   }
 
   diff_pose[0] = traj[0]*cos(start_angular_position_) - traj[1]*sin(start_angular_position_);
   diff_pose[1] = traj[0]*sin(start_angular_position_) + traj[1]*cos(start_angular_position_);
 
-  pose.position(0) = start_position_(0) + diff_pose[0];
-  pose.position(1) = start_position_(1) + diff_pose[1];
-  pose.position(2) = start_position_(2);
+  pose.at(X_AXIS).value = start_pose_.at(X_AXIS).value + radius_ * diff_pose[0];
+  pose.at(Y_AXIS).value = start_pose_.at(Y_AXIS).value + radius_ * diff_pose[1];
+  pose.at(Z_AXIS).value = start_pose_.at(Z_AXIS).value;
 
-  pose.orientation = start_pose_.orientation;
+  pose.at(ROLL).value = start_pose_.at(ROLL).value;
+  pose.at(PITCH).value = start_pose_.at(PITCH).value;
+  pose.at(YAW).value = start_pose_.at(YAW).value;
 
   return pose;
 }
 
-void Rhombus::initDraw(const void *arg)
-{
-  get_arg_ = (double *)arg;
 
-  init(get_arg_[0], get_arg_[1]);
+void Rhombus::init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg)
+{
+  double *get_arg_ = (double *)arg;
+  initRhombus(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
 
-void Rhombus::setAngularStartPosition(double start_angular_position)
+std::vector<WayPoint> Rhombus::getJointWayPoint(double tick)
 {
-  start_angular_position_ = start_angular_position;
+  return {};
 }
-
-void Rhombus::setRadius(double radius)
+std::vector<WayPoint> Rhombus::getTaskWayPoint(double tick)
 {
-  radius_ = radius;
+  return drawRhombus(tick);
 }
-void Rhombus::setStartPose(Pose start_pose)
-{
-  start_pose_ = start_pose;
-  start_position_ = start_pose.position;
-}
-
-void Rhombus::setgoalPose(Pose goal_pose){}
-Pose Rhombus::getPose(double tick)
-{
-  double get_time_var = 0.0;
-
-  get_time_var = coefficient_(0) +
-                 coefficient_(1) * pow(tick, 1) +
-                 coefficient_(2) * pow(tick, 2) +
-                 coefficient_(3) * pow(tick, 3) +
-                 coefficient_(4) * pow(tick, 4) +
-                 coefficient_(5) * pow(tick, 5);
-
-  return rhombus(get_time_var);
-}
-
 //-------------------- Heart --------------------//
 
 Heart::Heart() {}
 Heart::~Heart() {}
 
-void Heart::init(double move_time, double control_time)
+void Heart::initHeart(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  Trajectory start;
-  Trajectory goal;
+  output_way_point_type_ = TASK;
 
-  start.position = 0.0;    
-  start.velocity = 0.0;
-  start.acceleration = 0.0;
+  start_pose_ = start;
 
-  goal.position = 2 * M_PI; 
-  goal.velocity = 0.0;
-  goal.acceleration = 0.0;
+  radius_ = radius;
+  revolution_ = revolution;
+  start_angular_position_ = start_angular_position;
 
-  path_generator_.calcCoefficient(start,
-                                  goal,
-                                  move_time,
-                                  control_time);
+  WayPoint drawingStart, drawingGoal;
 
+  drawingStart.value = 0.0;
+  drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
+
+  drawingGoal.value = revolution_ * M_PI;
+  drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
+
+  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
   coefficient_ = path_generator_.getCoefficient();
 }
 
-Pose Heart::heart(double time_var)
+std::vector<WayPoint> Heart::drawHeart(double tick)
 {
-  Pose pose;
-
-  double traj[2];
-  double diff_pose[2];
-
-  traj[0] =  - 1.0f/17.0f*radius_*7  
-    + (1.0f/17.0f*radius_*(13*cos(time_var) - 5*cos(2*time_var) - 2*cos(3*time_var) - cos(4*time_var)));
-  traj[1] = 1.0f/17.0f*radius_*(16*sin(time_var)*sin(time_var)*sin(time_var));
-
-  diff_pose[0] = traj[0]*cos(start_angular_position_) - traj[1]*sin(start_angular_position_);
-  diff_pose[1] = traj[0]*sin(start_angular_position_) + traj[1]*cos(start_angular_position_);
-
-  pose.position(0) = start_position_(0) + diff_pose[0];
-  pose.position(1) = start_position_(1) + diff_pose[1];
-  pose.position(2) = start_position_(2);
-
-  pose.orientation = start_pose_.orientation;
-
-  return pose;
-}
-
-void Heart::initDraw(const void *arg)
-{
-  get_arg_ = (double *)arg;
-
-  init(get_arg_[0], get_arg_[1]);
-}
-
-void Heart::setAngularStartPosition(double start_angular_position)
-{
-  start_angular_position_ = start_angular_position;
-}
-
-void Heart::setRadius(double radius)
-{
-  radius_ = radius;
-}
-
-void Heart::setStartPose(Pose start_pose)
-{
-  start_pose_ = start_pose;
-  start_position_ = start_pose.position;
-}
-void Heart::setgoalPose(Pose goal_pose){}
-Pose Heart::getPose(double tick)
-{
+  // get time variable
   double get_time_var = 0.0;
 
   get_time_var = coefficient_(0) +
@@ -355,5 +307,41 @@ Pose Heart::getPose(double tick)
                  coefficient_(4) * pow(tick, 4) +
                  coefficient_(5) * pow(tick, 5);
 
-  return heart(get_time_var);
+  // set drawing trajectory
+  std::vector<WayPoint> pose;
+  pose.resize(6);
+  double diff_pose[2];
+  double traj[2];
+
+  traj[0] =  - 1.0f/17.0f*radius_*7
+    + (1.0f/17.0f*radius_*(13*cos(get_time_var) - 5*cos(2*get_time_var) - 2*cos(3*get_time_var) - cos(4*get_time_var)));
+  traj[1] = 1.0f/17.0f*radius_*(16*sin(get_time_var)*sin(get_time_var)*sin(get_time_var));
+
+  diff_pose[0] = traj[0]*cos(start_angular_position_) - traj[1]*sin(start_angular_position_);
+  diff_pose[1] = traj[0]*sin(start_angular_position_) + traj[1]*cos(start_angular_position_);
+
+  pose.at(X_AXIS).value = start_pose_.at(X_AXIS).value + radius_ * diff_pose[0];
+  pose.at(Y_AXIS).value = start_pose_.at(Y_AXIS).value + radius_ * diff_pose[1];
+  pose.at(Z_AXIS).value = start_pose_.at(Z_AXIS).value;
+
+  pose.at(ROLL).value = start_pose_.at(ROLL).value;
+  pose.at(PITCH).value = start_pose_.at(PITCH).value;
+  pose.at(YAW).value = start_pose_.at(YAW).value;
+
+  return pose;
+}
+
+void Heart::init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg)
+{
+  double *get_arg_ = (double *)arg;
+  initHeart(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
+}
+
+std::vector<WayPoint> Heart::getJointWayPoint(double tick)
+{
+  return {};
+}
+std::vector<WayPoint> Heart::getTaskWayPoint(double tick)
+{
+  return drawHeart(tick);
 }

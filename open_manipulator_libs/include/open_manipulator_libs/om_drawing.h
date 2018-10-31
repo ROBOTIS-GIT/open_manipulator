@@ -14,8 +14,8 @@
 * limitations under the License.
 *******************************************************************************/
 
-#ifndef OM_CHAIN_DRAWING_H_
-#define OM_CHAIN_DRAWING_H_
+#ifndef OM_DRAWING_H_
+#define OM_DRAWING_H_
 
 
 #include <eigen3/Eigen/Eigen>
@@ -39,8 +39,10 @@ enum AXIS{
 using namespace ROBOTIS_MANIPULATOR;
 using namespace Eigen;
 
-namespace OM_CHAIN_DRAWING
+namespace OM_DRAWING
 {
+
+//-------------------- Line --------------------//
 
 class Line : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
@@ -83,15 +85,70 @@ private:
   double start_angular_position_;
   double revolution_;
 
-  double *get_arg_;
-
 public:
   Circle();
   virtual ~Circle();
 
   void initCircle(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
   std::vector<WayPoint> drawCircle(double time_var);
-  MatrixXf getCoefficient();
+
+  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
+  virtual std::vector<WayPoint> getJointWayPoint(double tick);
+  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
+};
+
+//-------------------- Rhombus --------------------//
+
+class Rhombus : public ROBOTIS_MANIPULATOR::DrawingTrajectory
+{
+private:
+  WayPointType output_way_point_type_;
+
+  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
+  VectorXd coefficient_;
+
+  std::vector<WayPoint> start_pose_;
+  std::vector<WayPoint> goal_pose_;
+
+  double radius_;
+  double start_angular_position_;
+  double revolution_;
+
+public:
+  Rhombus();
+  virtual ~Rhombus();
+
+  void initRhombus(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
+  std::vector<WayPoint> drawRhombus(double time_var);
+
+  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
+  virtual std::vector<WayPoint> getJointWayPoint(double tick);
+  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
+};
+
+//-------------------- Heart --------------------//
+
+class Heart : public ROBOTIS_MANIPULATOR::DrawingTrajectory
+{
+private:
+  WayPointType output_way_point_type_;
+
+  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
+  VectorXd coefficient_;
+
+  std::vector<WayPoint> start_pose_;
+  std::vector<WayPoint> goal_pose_;
+
+  double radius_;
+  double start_angular_position_;
+  double revolution_;
+
+public:
+  Heart();
+  virtual ~Heart();
+
+  void initHeart(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
+  std::vector<WayPoint> drawHeart(double tick);
 
   virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
   virtual std::vector<WayPoint> getJointWayPoint(double tick);
@@ -99,76 +156,8 @@ public:
 };
 
 
-class Rhombus : public ROBOTIS_MANIPULATOR::DrawingTrajectory
-{
-private:
-  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
-  MatrixXf coefficient_;
-
-  uint8_t joint_num_;
-
-  Vector3f start_position_;
-  Pose start_pose_;
-  double radius_;
-  double start_angular_position_;
-
-  double *get_arg_;
-
-public:
-  Rhombus();
-  virtual ~Rhombus();
-
-  void init(double move_time, double control_time);
-  Pose rhombus(double time_var);
-
-  MatrixXf getCoefficient();
-
-  virtual void initDraw(const void *arg);
-  virtual void setRadius(double radius);
-  virtual void setStartPose(Pose start_pose);
-  virtual void setgoalPose(Pose goal_pose);
-  virtual void setAngularStartPosition(double start_angular_position);
-
-  virtual Pose getPose(double tick);
-};
-
-
-class Heart : public ROBOTIS_MANIPULATOR::DrawingTrajectory
-{
-private:
-  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
-  MatrixXf coefficient_;
-
-  uint8_t joint_num_;
-
-  Vector3f start_position_;
-  Pose start_pose_;
-  double radius_;
-  double start_angular_position_;
-
-  double *get_arg_;
-
-public:
-  Heart();
-  virtual ~Heart();
-
-  void init(double move_time, double control_time);
-  Pose heart(double time_var);
-
-  MatrixXf getCoefficient();
-
-  virtual void initDraw(const void *arg);
-  virtual void setRadius(double radius);
-  virtual void setStartPose(Pose start_pose);
-  virtual void setgoalPose(Pose goal_pose);
-  virtual void setAngularStartPosition(double start_angular_position);
-
-  virtual Pose getPose(double tick);
-};
-
-
-} // namespace OM_CHAIN_DRAWING
-#endif // OM_CHAIN_DRAWING_H_
+} // namespace OM_DRAWING
+#endif // OM_DRAWING_H_
 
 
 
