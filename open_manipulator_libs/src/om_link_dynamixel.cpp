@@ -54,9 +54,16 @@ void Dynamixel::disable()
 bool Dynamixel::sendJointActuatorValue(uint8_t actuator_id, ROBOTIS_MANIPULATOR::Actuator value)
 {
 
+
+
+
 }
 bool Dynamixel::sendMultipleJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector)
 {
+
+
+
+
 
 }
 ROBOTIS_MANIPULATOR::Actuator Dynamixel::receiveJointActuatorValue(uint8_t actuator_id)
@@ -129,19 +136,29 @@ void Dynamixel::writeTorqueEnable(std::vector<uint8_t> actuator_id, int8_t value
 
 void Dynamixel::writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector)
 {
-  int32_t goal_position[dynamixel_num_] = {0, };
-
-
-
-
-  for (int index = 0; index < JOINT_NUM; index++)
-    goal_position[index] = dynamixel_controller_->convertRadian2Value(dynamixel_id_.at(index), radian_vector.at(index));
-  dynamixel_controller_->syncWrite("Goal_Position", goal_position);
-
-  return true;
+  for(int index = 0; index < dynamixel_id_.size(); index++)
+  {
+    for(int index2 = 0; index2 < actuator_id.size(); index2++)
+    {
+      if(dynamixel_id_.at(index) == actuator_id.at(index2))
+        goal_position_[index] = dynamixel_controller_->convertRadian2Value(dynamixel_id_.at(index), radian_vector.at(index2));
+    }
+  }
+  dynamixel_controller_->syncWrite("Goal_Position", goal_position_);
 }
 
-
+void Dynamixel::writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector)
+{
+  for(int index = 0; index < dynamixel_id_.size(); index++)
+  {
+    for(int index2 = 0; index2 < actuator_id.size(); index2++)
+    {
+      if(dynamixel_id_.at(index) == actuator_id.at(index2))
+        goal_velocity_[index] = dynamixel_controller_->convertRadian2Value(dynamixel_id_.at(index), velocity_vector.at(index2));
+    }
+  }
+//  dynamixel_controller_->syncWrite("Goal_Velocity", goal_position_);
+}
 
 
 

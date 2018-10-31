@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-namespace RM_DYNAMIXEL
+namespace OM_DYNAMIXEL
 {
 
 class Dynamixel : public ROBOTIS_MANIPULATOR::JointActuator
@@ -32,6 +32,9 @@ private:
   int8_t dynamixel_num_;
   DynamixelWorkbench *dynamixel_controller_;
   std::vector<uint8_t> dynamixel_id_;
+
+  int32_t goal_position_[20] = {0, }; //need update workbench
+  int32_t goal_velocity_[20] = {0, };
 
 public:
   Dynamixel() {}
@@ -55,8 +58,8 @@ public:
   void setOperatingMode(std::vector<uint8_t> actuator_id, std::string dynamixel_mode = "position_mode");
   void writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, int8_t value);
   void writeTorqueEnable(std::vector<uint8_t> actuator_id, int8_t value);
-
-
+  void writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector);
+  void writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector);
 
 
 ////////////////////////////////////////////////////////////////////
