@@ -14,8 +14,8 @@
 * limitations under the License.
 *******************************************************************************/
 
-#ifndef OM_CHAIN_CONFIG_HPP_
-#define OM_CHAIN_CONFIG_HPP_
+#ifndef OM_CHAIN_HPP_
+#define OM_CHAIN_HPP_
 
 #include "om_dynamixel.h"
 #include "om_drawing.h"
@@ -30,10 +30,6 @@
 #define COMP4 4
 #define TOOL 5
 
-#define X_AXIS RM_MATH::makeVector3(1.0, 0.0, 0.0)
-#define Y_AXIS RM_MATH::makeVector3(0.0, 1.0, 0.0)
-#define Z_AXIS RM_MATH::makeVector3(0.0, 0.0, 1.0)
-
 #define NUM_OF_JOINT 4
 
 #define DRAWING_LINE 0
@@ -44,22 +40,26 @@
 #define JOINT_DYNAMIXEL 0
 #define TOOL_DYNAMIXEL 1
 
-using namespace ROBOTIS_MANIPULATOR;
+#define ACTUATOR_CONTROL_TIME 0.010 //s
 
-class OM_CHAIN : public RobotisManipulator
+#define X_AXIS RM_MATH::makeVector3(1.0, 0.0, 0.0)
+#define Y_AXIS RM_MATH::makeVector3(0.0, 1.0, 0.0)
+#define Z_AXIS RM_MATH::makeVector3(0.0, 0.0, 1.0)
+
+class OM_CHAIN : public ROBOTIS_MANIPULATOR::RobotisManipulator
 {
 private:
   std::vector<double> present_joint_angle;
   std::vector<double> present_gripper_angle;
 
   ROBOTIS_MANIPULATOR::Kinematics *kinematics_;
-  ROBOTIS_MANIPULATOR::Actuator *actuator_;
-  ROBOTIS_MANIPULATOR::Actuator *tool_;
+  ROBOTIS_MANIPULATOR::JointActuator *actuator_;
+  ROBOTIS_MANIPULATOR::ToolActuator *tool_;
 
-  OM_CHAIN_DRAWING::Line line_;
-  OM_CHAIN_DRAWING::Circle circle_;
-  OM_CHAIN_DRAWING::Rhombus rhombus_;
-  OM_CHAIN_DRAWING::Heart heart_;
+  OM_DRAWING::Line line_;
+  OM_DRAWING::Circle circle_;
+  OM_DRAWING::Rhombus rhombus_;
+  OM_DRAWING::Heart heart_;
 
   bool platform_;
   bool processing_;
@@ -72,7 +72,7 @@ private:
   void chainProcess(double present_time);
 
 };
-#endif // OM_CHAIN_CONFIG_HPP_
+#endif // OM_CHAIN_HPP_
 
 
 

@@ -27,6 +27,13 @@
 
 #include "robotis_manipulator/robotis_manipulator.h"
 
+
+using namespace ROBOTIS_MANIPULATOR;
+using namespace Eigen;
+
+namespace OM_DRAWING
+{
+
 enum AXIS{
     X_AXIS,
     Y_AXIS,
@@ -35,13 +42,6 @@ enum AXIS{
     PITCH,
     YAW
 };
-
-using namespace ROBOTIS_MANIPULATOR;
-using namespace Eigen;
-
-namespace OM_DRAWING
-{
-
 //-------------------- Line --------------------//
 
 class Line : public ROBOTIS_MANIPULATOR::DrawingTrajectory

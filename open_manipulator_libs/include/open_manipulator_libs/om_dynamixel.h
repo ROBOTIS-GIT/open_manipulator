@@ -77,7 +77,7 @@ public:
 
   virtual void init(uint8_t actuator_id, const void *arg);
   virtual void setMode(uint8_t actuator_id, const void *arg);
-  uint8_t getId();
+  virtual uint8_t getId();
 
   virtual void enable();
   virtual void disable();

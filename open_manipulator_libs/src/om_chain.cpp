@@ -17,8 +17,6 @@
 
 #include "open_manipulator_libs/om_chain.h"
 
-using namespace ROBOTIS_MANIPULATOR;
-
 OM_CHAIN::OM_CHAIN()
 {
   present_joint_angle.resize(4);
@@ -74,41 +72,52 @@ void OM_CHAIN::initManipulator()
 
   // kinematics init.
   kinematics_ = new OM_CHAIN_KINEMATICS::Chain();
-  initKinematics(kinematics_);
+  addKinematics(kinematics_);
 
   // joint actuator init.
-  actuator_ = new OM_CHAIN_ACTUATOR::JointDynamixel();
-  addActuator(JOINT_DYNAMIXEL, actuator_);
+  actuator_ = new OM_DYNAMIXEL::JointDynamixel();
+  addJointActuator(JOINT_DYNAMIXEL, actuator_);
 
-  std::string actuator_arg[2] = {"/dev/ttyUSB0", "1000000"};
-  void *p_actuator_arg  = &actuator_arg;
-  actuatorInit(JOINT_DYNAMIXEL, p_actuator_arg);
-  setActuatorControlMode(JOINT_DYNAMIXEL);
-  actuatorEnable(JOINT_DYNAMIXEL);
+  std::string dxl_comm_arg[2] = {"/dev/ttyUSB0", "1000000"};
+  void *p_dxl_comm_arg = &dxl_comm_arg;
+
+  std::vector<uint8_t> jointDxlId;
+  jointDxlId.push_back(11);
+  jointDxlId.push_back(12);
+  jointDxlId.push_back(13);
+  jointDxlId.push_back(14);
+
+  JointActuatorInit(JOINT_DYNAMIXEL, jointDxlId, p_dxl_comm_arg);
+
+  std::string joint_dxl_mode_arg = "position_mode";
+  void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
+  JointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
   // tool actuator init.
-  tool_ = new OM_CHAIN_TOOL::ToolDynamixel();
-  addActuator(TOOL_DYNAMIXEL, tool_);
+  tool_ = new OM_DYNAMIXEL::GripperDynamixel();
+  addToolActuator(TOOL_DYNAMIXEL, tool_);
 
-  actuatorInit(TOOL_DYNAMIXEL, p_actuator_arg);
-  setActuatorControlMode(TOOL_DYNAMIXEL);
-  actuatorEnable(TOOL_DYNAMIXEL);
+  uint8_t gripperDxlId = 15;
+  toolActuatorInit(TOOL_DYNAMIXEL, gripperDxlId, p_dxl_comm_arg);
+
+  std::string gripper_dxl_mode_arg = "curemt_mode";
+  void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
+  toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
+
+  allActuatorEnable();
   // drawing path
-  addDraw(DRAWING_LINE, &line_);
-  addDraw(DRAWING_CIRCLE, &circle_);
-  addDraw(DRAWING_RHOMBUS, &rhombus_);
-  addDraw(DRAWING_HEART, &heart_);
+  addDrawingTrajectory(DRAWING_LINE, &line_);
+  addDrawingTrajectory(DRAWING_CIRCLE, &circle_);
+  addDrawingTrajectory(DRAWING_RHOMBUS, &rhombus_);
+  addDrawingTrajectory(DRAWING_HEART, &heart_);
 
-  setAllActiveJointAngle(receiveAllActuatorAngle(JOINT_DYNAMIXEL));
-  //setAllActiveJointAngle(receiveAllActuatorAngle(TOOL_DYNAMIXEL)); // 동작 x
+  setAllJointActuatorValue(receiveAllJointActuatorValue(jointDxlId));
 
-  initTrajectory(getAllActiveJointAngle());
+  //initTrajectory(getAllActiveJointAngle());
   setControlTime(ACTUATOR_CONTROL_TIME);
-
-  forward(COMP1);
 }
 
 void OM_CHAIN::chainProcess(double present_time)
 {
-  controlLoop(present_time, TOOL, JOINT_DYNAMIXEL);
+  trajectoryControllerLoop(present_time);
 }
