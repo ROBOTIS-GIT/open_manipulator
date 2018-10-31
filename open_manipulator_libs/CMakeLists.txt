@@ -47,11 +47,10 @@ include_directories(
 )
 
 add_library(open_manipulator_libs
-  src/om_chain_drawing.cpp
-  src/om_chain_actuator.cpp
-  src/om_chain_kinematics.cpp
-  src/om_chain_tool.cpp
   src/om_chain.cpp
+  src/om_drawing.cpp
+  src/om_dynamixel.cpp
+  src/om_kinematics.cpp
 )
 
 add_dependencies(open_manipulator_libs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
