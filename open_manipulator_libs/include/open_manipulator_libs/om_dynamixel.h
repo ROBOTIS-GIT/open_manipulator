@@ -26,7 +26,7 @@
 namespace OM_DYNAMIXEL
 {
 
-class Dynamixel : public ROBOTIS_MANIPULATOR::JointActuator
+class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
 {
 private:
   int8_t dynamixel_num_;
@@ -37,8 +37,8 @@ private:
   int32_t goal_velocity_[20] = {0, };
 
 public:
-  Dynamixel() {}
-  virtual ~Dynamixel() {}
+  JointDynamixel() {}
+  virtual ~JointDynamixel() {}
 
   virtual void init(std::vector<uint8_t> actuator_id, const void *arg);
   virtual void setMode(std::vector<uint8_t> actuator_id, const void *arg);
@@ -60,31 +60,42 @@ public:
   void writeTorqueEnable(std::vector<uint8_t> actuator_id, int8_t value);
   void writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector);
   void writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector);
-
-
-////////////////////////////////////////////////////////////////////
-
-  void setPositionControlMode();
-  void setTorqueEnable();
-  void setTorqueDisable();
-  bool goalAllJointAngle(std::vector<double> radian_vector);
-  bool goalMultipleJointAngle(std::vector<uint8_t> id, std::vector<double> radian_vector);
-  bool goalJointAngle(uint8_t actuator_id, double radian);
-  std::vector<double> receiveAllJointAngle();
-  std::vector<double> receiveAllJointVelocity();
-
-  void initActuator(const void *arg);
-  void setActuatorControlMode();
-
-  void Enable();
-  void Disable();
-
-  bool sendAllActuatorAngle(std::vector<double> radian_vector);
-  bool sendMultipleActuatorAngle(std::vector<uint8_t> id, std::vector<double> radian_vector);
-  bool sendActuatorAngle(uint8_t actuator_id, double radian);
-  std::vector<double> receiveAllActuatorAngle();
+  std::vector<double> receiveAllDynamixelAngle();
+  std::vector<double> receiveAllDynamixelVelocity();
 };
 
+class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
+{
+private:
+  int8_t dynamixel_num_;
+  DynamixelWorkbench *dynamixel_controller_;
+  uint8_t dynamixel_id_;
+
+public:
+  GripperDynamixel() {}
+  virtual ~GripperDynamixel() {}
+
+  virtual void init(uint8_t actuator_id, const void *arg);
+  virtual void setMode(uint8_t actuator_id, const void *arg);
+  uint8_t getId();
+
+  virtual void enable();
+  virtual void disable();
+
+  virtual bool sendJointActuatorValue(uint8_t actuator_id, ROBOTIS_MANIPULATOR::Actuator value);
+  virtual ROBOTIS_MANIPULATOR::Actuator receiveJointActuatorValue(uint8_t actuator_id);
+
+////////////////////////////////////////////////////////////////
+
+  void iniialize(uint8_t actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
+  void setOperatingMode(uint8_t actuator_id, std::string dynamixel_mode = "position_mode");
+  void writeProfileValue(uint8_t actuator_id, std::string profile_mode, int8_t value);
+  void writeTorqueEnable(uint8_t actuator_id, int8_t value);
+  void writeGoalPosition(uint8_t actuator_id, double radian);
+  void writeGoalVelocity(uint8_t actuator_id, double velocity);
+  double receiveDynamixelAngle();
+  double receiveDynamixelVelocity();
+};
 
 } // namespace RM_DYNAMIXEL
 #endif // OM_CHAIN_ACTUATOR_H_
