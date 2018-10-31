@@ -14,8 +14,8 @@
 * limitations under the License.
 *******************************************************************************/
 
-#ifndef OM_LINK_DYNAMIXEL_H_
-#define OM_LINK_DYNAMIXEL_H_
+#ifndef OM_DYNAMIXEL_H_
+#define OM_DYNAMIXEL_H_
 
 #include <robotis_manipulator/robotis_manipulator.h>
 #include <robotis_manipulator/robotis_manipulator_common.h>
@@ -98,7 +98,7 @@ public:
 };
 
 } // namespace RM_DYNAMIXEL
-#endif // OM_CHAIN_ACTUATOR_H_
+#endif // OM_DYNAMIXEL_H_
 
 
 

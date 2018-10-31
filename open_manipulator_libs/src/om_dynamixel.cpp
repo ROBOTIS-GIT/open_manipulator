@@ -235,18 +235,6 @@ std::vector<double> JointDynamixel::receiveAllDynamixelVelocity()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //////////////////////////////////////tool actuator
 
 void GripperDynamixel::init(uint8_t actuator_id, const void *arg)

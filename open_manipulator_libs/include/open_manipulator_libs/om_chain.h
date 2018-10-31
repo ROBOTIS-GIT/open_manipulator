@@ -17,10 +17,9 @@
 #ifndef OM_CHAIN_CONFIG_HPP_
 #define OM_CHAIN_CONFIG_HPP_
 
-#include "om_chain_actuator.h"
-#include "om_chain_drawing.h"
-#include "om_chain_kinematics.h"
-#include "om_chain_tool.h"
+#include "om_dynamixel.h"
+#include "om_drawing.h"
+#include "om_kinematics.h"
 
 #define DXL_BAUD_RATE 1000000
 

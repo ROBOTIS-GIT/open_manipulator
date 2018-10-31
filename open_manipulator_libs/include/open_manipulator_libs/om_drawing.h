@@ -27,47 +27,61 @@
 
 #include "robotis_manipulator/robotis_manipulator.h"
 
+enum AXIS{
+    X_AXIS,
+    Y_AXIS,
+    Z_AXIS,
+    ROLL,
+    PITCH,
+    YAW
+};
+
+using namespace ROBOTIS_MANIPULATOR;
+using namespace Eigen;
+
 namespace OM_CHAIN_DRAWING
 {
-using namespace Eigen;
-class Line : public ROBOTIS_MANIPULATOR::Drawing
+
+class Line : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
-  Pose start_pose_;
-  Pose end_pose_;
+  WayPointType output_way_point_type_;
+
+  std::vector<WayPoint> start_pose_;
+  std::vector<WayPoint> goal_pose_;
+
   double acc_dec_time_;
   double move_time_;
-  Vector3f vel_max_;
-  double *get_arg_;
+  std::vector<double> vel_max_;
 
 public:
   Line();
   virtual ~Line();
 
-  void init(double move_time, double control_time);
-  Pose line(double time_var);
+  void initLine(double move_time, double control_time, std::vector<WayPoint> start, std::vector<WayPoint> goal);
+  std::vector<WayPoint> drawLine(double time_var);
 
-  virtual void initDraw(const void *arg);
-  virtual void setStartPose(Pose start_pose);
-  virtual void setEndPose(Pose end_pose);
-  virtual Pose getPose(double tick);
-
-  virtual void setRadius(double radius);
-  virtual void setAngularStartPosition(double start_angular_position);
+  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
+  virtual std::vector<WayPoint> getJointWayPoint(double tick);
+  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
 };
 
-class Circle : public ROBOTIS_MANIPULATOR::Drawing
+//-------------------- Circle --------------------//
+
+class Circle : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
+  WayPointType output_way_point_type_;
+
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
-  MatrixXf coefficient_;
+  VectorXd coefficient_;
 
-  uint8_t joint_num_;
+  std::vector<WayPoint> start_pose_;
+  std::vector<WayPoint> goal_pose_;
 
-  Vector3f start_position_;
-  Pose start_pose_;
   double radius_;
   double start_angular_position_;
+  double revolution_;
 
   double *get_arg_;
 
@@ -75,21 +89,17 @@ public:
   Circle();
   virtual ~Circle();
 
-  void init(double move_time, double control_time);
-  Pose circle(double time_var);
-
+  void initCircle(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
+  std::vector<WayPoint> drawCircle(double time_var);
   MatrixXf getCoefficient();
 
-  virtual void initDraw(const void *arg);
-  virtual void setRadius(double radius);
-  virtual void setStartPose(Pose start_pose);
-  virtual void setEndPose(Pose end_pose);
-  virtual void setAngularStartPosition(double start_angular_position);
-  virtual Pose getPose(double tick);
+  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
+  virtual std::vector<WayPoint> getJointWayPoint(double tick);
+  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
 };
 
 
-class Rhombus : public ROBOTIS_MANIPULATOR::Drawing
+class Rhombus : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
@@ -116,14 +126,14 @@ public:
   virtual void initDraw(const void *arg);
   virtual void setRadius(double radius);
   virtual void setStartPose(Pose start_pose);
-  virtual void setEndPose(Pose end_pose);
+  virtual void setgoalPose(Pose goal_pose);
   virtual void setAngularStartPosition(double start_angular_position);
 
   virtual Pose getPose(double tick);
 };
 
 
-class Heart : public ROBOTIS_MANIPULATOR::Drawing
+class Heart : public ROBOTIS_MANIPULATOR::DrawingTrajectory
 {
 private:
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
@@ -150,7 +160,7 @@ public:
   virtual void initDraw(const void *arg);
   virtual void setRadius(double radius);
   virtual void setStartPose(Pose start_pose);
-  virtual void setEndPose(Pose end_pose);
+  virtual void setgoalPose(Pose goal_pose);
   virtual void setAngularStartPosition(double start_angular_position);
 
   virtual Pose getPose(double tick);
