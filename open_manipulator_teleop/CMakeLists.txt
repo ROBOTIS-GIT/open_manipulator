@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 2.8.3)
@@ -10,6 +10,7 @@ project(open_manipulator_teleop)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   geometry_msgs
+  open_manipulator_msgs
 )
 
 ################################################################################

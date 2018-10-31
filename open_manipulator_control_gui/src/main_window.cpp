@@ -96,7 +96,11 @@ void MainWindow::on_btn_init_pose_clicked(void)
   joint_name.push_back("joint3"); joint_angle.push_back(0.0);
   joint_name.push_back("joint4"); joint_angle.push_back(0.0);
 
-  qnode.setJointSpacePath(joint_name, joint_angle, path_time);
+  if(!qnode.setJointSpacePath(joint_name, joint_angle, path_time))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
 
   writeLog("Send joint angle to init. pose");
 }
@@ -111,9 +115,11 @@ void MainWindow::on_btn_home_pose_clicked(void)
   joint_name.push_back("joint2"); joint_angle.push_back(-1.05);
   joint_name.push_back("joint3"); joint_angle.push_back(0.35);
   joint_name.push_back("joint4"); joint_angle.push_back(0.70);
-
-  qnode.setJointSpacePath(joint_name, joint_angle, path_time);
-
+  if(!qnode.setJointSpacePath(joint_name, joint_angle, path_time))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
   writeLog("Send joint angle to home pose");
 }
 
@@ -121,7 +127,12 @@ void MainWindow::on_btn_gripper_open_clicked(void)
 {
   std::vector<double> joint_angle;
   joint_angle.push_back(-1.0);
-  qnode.setToolControl(joint_angle);
+
+  if(!qnode.setToolControl(joint_angle))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
 
   writeLog("Send gripper open");
 }
@@ -130,7 +141,11 @@ void MainWindow::on_btn_gripper_close_clicked(void)
 {
   std::vector<double> joint_angle;
   joint_angle.push_back(0.5);
-  qnode.setToolControl(joint_angle);
+  if(!qnode.setToolControl(joint_angle))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
 
   writeLog("Send gripper close");
 }
@@ -157,7 +172,11 @@ void MainWindow::on_btn_send_joint_angle_clicked(void)
   joint_name.push_back("joint3"); joint_angle.push_back(ui.doubleSpinBox_j3->value());
   joint_name.push_back("joint4"); joint_angle.push_back(ui.doubleSpinBox_j4->value());
 
-  qnode.setJointSpacePath(joint_name, joint_angle, path_time);
+  if(!qnode.setJointSpacePath(joint_name, joint_angle, path_time))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
 
   writeLog("Send joint angle");
 }
@@ -179,7 +198,11 @@ void MainWindow::on_btn_send_kinematic_pose_clicked(void)
   kinematics_pose.push_back(ui.doubleSpinBox_y->value());
   kinematics_pose.push_back(ui.doubleSpinBox_z->value());
 
-  qnode.setTaskSpacePath(kinematics_pose, path_time);
+  if(!qnode.setTaskSpacePath(kinematics_pose, path_time))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
 
   writeLog("Send task pose");
 }
@@ -187,7 +210,12 @@ void MainWindow::on_btn_set_gripper_clicked(void)
 {
   std::vector<double> joint_angle;
   joint_angle.push_back(ui.doubleSpinBox_gripper->value());
-  qnode.setToolControl(joint_angle);
+  if(!qnode.setToolControl(joint_angle))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
+
 
   writeLog("Send gripper value");
 

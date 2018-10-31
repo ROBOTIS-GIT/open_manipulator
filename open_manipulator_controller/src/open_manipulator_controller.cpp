@@ -5,10 +5,30 @@ using namespace open_manipulator_controller;
 
 OM_CONTROLLER::OM_CONTROLLER()
     :node_handle_(""),
-     priv_node_handle_("~")
+     priv_node_handle_("~"),
+     toolCtrlFlag(false),
+     toolPosition(0.0)
 {
   robot_name_   = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
 
+  initPublisher();
+  initSubscriber();
+
+  chain.initManipulator();
+
+  setTimerThread();
+  ROS_INFO("OpenManipulator initialization");
+}
+
+OM_CONTROLLER::~OM_CONTROLLER()
+{
+  chain.actuatorDisable(JOINT_DYNAMIXEL);
+  chain.actuatorDisable(TOOL_DYNAMIXEL);
+  ros::shutdown();
+}
+
+void OM_CONTROLLER::setTimerThread()
+{
   int error;
   struct sched_param param;
   pthread_attr_t attr;
@@ -28,26 +48,14 @@ OM_CONTROLLER::OM_CONTROLLER()
     ROS_ERROR("pthread_attr_setschedparam error = %d\n", error);
 
   // create and start the thread
-  if ((error = pthread_create(&this->timer_thread_, &attr, this->timerThread, this)) != 0)
+  if ((error = pthread_create(&this->timer_thread_, /*&attr*/NULL, this->timerThread, this)) != 0)
   {
     ROS_ERROR("Creating timer thread failed!! %d", error);
     exit(-1);
   }
-
-  initPublisher();
-  initSubscriber();
-
-  chain.initManipulator();
-
-  ROS_INFO("OpenManipulator initialization");
 }
 
-OM_CONTROLLER::~OM_CONTROLLER()
-{
-  chain.actuatorDisable(JOINT_DYNAMIXEL);
-  chain.actuatorDisable(TOOL_DYNAMIXEL);
-  ros::shutdown();
-}
+
 void *OM_CONTROLLER::timerThread(void *param)
 {
   OM_CONTROLLER *controller = (OM_CONTROLLER *) param;
@@ -61,12 +69,15 @@ void *OM_CONTROLLER::timerThread(void *param)
     next_time.tv_sec += (next_time.tv_nsec + ACTUATOR_CONTROL_TIME_MSEC * 1000000) / 1000000000;
     next_time.tv_nsec = (next_time.tv_nsec + ACTUATOR_CONTROL_TIME_MSEC * 1000000) % 1000000000;
 
-
-    controller->process();
+    double time = next_time.tv_sec + (next_time.tv_nsec*0.000000001);
+    controller->process(time);
 
     clock_gettime(CLOCK_MONOTONIC, &curr_time);
     long delta_nsec = (next_time.tv_sec - curr_time.tv_sec) * 1000000000 + (next_time.tv_nsec - curr_time.tv_nsec);
-    //ROS_INFO("%ld", next_time.tv_nsec);
+    /////
+    //double current_time = curr_time.tv_sec + (curr_time.tv_nsec*0.000000001);
+    //ROS_INFO("%lf", current_time);
+    /////
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
   }
 
@@ -115,7 +126,9 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
 bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
-  chain.toolMove(TOOL_DYNAMIXEL, TOOL, req.joint_position.position.at(0));
+  toolCtrlFlag = true;
+  toolPosition = req.joint_position.position.at(0);
+
   res.isPlanned = true;
   return true;
 }
@@ -141,10 +154,15 @@ void OM_CONTROLLER::publishJointStates()
 }
 
 
-void OM_CONTROLLER::process()
+void OM_CONTROLLER::process(double time)
 {
-  //ROS_INFO("%lf",ros::Time::now().toSec());
-  chain.chainProcess(ros::Time::now().toSec());
+  chain.chainProcess(time);
+
+  if(toolCtrlFlag)
+  {
+    chain.toolMove(TOOL_DYNAMIXEL, TOOL, toolPosition);
+    toolCtrlFlag = false;
+  }
 }
 
 int main(int argc, char **argv)
@@ -162,7 +180,6 @@ int main(int argc, char **argv)
     om_controller.publishKinematicsPose();
     ros::spinOnce();
     loop_rate.sleep();
-
   }
 
   return 0;

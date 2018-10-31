@@ -37,6 +37,8 @@ class OM_CONTROLLER
   pthread_t timer_thread_;
 
   OM_CHAIN chain;
+  bool toolCtrlFlag;
+  double toolPosition;
 
  public:
   OM_CONTROLLER();
@@ -54,9 +56,10 @@ class OM_CONTROLLER
   bool goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                open_manipulator_msgs::SetJointPosition::Response &res);
 
+  void setTimerThread();
   static void *timerThread(void *param);
 
-  void process();
+  void process(double time);
 
   void publishKinematicsPose();
   void publishJointStates();
