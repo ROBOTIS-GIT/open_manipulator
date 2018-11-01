@@ -122,6 +122,9 @@ void DynamixelController::setOperatingMode()
   }
   else
   {
+    ROS_WARN("Joint controller mode '%s' not found. Please use 'position_mode' or 'current_mode'.",
+             joint_mode_.c_str());
+    ROS_WARN("Setting joint controller to 'position_mode'.");
     for (uint8_t num = 0; num < JOINT_NUM; num++)
       joint_controller_->jointMode(joint_id_.at(num));
   }
@@ -131,7 +134,12 @@ void DynamixelController::setOperatingMode()
   else if (gripper_mode_ == "current_mode" && protocol_version_ == 2.0)
     gripper_controller_->currentMode(gripper_id_.at(0), 50);
   else
+  {
+    ROS_WARN("Gripper controller mode '%s' not found. Please use 'position_mode' or 'current_mode'.",
+             gripper_mode_.c_str());
+    ROS_WARN("Setting gripper controller to 'position_mode'.");
     gripper_controller_->jointMode(gripper_id_.at(0));
+  }
 }
 
 void DynamixelController::setSyncFunction()
