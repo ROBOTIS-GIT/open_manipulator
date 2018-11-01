@@ -25,6 +25,9 @@
 
 namespace OM_DYNAMIXEL
 {
+#define SYNC_WRITE_GOAL_POSITION 0
+#define SYNC_READ_PRESENT_POSITION 0
+#define SYNC_READ_PRESENT_VELOCITY 1
 
 class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
 {
@@ -33,8 +36,8 @@ private:
   DynamixelWorkbench *dynamixel_controller_;
   std::vector<uint8_t> dynamixel_id_;
 
-  int32_t goal_position_[20] = {0, }; //need update workbench
-  int32_t goal_velocity_[20] = {0, };
+  uint32_t goal_position_[20] = {0, }; //need update workbench
+  uint32_t goal_velocity_[20] = {0, };
 
 public:
   JointDynamixel() {}
@@ -56,8 +59,8 @@ public:
 
   void iniialize(std::vector<uint8_t> actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
   void setOperatingMode(std::vector<uint8_t> actuator_id, std::string dynamixel_mode = "position_mode");
-  void writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, int8_t value);
-  void writeTorqueEnable(std::vector<uint8_t> actuator_id, int8_t value);
+  void writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint8_t value);
+  void writeTorqueEnable(std::vector<uint8_t> actuator_id, uint8_t value);
   void writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector);
   void writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector);
   std::vector<double> receiveAllDynamixelAngle();
@@ -67,7 +70,6 @@ public:
 class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
 {
 private:
-  int8_t dynamixel_num_;
   DynamixelWorkbench *dynamixel_controller_;
   uint8_t dynamixel_id_;
 
@@ -76,21 +78,21 @@ public:
   virtual ~GripperDynamixel() {}
 
   virtual void init(uint8_t actuator_id, const void *arg);
-  virtual void setMode(uint8_t actuator_id, const void *arg);
+  virtual void setMode(const void *arg);
   virtual uint8_t getId();
 
   virtual void enable();
   virtual void disable();
 
-  virtual bool sendJointActuatorValue(uint8_t actuator_id, ROBOTIS_MANIPULATOR::Actuator value);
-  virtual ROBOTIS_MANIPULATOR::Actuator receiveJointActuatorValue(uint8_t actuator_id);
+  virtual bool sendToolActuatorValue(uint8_t actuator_id, double value);
+  virtual double receiveToolActuatorValue(uint8_t actuator_id);
 
 ////////////////////////////////////////////////////////////////
 
   void iniialize(uint8_t actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
   void setOperatingMode(uint8_t actuator_id, std::string dynamixel_mode = "position_mode");
-  void writeProfileValue(uint8_t actuator_id, std::string profile_mode, int8_t value);
-  void writeTorqueEnable(uint8_t actuator_id, int8_t value);
+  void writeProfileValue(uint8_t actuator_id, std::string profile_mode, uint8_t value);
+  void writeTorqueEnable(uint8_t actuator_id, uint8_t value);
   void writeGoalPosition(uint8_t actuator_id, double radian);
   void writeGoalVelocity(uint8_t actuator_id, double velocity);
   double receiveDynamixelAngle();

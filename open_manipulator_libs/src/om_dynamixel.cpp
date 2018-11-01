@@ -155,7 +155,7 @@ void JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
   else if (dynamixel_mode == "current_mode")
   {
     for (uint8_t num = 0; num < actuator_id.size(); num++)
-      dynamixel_controller_->currentMode(actuator_id.at(num));
+      dynamixel_controller_->CurrentBasedPositionMode(actuator_id.at(num));
   }
   else
   {
@@ -163,23 +163,23 @@ void JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
       dynamixel_controller_->jointMode(actuator_id.at(num));
   }
 
-  dynamixel_controller_->addSyncWrite("Goal_Position");
+  dynamixel_controller_->addSyncWriteHandler(actuator_id.at(0), "Goal_Position");
 
-  dynamixel_controller_->addSyncRead("Present_Position");
-  dynamixel_controller_->addSyncRead("Present_Velocity");
+  dynamixel_controller_->addSyncReadHandler(actuator_id.at(0), "Present_Position");
+  dynamixel_controller_->addSyncReadHandler(actuator_id.at(0), "Present_Velocity");
 }
 
-void JointDynamixel::writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, int8_t value)
+void JointDynamixel::writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint8_t value)
 {
   const char * char_profile_mode = profile_mode.c_str();
   for (uint8_t num = 0; num < actuator_id.size(); num++)
-    dynamixel_controller_->itemWrite(actuator_id.at(num), char_profile_mode, value);
+    dynamixel_controller_->writeRegister(actuator_id.at(num), char_profile_mode, value);
 }
 
-void JointDynamixel::writeTorqueEnable(std::vector<uint8_t> actuator_id, int8_t value)
+void JointDynamixel::writeTorqueEnable(std::vector<uint8_t> actuator_id, uint8_t value)
 {
   for (uint8_t num = 0; num < actuator_id.size(); num++)
-    dynamixel_controller_->itemWrite(actuator_id.at(num), "Torque_Enable", value);
+    dynamixel_controller_->writeRegister(actuator_id.at(num), "Torque_Enable", value);
 }
 
 void JointDynamixel::writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector)
@@ -192,7 +192,7 @@ void JointDynamixel::writeGoalPosition(std::vector<uint8_t> actuator_id, std::ve
         goal_position_[index] = dynamixel_controller_->convertRadian2Value(dynamixel_id_.at(index), radian_vector.at(index2));
     }
   }
-  dynamixel_controller_->syncWrite("Goal_Position", goal_position_);
+  dynamixel_controller_->syncWrite(SYNC_WRITE_GOAL_POSITION, goal_position_);
 }
 
 void JointDynamixel::writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector)
@@ -205,15 +205,15 @@ void JointDynamixel::writeGoalVelocity(std::vector<uint8_t> actuator_id, std::ve
         goal_velocity_[index] = dynamixel_controller_->convertRadian2Value(dynamixel_id_.at(index), velocity_vector.at(index2));
     }
   }
-//  dynamixel_controller_->syncWrite("Goal_Velocity", goal_position_);
+  dynamixel_controller_->syncWrite(SYNC_WRITE_GOAL_POSITION, goal_position_);
 }
 
 std::vector<double> JointDynamixel::receiveAllDynamixelAngle()
 {
   std::vector<double> value;
 
-  int32_t* get_joint_present_position = NULL;
-  get_joint_present_position = dynamixel_controller_->syncRead("Present_Position");
+  uint32_t* get_joint_present_position = NULL;
+  dynamixel_controller_->syncRead(SYNC_READ_PRESENT_POSITION, get_joint_present_position);
 
   for (int index = 0; index < dynamixel_id_.size(); index++)
     value.push_back(dynamixel_controller_->convertValue2Radian(dynamixel_id_.at(index), get_joint_present_position[index]));
@@ -224,8 +224,8 @@ std::vector<double> JointDynamixel::receiveAllDynamixelAngle()
 std::vector<double> JointDynamixel::receiveAllDynamixelVelocity()
 {
   std::vector<double> value_vel;
-  int32_t* get_joint_present_velocity = NULL;
-  get_joint_present_velocity = dynamixel_controller_->syncRead("Present_Velocity");
+  uint32_t* get_joint_present_velocity = NULL;
+  dynamixel_controller_->syncRead(SYNC_READ_PRESENT_VELOCITY, get_joint_present_velocity);
 
   for (int index = 0; index < dynamixel_id_.size(); index++)
     value_vel.push_back(dynamixel_controller_->convertValue2Velocity(dynamixel_id_.at(index), get_joint_present_velocity[index]));
@@ -243,14 +243,14 @@ void GripperDynamixel::init(uint8_t actuator_id, const void *arg)
   iniialize(actuator_id ,get_arg_[0], get_arg_[1]);
 }
 
-void GripperDynamixel::setMode(uint8_t actuator_id, const void *arg)
+void GripperDynamixel::setMode(const void *arg)
 {
   std::string *get_arg_ = (std::string *)arg;
 
   if(get_arg_[0]=="position_mode" || get_arg_[0]=="current_mode")
-    setOperatingMode(actuator_id, get_arg_[0]);
+    setOperatingMode(dynamixel_id_, get_arg_[0]);
   else
-    writeProfileValue(actuator_id, get_arg_[0], std::stoi(get_arg_[1]));
+    writeProfileValue(dynamixel_id_, get_arg_[0], std::stoi(get_arg_[1]));
 }
 
 uint8_t GripperDynamixel::getId()
@@ -268,24 +268,15 @@ void GripperDynamixel::disable()
   writeTorqueEnable(dynamixel_id_, false);
 }
 
-bool GripperDynamixel::sendJointActuatorValue(uint8_t actuator_id, ROBOTIS_MANIPULATOR::Actuator value)
+bool GripperDynamixel::sendToolActuatorValue(uint8_t actuator_id, double value)
 {
-  double radian;
-  double velocity;
-
-  writeGoalPosition(actuator_id, value.value);
-  writeGoalVelocity(actuator_id, value.velocity);
+  writeGoalPosition(actuator_id, value);
 }
 
 
-ROBOTIS_MANIPULATOR::Actuator GripperDynamixel::receiveJointActuatorValue(uint8_t actuator_id)
+double GripperDynamixel::receiveToolActuatorValue(uint8_t actuator_id)
 {
-  ROBOTIS_MANIPULATOR::Actuator result;
-
-  result.value = receiveDynamixelAngle();
-  result.velocity = receiveDynamixelVelocity();
-
-  return result;
+  return receiveDynamixelAngle();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -298,13 +289,8 @@ void GripperDynamixel::iniialize(uint8_t actuator_id, std::string dxl_device_nam
   dynamixel_controller_->begin(dxl_device_name.c_str(), std::stoi(dxl_baud_rate));
 
   uint16_t get_model_number;
-  for (uint8_t index = 0; index < dynamixel_num_; index++)
-  {
-    if (dynamixel_controller_->ping(dynamixel_id_, &get_model_number) != true)
-    {
+  if (dynamixel_controller_->ping(dynamixel_id_, &get_model_number) != true)
       return;
-    }
-  }
   return;
 }
 
@@ -316,59 +302,48 @@ void GripperDynamixel::setOperatingMode(uint8_t actuator_id, std::string dynamix
   }
   else if (dynamixel_mode == "current_mode")
   {
-    dynamixel_controller_->currentMode(actuator_id);
+    dynamixel_controller_->CurrentBasedPositionMode(actuator_id);
   }
   else
   {
     dynamixel_controller_->jointMode(actuator_id);
   }
-
-  dynamixel_controller_->addSyncWrite("Goal_Position");
-
-  dynamixel_controller_->addSyncRead("Present_Position");
-  dynamixel_controller_->addSyncRead("Present_Velocity");
 }
 
-void GripperDynamixel::writeProfileValue(uint8_t actuator_id, std::string profile_mode, int8_t value)
+void GripperDynamixel::writeProfileValue(uint8_t actuator_id, std::string profile_mode, uint8_t value)
 {
   const char * char_profile_mode = profile_mode.c_str();
-  dynamixel_controller_->itemWrite(actuator_id, char_profile_mode, value);
+  dynamixel_controller_->writeRegister(actuator_id, char_profile_mode, value);
 }
 
-void GripperDynamixel::writeTorqueEnable(uint8_t actuator_id, int8_t value)
+void GripperDynamixel::writeTorqueEnable(uint8_t actuator_id, uint8_t value)
 {
-    dynamixel_controller_->itemWrite(actuator_id, "Torque_Enable", value);
+  dynamixel_controller_->writeRegister(actuator_id, "Torque_Enable", value);
 }
 
 void GripperDynamixel::writeGoalPosition(uint8_t actuator_id, double radian)
 {
-  int32_t goal_position[1];
-  goal_position[0] = dynamixel_controller_->convertRadian2Value(dynamixel_id_, radian);
-
-  dynamixel_controller_->syncWrite("Goal_Position", goal_position);
+  uint32_t goal_position = dynamixel_controller_->convertRadian2Value(dynamixel_id_, radian);
+  dynamixel_controller_->writeRegister(actuator_id, "Goal_Position", goal_position);
 }
 
 void GripperDynamixel::writeGoalVelocity(uint8_t actuator_id, double velocity)
 {
-  int32_t goal_velocity_[1];
-  goal_velocity_[0] = dynamixel_controller_->convertRadian2Value(dynamixel_id_, velocity);
-
-  dynamixel_controller_->syncWrite("Goal_Velocity", goal_velocity_);
+  uint32_t goal_velocity = dynamixel_controller_->convertRadian2Value(dynamixel_id_, velocity);
+  dynamixel_controller_->writeRegister(actuator_id, "Goal_Velocity", goal_velocity);
 }
 
 double GripperDynamixel::receiveDynamixelAngle()
 {
-  int32_t* get_joint_present_position = NULL;
-  get_joint_present_position = dynamixel_controller_->syncRead("Present_Position");
-
-  return dynamixel_controller_->convertValue2Radian(dynamixel_id_, get_joint_present_position[0]);
+  uint32_t get_joint_present_position;
+  dynamixel_controller_->readRegister(dynamixel_id_, "Present_Position", &get_joint_present_position);
+  return dynamixel_controller_->convertValue2Radian(dynamixel_id_, get_joint_present_position);
 }
 
 double GripperDynamixel::receiveDynamixelVelocity()
 {
-  int32_t* get_joint_present_velocity = NULL;
-  get_joint_present_velocity = dynamixel_controller_->syncRead("Present_Velocity");
-
-  return dynamixel_controller_->convertValue2Velocity(dynamixel_id_, get_joint_present_velocity[0]);
+  uint32_t get_joint_present_velocity;
+  dynamixel_controller_->readRegister(dynamixel_id_, "Present_Velocity", &get_joint_present_velocity);
+  return dynamixel_controller_->convertValue2Radian(dynamixel_id_, get_joint_present_velocity);
 }
 

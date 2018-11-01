@@ -111,7 +111,7 @@ void OM_CHAIN::initManipulator()
   addDrawingTrajectory(DRAWING_RHOMBUS, &rhombus_);
   addDrawingTrajectory(DRAWING_HEART, &heart_);
 
-  setAllJointActuatorValue(receiveAllJointActuatorValue(jointDxlId));
+  //setAllJointActuatorValue(receiveAllJointActuatorValue(jointDxlId));
 
   //initTrajectory(getAllActiveJointAngle());
   setControlTime(ACTUATOR_CONTROL_TIME);
