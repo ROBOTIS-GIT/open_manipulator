@@ -87,11 +87,11 @@ void OM_CHAIN::initManipulator()
   jointDxlId.push_back(13);
   jointDxlId.push_back(14);
 
-  JointActuatorInit(JOINT_DYNAMIXEL, jointDxlId, p_dxl_comm_arg);
+  jointActuatorInit(JOINT_DYNAMIXEL, jointDxlId, p_dxl_comm_arg);
 
   std::string joint_dxl_mode_arg = "position_mode";
   void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
-  JointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
+  jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
   // tool actuator init.
   tool_ = new OM_DYNAMIXEL::GripperDynamixel();
@@ -111,9 +111,10 @@ void OM_CHAIN::initManipulator()
   addDrawingTrajectory(DRAWING_RHOMBUS, &rhombus_);
   addDrawingTrajectory(DRAWING_HEART, &heart_);
 
-  //setAllJointActuatorValue(receiveAllJointActuatorValue(jointDxlId));
+  std::vector<Actuator> recvJointValue = receiveAllJointActuatorValue(jointDxlId);
+  getManipulator()->setAllJointActuatorValue(receiveAllJointActuatorValue(jointDxlId));
 
-  //initTrajectory(getAllActiveJointAngle());
+  initTrajectoryWayPoint();
   setControlTime(ACTUATOR_CONTROL_TIME);
 }
 
