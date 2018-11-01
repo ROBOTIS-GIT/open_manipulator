@@ -42,7 +42,7 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::timerCallback()
 {
-  std::vector<double> joint_angle = qnode.getPresentJointAngle();
+ /* std::vector<double> joint_angle = qnode.getPresentJointAngle();
   ui.txt_j1->setText(QString::number(joint_angle.at(0),'f', 3));
   ui.txt_j2->setText(QString::number(joint_angle.at(1),'f', 3));
   ui.txt_j3->setText(QString::number(joint_angle.at(2),'f', 3));
@@ -51,7 +51,7 @@ void MainWindow::timerCallback()
   std::vector<double> position = qnode.getPresentKinematicsPose();
   ui.txt_x->setText(QString::number(position.at(0),'f', 3));
   ui.txt_y->setText(QString::number(position.at(1),'f', 3));
-  ui.txt_z->setText(QString::number(position.at(2),'f', 3));
+  ui.txt_z->setText(QString::number(position.at(2),'f', 3));*/
 }
 void MainWindow::tabSelected()
 {

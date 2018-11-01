@@ -75,8 +75,8 @@ void *OM_CONTROLLER::timerThread(void *param)
     clock_gettime(CLOCK_MONOTONIC, &curr_time);
     long delta_nsec = (next_time.tv_sec - curr_time.tv_sec) * 1000000000 + (next_time.tv_nsec - curr_time.tv_nsec);
     /////
-    //double current_time = curr_time.tv_sec + (curr_time.tv_nsec*0.000000001);
-    //ROS_INFO("%lf", current_time);
+    double current_time = curr_time.tv_sec + (curr_time.tv_nsec*0.000000001);
+    ROS_INFO("%lf", current_time);
     /////
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
   }
@@ -103,9 +103,11 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
                                                open_manipulator_msgs::SetJointPosition::Response &res)
 {
   std::vector <double> target_angle;
+
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
-  //chain.setJointTrajectory(target_angle,req.path_time);
+
+  chain.jointTrajectoryMove(target_angle, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -117,8 +119,9 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_pose.position(0) = req.kinematics_pose.pose.position.x;
   target_pose.position(1) = req.kinematics_pose.pose.position.y;
   target_pose.position(2) = req.kinematics_pose.pose.position.z;
-  //target_pose.orientation = chain.getComponentOrientationToWorld(TOOL);
-  //chain.setTaskTrajectory(TOOL, target_pose, req.path_time);
+  target_pose.orientation = chain.getManipulator()->getComponentOrientationToWorld(TOOL);
+
+  chain.taskTrajectoryMove(TOOL, target_pose, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -137,7 +140,7 @@ void OM_CONTROLLER::publishKinematicsPose()
 {
   open_manipulator_msgs::KinematicsPose msg;
 
-  Vector3f position;// = chain.getComponentPositionToWorld(TOOL);
+  Vector3d position = chain.getManipulator()->getComponentPositionToWorld(TOOL);
   msg.pose.position.x = position[0];
   msg.pose.position.y = position[1];
   msg.pose.position.z = position[2];
@@ -148,7 +151,7 @@ void OM_CONTROLLER::publishJointStates()
 {
   open_manipulator_msgs::JointPosition msg;
 
-  std::vector<double> position;// = chain.getAllActiveJointAngle();
+  std::vector<double> position = chain.getManipulator()->getAllActiveJointValue();
   msg.position = position;
   chain_joint_states_pub_.publish(msg);
 }
@@ -160,7 +163,7 @@ void OM_CONTROLLER::process(double time)
 
   if(toolCtrlFlag)
   {
-    //chain.toolMove(TOOL_DYNAMIXEL, TOOL, toolPosition);
+    chain.toolMove(TOOL, toolPosition);
     toolCtrlFlag = false;
   }
 }

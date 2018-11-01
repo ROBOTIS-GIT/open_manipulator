@@ -49,9 +49,6 @@
 class OM_CHAIN : public ROBOTIS_MANIPULATOR::RobotisManipulator
 {
 private:
-  std::vector<double> present_joint_angle;
-  std::vector<double> present_gripper_angle;
-
   ROBOTIS_MANIPULATOR::Kinematics *kinematics_;
   ROBOTIS_MANIPULATOR::JointActuator *actuator_;
   ROBOTIS_MANIPULATOR::ToolActuator *tool_;
@@ -63,6 +60,8 @@ private:
 
   bool platform_;
   bool processing_;
+
+  std::vector<uint8_t> jointDxlId;
 
  public:
   OM_CHAIN();

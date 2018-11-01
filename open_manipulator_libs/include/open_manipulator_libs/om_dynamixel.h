@@ -37,7 +37,7 @@ private:
   int8_t dynamixel_num_;
   DynamixelWorkbench *dynamixel_controller_;
   std::vector<uint8_t> dynamixel_id_;
-
+  const char* log ;
   uint32_t goal_position_[20] = {0, }; //need update workbench
   uint32_t goal_velocity_[20] = {0, };
 
@@ -74,7 +74,7 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
 private:
   DynamixelWorkbench *dynamixel_controller_;
   uint8_t dynamixel_id_;
-
+  const char* log;
 public:
   GripperDynamixel() {}
   virtual ~GripperDynamixel() {}
