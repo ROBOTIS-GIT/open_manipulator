@@ -61,7 +61,7 @@ bool JointDynamixel::sendJointActuatorValue(uint8_t actuator_id, ROBOTIS_MANIPUL
   velocity_vector.push_back(value.velocity);
 
   writeGoalPosition(id_vector, radian_vector);
-  writeGoalVelocity(id_vector, velocity_vector);
+  //writeGoalVelocity(id_vector, velocity_vector);
 }
 
 bool JointDynamixel::sendMultipleJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector)
@@ -76,7 +76,7 @@ bool JointDynamixel::sendMultipleJointActuatorValue(std::vector<uint8_t> actuato
   }
 
   writeGoalPosition(actuator_id, radian_vector);
-  writeGoalVelocity(actuator_id, velocity_vector);
+  //writeGoalVelocity(actuator_id, velocity_vector);
 }
 
 ROBOTIS_MANIPULATOR::Actuator JointDynamixel::receiveJointActuatorValue(uint8_t actuator_id)
@@ -86,14 +86,14 @@ ROBOTIS_MANIPULATOR::Actuator JointDynamixel::receiveJointActuatorValue(uint8_t 
   ROBOTIS_MANIPULATOR::Actuator result;
 
   value = receiveAllDynamixelAngle();
-  velocity = receiveAllDynamixelVelocity();
+  //velocity = receiveAllDynamixelVelocity();
 
   for(int index = 0; index < dynamixel_num_; index++)
   {
     if(dynamixel_id_.at(index) == actuator_id)
     {
       result.value = value.at(index);
-      result.velocity = velocity.at(index);
+      result.velocity = 0.0;//velocity.at(index);
     }
   }
   return result;
@@ -163,9 +163,12 @@ void JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
   }
 
   dynamixel_controller_->addSyncWriteHandler(actuator_id.at(0), "Goal_Position", &log);
+  dynamixel_controller_->addSyncWriteHandler(actuator_id.at(0), "Goal_Velocity", &log);
 
   dynamixel_controller_->addSyncReadHandler(actuator_id.at(0), "Present_Position", &log);
   dynamixel_controller_->addSyncReadHandler(actuator_id.at(0), "Present_Velocity", &log);
+
+
 }
 
 void JointDynamixel::writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint8_t value)
@@ -201,10 +204,10 @@ void JointDynamixel::writeGoalVelocity(std::vector<uint8_t> actuator_id, std::ve
     for(int index2 = 0; index2 < actuator_id.size(); index2++)
     {
       if(dynamixel_id_.at(index) == actuator_id.at(index2))
-        goal_velocity_[index] = dynamixel_controller_->convertRadian2Value(dynamixel_id_.at(index), velocity_vector.at(index2), &log);
+        goal_velocity_[index] = dynamixel_controller_->convertValue2Velocity(dynamixel_id_.at(index), velocity_vector.at(index2), &log);
     }
   }
-  dynamixel_controller_->syncWrite(SYNC_WRITE_GOAL_POSITION, goal_position_, &log);
+  dynamixel_controller_->syncWrite(SYNC_WRITE_GOAL_VELOCITY, goal_position_, &log);
 }
 
 std::vector<double> JointDynamixel::receiveAllDynamixelAngle()
@@ -298,20 +301,15 @@ void GripperDynamixel::setOperatingMode(uint8_t actuator_id, std::string dynamix
   if (dynamixel_mode == "position_mode")
     dynamixel_controller_->jointMode(actuator_id, 0,0,&log);
   else if (dynamixel_mode == "current_based_position_mode")
-    dynamixel_controller_->CurrentBasedPositionMode(actuator_id, 50, &log);
+    dynamixel_controller_->CurrentBasedPositionMode(actuator_id, 100, &log);
   else
     dynamixel_controller_->jointMode(actuator_id, 0,0,&log);
-
-
 }
 
 void GripperDynamixel::writeProfileValue(uint8_t actuator_id, std::string profile_mode, uint8_t value)
 {
   const char * char_profile_mode = profile_mode.c_str();
-  printf("%s, %d\n", char_profile_mode, value);
-  //dynamixel_controller_->writeRegister(actuator_id, char_profile_mode, value, &log);
-  dynamixel_controller_->writeRegister((uint8_t)15, "Profile_Velocity", (uint8_t)200, &log);
-  printf("%s\n", log);
+  dynamixel_controller_->writeRegister(actuator_id, char_profile_mode, (uint32_t)value, &log);
 }
 
 void GripperDynamixel::writeTorqueEnable(uint8_t actuator_id, uint8_t value)

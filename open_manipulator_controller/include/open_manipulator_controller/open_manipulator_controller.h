@@ -36,11 +36,13 @@ class OM_CONTROLLER
 
   pthread_t timer_thread_;
 
-  OM_CHAIN chain;
-  bool toolCtrlFlag;
-  double toolPosition;
+  bool toolCtrlFlag_;
+  double toolPosition_;
 
  public:
+  bool timerThreadFlag_;
+  OM_CHAIN chain_;
+
   OM_CONTROLLER();
   ~OM_CONTROLLER();
 

@@ -6,15 +6,16 @@ using namespace open_manipulator_controller;
 OM_CONTROLLER::OM_CONTROLLER()
     :node_handle_(""),
      priv_node_handle_("~"),
-     toolCtrlFlag(false),
-     toolPosition(0.0)
+     toolCtrlFlag_(false),
+     timerThreadFlag_(false),
+     toolPosition_(0.0)
 {
   robot_name_   = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
 
   initPublisher();
   initSubscriber();
 
-  chain.initManipulator();
+  chain_.initManipulator();
 
   setTimerThread();
   ROS_INFO("OpenManipulator initialization");
@@ -22,8 +23,10 @@ OM_CONTROLLER::OM_CONTROLLER()
 
 OM_CONTROLLER::~OM_CONTROLLER()
 {
-  chain.actuatorDisable(JOINT_DYNAMIXEL);
-  chain.actuatorDisable(TOOL_DYNAMIXEL);
+  timerThreadFlag_ = false;
+  usleep(10 * 1000);
+  ROS_INFO("Shutdown the OpenManipulator");
+  chain_.allActuatorDisable();
   ros::shutdown();
 }
 
@@ -53,6 +56,7 @@ void OM_CONTROLLER::setTimerThread()
     ROS_ERROR("Creating timer thread failed!! %d", error);
     exit(-1);
   }
+  timerThreadFlag_ = true;
 }
 
 
@@ -64,7 +68,7 @@ void *OM_CONTROLLER::timerThread(void *param)
 
   clock_gettime(CLOCK_MONOTONIC, &next_time);
 
-  while(1)
+  while(controller->timerThreadFlag_)
   {
     next_time.tv_sec += (next_time.tv_nsec + ACTUATOR_CONTROL_TIME_MSEC * 1000000) / 1000000000;
     next_time.tv_nsec = (next_time.tv_nsec + ACTUATOR_CONTROL_TIME_MSEC * 1000000) % 1000000000;
@@ -75,8 +79,8 @@ void *OM_CONTROLLER::timerThread(void *param)
     clock_gettime(CLOCK_MONOTONIC, &curr_time);
     long delta_nsec = (next_time.tv_sec - curr_time.tv_sec) * 1000000000 + (next_time.tv_nsec - curr_time.tv_nsec);
     /////
-    double current_time = curr_time.tv_sec + (curr_time.tv_nsec*0.000000001);
-    ROS_INFO("%lf", current_time);
+    //double current_time = curr_time.tv_sec + (curr_time.tv_nsec*0.000000001);
+    //ROS_INFO("%lf", current_time);
     /////
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
   }
@@ -107,7 +111,7 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  chain.jointTrajectoryMove(target_angle, req.path_time);
+  chain_.jointTrajectoryMove(target_angle, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -119,9 +123,9 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_pose.position(0) = req.kinematics_pose.pose.position.x;
   target_pose.position(1) = req.kinematics_pose.pose.position.y;
   target_pose.position(2) = req.kinematics_pose.pose.position.z;
-  target_pose.orientation = chain.getManipulator()->getComponentOrientationToWorld(TOOL);
+  target_pose.orientation = chain_.getManipulator()->getComponentOrientationToWorld(TOOL);
 
-  chain.taskTrajectoryMove(TOOL, target_pose, req.path_time);
+  chain_.taskTrajectoryMove(TOOL, target_pose, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -129,8 +133,8 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
 bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
-  toolCtrlFlag = true;
-  toolPosition = req.joint_position.position.at(0);
+  toolPosition_ = req.joint_position.position.at(0);
+  toolCtrlFlag_ = true;
 
   res.isPlanned = true;
   return true;
@@ -140,7 +144,7 @@ void OM_CONTROLLER::publishKinematicsPose()
 {
   open_manipulator_msgs::KinematicsPose msg;
 
-  Vector3d position = chain.getManipulator()->getComponentPositionToWorld(TOOL);
+  Vector3d position = chain_.getManipulator()->getComponentPositionToWorld(TOOL);
   msg.pose.position.x = position[0];
   msg.pose.position.y = position[1];
   msg.pose.position.z = position[2];
@@ -151,7 +155,7 @@ void OM_CONTROLLER::publishJointStates()
 {
   open_manipulator_msgs::JointPosition msg;
 
-  std::vector<double> position = chain.getManipulator()->getAllActiveJointValue();
+  std::vector<double> position = chain_.getManipulator()->getAllActiveJointValue();
   msg.position = position;
   chain_joint_states_pub_.publish(msg);
 }
@@ -159,12 +163,12 @@ void OM_CONTROLLER::publishJointStates()
 
 void OM_CONTROLLER::process(double time)
 {
-  chain.chainProcess(time);
+  chain_.chainProcess(time);
 
-  if(toolCtrlFlag)
+  if(toolCtrlFlag_)
   {
-    chain.toolMove(TOOL, toolPosition);
-    toolCtrlFlag = false;
+    chain_.toolMove(TOOL, toolPosition_);
+    toolCtrlFlag_ = false;
   }
 }
 

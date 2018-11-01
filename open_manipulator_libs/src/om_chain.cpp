@@ -111,7 +111,7 @@ void OM_CHAIN::initManipulator()
   toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
   gripper_dxl_opt_arg[0] = "Profile_Acceleration";
-  gripper_dxl_opt_arg[1] = "10";
+  gripper_dxl_opt_arg[1] = "20";
   toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
   // all actuator enable
