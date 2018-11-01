@@ -71,7 +71,7 @@ void OM_CHAIN::initManipulator()
           1.0f); // Change unit from `meter` to `radian`
 
   // kinematics init.
-  kinematics_ = new OM_CHAIN_KINEMATICS::Chain();
+  kinematics_ = new OM_KINEMATICS::Chain();
   addKinematics(kinematics_);
 
   // joint actuator init.

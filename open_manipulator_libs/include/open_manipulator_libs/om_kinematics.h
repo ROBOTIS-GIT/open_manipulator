@@ -33,13 +33,13 @@
 using namespace Eigen;
 using namespace ROBOTIS_MANIPULATOR;
 
-namespace OM_CHAIN_KINEMATICS
+namespace OM_KINEMATICS
 {
-class Chain : public ROBOTIS_MANIPULATOR:: Kinematics
+class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 {
 public:
-  Chain(){};
-  virtual ~Chain(){};
+  Chain(){}
+  virtual ~Chain(){}
 
   virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);

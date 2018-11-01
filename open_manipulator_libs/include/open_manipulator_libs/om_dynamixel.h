@@ -17,14 +17,16 @@
 #ifndef OM_DYNAMIXEL_H_
 #define OM_DYNAMIXEL_H_
 
+#include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
 #include <robotis_manipulator/robotis_manipulator.h>
 #include <robotis_manipulator/robotis_manipulator_common.h>
-#include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
+
 
 #include <iostream>
 
 namespace OM_DYNAMIXEL
 {
+
 #define SYNC_WRITE_GOAL_POSITION 0
 #define SYNC_READ_PRESENT_POSITION 0
 #define SYNC_READ_PRESENT_VELOCITY 1

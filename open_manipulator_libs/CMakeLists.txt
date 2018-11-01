@@ -10,10 +10,9 @@ add_compile_options(-std=c++11)
 # Find catkin packages and libraries for catkin and system dependencies
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
+    robotis_manipulator
     roscpp
     cmake_modules
-    robotis_manipulator
-    dynamixel_sdk
     dynamixel_workbench_toolbox
 )
 find_package(Eigen3 REQUIRED)
@@ -35,6 +34,7 @@ find_package(Eigen3 REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
+  CATKIN_DEPENDS dynamixel_workbench_toolbox
   DEPENDS EIGEN3
 )
 
@@ -53,8 +53,6 @@ add_library(open_manipulator_libs
   src/om_kinematics.cpp
 )
 
-add_dependencies(open_manipulator_libs ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-target_link_libraries(open_manipulator_libs
-  ${catkin_LIBRARIES}
+add_dependencies(open_manipulator_libs ${catkin_EXPORTED_TARGETS})
+target_link_libraries(open_manipulator_libs  ${catkin_LIBRARIES}
 )

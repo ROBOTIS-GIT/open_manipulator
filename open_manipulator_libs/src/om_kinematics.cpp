@@ -20,11 +20,11 @@
 
 using namespace Eigen;
 using namespace ROBOTIS_MANIPULATOR;
-using namespace OM_CHAIN_KINEMATICS;
+using namespace OM_KINEMATICS;
 
 MatrixXd Chain::jacobian(Manipulator *manipulator, Name tool_name)
 {
-  MatrixXd jacobian = MatrixXd::Identity(6, manipulator->getDOF());
+  /*MatrixXd jacobian = MatrixXd::Identity(6, manipulator->getDOF());
 
   Vector3f joint_axis = ZERO_VECTOR;
 
@@ -62,17 +62,17 @@ MatrixXd Chain::jacobian(Manipulator *manipulator, Name tool_name)
     index++;
     my_name = manipulator->getComponentChildName(my_name).at(0); // Get Child name which has active joint
   }
-  return jacobian;
+  return jacobian;*/
 }
 
 void Chain::forward(Manipulator *manipulator)
 {
-  forward(manipulator, manipulator->getWorldChildName());
+  //forward(manipulator, manipulator->getWorldChildName());
 }
 
 void Chain::forward(Manipulator *manipulator, Name component_name)
 {
-  Name my_name = component_name;
+/*  Name my_name = component_name;
   Name parent_name = manipulator->getComponentParentName(my_name);
   int8_t number_of_child = manipulator->getComponentChildName(my_name).size();
 
@@ -100,7 +100,7 @@ void Chain::forward(Manipulator *manipulator, Name component_name)
   {
     Name child_name = manipulator->getComponentChildName(my_name).at(index);
     forward(manipulator, child_name);
-  }
+  }*/
 }
 
 std::vector<double> Chain::inverse(Manipulator *manipulator, Name tool_name, Pose target_pose)
@@ -111,7 +111,7 @@ std::vector<double> Chain::inverse(Manipulator *manipulator, Name tool_name, Pos
 
 std::vector<double> Chain::inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
-  const double lambda = 0.7;
+ /* const double lambda = 0.7;
   const int8_t iteration = 10;
 
   Manipulator _manipulator = *manipulator;
@@ -142,12 +142,12 @@ std::vector<double> Chain::inverseKinematics(Manipulator *manipulator, Name tool
     _manipulator.setAllActiveJointAngle(set_angle_changed);
   }
 
-  return _manipulator.getAllActiveJointAngle();
+  return _manipulator.getAllActiveJointAngle();*/
 }
 
 std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
-  double lambda = 0.0;
+ /* double lambda = 0.0;
   const double param = 0.002;
   int8_t iteration = 50;
 
@@ -222,12 +222,12 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
     }
   }
 
-  return _manipulator.getAllActiveJointAngle();
+  return _manipulator.getAllActiveJointAngle();*/
 }
 
 std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
-  double lambda = 0.0;
+ /* double lambda = 0.0;
   const double param = 0.002;
   const int8_t iteration = 10;
 
@@ -301,5 +301,7 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
     }
   }
 
-  return _manipulator.getAllActiveJointAngle();
+  return _manipulator.getAllActiveJointAngle();*/
 }
+
+void Chain::updatePassiveJointValue(Manipulator *manipulator){}
