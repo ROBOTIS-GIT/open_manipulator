@@ -1,59 +1,95 @@
-﻿##############################################################################
-# CMake
-##############################################################################
-
+﻿################################################################################
+# Set minimum required version of cmake, project name and compile options
+################################################################################
 cmake_minimum_required(VERSION 2.8.0)
 project(open_manipulator_control_gui)
 
-##############################################################################
-# Catkin
-##############################################################################
+## Compile as C++11, supported in ROS Kinetic and newer
+add_compile_options(-std=c++11)
 
-# qt_build provides the qt cmake glue, roscpp the comms for a default talker
+################################################################################
+# Find catkin packages and libraries for catkin and system dependencies
+################################################################################
 find_package(catkin REQUIRED COMPONENTS
-    qt_build
-    roscpp
-    std_msgs
-    sensor_msgs
-    open_manipulator_msgs
-    )
-include_directories(${catkin_INCLUDE_DIRS})
-# Use this to define what the package will export (e.g. libs, headers).
-# Since the default here is to produce only a binary, we don't worry about
-# exporting anything. 
-catkin_package()
+  roscpp
+  std_msgs
+  sensor_msgs
+  open_manipulator_msgs
+)
+find_package(Qt5Widgets REQUIRED)
 
-##############################################################################
-# Qt Environment
-##############################################################################
+set(${PROJECT_NAME}_SRCS
+  src/main.cpp
+  src/main_window.cpp
+  src/qnode.cpp
+)
 
-# this comes from qt_build's qt-ros.cmake which is automatically 
-# included via the dependency call in package.xml
-rosbuild_prepare_qt4(QtCore QtGui) # Add the appropriate components to the component list here
+set(${PROJECT_NAME}_HDRS
+  include/${PROJECT_NAME}/main_window.hpp
+  include/${PROJECT_NAME}/qnode.hpp
+)
 
-##############################################################################
-# Sections
-##############################################################################
+set(${PROJECT_NAME}_UIS
+  ui/main_window.ui
+)
 
-file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
-file(GLOB QT_RESOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/*.qrc)
-file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/open_manipulator_control_gui/*.hpp)
+set(${PROJECT_NAME}_RESOURCES
+  resources/images.qrc
+)
 
-QT4_ADD_RESOURCES(QT_RESOURCES_CPP ${QT_RESOURCES})
-QT4_WRAP_UI(QT_FORMS_HPP ${QT_FORMS})
-QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
+set(${PROJECT_NAME}_INCLUDE_DIRECTORIES
+  "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}/${PROJECT_NAME}"
+)
 
-##############################################################################
-# Sources
-##############################################################################
+if(NOT EXISTS ${${PROJECT_NAME}_INCLUDE_DIRECTORIES})
+  file(MAKE_DIRECTORY ${${PROJECT_NAME}_INCLUDE_DIRECTORIES})
+endif()
 
-file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
 
-##############################################################################
-# Binaries
-##############################################################################
 
-add_executable(open_manipulator_control_gui ${QT_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(open_manipulator_control_gui ${QT_LIBRARIES} ${catkin_LIBRARIES})
-install(TARGETS open_manipulator_control_gui RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+################################################################################
+# Setup for python modules and scripts
+################################################################################
+
+################################################################################
+# Declare ROS messages, services and actions
+################################################################################
+
+################################################################################
+# Declare ROS dynamic reconfigure parameters
+################################################################################
+
+################################################################################
+# Declare catkin specific configuration to be passed to dependent projects
+################################################################################
+catkin_package(
+  INCLUDE_DIRS include
+  CATKIN_DEPENDS roscpp open_manipulator_msgs
+
+)
+
+qt5_wrap_cpp(${PROJECT_NAME}_MOCS     ${${PROJECT_NAME}_HDRS})
+qt5_add_resources(${PROJECT_NAME}_RCC ${${PROJECT_NAME}_RESOURCES})
+
+# ensure generated header files are being created in the devel space
+set(_cmake_current_binary_dir "${CMAKE_CURRENT_BINARY_DIR}")
+set(CMAKE_CURRENT_BINARY_DIR ${open_manipulator_control_gui_INCLUDE_DIRECTORIES})
+
+qt5_wrap_ui(${PROJECT_NAME}_UIS_H ${${PROJECT_NAME}_UIS})
+
+set(CMAKE_CURRENT_BINARY_DIR "${_cmake_current_binary_dir}")
+
+
+################################################################################
+# Build
+################################################################################
+include_directories(
+  include
+  ${open_manipulator_control_gui_INCLUDE_DIRECTORIES}
+  ${catkin_INCLUDE_DIRS}
+)
+
+add_executable(open_manipulator_control_gui ${open_manipulator_control_gui_SRCS} ${open_manipulator_control_gui_MOCS} ${open_manipulator_control_gui_UIS_H} ${open_manipulator_control_gui_RCC})
+add_dependencies(open_manipulator_control_gui ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(open_manipulator_control_gui Qt5::Widgets ${catkin_LIBRARIES})
 
