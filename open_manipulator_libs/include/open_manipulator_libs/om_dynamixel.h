@@ -80,9 +80,7 @@ class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
   bool setSDKHandler(uint8_t actuator_id);
   bool writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint32_t value);
   bool writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector);
-  // bool writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector);
   std::vector<ROBOTIS_MANIPULATOR::Actuator> receiveAllDynamixelValue(std::vector<uint8_t> actuator_id);
-  // std::vector<double> receiveAllDynamixelVelocity();
 };
 
 class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
@@ -111,11 +109,8 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
   bool setOperatingMode(std::string dynamixel_mode = "position_mode");
   bool writeProfileValue(std::string profile_mode, uint8_t value);
   bool setSDKHandler();
-  // void writeTorqueEnable(uint8_t actuator_id, uint8_t value);
   bool writeGoalPosition(double radian);
-  // void writeGoalVelocity(uint8_t actuator_id, double velocity);
   double receiveDynamixelValue();
-  // double receiveDynamixelVelocity();
 };
 
 } // namespace RM_DYNAMIXEL
