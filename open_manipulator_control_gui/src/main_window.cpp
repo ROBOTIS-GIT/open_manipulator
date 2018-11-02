@@ -215,8 +215,6 @@ void MainWindow::on_btn_set_gripper_clicked(void)
     writeLog("[ERR!!] Failed to send service");
     return;
   }
-
-
   writeLog("Send gripper value");
 
 }

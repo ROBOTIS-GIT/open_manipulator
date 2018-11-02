@@ -77,12 +77,15 @@ void *OM_CONTROLLER::timerThread(void *param)
     controller->process(time);
 
     clock_gettime(CLOCK_MONOTONIC, &curr_time);
-    long delta_nsec = (next_time.tv_sec - curr_time.tv_sec) * 1000000000 + (next_time.tv_nsec - curr_time.tv_nsec);
+
     /////
-    //double current_time = curr_time.tv_sec + (curr_time.tv_nsec*0.000000001);
-    //ROS_INFO("%lf", current_time);
+    double delta_nsec = (next_time.tv_sec - curr_time.tv_sec) + (next_time.tv_nsec - curr_time.tv_nsec)*0.000000001;
+    //ROS_INFO("%lf", ACTUATOR_CONTROL_TIME - delta_nsec);
+    if(delta_nsec < 0.0)
+      next_time = curr_time;
+    else
+      clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
     /////
-    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
   }
 
   return 0;
@@ -101,7 +104,6 @@ void OM_CONTROLLER::initSubscriber()
   goal_task_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
   goal_tool_control_server_ = node_handle_.advertiseService(robot_name_ + "/goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
 }
-
 
 bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                                open_manipulator_msgs::SetJointPosition::Response &res)
