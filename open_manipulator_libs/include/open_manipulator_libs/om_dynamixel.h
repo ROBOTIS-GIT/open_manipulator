@@ -1,5 +1,5 @@
 ﻿/*******************************************************************************
-* Copyright 2016 ROBOTIS CO., LTD.
+* Copyright 2018 ROBOTIS CO., LTD.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,34 +21,49 @@
 #include <robotis_manipulator/robotis_manipulator.h>
 #include <robotis_manipulator/robotis_manipulator_common.h>
 
-
 #include <iostream>
 
 namespace OM_DYNAMIXEL
 {
 
-#define SYNC_WRITE_GOAL_POSITION 0
-#define SYNC_WRITE_GOAL_VELOCITY 1
-#define SYNC_READ_PRESENT_POSITION 0
-#define SYNC_READ_PRESENT_VELOCITY 1
+#define SYNC_WRITE_HANDLER_FOR_GOAL_POSITION 0
+#define SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT 0
+
+#define ADDR_PRESENT_CURRENT_2 126
+#define ADDR_PRESENT_VELOCITY_2 128
+#define ADDR_PRESENT_POSITION_2 132
+
+#define LENGTH_PRESENT_CURRENT_2 2
+#define LENGTH_PRESENT_VELOCITY_2 4
+#define LENGTH_PRESENT_POSITION_2 4
+
+// #define ADDR_PRESENT_CURRENT_1 = 40;
+// #define ADDR_PRESENT_VELOCITY_1 = 38;
+// #define ADDR_PRESENT_POSITION_1 = 36;
+
+// #define LENGTH_PRESENT_CURRENT_1 = 2;
+// #define LENGTH_PRESENT_VELOCITY_1 = 2;
+// #define LENGTH_PRESENT_POSITION_1 = 2;
+
+typedef struct
+{
+  std::vector<uint8_t> id;
+  uint8_t num;
+} Joint;
 
 class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
 {
-private:
-  int8_t dynamixel_num_;
-  DynamixelWorkbench *dynamixel_controller_;
-  std::vector<uint8_t> dynamixel_id_;
-  const char* log ;
-  uint32_t goal_position_[20] = {0, }; //need update workbench
-  uint32_t goal_velocity_[20] = {0, };
+ private:
+  DynamixelWorkbench *dynamixel_workbench_;
+  Joint dynamixel_;
 
-public:
+ public:
   JointDynamixel() {}
   virtual ~JointDynamixel() {}
 
   virtual void init(std::vector<uint8_t> actuator_id, const void *arg);
   virtual void setMode(std::vector<uint8_t> actuator_id, const void *arg);
-  std::vector<uint8_t> getId();
+  virtual std::vector<uint8_t> getId();
 
   virtual void enable();
   virtual void disable();
@@ -60,23 +75,23 @@ public:
 
 ////////////////////////////////////////////////////////////////
 
-  void iniialize(std::vector<uint8_t> actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
-  void setOperatingMode(std::vector<uint8_t> actuator_id, std::string dynamixel_mode = "position_mode");
-  void writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint8_t value);
-  void writeTorqueEnable(std::vector<uint8_t> actuator_id, uint8_t value);
-  void writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector);
-  void writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector);
-  std::vector<double> receiveAllDynamixelAngle();
-  std::vector<double> receiveAllDynamixelVelocity();
+  bool initialize(std::vector<uint8_t> actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
+  bool setOperatingMode(std::vector<uint8_t> actuator_id, std::string dynamixel_mode = "position_mode");
+  bool setSDKHandler(uint8_t actuator_id);
+  bool writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint32_t value);
+  bool writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector);
+  // bool writeGoalVelocity(std::vector<uint8_t> actuator_id, std::vector<double> velocity_vector);
+  std::vector<ROBOTIS_MANIPULATOR::Actuator> receiveAllDynamixelValue(std::vector<uint8_t> actuator_id);
+  // std::vector<double> receiveAllDynamixelVelocity();
 };
 
 class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
 {
-private:
-  DynamixelWorkbench *dynamixel_controller_;
-  uint8_t dynamixel_id_;
-  const char* log;
-public:
+ private:
+  DynamixelWorkbench *dynamixel_workbench_;
+  Joint dynamixel_;
+
+ public:
   GripperDynamixel() {}
   virtual ~GripperDynamixel() {}
 
@@ -92,14 +107,15 @@ public:
 
 ////////////////////////////////////////////////////////////////
 
-  void iniialize(uint8_t actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
-  void setOperatingMode(uint8_t actuator_id, std::string dynamixel_mode = "position_mode");
-  void writeProfileValue(uint8_t actuator_id, std::string profile_mode, uint8_t value);
-  void writeTorqueEnable(uint8_t actuator_id, uint8_t value);
-  void writeGoalPosition(uint8_t actuator_id, double radian);
-  void writeGoalVelocity(uint8_t actuator_id, double velocity);
-  double receiveDynamixelAngle();
-  double receiveDynamixelVelocity();
+  bool initialize(uint8_t actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
+  bool setOperatingMode(std::string dynamixel_mode = "position_mode");
+  bool writeProfileValue(std::string profile_mode, uint8_t value);
+  bool setSDKHandler();
+  // void writeTorqueEnable(uint8_t actuator_id, uint8_t value);
+  bool writeGoalPosition(double radian);
+  // void writeGoalVelocity(uint8_t actuator_id, double velocity);
+  double receiveDynamixelValue();
+  // double receiveDynamixelVelocity();
 };
 
 } // namespace RM_DYNAMIXEL
