@@ -157,14 +157,14 @@ bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
   bool result = false;
 
   const uint32_t velocity = 0;
-  const uint32_t acceleration = 0;
+  const uint32_t effort = 0;
   const uint32_t current = 0;
 
   if (dynamixel_mode == "position_mode")
   {
     for (uint8_t num = 0; num < actuator_id.size(); num++)
     {
-      result = dynamixel_workbench_->jointMode(actuator_id.at(num), velocity, acceleration, &log);
+      result = dynamixel_workbench_->jointMode(actuator_id.at(num), velocity, effort, &log);
       if (result == false)
       {
         printf("%s\n", log);
@@ -188,7 +188,7 @@ bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
   {
     for (uint8_t num = 0; num < actuator_id.size(); num++)
     {
-      result = dynamixel_workbench_->jointMode(actuator_id.at(num), velocity, acceleration, &log);
+      result = dynamixel_workbench_->jointMode(actuator_id.at(num), velocity, effort, &log);
       if (result == false)
       {
         printf("%s\n", log);
@@ -434,12 +434,12 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
   bool result = false;
 
   const uint32_t velocity = 0;
-  const uint32_t acceleration = 0;
+  const uint32_t effort = 0;
   const uint32_t current = 100;
 
   if (dynamixel_mode == "position_mode")
   {
-    result = dynamixel_workbench_->jointMode(dynamixel_.id.at(0), velocity, acceleration, &log);
+    result = dynamixel_workbench_->jointMode(dynamixel_.id.at(0), velocity, effort, &log);
     if (result == false)
     {
       printf("%s\n", log);
@@ -457,7 +457,7 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
   }
   else
   {
-    result = dynamixel_workbench_->jointMode(dynamixel_.id.at(0), velocity, acceleration, &log);
+    result = dynamixel_workbench_->jointMode(dynamixel_.id.at(0), velocity, effort, &log);
     if (result == false)
     {
       printf("%s\n", log);
