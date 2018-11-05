@@ -90,12 +90,9 @@ void JointDynamixel::disable()
   }
 }
 
-bool JointDynamixel::sendJointActuatorValue(uint8_t actuator_id, ROBOTIS_MANIPULATOR::Actuator value)
-{
-  return false;
-}
 
-bool JointDynamixel::sendMultipleJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector)
+
+bool JointDynamixel::sendJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector)
 {
   bool result = false;
   std::vector<double> radian_vector;
@@ -112,12 +109,7 @@ bool JointDynamixel::sendMultipleJointActuatorValue(std::vector<uint8_t> actuato
   return true;
 }
 
-ROBOTIS_MANIPULATOR::Actuator JointDynamixel::receiveJointActuatorValue(uint8_t actuator_id)
-{
-
-}
-
-std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveMultipleJointActuatorValue(std::vector<uint8_t> actuator_id)
+std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveJointActuatorValue(std::vector<uint8_t> actuator_id)
 {
   return JointDynamixel::receiveAllDynamixelValue(actuator_id);
 }
@@ -377,12 +369,12 @@ void GripperDynamixel::disable()
   }
 }
 
-bool GripperDynamixel::sendToolActuatorValue(uint8_t actuator_id, double value)
+bool GripperDynamixel::sendToolActuatorValue(double value)
 {
   return GripperDynamixel::writeGoalPosition(value);
 }
 
-double GripperDynamixel::receiveToolActuatorValue(uint8_t actuator_id)
+double GripperDynamixel::receiveToolActuatorValue()
 {
   return GripperDynamixel::receiveDynamixelValue();
 }

@@ -68,10 +68,8 @@ class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
   virtual void enable();
   virtual void disable();
 
-  virtual bool sendJointActuatorValue(uint8_t actuator_id, ROBOTIS_MANIPULATOR::Actuator value);
-  virtual bool sendMultipleJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector);
-  virtual ROBOTIS_MANIPULATOR::Actuator receiveJointActuatorValue(uint8_t actuator_id);
-  virtual std::vector<ROBOTIS_MANIPULATOR::Actuator> receiveMultipleJointActuatorValue(std::vector<uint8_t> actuator_id);
+  virtual bool sendJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector);
+  virtual std::vector<ROBOTIS_MANIPULATOR::Actuator> receiveJointActuatorValue(std::vector<uint8_t> actuator_id);
 
 ////////////////////////////////////////////////////////////////
 
@@ -100,8 +98,8 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
   virtual void enable();
   virtual void disable();
 
-  virtual bool sendToolActuatorValue(uint8_t actuator_id, double value);
-  virtual double receiveToolActuatorValue(uint8_t actuator_id);
+  virtual bool sendToolActuatorValue(double value);
+  virtual double receiveToolActuatorValue();
 
 ////////////////////////////////////////////////////////////////
 

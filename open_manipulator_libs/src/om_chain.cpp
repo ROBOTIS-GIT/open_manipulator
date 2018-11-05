@@ -83,6 +83,7 @@ void OM_CHAIN::initManipulator()
   jointDxlId.push_back(12);
   jointDxlId.push_back(13);
   jointDxlId.push_back(14);
+
   addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
 
   // set joint actuator control mode
@@ -90,12 +91,12 @@ void OM_CHAIN::initManipulator()
   void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
   jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
+
   ////////// tool actuator init.
   tool_ = new OM_DYNAMIXEL::GripperDynamixel();
 
   uint8_t gripperDxlId = 15;
   addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
-
 
   // set gripper actuator control mode
   std::string gripper_dxl_mode_arg = "current_based_position_mode";
@@ -120,14 +121,15 @@ void OM_CHAIN::initManipulator()
   addDrawingTrajectory(DRAWING_HEART, &heart_);
 
   ////////// manipulator trajectory & control time initialization
-  receiveAllJointActuatorValue();
+//  receiveAllJointActuatorValue();
+
   initTrajectoryWayPoint();
   setControlTime(ACTUATOR_CONTROL_TIME);
 }
 
 void OM_CHAIN::chainProcess(double present_time)
 {
-  receiveAllJointActuatorValue();
+//  receiveAllJointActuatorValue();
   forward();
   trajectoryControllerLoop(present_time);
 }
