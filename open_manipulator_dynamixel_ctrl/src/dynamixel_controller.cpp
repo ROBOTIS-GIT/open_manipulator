@@ -20,8 +20,15 @@
 
 using namespace dynamixel;
 
-double mapd(double x, double in_min, double in_max, double out_min, double out_max)
+double mapd(double x, double in_min, double in_max, double out_min, double out_max, bool *off_range=NULL)
 {
+  if(x < in_min || x > in_max)
+  {
+    ROS_WARN("Value %g out of range! Expected value between %g and %g.",
+             x, in_min, in_max);
+    if (off_range) *off_range = true;
+  }
+  else if (off_range) *off_range = false;
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
@@ -241,7 +248,7 @@ void DynamixelController::updateJointStates()
   joint_states_pos[1] = get_joint_position[1];
   joint_states_pos[2] = get_joint_position[2];
   joint_states_pos[3] = get_joint_position[3];
-  joint_states_pos[4] = mapd(get_joint_position[4], 0.90, -0.80, -0.01, 0.01);
+  joint_states_pos[4] = mapd(get_joint_position[4], -0.80, 0.90, 0.01, -0.01);
   joint_states_pos[5] = joint_states_pos[4];
 
   joint_states_vel[0] = get_joint_velocity[0];
@@ -281,7 +288,10 @@ void DynamixelController::goalJointPositionCallback(const sensor_msgs::JointStat
 void DynamixelController::goalGripperPositionCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   double goal_gripper_position = msg->position[0];
-  goal_gripper_position = mapd(goal_gripper_position, -0.01, 0.01, 0.90, -0.80);
+  bool off_range;
+
+  goal_gripper_position = mapd(goal_gripper_position, -0.01, 0.01, 0.90, -0.80, &off_range);
+  if (off_range) return;
 
   gripper_controller_->itemWrite(gripper_id_.at(0), "Goal_Position", gripper_controller_->convertRadian2Value(gripper_id_.at(0), goal_gripper_position));
 }
