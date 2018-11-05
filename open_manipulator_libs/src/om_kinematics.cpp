@@ -106,7 +106,7 @@ void Chain::forward(Manipulator *manipulator, Name component_name)
 
 std::vector<double> Chain::inverse(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
-  // return positionOnlyInverseKinematics(manipulator, tool_name, target_pose);
+//  return positionOnlyInverseKinematics(manipulator, tool_name, target_pose);
   return srInverseKinematics(manipulator, tool_name, target_pose);
 }
 
@@ -149,14 +149,14 @@ std::vector<double> Chain::inverseKinematics(Manipulator *manipulator, Name tool
 std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
   double lambda = 0.0;
-  const double param = 0.002;
+  const double param = 0.01;
   int8_t iteration = 50;
 
   Manipulator _manipulator = *manipulator;
 
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Identity(6, _manipulator.getDOF());
   Eigen::MatrixXd updated_jacobian = Eigen::MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
-  Eigen::VectorXd pose_changed = Eigen::VectorXd::Zero(_manipulator.getDOF());
+  Eigen::VectorXd pose_changed = Eigen::VectorXd::Zero(6);
   Eigen::VectorXd angle_changed = Eigen::VectorXd::Zero(_manipulator.getDOF());
   Eigen::VectorXd gerr(_manipulator.getDOF());
 
@@ -213,7 +213,6 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
     }
     else
     {
-      std::vector<double> set_angle_changed;
       for (int8_t index = 0; index < _manipulator.getDOF(); index++)
         set_angle_changed.push_back(_manipulator.getAllActiveJointValue().at(index) - angle_changed(index));
 
@@ -265,7 +264,7 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
     position_jacobian.row(2) = jacobian.row(2);
     lambda = Ek + param;
 
-    updated_jacobian = (position_jacobian.transpose() * We * jacobian) + (lambda * Wn);
+    updated_jacobian = (position_jacobian.transpose() * We * position_jacobian) + (lambda * Wn);
     gerr = position_jacobian.transpose() * We * position_changed;
 
     ColPivHouseholderQR<Eigen::MatrixXd> dec(updated_jacobian);

@@ -121,13 +121,12 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
 bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
-  Pose target_pose;
-  target_pose.position(0) = req.kinematics_pose.pose.position.x;
-  target_pose.position(1) = req.kinematics_pose.pose.position.y;
-  target_pose.position(2) = req.kinematics_pose.pose.position.z;
-  target_pose.orientation = chain_.getManipulator()->getComponentOrientationToWorld(TOOL);
+  Eigen::Vector3d target_position;
+  target_position[0] = req.kinematics_pose.pose.position.x;
+  target_position[1] = req.kinematics_pose.pose.position.y;
+  target_position[2] = req.kinematics_pose.pose.position.z;
 
-  chain_.taskTrajectoryMove(TOOL, target_pose, req.path_time);
+  chain_.taskTrajectoryMove(TOOL, target_position, req.path_time);
 
   res.isPlanned = true;
   return true;
