@@ -149,7 +149,7 @@ std::vector<double> Chain::inverseKinematics(Manipulator *manipulator, Name tool
 std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
   double lambda = 0.0;
-  const double param = 0.01;
+  const double param = 0.0005;
   int8_t iteration = 50;
 
   Manipulator _manipulator = *manipulator;
@@ -202,7 +202,6 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
                                            target_pose.orientation, _manipulator.getComponentOrientationToWorld(tool_name));
 
     Ek2 = pose_changed.transpose() * We * pose_changed;
-
     if (Ek2 < 1E-12)
     {
       return _manipulator.getAllActiveJointValue();
