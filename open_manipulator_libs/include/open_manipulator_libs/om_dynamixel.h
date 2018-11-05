@@ -21,7 +21,8 @@
 #include <robotis_manipulator/robotis_manipulator.h>
 #include <robotis_manipulator/robotis_manipulator_common.h>
 
-#include <iostream>
+// #include <iostream>
+#include <cstdio>
 
 namespace OM_DYNAMIXEL
 {
