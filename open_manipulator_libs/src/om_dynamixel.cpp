@@ -90,8 +90,6 @@ void JointDynamixel::disable()
   }
 }
 
-
-
 bool JointDynamixel::sendJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector)
 {
   bool result = false;
@@ -217,9 +215,7 @@ bool JointDynamixel::setSDKHandler(uint8_t actuator_id)
   // result = dynamixel_workbench_->addSyncReadHandler(ADDR_PRESENT_CURRENT_2, 
   //                                                   (LENGTH_PRESENT_CURRENT_2 + LENGTH_PRESENT_VELOCITY_2 + LENGTH_PRESENT_POSITION_2), 
   //                                                   &log);
-  result = dynamixel_workbench_->addSyncReadHandler(actuator_id, 
-                                                    "Present_Position", 
-                                                    &log);
+  result = dynamixel_workbench_->addSyncReadHandler(actuator_id, "Present_Position", &log);
   if (result == false)
   {
     printf("%s\n", log);
@@ -281,14 +277,11 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
   ROBOTIS_MANIPULATOR::Actuator value;
   std::vector<ROBOTIS_MANIPULATOR::Actuator> all_values;
 
-  // int32_t get_value[actuator_id.size() * (LENGTH_PRESENT_CURRENT_2 + LENGTH_PRESENT_VELOCITY_2 + LENGTH_PRESENT_POSITION_2)];
   int32_t get_value[actuator_id.size()];
 
   uint8_t id_array[actuator_id.size()];
   for (uint8_t index = 0; index < actuator_id.size(); index++)
-  {
     id_array[index] = actuator_id.at(index);
-  }
 
   result = dynamixel_workbench_->syncRead(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
                                           id_array, 
@@ -297,7 +290,7 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
   if (result == false)
   {
     printf("%s\n", log);
-    return all_values; // Is it right..?
+    return {};
   }
 
   result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
@@ -308,18 +301,18 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
   if (result == false)
   {
     printf("%s\n", log);
-    return all_values; // Is it right..?
+    return {};
   } 
 
   for (uint8_t index = 0; index < actuator_id.size(); index++)
   {
-    int32_t position = get_value[actuator_id.at(index)];
+    int32_t position = get_value[index];
     int32_t velocity = 0;
     int32_t current = 0;
 
     value.value    = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), position);
     value.velocity = velocity;
-    value.current = current;
+    //value.current = current;
 
     all_values.push_back(value);
   }
@@ -442,7 +435,7 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
 
   const uint32_t velocity = 0;
   const uint32_t acceleration = 0;
-  const uint32_t current = 0;
+  const uint32_t current = 100;
 
   if (dynamixel_mode == "position_mode")
   {
@@ -475,7 +468,7 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
   return true;
 }
 
-bool GripperDynamixel::writeProfileValue(std::string profile_mode, uint8_t value)
+bool GripperDynamixel::writeProfileValue(std::string profile_mode, uint32_t value)
 {
   const char* log = NULL;
   bool result = false;
@@ -504,10 +497,7 @@ bool GripperDynamixel::setSDKHandler()
     return false;
   }
 
-  // result = dynamixel_workbench_->addSyncReadHandler(ADDR_PRESENT_CURRENT_2, 
-  //                                                   (LENGTH_PRESENT_CURRENT_2 + LENGTH_PRESENT_VELOCITY_2 + LENGTH_PRESENT_POSITION_2), 
-  //                                                   &log);
-  result = dynamixel_workbench_->addSyncReadHandler(actuator_id, 
+  result = dynamixel_workbench_->addSyncReadHandler(dynamixel_.id.at(0),
                                                     "Present_Position", 
                                                     &log);
   if (result == false)
@@ -544,27 +534,27 @@ double GripperDynamixel::receiveDynamixelValue()
   const char* log = NULL;
 
   int32_t get_value = 0;
-  double value = 0.0;
+  uint8_t id_array[1] = {dynamixel_.id.at(0)};
 
   result = dynamixel_workbench_->syncRead(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
-                                          dynamixel_.id.at(0), 
+                                          id_array,
                                           (uint8_t)1,
                                           &log);
   if (result == false)
   {
     printf("%s\n", log);
-    return value; // Is it right..?
+    return (double)false;
   }
 
   result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
-                                            dynamixel_.id.at(0), 
+                                            id_array,
                                             (uint8_t)1,
                                             &get_value, 
                                             &log);
   if (result == false)
   {
     printf("%s\n", log);
-    return all_values; // Is it right..?
+    return (double)false;
   } 
 
   return dynamixel_workbench_->convertValue2Radian(dynamixel_.id.at(0), get_value);

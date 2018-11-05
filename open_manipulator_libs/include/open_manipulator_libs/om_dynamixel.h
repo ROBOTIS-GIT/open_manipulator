@@ -106,7 +106,7 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
 
   bool initialize(uint8_t actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
   bool setOperatingMode(std::string dynamixel_mode = "position_mode");
-  bool writeProfileValue(std::string profile_mode, uint8_t value);
+  bool writeProfileValue(std::string profile_mode, uint32_t value);
   bool setSDKHandler();
   bool writeGoalPosition(double radian);
   double receiveDynamixelValue();

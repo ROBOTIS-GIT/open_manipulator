@@ -121,7 +121,7 @@ void OM_CHAIN::initManipulator()
   addDrawingTrajectory(DRAWING_HEART, &heart_);
 
   ////////// manipulator trajectory & control time initialization
-//  receiveAllJointActuatorValue();
+  receiveAllJointActuatorValue();
 
   initTrajectoryWayPoint();
   setControlTime(ACTUATOR_CONTROL_TIME);
@@ -129,7 +129,7 @@ void OM_CHAIN::initManipulator()
 
 void OM_CHAIN::chainProcess(double present_time)
 {
-//  receiveAllJointActuatorValue();
+  receiveAllJointActuatorValue();
   forward();
   trajectoryControllerLoop(present_time);
 }
