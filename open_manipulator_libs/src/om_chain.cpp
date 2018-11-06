@@ -72,47 +72,47 @@ void OM_CHAIN::initManipulator()
   kinematics_ = new OM_KINEMATICS::Chain();
   addKinematics(kinematics_);
 
-  ////////// joint actuator init.
-  actuator_ = new OM_DYNAMIXEL::JointDynamixel();
-  // communication setting argument
-  std::string dxl_comm_arg[2] = {"/dev/ttyUSB0", "1000000"};
-  void *p_dxl_comm_arg = &dxl_comm_arg;
+    ////////// joint actuator init.
+    actuator_ = new OM_DYNAMIXEL::JointDynamixel();
+    // communication setting argument
+    std::string dxl_comm_arg[2] = {"/dev/ttyUSB0", "1000000"};
+    void *p_dxl_comm_arg = &dxl_comm_arg;
 
-  // set joint actuator id
-  jointDxlId.push_back(11);
-  jointDxlId.push_back(12);
-  jointDxlId.push_back(13);
-  jointDxlId.push_back(14);
+    // set joint actuator id
+    jointDxlId.push_back(11);
+    jointDxlId.push_back(12);
+    jointDxlId.push_back(13);
+    jointDxlId.push_back(14);
 
-  addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
+    addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
 
-  // set joint actuator control mode
-  std::string joint_dxl_mode_arg = "position_mode";
-  void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
-  jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
+    // set joint actuator control mode
+    std::string joint_dxl_mode_arg = "position_mode";
+    void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
+    jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
 
-  ////////// tool actuator init.
-  tool_ = new OM_DYNAMIXEL::GripperDynamixel();
+    ////////// tool actuator init.
+    tool_ = new OM_DYNAMIXEL::GripperDynamixel();
 
-  uint8_t gripperDxlId = 15;
-  addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
+    uint8_t gripperDxlId = 15;
+    addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
 
-  // set gripper actuator control mode
-  std::string gripper_dxl_mode_arg = "current_based_position_mode";
-  void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
-  toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
+    // set gripper actuator control mode
+    std::string gripper_dxl_mode_arg = "current_based_position_mode";
+    void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
+    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
 
-  std::string gripper_dxl_opt_arg[2] = {"Profile_Velocity", "200"};
-  void *p_gripper_dxl_opt_arg = &gripper_dxl_opt_arg;
-  toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
+    std::string gripper_dxl_opt_arg[2] = {"Profile_Velocity", "200"};
+    void *p_gripper_dxl_opt_arg = &gripper_dxl_opt_arg;
+    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
-  gripper_dxl_opt_arg[0] = "Profile_Acceleration";
-  gripper_dxl_opt_arg[1] = "20";
-  toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
+    gripper_dxl_opt_arg[0] = "Profile_Acceleration";
+    gripper_dxl_opt_arg[1] = "20";
+    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
-  // all actuator enable
-  allActuatorEnable();
+    // all actuator enable
+    allActuatorEnable();
 
   ////////// drawing path
   addDrawingTrajectory(DRAWING_LINE, &line_);

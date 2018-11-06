@@ -121,7 +121,7 @@ void Circle::initCircle(double move_time, double control_time, std::vector<WayPo
   drawingStart.velocity = 0.0;
   drawingStart.effort = 0.0;
 
-  drawingGoal.value = revolution_ * M_PI;
+  drawingGoal.value = revolution_ * 2*M_PI;
   drawingGoal.velocity = 0.0;
   drawingGoal.effort = 0.0;
 
