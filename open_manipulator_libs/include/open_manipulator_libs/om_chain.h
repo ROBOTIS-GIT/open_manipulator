@@ -67,7 +67,7 @@ private:
   OM_CHAIN();
   virtual ~OM_CHAIN();
 
-  void initManipulator();
+  void initManipulator(bool using_platform);
   void chainProcess(double present_time);
 
 };

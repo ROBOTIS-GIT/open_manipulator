@@ -48,8 +48,8 @@ bool QNode::init() {
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
 	ros::NodeHandle n;
 	// Add your ros communications here.
-  chain_joint_states_sub_ = n.subscribe("open_manipulator/chain_joint_states", 10, &QNode::jointStatesCallback, this);
-  chain_kinematics_pose_sub_ = n.subscribe("open_manipulator/chain_kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
+  chain_joint_states_sub_ = n.subscribe("open_manipulator/joint_states", 10, &QNode::jointStatesCallback, this);
+  chain_kinematics_pose_sub_ = n.subscribe("open_manipulator/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
 
   goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_joint_space_path");
   goal_task_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>("open_manipulator/goal_task_space_path");
@@ -72,7 +72,7 @@ void QNode::run() {
 }
 
 
-void QNode::jointStatesCallback(const open_manipulator_msgs::JointPosition::ConstPtr &msg)
+void QNode::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   std::vector<double> temp_angle;
   for(int i = 0; i < NUM_OF_JOINT; i ++) temp_angle.push_back(msg->position.at(i));

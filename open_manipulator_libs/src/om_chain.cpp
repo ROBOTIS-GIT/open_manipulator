@@ -22,8 +22,9 @@ OM_CHAIN::OM_CHAIN()
 OM_CHAIN::~OM_CHAIN()
 {}
 
-void OM_CHAIN::initManipulator()
+void OM_CHAIN::initManipulator(bool using_platform)
 {
+  platform_ = using_platform;
   ////////// manipulator parameter initialization
 
   addWorld(WORLD, // world name
@@ -66,12 +67,14 @@ void OM_CHAIN::initManipulator()
           RM_MATH::makeVector3(0.130, 0.0, 0.0), // relative position
           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
           15, // actuator id
-          1.0f); // Change unit from `meter` to `radian`
+          1.0); // Change unit from `meter` to `radian`
 
   ////////// kinematics init.
   kinematics_ = new OM_KINEMATICS::Chain();
   addKinematics(kinematics_);
 
+  if(platform_)
+  {
     ////////// joint actuator init.
     actuator_ = new OM_DYNAMIXEL::JointDynamixel();
     // communication setting argument
@@ -113,7 +116,9 @@ void OM_CHAIN::initManipulator()
 
     // all actuator enable
     allActuatorEnable();
-
+    receiveAllJointActuatorValue();
+    receiveToolActuatorValue(TOOL);
+  }
   ////////// drawing path
   addDrawingTrajectory(DRAWING_LINE, &line_);
   addDrawingTrajectory(DRAWING_CIRCLE, &circle_);
@@ -121,15 +126,24 @@ void OM_CHAIN::initManipulator()
   addDrawingTrajectory(DRAWING_HEART, &heart_);
 
   ////////// manipulator trajectory & control time initialization
-  receiveAllJointActuatorValue();
-
   initTrajectoryWayPoint();
   setControlTime(ACTUATOR_CONTROL_TIME);
 }
 
 void OM_CHAIN::chainProcess(double present_time)
 {
-  receiveAllJointActuatorValue();
-  forward();
-  trajectoryControllerLoop(present_time);
+  std::vector<WayPoint> goal_value = trajectoryControllerLoop(present_time);
+
+  if(platform_)
+  {
+    receiveAllJointActuatorValue();
+    if(goal_value.size() != 0)  sendAllJointActuatorValue(goal_value);
+    forward();
+  }
+  else
+  {
+    getManipulator()->getAllActiveJointValue();
+    if(goal_value.size() != 0) setAllActiveJointValue(goal_value); // visualization
+    forward();
+  }
 }

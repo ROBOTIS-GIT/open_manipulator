@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <std_msgs/Float64.h>
 #include <boost/thread.hpp>
 #include <unistd.h>
 
@@ -31,16 +32,19 @@ class OM_CONTROLLER
 
   ros::Publisher chain_kinematics_pose_pub_;
   ros::Publisher chain_joint_states_pub_;
+  ros::Publisher chain_joint_states_to_gazebo_pub_[NUM_OF_JOINT];
+  ros::Publisher chain_gripper_states_to_gazebo_pub_[2];
 
   std::string robot_name_;
 
   pthread_t timer_thread_;
 
-  bool toolCtrlFlag_;
-  double toolPosition_;
+  bool tool_ctrl_flag_;
+  bool using_platform_;
+  double tool_position_;
 
  public:
-  bool timerThreadFlag_;
+  bool timer_thread_flag_;
   OM_CHAIN chain_;
 
   OM_CONTROLLER();

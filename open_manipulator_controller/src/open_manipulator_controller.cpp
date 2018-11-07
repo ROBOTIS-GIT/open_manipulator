@@ -6,16 +6,18 @@ using namespace open_manipulator_controller;
 OM_CONTROLLER::OM_CONTROLLER()
     :node_handle_(""),
      priv_node_handle_("~"),
-     toolCtrlFlag_(false),
-     timerThreadFlag_(false),
-     toolPosition_(0.0)
+     tool_ctrl_flag_(false),
+     timer_thread_flag_(false),
+     using_platform_(false),
+     tool_position_(0.0)
 {
-  robot_name_   = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
+  robot_name_     = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
+  using_platform_ = priv_node_handle_.param<bool>("using_platform", false);
 
   initPublisher();
   initSubscriber();
 
-  chain_.initManipulator();
+  chain_.initManipulator(using_platform_);
 
   setTimerThread();
   ROS_INFO("OpenManipulator initialization");
@@ -23,8 +25,8 @@ OM_CONTROLLER::OM_CONTROLLER()
 
 OM_CONTROLLER::~OM_CONTROLLER()
 {
-  timerThreadFlag_ = false;
-  usleep(10 * 1000);
+  timer_thread_flag_ = false;
+  usleep(10 * 1000); // 10ms
   ROS_INFO("Shutdown the OpenManipulator");
   chain_.allActuatorDisable();
   ros::shutdown();
@@ -56,7 +58,7 @@ void OM_CONTROLLER::setTimerThread()
     ROS_ERROR("Creating timer thread failed!! %d", error);
     exit(-1);
   }
-  timerThreadFlag_ = true;
+  timer_thread_flag_ = true;
 }
 
 
@@ -68,7 +70,7 @@ void *OM_CONTROLLER::timerThread(void *param)
 
   clock_gettime(CLOCK_MONOTONIC, &next_time);
 
-  while(controller->timerThreadFlag_)
+  while(controller->timer_thread_flag_)
   {
     next_time.tv_sec += (next_time.tv_nsec + ACTUATOR_CONTROL_TIME_MSEC * 1000000) / 1000000000;
     next_time.tv_nsec = (next_time.tv_nsec + ACTUATOR_CONTROL_TIME_MSEC * 1000000) % 1000000000;
@@ -80,7 +82,7 @@ void *OM_CONTROLLER::timerThread(void *param)
 
     /////
     double delta_nsec = (next_time.tv_sec - curr_time.tv_sec) + (next_time.tv_nsec - curr_time.tv_nsec)*0.000000001;
-    ROS_INFO("%lf", ACTUATOR_CONTROL_TIME - delta_nsec);
+    //ROS_INFO("%lf", ACTUATOR_CONTROL_TIME - delta_nsec);
     if(delta_nsec < 0.0)
       next_time = curr_time;
     else
@@ -94,8 +96,18 @@ void *OM_CONTROLLER::timerThread(void *param)
 void OM_CONTROLLER::initPublisher()
 {
   // msg publisher
-  chain_kinematics_pose_pub_  = node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(robot_name_ + "/chain_kinematics_pose", 10);
-  chain_joint_states_pub_  = node_handle_.advertise<open_manipulator_msgs::JointPosition>(robot_name_ + "/chain_joint_states", 10);
+  chain_kinematics_pose_pub_  = node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(robot_name_ + "/kinematics_pose", 10);
+  if(using_platform_)
+    chain_joint_states_pub_  = node_handle_.advertise<sensor_msgs::JointState>(robot_name_ + "/joint_states", 10);
+  else
+  {
+    chain_joint_states_to_gazebo_pub_[0] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint1_position/command", 10);
+    chain_joint_states_to_gazebo_pub_[1] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint2_position/command", 10);
+    chain_joint_states_to_gazebo_pub_[2] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint3_position/command", 10);
+    chain_joint_states_to_gazebo_pub_[3] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint4_position/command", 10);
+    chain_gripper_states_to_gazebo_pub_[0] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_position/command", 10);
+    chain_gripper_states_to_gazebo_pub_[1] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_sub_position/command", 10);
+  }
 }
 void OM_CONTROLLER::initSubscriber()
 {
@@ -134,8 +146,8 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
 bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
-  toolPosition_ = req.joint_position.position.at(0);
-  toolCtrlFlag_ = true;
+  tool_position_ = req.joint_position.position.at(0);
+  tool_ctrl_flag_ = true;
 
   res.isPlanned = true;
   return true;
@@ -154,11 +166,36 @@ void OM_CONTROLLER::publishKinematicsPose()
 
 void OM_CONTROLLER::publishJointStates()
 {
-  open_manipulator_msgs::JointPosition msg;
-
-  std::vector<double> position = chain_.getManipulator()->getAllActiveJointValue();
-  msg.position = position;
-  chain_joint_states_pub_.publish(msg);
+  if(using_platform_)
+  {
+    sensor_msgs::JointState msg;
+    std::vector<double> position = chain_.getManipulator()->getAllActiveJointValue();
+    double tool_value = -chain_.getManipulator()->getToolGoalValue(TOOL) * 0.01;
+    msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
+    msg.name.push_back("joint2");           msg.position.push_back(position.at(1));
+    msg.name.push_back("joint3");           msg.position.push_back(position.at(2));
+    msg.name.push_back("joint4");           msg.position.push_back(position.at(3));
+    msg.name.push_back("grip_joint");       msg.position.push_back(tool_value);
+    msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
+    chain_joint_states_pub_.publish(msg);
+  }
+  else // gazebo
+  {
+    std::vector<double> value = chain_.getManipulator()->getAllActiveJointValue();
+    for(int i = 0; i < value.size(); i ++)
+    {
+      std_msgs::Float64 msg;
+      msg.data = value.at(i);
+      chain_joint_states_to_gazebo_pub_[i].publish(msg);
+    }
+    double tool_value = -chain_.getManipulator()->getToolGoalValue(TOOL) * 0.01;
+    for(int i = 0; i < 2; i ++)
+    {
+      std_msgs::Float64 msg;
+      msg.data = tool_value;
+      chain_gripper_states_to_gazebo_pub_[i].publish(msg);
+    }
+  }
 }
 
 
@@ -166,10 +203,10 @@ void OM_CONTROLLER::process(double time)
 {
   chain_.chainProcess(time);
 
-  if(toolCtrlFlag_)
+  if(tool_ctrl_flag_)
   {
-    chain_.toolMove(TOOL, toolPosition_);
-    toolCtrlFlag_ = false;
+    chain_.toolMove(TOOL, tool_position_);
+    tool_ctrl_flag_ = false;
   }
 }
 

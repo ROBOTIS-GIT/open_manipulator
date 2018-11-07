@@ -1,7 +1,9 @@
 ﻿<launch>
   <arg name="use_robot_name"         default="open_manipulator"/>
+  <arg name="use_platform"           default="true"/>
 
   <node pkg="open_manipulator_controller" type="open_manipulator_controller" name="open_manipulator_controller" output="screen">
   <param name="robot_name"           value="$(arg use_robot_name)"/>
+  <param name="using_platform"       value="$(arg use_platform)"/>
   </node>
 </launch>

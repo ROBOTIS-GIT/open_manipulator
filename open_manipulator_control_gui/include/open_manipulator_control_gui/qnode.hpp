@@ -64,7 +64,7 @@ public:
 	QStringListModel* loggingModel() { return &logging_model; }
 	void log( const LogLevel &level, const std::string &msg);
 
-  void jointStatesCallback(const open_manipulator_msgs::JointPosition::ConstPtr &msg);
+  void jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
 
   std::vector<double> getPresentJointAngle();
