@@ -144,7 +144,7 @@ bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, std::string dx
     }
     else
     {
-      printf("ID : %d, Model Name : %s\n", id, dynamixel_workbench_->getModelName(id));
+      printf("Joint Dynamixel ID : %d, Model Name : %s\n", id, dynamixel_workbench_->getModelName(id));
     }
   }
 
@@ -212,10 +212,9 @@ bool JointDynamixel::setSDKHandler(uint8_t actuator_id)
     return false;
   }
 
-  // result = dynamixel_workbench_->addSyncReadHandler(ADDR_PRESENT_CURRENT_2, 
-  //                                                   (LENGTH_PRESENT_CURRENT_2 + LENGTH_PRESENT_VELOCITY_2 + LENGTH_PRESENT_POSITION_2), 
-  //                                                   &log);
-  result = dynamixel_workbench_->addSyncReadHandler(actuator_id, "Present_Position", &log);
+  result = dynamixel_workbench_->addSyncReadHandler(ADDR_PRESENT_CURRENT_2, 
+                                                    (LENGTH_PRESENT_CURRENT_2 + LENGTH_PRESENT_VELOCITY_2 + LENGTH_PRESENT_POSITION_2), 
+                                                    &log);
   if (result == false)
   {
     printf("%s\n", log);
@@ -274,8 +273,8 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
   bool result = false;
   const char* log = NULL;
 
-  ROBOTIS_MANIPULATOR::Actuator value;
-  std::vector<ROBOTIS_MANIPULATOR::Actuator> all_values;
+  ROBOTIS_MANIPULATOR::Actuator actuator;
+  std::vector<ROBOTIS_MANIPULATOR::Actuator> all_actuator;
 
   int32_t get_value[actuator_id.size()];
 
@@ -293,31 +292,69 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
     return {};
   }
 
-  result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
-                                            id_array, 
-                                            actuator_id.size(),
-                                            get_value, 
-                                            &log);
-  if (result == false)
-  {
-    printf("%s\n", log);
-    return {};
-  } 
-
   for (uint8_t index = 0; index < actuator_id.size(); index++)
   {
     int32_t position = get_value[index];
     int32_t velocity = 0;
-    int32_t current = 0;
+    int32_t current  = 0;
 
-    value.value    = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), position);
-    value.velocity = velocity;
-    //value.current = current;
+    uint8_t id = actuator_id.at(index);
 
-    all_values.push_back(value);
+    result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
+                                                  &id, 
+                                                  1,
+                                                  ADDR_PRESENT_CURRENT_2,
+                                                  LENGTH_PRESENT_CURRENT_2,
+                                                  &get_value[index], 
+                                                  &log);
+    if (result == false)
+    {
+      printf("%s\n", log);
+      return {};
+    }
+    else
+    {
+      actuator.effort = dynamixel_workbench_->convertValue2Current(actuator_id.at(index), (uint16_t)get_value[index]);
+    }
+
+    result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
+                                                  &id, 
+                                                  1,
+                                                  ADDR_PRESENT_VELOCITY_2,
+                                                  LENGTH_PRESENT_VELOCITY_2,
+                                                  &get_value[index], 
+                                                  &log);
+    if (result == false)
+    {
+      printf("%s\n", log);
+      return {};
+    }
+    else
+    {
+      actuator.velocity = dynamixel_workbench_->convertValue2Velocity(actuator_id.at(index), get_value[index]);
+    }
+
+    result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
+                                                  &id, 
+                                                  1,
+                                                  ADDR_PRESENT_POSITION_2,
+                                                  LENGTH_PRESENT_POSITION_2,
+                                                  &get_value[index], 
+                                                  &log);
+    if (result == false)
+    {
+      printf("%s\n", log);
+      return {};
+    }
+    else
+    {
+      actuator.value = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), get_value[index]);
+    }
+
+    all_actuator.push_back(actuator);
   }
 
-  return all_values;
+  return all_actuator;
 }
 
 //////////////////////////////////////tool actuator
@@ -422,7 +459,12 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, std::string dxl_device_na
   if (result == false)
   {
     printf("%s\n", log);
+    printf("Please check your Dynamixel ID\n");
     return false;
+  }
+  else
+  {
+    printf("Gripper Dynamixel ID : %d, Model Name : %s\n", dynamixel_.id.at(0), dynamixel_workbench_->getModelName(dynamixel_.id.at(0)));
   }
 
   return true;

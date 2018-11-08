@@ -169,12 +169,25 @@ void OM_CONTROLLER::publishJointStates()
   if(using_platform_)
   {
     sensor_msgs::JointState msg;
-    std::vector<double> position = chain_.getManipulator()->getAllActiveJointValue();
+    std::vector<double> position, velocity, effort;
+    chain_.getManipulator()->getAllActiveJointValue(&position, &velocity, &effort);
     double tool_value = -chain_.getManipulator()->getToolGoalValue(TOOL) * 0.01;
     msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
+                                            msg.velocity.push_back(velocity.at(0));
+                                            msg.effort.push_back(effort.at(0));
+
     msg.name.push_back("joint2");           msg.position.push_back(position.at(1));
+                                            msg.velocity.push_back(velocity.at(1));
+                                            msg.effort.push_back(effort.at(1));
+
     msg.name.push_back("joint3");           msg.position.push_back(position.at(2));
+                                            msg.velocity.push_back(velocity.at(2));
+                                            msg.effort.push_back(effort.at(2));
+
     msg.name.push_back("joint4");           msg.position.push_back(position.at(3));
+                                            msg.velocity.push_back(velocity.at(3));
+                                            msg.effort.push_back(effort.at(3));
+
     msg.name.push_back("grip_joint");       msg.position.push_back(tool_value);
     msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
     chain_joint_states_pub_.publish(msg);
