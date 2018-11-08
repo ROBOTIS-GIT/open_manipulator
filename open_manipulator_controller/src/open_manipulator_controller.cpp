@@ -169,6 +169,7 @@ void OM_CONTROLLER::publishJointStates()
   if(using_platform_)
   {
     sensor_msgs::JointState msg;
+    msg.header.stamp = ros::Time::now();
     std::vector<double> position, velocity, effort;
     chain_.getManipulator()->getAllActiveJointValue(&position, &velocity, &effort);
     double tool_value = -chain_.getManipulator()->getToolGoalValue(TOOL) * 0.01;

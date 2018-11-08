@@ -30,7 +30,7 @@ catkin_python_setup()
 # Declare catkin specific configuration to be passed to dependent projects
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS rospy geometry_msgs
+  CATKIN_DEPENDS rospy geometry_msgs open_manipulator_msgs
 )
 
 ################################################################################
