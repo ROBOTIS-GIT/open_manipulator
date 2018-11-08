@@ -11,13 +11,17 @@ OM_CONTROLLER::OM_CONTROLLER()
      using_platform_(false),
      tool_position_(0.0)
 {
-  robot_name_     = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
+  robot_name_             = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
+  std::string usb_port    = priv_node_handle_.param<std::string>("usb_port", "/dev/ttyUSB0");
+  std::string baud_rate   = priv_node_handle_.param<std::string>("baud_rate", "1000000");
+  robot_name_             = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
+
   using_platform_ = priv_node_handle_.param<bool>("using_platform", false);
 
   initPublisher();
   initSubscriber();
 
-  chain_.initManipulator(using_platform_);
+  chain_.initManipulator(using_platform_, usb_port, baud_rate);
 
   setTimerThread();
   ROS_INFO("OpenManipulator initialization");
@@ -174,20 +178,20 @@ void OM_CONTROLLER::publishJointStates()
     chain_.getManipulator()->getAllActiveJointValue(&position, &velocity, &effort);
     double tool_value = -chain_.getManipulator()->getToolGoalValue(TOOL) * 0.01;
     msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
-                                            msg.velocity.push_back(velocity.at(0));
-                                            msg.effort.push_back(effort.at(0));
+//                                            msg.velocity.push_back(velocity.at(0));
+//                                            msg.effort.push_back(effort.at(0));
 
     msg.name.push_back("joint2");           msg.position.push_back(position.at(1));
-                                            msg.velocity.push_back(velocity.at(1));
-                                            msg.effort.push_back(effort.at(1));
+//                                            msg.velocity.push_back(velocity.at(1));
+//                                            msg.effort.push_back(effort.at(1));
 
     msg.name.push_back("joint3");           msg.position.push_back(position.at(2));
-                                            msg.velocity.push_back(velocity.at(2));
-                                            msg.effort.push_back(effort.at(2));
+//                                            msg.velocity.push_back(velocity.at(2));
+//                                            msg.effort.push_back(effort.at(2));
 
     msg.name.push_back("joint4");           msg.position.push_back(position.at(3));
-                                            msg.velocity.push_back(velocity.at(3));
-                                            msg.effort.push_back(effort.at(3));
+//                                            msg.velocity.push_back(velocity.at(3));
+//                                            msg.effort.push_back(effort.at(3));
 
     msg.name.push_back("grip_joint");       msg.position.push_back(tool_value);
     msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
