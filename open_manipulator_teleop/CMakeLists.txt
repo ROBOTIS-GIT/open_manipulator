@@ -4,50 +4,51 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(open_manipulator_teleop)
 
+add_compile_options(-std=c++11)
+
 ################################################################################
 # Find catkin packages and libraries for catkin and system dependencies
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
-  rospy
-  geometry_msgs
-  open_manipulator_msgs
+    roscpp
+    std_msgs
+    sensor_msgs
+    open_manipulator_msgs
 )
 
 ################################################################################
 # Setup for python modules and scripts
 ################################################################################
-catkin_python_setup()
 
 ################################################################################
 # Declare ROS messages, services and actions
 ################################################################################
 
 ################################################################################
-# Declare ROS dynamic reconfigure parameters
+## Declare ROS dynamic reconfigure parameters
 ################################################################################
 
 ################################################################################
 # Declare catkin specific configuration to be passed to dependent projects
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS rospy geometry_msgs open_manipulator_msgs
+  INCLUDE_DIRS include
 )
 
 ################################################################################
 # Build
 ################################################################################
-
-################################################################################
-# Install
-################################################################################
-catkin_install_python(PROGRAMS
-  nodes/open_manipulator_teleop_key
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
 )
 
-install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
+
+add_executable(open_manipulator_teleop src/open_manipulator_teleop.cpp)
+add_dependencies(open_manipulator_teleop ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(open_manipulator_teleop ${catkin_LIBRARIES} )
+
 
 ################################################################################
 # Test
