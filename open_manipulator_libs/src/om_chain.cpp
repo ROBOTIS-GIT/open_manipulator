@@ -22,7 +22,7 @@ OM_CHAIN::OM_CHAIN()
 OM_CHAIN::~OM_CHAIN()
 {}
 
-void OM_CHAIN::initManipulator(bool using_platform)
+void OM_CHAIN::initManipulator(bool using_platform, std::string usb_port, std::string baud_rate)
 {
   platform_ = using_platform;
   ////////// manipulator parameter initialization
@@ -78,7 +78,7 @@ void OM_CHAIN::initManipulator(bool using_platform)
     ////////// joint actuator init.
     actuator_ = new OM_DYNAMIXEL::JointDynamixel();
     // communication setting argument
-    std::string dxl_comm_arg[2] = {"/dev/ttyUSB0", "1000000"};
+    std::string dxl_comm_arg[2] = {usb_port, baud_rate};
     void *p_dxl_comm_arg = &dxl_comm_arg;
 
     // set joint actuator id

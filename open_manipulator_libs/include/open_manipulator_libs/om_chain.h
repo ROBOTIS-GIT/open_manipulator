@@ -67,7 +67,7 @@ private:
   OM_CHAIN();
   virtual ~OM_CHAIN();
 
-  void initManipulator(bool using_platform);
+  void initManipulator(bool using_platform, std::string usb_port = "/dev/ttyUSB0", std::string baud_rate = "1000000");
   void chainProcess(double present_time);
 
 };
