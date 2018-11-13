@@ -165,11 +165,9 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "open_manipulator_example");
 
   OM_EXAMPLE om_example_;
-  om_example_.goalPose = om_example_.getPresentKinematicsPose();
-
-  sleep(2);
 
   ros::spinOnce();
+  om_example_.goalPose = om_example_.getPresentKinematicsPose();
   om_example_.setGoal();
   om_example_.setTaskSpacePath(om_example_.goalPose, 3.0);
 
