@@ -43,12 +43,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-#file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
+add_executable(open_manipulator_teleop_keyboard src/open_manipulator_teleop_keyboard.cpp)
+add_dependencies(open_manipulator_teleop_keyboard ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(open_manipulator_teleop_keyboard ${catkin_LIBRARIES} )
 
-add_executable(open_manipulator_teleop src/open_manipulator_teleop.cpp)
-add_dependencies(open_manipulator_teleop ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(open_manipulator_teleop ${catkin_LIBRARIES} )
-
+add_executable(open_manipulator_teleop_joystick src/open_manipulator_teleop_joystick.cpp)
+add_dependencies(open_manipulator_teleop_joystick ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(open_manipulator_teleop_joystick ${catkin_LIBRARIES} )
 
 ################################################################################
 # Test

@@ -28,6 +28,8 @@ class OM_CONTROLLER
 
   ros::ServiceServer goal_joint_space_path_server_;
   ros::ServiceServer goal_task_space_path_server_;
+  ros::ServiceServer goal_joint_space_path_to_present_server_;
+  ros::ServiceServer goal_task_space_path_to_present_server_;
   ros::ServiceServer goal_tool_control_server_;
 
   ros::Publisher chain_kinematics_pose_pub_;
@@ -59,6 +61,10 @@ class OM_CONTROLLER
                                   open_manipulator_msgs::SetJointPosition::Response &res);
   bool goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                   open_manipulator_msgs::SetKinematicsPose::Response &res);
+  bool goalJointSpacePathToPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
+                                           open_manipulator_msgs::SetJointPosition::Response &res);
+  bool goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                          open_manipulator_msgs::SetKinematicsPose::Response &res);
   bool goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                open_manipulator_msgs::SetJointPosition::Response &res);
 

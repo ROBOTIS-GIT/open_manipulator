@@ -3,7 +3,9 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <sensor_msgs/Joy.h>
 
+#include <termios.h>
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 
@@ -22,20 +24,18 @@ class OM_TELEOP
   ros::NodeHandle node_handle_;
   ros::NodeHandle priv_node_handle_;
 
+  ros::ServiceClient goal_task_space_path_to_present_client_;
   ros::ServiceClient goal_joint_space_path_client_;
-  ros::ServiceClient goal_task_space_path_client_;
   ros::ServiceClient goal_tool_control_client_;
 
   ros::Subscriber chain_joint_states_sub_;
   ros::Subscriber chain_kinematics_pose_sub_;
-
+  ros::Subscriber joy_command_sub_;
 
   std::vector<double> present_joint_angle;
   std::vector<double> present_kinematic_position;
 
   std::string robot_name_;
-
-
  public:
 
   OM_TELEOP();
@@ -46,17 +46,16 @@ class OM_TELEOP
 
   void jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
+  void joyCallback(const sensor_msgs::Joy::ConstPtr &msg);
 
   std::vector<double> getPresentJointAngle();
-  std::vector<double> getPresentGripperAngle();
   std::vector<double> getPresentKinematicsPose();
 
   bool setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
-  bool setTaskSpacePath(std::vector<double> kinematics_pose, double path_time);
+  bool setTaskSpacePathToPresent(std::vector<double> kinematics_pose, double path_time);
   bool setToolControl(std::vector<double> joint_angle);
 
-  void printText();
-  void setGoal(std::string inputString);
+  void setGoal(const char *str);
 };
 }
 

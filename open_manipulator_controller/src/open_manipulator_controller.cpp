@@ -118,6 +118,8 @@ void OM_CONTROLLER::initSubscriber()
   // service server
   goal_joint_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path", &OM_CONTROLLER::goalJointSpacePathCallback, this);
   goal_task_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
+  goal_joint_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path_to_present", &OM_CONTROLLER::goalJointSpacePathToPresentCallback, this);
+  goal_task_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path_to_present", &OM_CONTROLLER::goalTaskSpacePathToPresentCallback, this);
   goal_tool_control_server_ = node_handle_.advertiseService(robot_name_ + "/goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
 }
 
@@ -143,6 +145,33 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_position[2] = req.kinematics_pose.pose.position.z;
 
   chain_.taskTrajectoryMove(TOOL, target_position, req.path_time);
+
+  res.isPlanned = true;
+  return true;
+}
+
+bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
+                                                        open_manipulator_msgs::SetJointPosition::Response &res)
+{
+  std::vector <double> target_angle;
+
+  for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
+    target_angle.push_back(req.joint_position.position.at(i));
+
+  chain_.jointTrajectoryMoveToPresentValue(target_angle, req.path_time);
+
+  res.isPlanned = true;
+  return true;
+}
+bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                      open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  Eigen::Vector3d target_position;
+  target_position[0] = req.kinematics_pose.pose.position.x;
+  target_position[1] = req.kinematics_pose.pose.position.y;
+  target_position[2] = req.kinematics_pose.pose.position.z;
+
+  chain_.taskTrajectoryMoveToPresentPosition(TOOL, target_position, req.path_time);
 
   res.isPlanned = true;
   return true;
