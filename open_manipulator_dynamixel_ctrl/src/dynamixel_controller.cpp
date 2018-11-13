@@ -20,8 +20,15 @@
 
 using namespace dynamixel;
 
-double mapd(double x, double in_min, double in_max, double out_min, double out_max)
+double mapd(double x, double in_min, double in_max, double out_min, double out_max, bool *off_range=NULL)
 {
+  if(x < in_min || x > in_max)
+  {
+    ROS_WARN("Value %g out of range! Expected value between %g and %g.",
+             x, in_min, in_max);
+    if (off_range) *off_range = true;
+  }
+  else if (off_range) *off_range = false;
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
@@ -122,6 +129,9 @@ void DynamixelController::setOperatingMode()
   }
   else
   {
+    ROS_WARN("Joint controller mode '%s' not found. Please use 'position_mode' or 'current_mode'.",
+             joint_mode_.c_str());
+    ROS_WARN("Setting joint controller to 'position_mode'.");
     for (uint8_t num = 0; num < JOINT_NUM; num++)
       joint_controller_->jointMode(joint_id_.at(num));
   }
@@ -131,7 +141,12 @@ void DynamixelController::setOperatingMode()
   else if (gripper_mode_ == "current_mode" && protocol_version_ == 2.0)
     gripper_controller_->currentMode(gripper_id_.at(0), 50);
   else
+  {
+    ROS_WARN("Gripper controller mode '%s' not found. Please use 'position_mode' or 'current_mode'.",
+             gripper_mode_.c_str());
+    ROS_WARN("Setting gripper controller to 'position_mode'.");
     gripper_controller_->jointMode(gripper_id_.at(0));
+  }
 }
 
 void DynamixelController::setSyncFunction()
@@ -233,7 +248,7 @@ void DynamixelController::updateJointStates()
   joint_states_pos[1] = get_joint_position[1];
   joint_states_pos[2] = get_joint_position[2];
   joint_states_pos[3] = get_joint_position[3];
-  joint_states_pos[4] = mapd(get_joint_position[4], 0.90, -0.80, -0.01, 0.01);
+  joint_states_pos[4] = mapd(get_joint_position[4], -0.80, 0.90, 0.01, -0.01);
   joint_states_pos[5] = joint_states_pos[4];
 
   joint_states_vel[0] = get_joint_velocity[0];
@@ -273,7 +288,10 @@ void DynamixelController::goalJointPositionCallback(const sensor_msgs::JointStat
 void DynamixelController::goalGripperPositionCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   double goal_gripper_position = msg->position[0];
-  goal_gripper_position = mapd(goal_gripper_position, -0.01, 0.01, 0.90, -0.80);
+  bool off_range;
+
+  goal_gripper_position = mapd(goal_gripper_position, -0.01, 0.01, 0.90, -0.80, &off_range);
+  if (off_range) return;
 
   gripper_controller_->itemWrite(gripper_id_.at(0), "Goal_Position", gripper_controller_->convertRadian2Value(gripper_id_.at(0), goal_gripper_position));
 }
