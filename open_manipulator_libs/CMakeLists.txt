@@ -34,6 +34,7 @@ find_package(Eigen3 REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
+  LIBRARIES open_manipulator_libs
   CATKIN_DEPENDS dynamixel_workbench_toolbox
   DEPENDS EIGEN3
 )

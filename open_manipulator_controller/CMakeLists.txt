@@ -37,6 +37,7 @@ find_package(Boost REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
+  CATKIN_DEPENDS robotis_manipulator open_manipulator_libs
   DEPENDS Boost
 )
 
@@ -53,7 +54,7 @@ include_directories(
 
 add_executable(open_manipulator_controller src/open_manipulator_controller.cpp)
 add_dependencies(open_manipulator_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(open_manipulator_controller ${catkin_LIBRARIES} ${Boost_LIBRARIES} robotis_manipulator open_manipulator_libs)
+target_link_libraries(open_manipulator_controller ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 
 
