@@ -126,8 +126,7 @@ void OM_CHAIN::initManipulator(bool using_platform, std::string usb_port, std::s
   addDrawingTrajectory(DRAWING_HEART, &heart_);
 
   ////////// manipulator trajectory & control time initialization
-  initTrajectoryWayPoint();
-  setControlTime(ACTUATOR_CONTROL_TIME);
+  setTrajectoryControlTime(ACTUATOR_CONTROL_TIME);
 }
 
 void OM_CHAIN::chainProcess(double present_time)
@@ -137,6 +136,7 @@ void OM_CHAIN::chainProcess(double present_time)
   if(platform_)
   {
     receiveAllJointActuatorValue();
+    receiveToolActuatorValue(TOOL);
     if(goal_value.size() != 0)  sendAllJointActuatorValue(goal_value);
     forward();
   }

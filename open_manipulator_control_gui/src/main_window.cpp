@@ -109,7 +109,7 @@ void MainWindow::on_btn_init_pose_clicked(void)
     return;
   }
 
-  writeLog("Send joint angle to init. pose");
+  writeLog("Send joint angle to initial pose");
 }
 
 void MainWindow::on_btn_home_pose_clicked(void)

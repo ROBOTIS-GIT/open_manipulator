@@ -923,7 +923,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>x_axis</string>
+       <string>X axis</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_30">
@@ -936,7 +936,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>z_axis</string>
+       <string>Z axis</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_31">
@@ -956,13 +956,13 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>62</y>
+        <y>59</y>
         <width>59</width>
-        <height>14</height>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>y_axis</string>
+       <string>Y axis</string>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="doubleSpinBox_time_cs">
