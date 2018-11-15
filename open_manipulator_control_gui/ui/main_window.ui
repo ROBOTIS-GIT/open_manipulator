@@ -221,7 +221,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>z</string>
+     <string>Z</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="txt_y">
@@ -259,7 +259,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>y</string>
+     <string>Y</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="txt_x">
@@ -297,7 +297,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>x</string>
+     <string>X</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_11">
