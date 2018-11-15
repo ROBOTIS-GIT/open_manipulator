@@ -7,6 +7,20 @@
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/materials.xacro" />
 
+  <!-- Transmission macro -->
+  <xacro:macro name="SimpleTransmission" params="joint n">
+    <transmission name="tran${n}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${joint}">
+	<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor${n}">
+	<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
   <!-- World -->
   <link name="world">
   </link>
@@ -62,16 +76,7 @@
   </joint>
 
   <!-- Transmission 1 -->
-  <transmission name="tran1">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint1">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor1">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <xacro:SimpleTransmission n="1" joint="joint1" />
 
   <!--  Link 2 -->
   <link name="link2">
@@ -113,20 +118,11 @@
     <child link="link3"/>
     <origin xyz="0.0 0.0 0.058" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.5}" upper="${pi*0.5}" />
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.57}" upper="${pi*0.5}" />
   </joint>
 
   <!-- Transmission 2 -->
-  <transmission name="tran2">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint2">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor2">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <xacro:SimpleTransmission n="2" joint="joint2" />
 
   <!--  Link 3 -->
   <link name="link3">
@@ -172,16 +168,7 @@
   </joint>
 
   <!-- Transmission 3 -->
-  <transmission name="tran3">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint3">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor3">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <xacro:SimpleTransmission n="3" joint="joint3" />
 
   <!--  Link 4 -->
   <link name="link4">
@@ -223,20 +210,11 @@
     <child link="link5"/>
     <origin xyz="0.124 0.0 0.0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
-    <limit velocity="6.5" effort="1000" lower="${-pi*0.4}" upper="${pi*0.5}" />
+    <limit velocity="6.5" effort="1000" lower="${-pi*0.57}" upper="${pi*0.65}" />
   </joint>
 
   <!-- Transmission 4 -->
-  <transmission name="tran4">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint4">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor4">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <xacro:SimpleTransmission n="4" joint="joint4" />
 
   <!--  Link 5 -->
   <link name="link5">
@@ -316,16 +294,7 @@
   </joint>
 
   <!-- Transmission 5 -->
-  <transmission name="tran5">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="grip_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor7">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <xacro:SimpleTransmission n="5" joint="grip_joint" />
 
   <!--  Grip link sub -->
   <link name="grip_link_sub">
@@ -371,15 +340,6 @@
   </joint>
 
   <!-- Transmission 6 -->
-  <transmission name="tran6">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="grip_joint_sub">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor8">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <xacro:SimpleTransmission n="6" joint="grip_joint_sub" />
 
 </robot>
