@@ -41,6 +41,7 @@ public:
   Chain(){}
   virtual ~Chain(){}
 
+  virtual void setOption(const void *arg);
   virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
 

@@ -63,6 +63,7 @@ public:
   void initLine(double move_time, double control_time, std::vector<WayPoint> start, std::vector<WayPoint> goal);
   std::vector<WayPoint> drawLine(double time_var);
 
+  virtual void setOption(const void *arg);
   virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
   virtual std::vector<WayPoint> getJointWayPoint(double tick);
   virtual std::vector<WayPoint> getTaskWayPoint(double tick);
@@ -92,6 +93,7 @@ public:
   void initCircle(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
   std::vector<WayPoint> drawCircle(double time_var);
 
+  virtual void setOption(const void *arg);
   virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
   virtual std::vector<WayPoint> getJointWayPoint(double tick);
   virtual std::vector<WayPoint> getTaskWayPoint(double tick);
@@ -121,6 +123,7 @@ public:
   void initRhombus(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
   std::vector<WayPoint> drawRhombus(double time_var);
 
+  virtual void setOption(const void *arg);
   virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
   virtual std::vector<WayPoint> getJointWayPoint(double tick);
   virtual std::vector<WayPoint> getTaskWayPoint(double tick);
@@ -150,6 +153,7 @@ public:
   void initHeart(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
   std::vector<WayPoint> drawHeart(double tick);
 
+  virtual void setOption(const void *arg);
   virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
   virtual std::vector<WayPoint> getJointWayPoint(double tick);
   virtual std::vector<WayPoint> getTaskWayPoint(double tick);

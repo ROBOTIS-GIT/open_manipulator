@@ -302,5 +302,9 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
 
   return _manipulator.getAllActiveJointValue();
 }
+void Chain::setOption(const void *arg)
+{
+
+}
 
 
