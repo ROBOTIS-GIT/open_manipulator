@@ -14,7 +14,6 @@ OM_CONTROLLER::OM_CONTROLLER()
   robot_name_             = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
   std::string usb_port    = priv_node_handle_.param<std::string>("usb_port", "/dev/ttyUSB0");
   std::string baud_rate   = priv_node_handle_.param<std::string>("baud_rate", "1000000");
-  robot_name_             = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
 
   using_platform_ = priv_node_handle_.param<bool>("using_platform", false);
 
