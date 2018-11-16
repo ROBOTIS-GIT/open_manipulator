@@ -204,7 +204,7 @@ void OM_CONTROLLER::publishJointStates()
     msg.header.stamp = ros::Time::now();
     std::vector<double> position, velocity, effort;
     chain_.getManipulator()->getAllActiveJointValue(&position, &velocity, &effort);
-    double tool_value = -chain_.getManipulator()->getToolGoalValue(TOOL) * 0.01;
+    double tool_value = -chain_.getManipulator()->getToolValue(TOOL) * 0.01;
     msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
                                             msg.velocity.push_back(velocity.at(0));
                                             msg.effort.push_back(effort.at(0));
@@ -239,7 +239,7 @@ void OM_CONTROLLER::publishJointStates()
       msg.data = value.at(i);
       chain_joint_states_to_gazebo_pub_[i].publish(msg);
     }
-    double tool_value = -chain_.getManipulator()->getToolGoalValue(TOOL) * 0.01;
+    double tool_value = -chain_.getManipulator()->getToolValue(TOOL) * 0.01;
     for(int i = 0; i < 2; i ++)
     {
       std_msgs::Float64 msg;
