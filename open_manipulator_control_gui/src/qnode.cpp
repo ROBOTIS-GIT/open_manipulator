@@ -69,6 +69,7 @@ void QNode::run() {
 		++count;
 	}
 	std::cout << "Ros shutdown, proceeding to close the gui." << std::endl;
+	Q_EMIT rosShutdown();
 }
 
 

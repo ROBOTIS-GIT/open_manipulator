@@ -75,6 +75,9 @@ public:
   bool setTaskSpacePath(std::vector<double> kinematics_pose, double path_time);
   bool setToolControl(std::vector<double> joint_angle);
 
+Q_SIGNALS:
+  void rosShutdown();
+
 private:
 	int init_argc;
 	char** init_argv;
