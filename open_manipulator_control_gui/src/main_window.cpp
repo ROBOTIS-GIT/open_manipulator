@@ -45,13 +45,14 @@ void MainWindow::timerCallback()
 {
 
   std::vector<double> joint_angle = qnode.getPresentJointAngle();
-  if(joint_angle.size() != 4)
+  if(joint_angle.size() != 5)
     return;
 
   ui.txt_j1->setText(QString::number(joint_angle.at(0),'f', 3));
   ui.txt_j2->setText(QString::number(joint_angle.at(1),'f', 3));
   ui.txt_j3->setText(QString::number(joint_angle.at(2),'f', 3));
   ui.txt_j4->setText(QString::number(joint_angle.at(3),'f', 3));
+  ui.txt_grip->setText(QString::number(joint_angle.at(4),'f', 2));
 
   std::vector<double> position = qnode.getPresentKinematicsPose();
   if(position.size() != 3)
@@ -166,6 +167,7 @@ void MainWindow::on_btn_read_joint_angle_clicked(void)
   ui.doubleSpinBox_j2->setValue(joint_angle.at(1));
   ui.doubleSpinBox_j3->setValue(joint_angle.at(2));
   ui.doubleSpinBox_j4->setValue(joint_angle.at(3));
+  ui.doubleSpinBox_gripper->setValue(joint_angle.at(4));
 
   writeLog("Read joint angle");
 }

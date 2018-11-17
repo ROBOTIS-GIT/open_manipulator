@@ -30,7 +30,7 @@
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 
-#define NUM_OF_JOINT 4
+#define NUM_OF_JOINT_AND_TOOL 5
 
 /*****************************************************************************
 ** Namespaces

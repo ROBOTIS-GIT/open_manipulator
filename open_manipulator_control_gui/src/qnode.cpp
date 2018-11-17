@@ -76,13 +76,14 @@ void QNode::run() {
 void QNode::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   std::vector<double> temp_angle;
-  temp_angle.resize(NUM_OF_JOINT);
+  temp_angle.resize(NUM_OF_JOINT_AND_TOOL);
   for(int i = 0; i < msg->name.size(); i ++)
   {
     if(!msg->name.at(i).compare("joint1"))  temp_angle.at(0) = (msg->position.at(i));
     else if(!msg->name.at(i).compare("joint2"))  temp_angle.at(1) = (msg->position.at(i));
     else if(!msg->name.at(i).compare("joint3"))  temp_angle.at(2) = (msg->position.at(i));
     else if(!msg->name.at(i).compare("joint4"))  temp_angle.at(3) = (msg->position.at(i));
+    else if(!msg->name.at(i).compare("grip_joint"))  temp_angle.at(4) = (msg->position.at(i));
   }
   present_joint_angle = temp_angle;
 }

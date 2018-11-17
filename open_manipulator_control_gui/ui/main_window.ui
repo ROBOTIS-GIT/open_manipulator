@@ -1072,6 +1072,44 @@
      <string>Set gripper</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_38">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>151</y>
+      <width>59</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Gripper</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txt_grip">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>818</x>
+      <y>150</y>
+      <width>61</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>0.00</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
