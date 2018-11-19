@@ -175,14 +175,14 @@ void OM_TELEOP::setGoal(const char* str)
     printf("open gripper\n");
     std::vector<double> joint_angle;
 
-    joint_angle.push_back(-1.0);
+    joint_angle.push_back(0.01);
     setToolControl(joint_angle);
   }
   else if(str == "gripper close")
   {
     printf("close gripper\n");
     std::vector<double> joint_angle;
-    joint_angle.push_back(0.5);
+    joint_angle.push_back(-0.01);
     setToolControl(joint_angle);
   }
 

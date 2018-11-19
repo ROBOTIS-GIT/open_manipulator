@@ -52,7 +52,7 @@ void MainWindow::timerCallback()
   ui.txt_j2->setText(QString::number(joint_angle.at(1),'f', 3));
   ui.txt_j3->setText(QString::number(joint_angle.at(2),'f', 3));
   ui.txt_j4->setText(QString::number(joint_angle.at(3),'f', 3));
-  ui.txt_grip->setText(QString::number(joint_angle.at(4),'f', 2));
+  ui.txt_grip->setText(QString::number(joint_angle.at(4),'f', 3));
 
   std::vector<double> position = qnode.getPresentKinematicsPose();
   if(position.size() != 3)
@@ -135,7 +135,7 @@ void MainWindow::on_btn_home_pose_clicked(void)
 void MainWindow::on_btn_gripper_open_clicked(void)
 {
   std::vector<double> joint_angle;
-  joint_angle.push_back(-1.0);
+  joint_angle.push_back(0.01);
 
   if(!qnode.setToolControl(joint_angle))
   {
@@ -149,7 +149,7 @@ void MainWindow::on_btn_gripper_open_clicked(void)
 void MainWindow::on_btn_gripper_close_clicked(void)
 {
   std::vector<double> joint_angle;
-  joint_angle.push_back(0.5);
+  joint_angle.push_back(-0.01);
   if(!qnode.setToolControl(joint_angle))
   {
     writeLog("[ERR!!] Failed to send service");

@@ -1021,23 +1021,26 @@
    <widget class="QDoubleSpinBox" name="doubleSpinBox_gripper">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>627</x>
       <y>503</y>
-      <width>71</width>
+      <width>81</width>
       <height>23</height>
      </rect>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
+    <property name="decimals">
+     <number>3</number>
+    </property>
     <property name="minimum">
-     <double>-1.000000000000000</double>
+     <double>-0.015000000000000</double>
     </property>
     <property name="maximum">
-     <double>0.500000000000000</double>
+     <double>0.010000000000000</double>
     </property>
     <property name="singleStep">
-     <double>0.100000000000000</double>
+     <double>0.002000000000000</double>
     </property>
     <property name="value">
      <double>0.000000000000000</double>
@@ -1046,7 +1049,7 @@
    <widget class="QLabel" name="label_37">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>573</x>
       <y>503</y>
       <width>59</width>
       <height>20</height>
@@ -1075,9 +1078,9 @@
    <widget class="QLabel" name="label_38">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>151</y>
-      <width>59</width>
+      <x>745</x>
+      <y>150</y>
+      <width>61</width>
       <height>20</height>
      </rect>
     </property>
@@ -1091,9 +1094,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>818</x>
+      <x>802</x>
       <y>150</y>
-      <width>61</width>
+      <width>60</width>
       <height>22</height>
      </rect>
     </property>
@@ -1108,6 +1111,32 @@
     </property>
     <property name="readOnly">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_39">
+    <property name="geometry">
+     <rect>
+      <x>866</x>
+      <y>153</y>
+      <width>59</width>
+      <height>14</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_40">
+    <property name="geometry">
+     <rect>
+      <x>713</x>
+      <y>507</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>m</string>
     </property>
    </widget>
   </widget>

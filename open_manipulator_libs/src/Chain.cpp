@@ -67,7 +67,7 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
           RM_MATH::makeVector3(0.130, 0.0, 0.0), // relative position
           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
           15, // actuator id
-          1.0); // Change unit from `meter` to `radian`
+          -0.015); // Change unit from `meter` to `radian`
 
   ////////// kinematics init.
   kinematics_ = new KINEMATICS::Chain();

@@ -239,7 +239,7 @@ void OM_CONTROLLER::publishJointStates()
       msg.data = value.at(i);
       chain_joint_states_to_gazebo_pub_[i].publish(msg);
     }
-    double tool_value = -chain_.getManipulator()->getToolValue(TOOL) * 0.01;
+    double tool_value = chain_.getManipulator()->getToolGoalValue(TOOL);
     for(int i = 0; i < 2; i ++)
     {
       std_msgs::Float64 msg;
