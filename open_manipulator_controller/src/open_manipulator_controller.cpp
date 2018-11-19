@@ -204,7 +204,7 @@ void OM_CONTROLLER::publishJointStates()
     msg.header.stamp = ros::Time::now();
     std::vector<double> position, velocity, effort;
     chain_.getManipulator()->getAllActiveJointValue(&position, &velocity, &effort);
-    double tool_value = -chain_.getManipulator()->getToolValue(TOOL) * 0.01;
+    double tool_value = chain_.getManipulator()->getToolValue(TOOL);
     msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
                                             msg.velocity.push_back(velocity.at(0));
                                             msg.effort.push_back(effort.at(0));
