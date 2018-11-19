@@ -48,10 +48,10 @@ include_directories(
 )
 
 add_library(open_manipulator_libs
-  src/om_chain.cpp
-  src/om_drawing.cpp
-  src/om_dynamixel.cpp
-  src/om_kinematics.cpp
+  src/Chain.cpp
+  src/Drawing.cpp
+  src/Dynamixel.cpp
+  src/Kinematics.cpp
 )
 
 add_dependencies(open_manipulator_libs ${catkin_EXPORTED_TARGETS})

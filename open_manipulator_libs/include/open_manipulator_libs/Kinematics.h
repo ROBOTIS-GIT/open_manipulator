@@ -14,26 +14,19 @@
 * limitations under the License.
 *******************************************************************************/
 
-#ifndef OM_CHAIN_KINEMATICS_H_
-#define OM_CHAIN_KINEMATICS_H_
+#ifndef KINEMATICS_H_
+#define KINEMATICS_H_
 
-#include <eigen3/Eigen/Eigen>
-#include <eigen3/Eigen/LU>
-#include <eigen3/Eigen/QR>
-
-#include <math.h>
-#include <vector>
-#include <map>
-#include <stdio.h>
-#include "robotis_manipulator/robotis_manipulator_manager.h"
-#include "robotis_manipulator/robotis_manipulator.h"
-
-#define PI 3.141592
+#if defined(__OPENCR__)
+  #include <RobotisManipulator.h>
+#else
+  #include <robotis_manipulator/robotis_manipulator.h>
+#endif
 
 using namespace Eigen;
 using namespace ROBOTIS_MANIPULATOR;
 
-namespace OM_KINEMATICS
+namespace KINEMATICS
 {
 class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 {
@@ -54,6 +47,6 @@ public:
   std::vector<double> positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
 };
 
-} // namespace OM_CHAIN_KINEMATICS
+} // namespace KINEMATICS
 
-#endif // OM_CHAIN_KINEMATICS_H_
+#endif // KINEMATICS_H_

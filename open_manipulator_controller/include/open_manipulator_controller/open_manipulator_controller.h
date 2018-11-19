@@ -10,7 +10,7 @@
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 
-#include "open_manipulator_libs/om_chain.h"
+#include "open_manipulator_libs/Chain.h"
 
 #define ACTUATOR_CONTROL_TIME 0.010 // ms
 #define ITERATION_FREQUENCY   100   // hz 10ms
@@ -47,7 +47,7 @@ class OM_CONTROLLER
 
  public:
   bool timer_thread_flag_;
-  OM_CHAIN chain_;
+  CHAIN chain_;
 
   OM_CONTROLLER();
   ~OM_CONTROLLER();

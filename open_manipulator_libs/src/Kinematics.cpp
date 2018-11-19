@@ -16,10 +16,10 @@
 
 /* Authors: Hye-Jong KIM, Darby Lim */
 
-#include "open_manipulator_libs/om_kinematics.h"
+#include "../include/open_manipulator_libs/Kinematics.h"
 
 using namespace ROBOTIS_MANIPULATOR;
-using namespace OM_KINEMATICS;
+using namespace KINEMATICS;
 
 void Chain::updatePassiveJointValue(Manipulator *manipulator){}
 

@@ -14,17 +14,24 @@
 * limitations under the License.
 *******************************************************************************/
 
-#ifndef OM_DYNAMIXEL_H_
-#define OM_DYNAMIXEL_H_
+#ifndef DYNAMIXEL_H_
+#define DYNAMIXEL_H_
 
-#include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
-#include <robotis_manipulator/robotis_manipulator.h>
-#include <robotis_manipulator/robotis_manipulator_common.h>
+#if defined(__OPENCR__)
+  #include <RobotisManipulator.h>
+  #include <DynamixelWorkbench.h>
+#else
+  #include <robotis_manipulator/robotis_manipulator.h>
+  #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
+#endif
 
-// #include <iostream>
-#include <cstdio>
+#if defined(__OPENCR__)
+  typedef String		  STRING;
+#else
+  typedef std::string STRING;
+#endif
 
-namespace OM_DYNAMIXEL
+namespace DYNAMIXEL
 {
 
 #define SYNC_WRITE_HANDLER_FOR_GOAL_POSITION 0
@@ -76,10 +83,10 @@ class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
 
 ////////////////////////////////////////////////////////////////
 
-  bool initialize(std::vector<uint8_t> actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
-  bool setOperatingMode(std::vector<uint8_t> actuator_id, std::string dynamixel_mode = "position_mode");
+  bool initialize(std::vector<uint8_t> actuator_id, STRING dxl_device_name, STRING dxl_baud_rate);
+  bool setOperatingMode(std::vector<uint8_t> actuator_id, STRING dynamixel_mode = "position_mode");
   bool setSDKHandler(uint8_t actuator_id);
-  bool writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint32_t value);
+  bool writeProfileValue(std::vector<uint8_t> actuator_id, STRING profile_mode, uint32_t value);
   bool writeGoalPosition(std::vector<uint8_t> actuator_id, std::vector<double> radian_vector);
   std::vector<ROBOTIS_MANIPULATOR::Actuator> receiveAllDynamixelValue(std::vector<uint8_t> actuator_id);
 };
@@ -106,16 +113,16 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
 
 ////////////////////////////////////////////////////////////////
 
-  bool initialize(uint8_t actuator_id, std::string dxl_device_name, std::string dxl_baud_rate);
-  bool setOperatingMode(std::string dynamixel_mode = "position_mode");
-  bool writeProfileValue(std::string profile_mode, uint32_t value);
+  bool initialize(uint8_t actuator_id, STRING dxl_device_name, STRING dxl_baud_rate);
+  bool setOperatingMode(STRING dynamixel_mode = "position_mode");
+  bool writeProfileValue(STRING profile_mode, uint32_t value);
   bool setSDKHandler();
   bool writeGoalPosition(double radian);
   double receiveDynamixelValue();
 };
 
-} // namespace RM_DYNAMIXEL
-#endif // OM_DYNAMIXEL_H_
+} // namespace DYNAMIXEL
+#endif // DYNAMIXEL_H_
 
 
 

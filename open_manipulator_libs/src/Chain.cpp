@@ -15,14 +15,14 @@
 *******************************************************************************/
 
 
-#include "open_manipulator_libs/om_chain.h"
+#include "../include/open_manipulator_libs/Chain.h"
 
-OM_CHAIN::OM_CHAIN()
+CHAIN::CHAIN()
 {}
-OM_CHAIN::~OM_CHAIN()
+CHAIN::~CHAIN()
 {}
 
-void OM_CHAIN::initManipulator(bool using_platform, std::string usb_port, std::string baud_rate)
+void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
 {
   platform_ = using_platform;
   ////////// manipulator parameter initialization
@@ -70,15 +70,15 @@ void OM_CHAIN::initManipulator(bool using_platform, std::string usb_port, std::s
           1.0); // Change unit from `meter` to `radian`
 
   ////////// kinematics init.
-  kinematics_ = new OM_KINEMATICS::Chain();
+  kinematics_ = new KINEMATICS::Chain();
   addKinematics(kinematics_);
 
   if(platform_)
   {
     ////////// joint actuator init.
-    actuator_ = new OM_DYNAMIXEL::JointDynamixel();
+    actuator_ = new DYNAMIXEL::JointDynamixel();
     // communication setting argument
-    std::string dxl_comm_arg[2] = {usb_port, baud_rate};
+    STRING dxl_comm_arg[2] = {usb_port, baud_rate};
     void *p_dxl_comm_arg = &dxl_comm_arg;
 
     // set joint actuator id
@@ -90,23 +90,23 @@ void OM_CHAIN::initManipulator(bool using_platform, std::string usb_port, std::s
     addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
 
     // set joint actuator control mode
-    std::string joint_dxl_mode_arg = "position_mode";
+    STRING joint_dxl_mode_arg = "position_mode";
     void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
     jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
 
     ////////// tool actuator init.
-    tool_ = new OM_DYNAMIXEL::GripperDynamixel();
+    tool_ = new DYNAMIXEL::GripperDynamixel();
 
     uint8_t gripperDxlId = 15;
     addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
 
     // set gripper actuator control mode
-    std::string gripper_dxl_mode_arg = "current_based_position_mode";
+    STRING gripper_dxl_mode_arg = "current_based_position_mode";
     void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
 
-    std::string gripper_dxl_opt_arg[2] = {"Profile_Velocity", "200"};
+    STRING gripper_dxl_opt_arg[2] = {"Profile_Velocity", "200"};
     void *p_gripper_dxl_opt_arg = &gripper_dxl_opt_arg;
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
@@ -126,10 +126,10 @@ void OM_CHAIN::initManipulator(bool using_platform, std::string usb_port, std::s
   addDrawingTrajectory(DRAWING_HEART, &heart_);
 
   ////////// manipulator trajectory & control time initialization
-  setTrajectoryControlTime(ACTUATOR_CONTROL_TIME);
+  setTrajectoryControlTime(CONTROL_TIME);
 }
 
-void OM_CHAIN::chainProcess(double present_time)
+void CHAIN::chainProcess(double present_time)
 {
   std::vector<WayPoint> goal_value = trajectoryControllerLoop(present_time);
 
@@ -142,8 +142,12 @@ void OM_CHAIN::chainProcess(double present_time)
   }
   else
   {
-    getManipulator()->getAllActiveJointValue();
     if(goal_value.size() != 0) setAllActiveJointValue(goal_value); // visualization
     forward();
   }
+}
+
+bool CHAIN::getPlatformFlag()
+{
+  return platform_;
 }

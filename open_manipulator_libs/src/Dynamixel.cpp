@@ -14,13 +14,13 @@
 * limitations under the License.
 *******************************************************************************/
 
-#include "open_manipulator_libs/om_dynamixel.h"
+#include "../include/open_manipulator_libs/Dynamixel.h"
 
-using namespace OM_DYNAMIXEL;
+using namespace DYNAMIXEL;
 
 void JointDynamixel::init(std::vector<uint8_t> actuator_id, const void *arg)
 {
-  std::string *get_arg_ = (std::string *)arg;
+  STRING *get_arg_ = (STRING *)arg;
 
   bool result = JointDynamixel::initialize(actuator_id ,get_arg_[0], get_arg_[1]);
 
@@ -33,7 +33,7 @@ void JointDynamixel::setMode(std::vector<uint8_t> actuator_id, const void *arg)
   bool result = false;
   const char* log = NULL;
 
-  std::string *get_arg_ = (std::string *)arg;
+  STRING *get_arg_ = (STRING *)arg;
 
   if (get_arg_[0] == "position_mode" || get_arg_[0] == "current_based_position_mode")
   {
@@ -43,7 +43,7 @@ void JointDynamixel::setMode(std::vector<uint8_t> actuator_id, const void *arg)
   }
   else
   {
-    result = JointDynamixel::writeProfileValue(actuator_id, get_arg_[0], std::stoi(get_arg_[1]));
+    result = JointDynamixel::writeProfileValue(actuator_id, get_arg_[0], std::atoi(get_arg_[1].c_str()));
     if (result == false)
       return;
   }
@@ -68,7 +68,11 @@ void JointDynamixel::enable()
     result = dynamixel_workbench_->torqueOn(dynamixel_.id.at(index), &log);
     if (result == false)
     {
-      printf("%s\n", log);
+#if defined(__OPENCR__)
+        // print log data
+#else
+        printf("%s\n", log);
+#endif
       return;
     }
   }
@@ -84,7 +88,11 @@ void JointDynamixel::disable()
     result = dynamixel_workbench_->torqueOff(dynamixel_.id.at(index), &log);
     if (result == false)
     {
-      printf("%s\n", log);
+#if defined(__OPENCR__)
+        // print log data
+#else
+        printf("%s\n", log);
+#endif
       return;
     }
   }
@@ -114,7 +122,7 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveJointActuatorV
 
 //////////////////////////////////////////////////////////////////////////
 
-bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, std::string dxl_device_name, std::string dxl_baud_rate)
+bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, STRING dxl_device_name, STRING dxl_baud_rate)
 {
   bool result = false;
   const char* log = NULL;
@@ -124,10 +132,14 @@ bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, std::string dx
 
   dynamixel_workbench_ = new DynamixelWorkbench;
 
-  result = dynamixel_workbench_->init(dxl_device_name.c_str(), std::stoi(dxl_baud_rate), &log);
+  result = dynamixel_workbench_->init(dxl_device_name.c_str(), std::atoi(dxl_baud_rate.c_str()), &log);
   if (result == false)
   {
-    printf("%s\n", log);
+#if defined(__OPENCR__)
+      // print log data
+#else
+      printf("%s\n", log);
+#endif
     return false;
   }    
 
@@ -138,20 +150,27 @@ bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, std::string dx
     result = dynamixel_workbench_->ping(id, &get_model_number, &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+        // print log data
+#else
       printf("%s\n", log);
-      printf("Please check your Dynamixel ID\n");
+printf("Please check your Dynamixel ID\n");
+      #endif
       return false;
     }
     else
     {
+#if defined(__OPENCR__)
+        // print log data
+#else
       printf("Joint Dynamixel ID : %d, Model Name : %s\n", id, dynamixel_workbench_->getModelName(id));
+#endif
     }
   }
-
   return true;
 }
 
-bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::string dynamixel_mode)
+bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, STRING dynamixel_mode)
 {
   const char* log = NULL;
   bool result = false;
@@ -167,7 +186,11 @@ bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
       result = dynamixel_workbench_->jointMode(actuator_id.at(num), velocity, effort, &log);
       if (result == false)
       {
+#if defined(__OPENCR__)
+          // print log data
+  #else
         printf("%s\n", log);
+  #endif
         return false;
       }
     }
@@ -179,7 +202,11 @@ bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
       result = dynamixel_workbench_->CurrentBasedPositionMode(actuator_id.at(num), current, &log);
       if (result == false)
       {
+#if defined(__OPENCR__)
+          // print log data
+  #else
         printf("%s\n", log);
+  #endif
         return false;
       }
     }
@@ -191,7 +218,11 @@ bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, std::str
       result = dynamixel_workbench_->jointMode(actuator_id.at(num), velocity, effort, &log);
       if (result == false)
       {
+#if defined(__OPENCR__)
+          // print log data
+  #else
         printf("%s\n", log);
+  #endif
         return false;
       }
     }
@@ -208,7 +239,11 @@ bool JointDynamixel::setSDKHandler(uint8_t actuator_id)
   result = dynamixel_workbench_->addSyncWriteHandler(actuator_id, "Goal_Position", &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
@@ -217,14 +252,18 @@ bool JointDynamixel::setSDKHandler(uint8_t actuator_id)
                                                     &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
   return true;
 }
 
-bool JointDynamixel::writeProfileValue(std::vector<uint8_t> actuator_id, std::string profile_mode, uint32_t value)
+bool JointDynamixel::writeProfileValue(std::vector<uint8_t> actuator_id, STRING profile_mode, uint32_t value)
 {
   const char* log = NULL;
   bool result = false;
@@ -236,7 +275,11 @@ bool JointDynamixel::writeProfileValue(std::vector<uint8_t> actuator_id, std::st
     result = dynamixel_workbench_->writeRegister(actuator_id.at(num), char_profile_mode, value, &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+        // print log data
+#else
       printf("%s\n", log);
+#endif
       return false;
     }
   }
@@ -261,7 +304,11 @@ bool JointDynamixel::writeGoalPosition(std::vector<uint8_t> actuator_id, std::ve
   result = dynamixel_workbench_->syncWrite(SYNC_WRITE_HANDLER_FOR_GOAL_POSITION, id_array, actuator_id.size(), goal_position, &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
@@ -288,7 +335,11 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
                                           &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
+#endif
     return {};
   }
 
@@ -309,7 +360,11 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
                                                   &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+        // print log data
+#else
       printf("%s\n", log);
+#endif
       return {};
     }
     else
@@ -326,7 +381,11 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
                                                   &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+        // print log data
+#else
       printf("%s\n", log);
+#endif
       return {};
     }
     else
@@ -343,7 +402,11 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
                                                   &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+        // print log data
+#else
       printf("%s\n", log);
+#endif
       return {};
     }
     else
@@ -361,7 +424,7 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
 
 void GripperDynamixel::init(uint8_t actuator_id, const void *arg)
 {
-  std::string *get_arg_ = (std::string *)arg;
+  STRING *get_arg_ = (STRING *)arg;
 
   bool result = GripperDynamixel::initialize(actuator_id ,get_arg_[0], get_arg_[1]);
 
@@ -374,7 +437,7 @@ void GripperDynamixel::setMode(const void *arg)
   bool result = false;
   const char* log = NULL;
 
-  std::string *get_arg_ = (std::string *)arg;
+  STRING *get_arg_ = (STRING *)arg;
 
   if (get_arg_[0] == "position_mode" || get_arg_[0] == "current_based_position_mode")
   {
@@ -384,7 +447,7 @@ void GripperDynamixel::setMode(const void *arg)
   }
   else
   {
-    result = GripperDynamixel::writeProfileValue(get_arg_[0], std::stoi(get_arg_[1]));
+    result = GripperDynamixel::writeProfileValue(get_arg_[0], std::atoi(get_arg_[1].c_str()));
     if (result == false)
       return;
   }
@@ -407,7 +470,11 @@ void GripperDynamixel::enable()
   result = dynamixel_workbench_->torqueOn(dynamixel_.id.at(0), &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
+#endif
     return;
   }
 }
@@ -420,7 +487,11 @@ void GripperDynamixel::disable()
   result = dynamixel_workbench_->torqueOff(dynamixel_.id.at(0), &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
+#endif
     return;
   }
 }
@@ -437,7 +508,7 @@ double GripperDynamixel::receiveToolActuatorValue()
 
 //////////////////////////////////////////////////////////////////////////
 
-bool GripperDynamixel::initialize(uint8_t actuator_id, std::string dxl_device_name, std::string dxl_baud_rate)
+bool GripperDynamixel::initialize(uint8_t actuator_id, STRING dxl_device_name, STRING dxl_baud_rate)
 {
   const char* log = NULL;
   bool result = false;
@@ -447,10 +518,14 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, std::string dxl_device_na
 
   dynamixel_workbench_ = new DynamixelWorkbench;
 
-  result = dynamixel_workbench_->init(dxl_device_name.c_str(), std::stoi(dxl_baud_rate), &log);
+  result = dynamixel_workbench_->init(dxl_device_name.c_str(), std::atoi(dxl_baud_rate.c_str()), &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
@@ -458,19 +533,27 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, std::string dxl_device_na
   result = dynamixel_workbench_->ping(dynamixel_.id.at(0), &get_model_number, &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+      // print log data
+#else
     printf("%s\n", log);
-    printf("Please check your Dynamixel ID\n");
+printf("Please check your Dynamixel ID\n");
+    #endif
     return false;
   }
   else
   {
+#if defined(__OPENCR__)
+    // print log data
+#else
     printf("Gripper Dynamixel ID : %d, Model Name : %s\n", dynamixel_.id.at(0), dynamixel_workbench_->getModelName(dynamixel_.id.at(0)));
+#endif
   }
 
   return true;
 }
 
-bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
+bool GripperDynamixel::setOperatingMode(STRING dynamixel_mode)
 {
   const char* log = NULL;
   bool result = false;
@@ -484,7 +567,11 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
     result = dynamixel_workbench_->jointMode(dynamixel_.id.at(0), velocity, effort, &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+      // print log data
+#else
       printf("%s\n", log);
+#endif
       return false;
     }
   }
@@ -493,7 +580,11 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
     result = dynamixel_workbench_->CurrentBasedPositionMode(dynamixel_.id.at(0), current, &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+      // print log data
+#else
       printf("%s\n", log);
+#endif
       return false;
     }
   }
@@ -502,7 +593,11 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
     result = dynamixel_workbench_->jointMode(dynamixel_.id.at(0), velocity, effort, &log);
     if (result == false)
     {
+#if defined(__OPENCR__)
+      // print log data
+#else
       printf("%s\n", log);
+#endif
       return false;
     }
   }
@@ -510,7 +605,7 @@ bool GripperDynamixel::setOperatingMode(std::string dynamixel_mode)
   return true;
 }
 
-bool GripperDynamixel::writeProfileValue(std::string profile_mode, uint32_t value)
+bool GripperDynamixel::writeProfileValue(STRING profile_mode, uint32_t value)
 {
   const char* log = NULL;
   bool result = false;
@@ -520,7 +615,11 @@ bool GripperDynamixel::writeProfileValue(std::string profile_mode, uint32_t valu
   result = dynamixel_workbench_->writeRegister(dynamixel_.id.at(0), char_profile_mode, value, &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+    // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
@@ -534,8 +633,12 @@ bool GripperDynamixel::setSDKHandler()
 
   result = dynamixel_workbench_->addSyncWriteHandler(dynamixel_.id.at(0), "Goal_Position", &log);
   if (result == false)
-  {
+  {    
+#if defined(__OPENCR__)
+    // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
@@ -544,7 +647,11 @@ bool GripperDynamixel::setSDKHandler()
                                                     &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+    // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
@@ -563,7 +670,11 @@ bool GripperDynamixel::writeGoalPosition(double radian)
   result = dynamixel_workbench_->syncWrite(SYNC_WRITE_HANDLER_FOR_GOAL_POSITION, &goal_position, &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+    // print log data
+#else
     printf("%s\n", log);
+#endif
     return false;
   }
 
@@ -584,7 +695,11 @@ double GripperDynamixel::receiveDynamixelValue()
                                           &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+    // print log data
+#else
     printf("%s\n", log);
+#endif
     return (double)false;
   }
 
@@ -595,7 +710,11 @@ double GripperDynamixel::receiveDynamixelValue()
                                             &log);
   if (result == false)
   {
+#if defined(__OPENCR__)
+    // print log data
+#else
     printf("%s\n", log);
+#endif
     return (double)false;
   } 
 
