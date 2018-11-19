@@ -30,7 +30,7 @@
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 
-#define NUM_OF_JOINT 4
+#define NUM_OF_JOINT_AND_TOOL 5
 
 /*****************************************************************************
 ** Namespaces
@@ -74,6 +74,9 @@ public:
   bool setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
   bool setTaskSpacePath(std::vector<double> kinematics_pose, double path_time);
   bool setToolControl(std::vector<double> joint_angle);
+
+Q_SIGNALS:
+  void rosShutdown();
 
 private:
 	int init_argc;
