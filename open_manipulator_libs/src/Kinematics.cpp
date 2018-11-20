@@ -308,8 +308,8 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
 
 void Chain::setOption(const void *arg)
 {
-  std::string *get_arg_ = (std::string *)arg;
-  uint8_t inverse_solver_option = std::stoi(get_arg_[0]);
+  STRING *get_arg_ = (STRING *)arg;
+  uint8_t inverse_solver_option = std::atoi(get_arg_[0].c_str());
   inverse_solver_option_ = inverse_solver_option;
 }
 
