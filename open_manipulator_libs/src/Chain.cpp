@@ -33,7 +33,7 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
   addComponent(COMP1, // my name
                WORLD, // parent name
                COMP2, // child name
-               RM_MATH::makeVector3(-0.278, 0.0, 0.017), // relative position
+               RM_MATH::makeVector3(0.012, 0.0, 0.017), // relative position
                RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
                Z_AXIS, // axis of rotation
                11); // actuator id
@@ -94,6 +94,9 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
     jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
+    STRING joint_dxl_opt_arg[2] = {"Return_Delay_Time", "0"};
+    void *p_joint_dxl_opt_arg = &joint_dxl_opt_arg;
+    jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_opt_arg);
 
     ////////// tool actuator init.
     tool_ = new DYNAMIXEL::GripperDynamixel();
@@ -112,6 +115,10 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
 
     gripper_dxl_opt_arg[0] = "Profile_Acceleration";
     gripper_dxl_opt_arg[1] = "20";
+    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
+
+    gripper_dxl_opt_arg[0] = "Return_Delay_Time";
+    gripper_dxl_opt_arg[1] = "0";
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     // all actuator enable
