@@ -106,8 +106,11 @@ void Chain::forward(Manipulator *manipulator, Name component_name)
 
 std::vector<double> Chain::inverse(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
-//  return positionOnlyInverseKinematics(manipulator, tool_name, target_pose);
-  return srInverseKinematics(manipulator, tool_name, target_pose);
+  if(inverse_solver_option_ == 0)
+    return positionOnlyInverseKinematics(manipulator, tool_name, target_pose);
+  else if (inverse_solver_option_ == 1)
+    return srInverseKinematics(manipulator, tool_name, target_pose);
+  else if(inverse_solver_option_ == 2){}
 }
 
 std::vector<double> Chain::inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose)
@@ -302,9 +305,12 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
 
   return _manipulator.getAllActiveJointValue();
 }
+
 void Chain::setOption(const void *arg)
 {
-
+  std::string *get_arg_ = (std::string *)arg;
+  uint8_t inverse_solver_option = std::stoi(get_arg_[0]);
+  inverse_solver_option_ = inverse_solver_option;
 }
 
 
