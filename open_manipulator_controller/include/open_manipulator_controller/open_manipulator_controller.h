@@ -1,4 +1,22 @@
-﻿#ifndef OPEN_MANIPULATOR_CONTROLLER_H
+﻿/*******************************************************************************
+* Copyright 2018 ROBOTIS CO., LTD.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*******************************************************************************/
+
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
+
+#ifndef OPEN_MANIPULATOR_CONTROLLER_H
 #define OPEN_MANIPULATOR_CONTROLLER_H
 
 #include <ros/ros.h>
@@ -45,9 +63,12 @@ class OM_CONTROLLER
   bool using_platform_;
   double tool_position_;
 
+
+
  public:
   bool timer_thread_flag_;
   CHAIN chain_;
+  ROBOTIS_MANIPULATOR::DEBUG debug_;
 
   OM_CONTROLLER();
   ~OM_CONTROLLER();

@@ -14,6 +14,8 @@
 * limitations under the License.
 *******************************************************************************/
 
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
+
 #ifndef DYNAMIXEL_H_
 #define DYNAMIXEL_H_
 
@@ -66,6 +68,7 @@ class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
  private:
   DynamixelWorkbench *dynamixel_workbench_;
   Joint dynamixel_;
+  ROBOTIS_MANIPULATOR::DEBUG debug_;
 
  public:
   JointDynamixel() {}
@@ -96,6 +99,7 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
  private:
   DynamixelWorkbench *dynamixel_workbench_;
   Joint dynamixel_;
+  ROBOTIS_MANIPULATOR::DEBUG debug_;
 
  public:
   GripperDynamixel() {}

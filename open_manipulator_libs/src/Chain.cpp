@@ -1,5 +1,5 @@
 ﻿/*******************************************************************************
-* Copyright 2016 ROBOTIS CO., LTD.
+* Copyright 2018 ROBOTIS CO., LTD.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 * limitations under the License.
 *******************************************************************************/
 
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
 #include "../include/open_manipulator_libs/Chain.h"
 
@@ -89,14 +90,15 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
 
     addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
 
+    // set joint actuator parameter
+    STRING joint_dxl_opt_arg[2] = {"Return_Delay_Time", "0"};
+    void *p_joint_dxl_opt_arg = &joint_dxl_opt_arg;
+    jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_opt_arg);
+
     // set joint actuator control mode
     STRING joint_dxl_mode_arg = "position_mode";
     void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
     jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
-
-    STRING joint_dxl_opt_arg[2] = {"Return_Delay_Time", "0"};
-    void *p_joint_dxl_opt_arg = &joint_dxl_opt_arg;
-    jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_opt_arg);
 
     ////////// tool actuator init.
     tool_ = new DYNAMIXEL::GripperDynamixel();
@@ -104,11 +106,7 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     uint8_t gripperDxlId = 15;
     addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
 
-    // set gripper actuator control mode
-    STRING gripper_dxl_mode_arg = "current_based_position_mode";
-    void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
-    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
-
+    // set gripper actuator parameter
     STRING gripper_dxl_opt_arg[2] = {"Profile_Velocity", "200"};
     void *p_gripper_dxl_opt_arg = &gripper_dxl_opt_arg;
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
@@ -120,6 +118,12 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     gripper_dxl_opt_arg[0] = "Return_Delay_Time";
     gripper_dxl_opt_arg[1] = "0";
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
+
+    // set gripper actuator control mode
+    STRING gripper_dxl_mode_arg = "current_based_position_mode";
+    void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
+    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
+
 
     // all actuator enable
     allActuatorEnable();

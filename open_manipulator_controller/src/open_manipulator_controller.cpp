@@ -1,4 +1,21 @@
-﻿
+﻿/*******************************************************************************
+* Copyright 2018 ROBOTIS CO., LTD.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*******************************************************************************/
+
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
+
 #include "open_manipulator_controller/open_manipulator_controller.h"
 
 using namespace open_manipulator_controller;
@@ -85,9 +102,12 @@ void *OM_CONTROLLER::timerThread(void *param)
 
     /////
     double delta_nsec = (next_time.tv_sec - curr_time.tv_sec) + (next_time.tv_nsec - curr_time.tv_nsec)*0.000000001;
-    // ROS_INFO("%lf", ACTUATOR_CONTROL_TIME - delta_nsec);
+    //controller->debug_.INFO("control time : ", ACTUATOR_CONTROL_TIME - delta_nsec);
     if(delta_nsec < 0.0)
+    {
+      controller->debug_.WARN("control time :", ACTUATOR_CONTROL_TIME - delta_nsec);
       next_time = curr_time;
+    }
     else
       clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
     /////
@@ -138,12 +158,12 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
 bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
-  Eigen::Vector3d target_position;
-  target_position[0] = req.kinematics_pose.pose.position.x;
-  target_position[1] = req.kinematics_pose.pose.position.y;
-  target_position[2] = req.kinematics_pose.pose.position.z;
+  Pose target_pose;
+  target_pose.position[0] = req.kinematics_pose.pose.position.x;
+  target_pose.position[1] = req.kinematics_pose.pose.position.y;
+  target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
-  chain_.taskTrajectoryMove(TOOL, target_position, req.path_time);
+  chain_.taskTrajectoryMove(TOOL, target_pose.position, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -165,12 +185,12 @@ bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::S
 bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                       open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
-  Eigen::Vector3d target_position;
-  target_position[0] = req.kinematics_pose.pose.position.x;
-  target_position[1] = req.kinematics_pose.pose.position.y;
-  target_position[2] = req.kinematics_pose.pose.position.z;
+  Pose target_pose;
+  target_pose.position[0] = req.kinematics_pose.pose.position.x;
+  target_pose.position[1] = req.kinematics_pose.pose.position.y;
+  target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
-  chain_.taskTrajectoryMoveToPresentPosition(TOOL, target_position, req.path_time);
+  chain_.taskTrajectoryMoveToPresentPosition(TOOL, target_pose.position, req.path_time);
 
   res.isPlanned = true;
   return true;
