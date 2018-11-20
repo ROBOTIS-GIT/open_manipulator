@@ -37,7 +37,7 @@ find_package(Boost REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS robotis_manipulator open_manipulator_libs
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs open_manipulator_msgs robotis_manipulator open_manipulator_libs cmake_modules
   DEPENDS Boost
 )
 

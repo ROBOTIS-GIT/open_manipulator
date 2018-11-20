@@ -107,16 +107,8 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
 
     // set gripper actuator parameter
-    STRING gripper_dxl_opt_arg[2] = {"Profile_Velocity", "200"};
+    STRING gripper_dxl_opt_arg[2] = {"Return_Delay_Time", "0"};
     void *p_gripper_dxl_opt_arg = &gripper_dxl_opt_arg;
-    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
-
-    gripper_dxl_opt_arg[0] = "Profile_Acceleration";
-    gripper_dxl_opt_arg[1] = "20";
-    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
-
-    gripper_dxl_opt_arg[0] = "Return_Delay_Time";
-    gripper_dxl_opt_arg[1] = "0";
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     // set gripper actuator control mode
@@ -124,6 +116,13 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
 
+    gripper_dxl_opt_arg[0] = "Profile_Acceleration";
+    gripper_dxl_opt_arg[1] = "20";
+    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
+
+    gripper_dxl_opt_arg[0] = "Profile_Velocity";
+    gripper_dxl_opt_arg[1] = "20";
+    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     // all actuator enable
     allActuatorEnable();

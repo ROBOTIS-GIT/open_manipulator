@@ -64,8 +64,7 @@ endif()
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp open_manipulator_msgs
-
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs open_manipulator_msgs
 )
 
 qt5_wrap_cpp(${PROJECT_NAME}_MOCS     ${${PROJECT_NAME}_HDRS})
