@@ -1,24 +1,37 @@
-<?xml version="1.0"?>
-<package format="2">
+<package>
+
   <name>open_manipulator_moveit</name>
-  <version>1.0.0</version>
+  <version>0.3.0</version>
   <description>
-     An automatically generated packages including all the configurations and launch files for OpenManipulator by using MoveIt! Motion Planning Framework.
+     An automatically generated package with all the configuration and launch files for using the open_manipulator with the MoveIt! Motion Planning Framework
   </description>
-  <license>Apache 2.0</license>
   <author email="thlim@robotis.com">Darby Lim</author>
+  <author email="hjkim@robotis.com">Hye-Jong KIM</author>
+  <author email="jhshim@robotis.com">Ryan Shim</author>
+  <author email="yhna@robotis.com">Yong-Ho Na</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
-  <url type="website">http://wiki.ros.org/open_manipulator_moveit</url>
-  <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
-  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
-  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+
+  <license>BSD</license>
+
+  <url type="website">http://moveit.ros.org/</url>
+  <url type="bugtracker">https://github.com/ros-planning/moveit/issues</url>
+  <url type="repository">https://github.com/ros-planning/moveit</url>
+
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>moveit_ros_move_group</depend>
-  <depend>moveit_kinematics</depend>
-  <depend>moveit_planners_ompl</depend>
-  <depend>moveit_ros_visualization</depend>
-  <depend>joint_state_publisher</depend>
-  <depend>robot_state_publisher</depend>
-  <depend>xacro</depend>
-  <depend>urdf</depend>
+
+  <run_depend>moveit_ros_move_group</run_depend>
+  <run_depend>moveit_fake_controller_manager</run_depend>
+  <run_depend>moveit_kinematics</run_depend>
+  <run_depend>moveit_planners_ompl</run_depend>
+  <run_depend>moveit_ros_visualization</run_depend>
+  <run_depend>moveit_setup_assistant</run_depend>
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>xacro</run_depend>
+  <!-- This package is referenced in the warehouse launch files, but does not build out of the box at the moment. Commented the dependency until this works. -->
+  <!-- <run_depend>warehouse_ros_mongo</run_depend> -->
+  <build_depend>open_manipulator_description</build_depend>
+  <run_depend>open_manipulator_description</run_depend>
+
+
 </package>

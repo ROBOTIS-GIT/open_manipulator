@@ -3,4 +3,4 @@ arm:
   kinematics_solver_search_resolution: 0.005
   kinematics_solver_timeout: 0.005
   kinematics_solver_attempts: 3
-  position_only_ik: true
+  position_only_ik: False

@@ -20,10 +20,7 @@
 	- sample_duration (default = 0.050)
     </description>
   </class>
-
-  <class name="industrial_trajectory_filters/AddSmoothingFilter" 
-	type="industrial_trajectory_filters::AddSmoothingFilter" 
-	base_class_type="planning_request_adapter::PlanningRequestAdapter">
+  <class name="industrial_trajectory_filters/AddSmoothingFilter" type="industrial_trajectory_filters::AddSmoothingFilter" base_class_type="planning_request_adapter::PlanningRequestAdapter">
     <description>
            This filter replaces each point with a weighted average of the adjacent 
            waypoints/states in the trajectory. Odd number of weights are provided
@@ -37,5 +34,7 @@
                             - 0.50
                             - 0.25
     </description>
-  </class> 
+  </class>
+
+  
 </library>

@@ -1,0 +1,29 @@
+ps4 dualshock
+
+install 
+sudo apt-get install ros-kinetic-joy ros-kinetic-joystick-drivers ros-kinetic-teleop-twist-joy
+sudo pip install ds4drv
+
+execution
+sudo ds4drv
+roslaunch teleop_twist_joy teleop.launch
+roslaunch open_manipulator_teleop open_manipulator_teleop_joystick.launch
+
+
+xbox 360
+
+install
+sudo apt-get install xboxdrv ros-kinetic-joy ros-kinetic-joystick-drivers ros-kinetic-teleop-twist-joy
+
+execution
+sudo xboxdrv --silent
+roslaunch teleop_twist_joy teleop.launch
+roslaunch open_manipulator_teleop open_manipulator_teleop_joystick.launch
+
+
+Wii Remote
+sudo apt-get install ros-kinetic-wiimote libbluetooth-dev libcwiid-dev
+
+cd ~/catkin_ws/src
+git clone https://github.com/ros-drivers/joystick_drivers.git  
+cd ~/catkin_ws && catkin_make

@@ -45,6 +45,7 @@
 namespace industrial_trajectory_filters
 {
 
+
   SmoothingTrajectoryFilter::SmoothingTrajectoryFilter()
   {
       initialized_ = false;

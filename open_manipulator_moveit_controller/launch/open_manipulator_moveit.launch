@@ -31,7 +31,7 @@
   </include>
 
   <!-- OpenManipultor Position controller-->
-  <include file="$(find open_manipulator_position_ctrl)/launch/open_manipulator_position_controller.launch">
+  <include file="$(find open_manipulator_moveit_controller)/launch/open_manipulator_moveit_controller.launch">
     <arg name="use_gazebo"     value="$(arg use_gazebo)"/>
     <arg name="use_robot_name" value="open_manipulator"/>
   </include>
