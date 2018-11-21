@@ -102,10 +102,10 @@ void *OM_CONTROLLER::timerThread(void *param)
 
     /////
     double delta_nsec = (next_time.tv_sec - curr_time.tv_sec) + (next_time.tv_nsec - curr_time.tv_nsec)*0.000000001;
-    //controller->debug_.INFO("control time : ", ACTUATOR_CONTROL_TIME - delta_nsec);
+    //controller->chain_.debugging().INFO("control time : ", ACTUATOR_CONTROL_TIME - delta_nsec);
     if(delta_nsec < 0.0)
     {
-      controller->debug_.WARN("control time :", ACTUATOR_CONTROL_TIME - delta_nsec);
+      controller->chain_.debugging().WARN("control time :", ACTUATOR_CONTROL_TIME - delta_nsec);
       next_time = curr_time;
     }
     else

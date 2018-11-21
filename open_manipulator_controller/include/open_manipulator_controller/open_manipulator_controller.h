@@ -59,16 +59,14 @@ class OM_CONTROLLER
 
   pthread_t timer_thread_;
 
+  CHAIN chain_;
+
   bool tool_ctrl_flag_;
   bool using_platform_;
   double tool_position_;
-
-
+  bool timer_thread_flag_;
 
  public:
-  bool timer_thread_flag_;
-  CHAIN chain_;
-  ROBOTIS_MANIPULATOR::DEBUG debug_;
 
   OM_CONTROLLER();
   ~OM_CONTROLLER();

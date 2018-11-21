@@ -19,11 +19,3 @@ execution
 sudo xboxdrv --silent
 roslaunch teleop_twist_joy teleop.launch
 roslaunch open_manipulator_teleop open_manipulator_teleop_joystick.launch
-
-
-Wii Remote
-sudo apt-get install ros-kinetic-wiimote libbluetooth-dev libcwiid-dev
-
-cd ~/catkin_ws/src
-git clone https://github.com/ros-drivers/joystick_drivers.git  
-cd ~/catkin_ws && catkin_make
