@@ -121,7 +121,7 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     gripper_dxl_opt_arg[0] = "Profile_Velocity";
-    gripper_dxl_opt_arg[1] = "20";
+    gripper_dxl_opt_arg[1] = "200";
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     // all actuator enable
