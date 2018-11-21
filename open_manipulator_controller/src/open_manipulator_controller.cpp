@@ -163,8 +163,6 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
-  Eigen::Vector3d a;
-  RM_LOG::PRINT_VECTOR(a);
   chain_.taskTrajectoryMove(TOOL, target_pose.position, req.path_time);
 
   res.isPlanned = true;

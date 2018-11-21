@@ -41,7 +41,7 @@ class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 private:
   STRING inverse_solver_option_;
 public:
-  Chain():inverse_solver_option_("om_chain_inverse"){}
+  Chain():inverse_solver_option_("inverse_maintaining_present_orientation"){}
   virtual ~Chain(){}
 
   virtual void setOption(const void *arg);
@@ -55,7 +55,7 @@ public:
   std::vector<double> inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
   std::vector<double> srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
   std::vector<double> positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> srInverseKinematicsForOMChain(Manipulator *manipulator, Name tool_name, Pose target_pose);
+  std::vector<double> inverseKinematicsMaintainingPresentOrientation(Manipulator *manipulator, Name tool_name, Pose target_pose);
 
 };
 

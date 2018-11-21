@@ -110,8 +110,8 @@ std::vector<double> Chain::inverse(Manipulator *manipulator, Name tool_name, Pos
     return positionOnlyInverseKinematics(manipulator, tool_name, target_pose);
   else if (inverse_solver_option_ == "sr_inverse")
     return srInverseKinematics(manipulator, tool_name, target_pose);
-  else if(inverse_solver_option_ == "om_chain_inverse")
-    return srInverseKinematicsForOMChain(manipulator, tool_name, target_pose);
+  else if(inverse_solver_option_ == "inverse_maintaining_present_orientation")
+    return inverseKinematicsMaintainingPresentOrientation(manipulator, tool_name, target_pose);
   else{}
 }
 
@@ -206,6 +206,7 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
     position_changed = RM_MATH::positionDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name));
 
     Ek2 = position_changed.transpose() * We * position_changed;
+
     if (Ek2 < 1E-12)
     {
       return _manipulator.getAllActiveJointValue();
@@ -225,15 +226,15 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
       forward(&_manipulator, _manipulator.getIteratorBegin()->first);
     }
   }
-
-  return _manipulator.getAllActiveJointValue();
+  RM_LOG::ERROR("fail to solve inverse kinematics");
+  return manipulator->getAllActiveJointValue();
 }
 
 std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
   double lambda = 0.0;
-  const double param = 0.0005;
-  int8_t iteration = 50;
+  const double param = 0.002;
+  int8_t iteration = 10;
 
   Manipulator _manipulator = *manipulator;
 
@@ -303,24 +304,27 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
       forward(&_manipulator, _manipulator.getIteratorBegin()->first);
     }
   }
-
-  return _manipulator.getAllActiveJointValue();
+  RM_LOG::ERROR("fail to solve inverse kinematics");
+  return manipulator->getAllActiveJointValue();
 }
 
-
-
-std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulator, Name tool_name, Pose target_pose)
+std::vector<double> Chain::inverseKinematicsMaintainingPresentOrientation(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
   double lambda = 0.0;
-  const double param = 0.0005;
-  int8_t iteration = 50;
+  const double param = 0.002;
+  int8_t iteration = 10;
 
   Manipulator _manipulator = *manipulator;
 
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Identity(6, _manipulator.getDOF());
+  Eigen::MatrixXd new_jacobian = Eigen::MatrixXd::Identity(5, _manipulator.getDOF());
   Eigen::MatrixXd updated_jacobian = Eigen::MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
+
   Eigen::VectorXd pose_changed = Eigen::VectorXd::Zero(6);
+  Eigen::VectorXd new_pose_changed = Eigen::VectorXd::Zero(5);
+
   Eigen::VectorXd angle_changed = Eigen::VectorXd::Zero(_manipulator.getDOF());
+
   Eigen::VectorXd gerr(_manipulator.getDOF());
 
   double wn_pos = 1 / 0.3;
@@ -328,17 +332,14 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
   double Ek = 0.0;
   double Ek2 = 0.0;
 
-  Eigen::MatrixXd We(6, 6);
-  We << wn_pos, 0, 0, 0, 0, 0,
-      0, wn_pos, 0, 0, 0, 0,
-      0, 0, wn_pos, 0, 0, 0,
-      0, 0, 0, wn_ang, 0, 0,
-      0, 0, 0, 0, wn_ang, 0,
-      0, 0, 0, 0, 0, wn_ang;
+  Eigen::MatrixXd We(5, 5);
+  We << wn_pos, 0, 0, 0, 0,
+      0, wn_pos, 0, 0, 0,
+      0, 0, wn_pos, 0, 0,
+      0, 0, 0, wn_ang, 0,
+      0, 0, 0, 0, wn_ang;
 
   Eigen::MatrixXd Wn = Eigen::MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
-
-  forward(&_manipulator, _manipulator.getIteratorBegin()->first);
 
   ///////////////////////////////////////////////////////////////////
   Eigen::Matrix3d target_orientation;
@@ -346,37 +347,56 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
   double present_yaw;
   double target_yaw;
 
+  ////////////////////////////////////////////////////////////////////////
+  forward(&_manipulator, _manipulator.getIteratorBegin()->first);
   present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
   present_yaw = atan2(_manipulator.getComponentPositionToWorld(tool_name)(1),_manipulator.getComponentPositionToWorld(tool_name)(0));
   target_yaw = atan2(target_pose.position(1),target_pose.position(0));
-  target_orientation = RM_MATH::getRotationZ(target_yaw) * RM_MATH::getRotationZ(-present_yaw) * present_orientation;
-
-
-  Eigen::Vector3d present_orientation_rpy1 = RM_MATH::convertRotationToRPY(present_orientation);
-  Eigen::Vector3d present_orientation_rpy2 = RM_MATH::convertRotationToRPY(RM_MATH::getRotationZ(-present_yaw) * present_orientation);
-  Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationToRPY(target_orientation);
-
-  RM_LOG::PRINT("------------------------------------");
-  RM_LOG::PRINT("pre_ori");
-  RM_LOG::PRINT_VECTOR(present_orientation_rpy1);
-  RM_LOG::PRINT("pre_ori2");
-  RM_LOG::PRINT_VECTOR(present_orientation_rpy2);
-  RM_LOG::PRINT("tar_ori");
-  RM_LOG::PRINT_VECTOR(target_orientation_rpy);
-  /////////////////////////////////////////////////////////////////////
-
+  target_orientation = RM_MATH::getRotationZ(target_yaw) * RM_MATH::getRotationZ(-present_yaw) * present_orientation;           //asdasd
 
   pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name),
                                          target_orientation, _manipulator.getComponentOrientationToWorld(tool_name));
-  Ek = pose_changed.transpose() * We * pose_changed;
+  for(int i=0; i<5; i++)
+    new_pose_changed(i) = pose_changed(i);
+
+  Ek = new_pose_changed.transpose() * We * new_pose_changed;
+  /////////////////////////////////////////////////////////////////////
+
+//  //////////////////debug
+//  Eigen::Vector3d present_position = _manipulator.getComponentPositionToWorld(tool_name);
+//  Eigen::Vector3d present_orientation_rpy1 = RM_MATH::convertRotationToRPY(present_orientation);
+//  Eigen::VectorXd deb_present_pose(6);
+//  for(int t=0; t<3; t++)
+//    deb_present_pose(t) = present_position(t);
+//  for(int t=0; t<3; t++)
+//    deb_present_pose(t+3) = present_orientation_rpy1(t);
+//  Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationToRPY(target_orientation);
+//  Eigen::VectorXd deb_target_pose(6);
+//  for(int t=0; t<3; t++)
+//    deb_target_pose(t) = target_pose.position(t);
+//  for(int t=0; t<3; t++)
+//    deb_target_pose(t+3) = target_orientation_rpy(t);
+
+//  RM_LOG::PRINT("------------------------------------");
+//  RM_LOG::WARN("iter : first");
+//  RM_LOG::WARN("Ek : ", Ek*1000000000000);
+//  RM_LOG::PRINT("tar_pose");
+//  RM_LOG::PRINT_VECTOR(deb_target_pose,16);
+//  RM_LOG::PRINT("pre_pose");
+//  RM_LOG::PRINT_VECTOR(deb_present_pose,16);
+//  RM_LOG::PRINT("delta_pose");
+//  RM_LOG::PRINT_VECTOR(pose_changed,16);
+//  //////////////////debug
 
   for (int8_t count = 0; count < iteration; count++)
   {
     jacobian = this->jacobian(&_manipulator, tool_name);
+    for(int i=0; i<5; i++)
+      new_jacobian.row(i) = jacobian.row(i);
     lambda = Ek + param;
 
-    updated_jacobian = (jacobian.transpose() * We * jacobian) + (lambda * Wn);
-    gerr = jacobian.transpose() * We * pose_changed;
+    updated_jacobian = (new_jacobian.transpose() * We * new_jacobian) + (lambda * Wn);
+    gerr = new_jacobian.transpose() * We * new_pose_changed;
 
     ColPivHouseholderQR<Eigen::MatrixXd> dec(updated_jacobian);
     angle_changed = dec.solve(gerr);
@@ -387,14 +407,41 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
     _manipulator.setAllActiveJointValue(set_angle_changed);
 
 
+    ///////////////////////////////////////////////////check/////////////////////////////////////
+
     forward(&_manipulator, _manipulator.getIteratorBegin()->first);
     pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name),
                                            target_orientation, _manipulator.getComponentOrientationToWorld(tool_name));
 
-    Ek2 = pose_changed.transpose() * We * pose_changed;
-    RM_LOG::PRINT("iter : ",count);
+    for(int i=0; i<5; i++)
+      new_pose_changed(i) = pose_changed(i);
+
+    Ek2 = new_pose_changed.transpose() * We * new_pose_changed;
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+//    //////////////////debug
+//    present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+//    present_position = _manipulator.getComponentPositionToWorld(tool_name);
+//    present_orientation_rpy1 = RM_MATH::convertRotationToRPY(present_orientation);
+//    for(int t=0; t<3; t++)
+//      deb_present_pose(t) = present_position(t);
+//    for(int t=0; t<3; t++)
+//      deb_present_pose(t+3) = present_orientation_rpy1(t);
+//    RM_LOG::WARN("iter : ", count,0);
+//    RM_LOG::WARN("Ek : ", Ek2*1000000000000);
+//    RM_LOG::PRINT("tar_pose");
+//    RM_LOG::PRINT_VECTOR(deb_target_pose,16);
+//    RM_LOG::PRINT("pre_pose");
+//    RM_LOG::PRINT_VECTOR(deb_present_pose,16);
+//    RM_LOG::PRINT("delta_pose");
+//    RM_LOG::PRINT_VECTOR(pose_changed,16);
+//    //////////////////debug
     if (Ek2 < 1E-12)
     {
+//    //////////////////debug
+//      RM_LOG::ERROR("good");
+//      RM_LOG::PRINT("------------------------------------");
+//    //////////////////debug
       return _manipulator.getAllActiveJointValue();
     }
     else if (Ek2 < Ek)
@@ -404,15 +451,15 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
     else
     {
       for (int8_t index = 0; index < _manipulator.getDOF(); index++)
-        set_angle_changed.push_back(_manipulator.getAllActiveJointValue().at(index) - angle_changed(index));
+        set_angle_changed.push_back(_manipulator.getAllActiveJointValue().at(index) - 2.0* angle_changed(index));
 
       _manipulator.setAllActiveJointValue(set_angle_changed);
 
       forward(&_manipulator, _manipulator.getIteratorBegin()->first);
     }
   }
-
-  return _manipulator.getAllActiveJointValue();
+  RM_LOG::ERROR("fail to solve inverse kinematics");
+  return manipulator->getAllActiveJointValue();
 }
 
 
