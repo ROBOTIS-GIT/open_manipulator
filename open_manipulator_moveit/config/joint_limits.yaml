@@ -4,31 +4,31 @@
 joint_limits:
   grip_joint:
     has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_velocity: 3.5
+    has_acceleration_limits: false
+    max_acceleration: 0
   grip_joint_sub:
     has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_velocity: 3.5
+    has_acceleration_limits: false
+    max_acceleration: 0
   joint1:
     has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_velocity: 6.5
+    has_acceleration_limits: false
+    max_acceleration: 0
   joint2:
     has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_velocity: 6.5
+    has_acceleration_limits: false
+    max_acceleration: 0
   joint3:
     has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_velocity: 6.5
+    has_acceleration_limits: false
+    max_acceleration: 0
   joint4:
     has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: true
-    max_acceleration: 1.0
+    max_velocity: 6.5
+    has_acceleration_limits: false
+    max_acceleration: 0
