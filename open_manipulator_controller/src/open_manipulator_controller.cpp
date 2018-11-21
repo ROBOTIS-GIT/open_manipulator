@@ -40,14 +40,14 @@ OM_CONTROLLER::OM_CONTROLLER()
   chain_.initManipulator(using_platform_, usb_port, baud_rate);
 
   setTimerThread();
-  ROS_INFO("OpenManipulator initialization");
+  chain_.debugging().INFO("Successed to OpenManipulator initialization");
 }
 
 OM_CONTROLLER::~OM_CONTROLLER()
 {
   timer_thread_flag_ = false;
   usleep(10 * 1000); // 10ms
-  ROS_INFO("Shutdown the OpenManipulator");
+  chain_.debugging().INFO("Shutdown the OpenManipulator");
   chain_.allActuatorDisable();
   ros::shutdown();
 }
@@ -61,24 +61,25 @@ void OM_CONTROLLER::setTimerThread()
 
   error = pthread_attr_setschedpolicy(&attr, SCHED_RR);
   if (error != 0)
-    ROS_ERROR("pthread_attr_setschedpolicy error = %d\n", error);
+    chain_.debugging().ERROR("pthread_attr_setschedpolicy error = ", (double)error);
   error = pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
   if (error != 0)
-    ROS_ERROR("pthread_attr_setinheritsched error = %d\n", error);
+    chain_.debugging().ERROR("pthread_attr_setinheritsched error = ", (double)error);
 
   memset(&param, 0, sizeof(param));
   param.sched_priority = 31;    // RT
   error = pthread_attr_setschedparam(&attr, &param);
   if (error != 0)
-    ROS_ERROR("pthread_attr_setschedparam error = %d\n", error);
+    chain_.debugging().ERROR("pthread_attr_setschedparam error = ", (double)error);
 
   // create and start the thread
   if ((error = pthread_create(&this->timer_thread_, /*&attr*/NULL, this->timerThread, this)) != 0)
   {
-    ROS_ERROR("Creating timer thread failed!! %d", error);
+    chain_.debugging().ERROR("Creating timer thread failed!!", (double)error);
     exit(-1);
   }
   timer_thread_flag_ = true;
+  chain_.debugging().INFO("Start the OpenManipulator control thread");
 }
 
 
@@ -289,7 +290,6 @@ int main(int argc, char **argv)
   OM_CONTROLLER om_controller;
   ros::Rate loop_rate(ITERATION_FREQUENCY);
 
-  ROS_INFO("OpenManipulator control loop start");
   while (ros::ok())
   {
     om_controller.publishJointStates();
