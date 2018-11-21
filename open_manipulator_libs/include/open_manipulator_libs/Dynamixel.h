@@ -68,7 +68,7 @@ class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
  private:
   DynamixelWorkbench *dynamixel_workbench_;
   Joint dynamixel_;
-  ROBOTIS_MANIPULATOR::DEBUG debug_;
+  ROBOTIS_MANIPULATOR::LOG debug_;
 
  public:
   JointDynamixel() {}
@@ -99,7 +99,7 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
  private:
   DynamixelWorkbench *dynamixel_workbench_;
   Joint dynamixel_;
-  ROBOTIS_MANIPULATOR::DEBUG debug_;
+  ROBOTIS_MANIPULATOR::LOG debug_;
 
  public:
   GripperDynamixel() {}

@@ -161,3 +161,8 @@ bool CHAIN::getPlatformFlag()
 {
   return platform_;
 }
+
+ROBOTIS_MANIPULATOR::LOG CHAIN::debugging()
+{
+  return debug_;
+}

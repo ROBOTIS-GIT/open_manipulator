@@ -60,6 +60,7 @@ private:
   ROBOTIS_MANIPULATOR::Kinematics *kinematics_;
   ROBOTIS_MANIPULATOR::JointActuator *actuator_;
   ROBOTIS_MANIPULATOR::ToolActuator *tool_;
+  ROBOTIS_MANIPULATOR::LOG debug_;
 
   DRAWING::Line line_;
   DRAWING::Circle circle_;
@@ -67,10 +68,7 @@ private:
   DRAWING::Heart heart_;
 
   bool platform_;
-  bool processing_;
-
   std::vector<uint8_t> jointDxlId;
-
  public:
   CHAIN();
   virtual ~CHAIN();
@@ -78,6 +76,7 @@ private:
   void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
   void chainProcess(double present_time);
   bool getPlatformFlag();
+  ROBOTIS_MANIPULATOR::LOG debugging();
 };
 
 #endif // CHAIN_H_
