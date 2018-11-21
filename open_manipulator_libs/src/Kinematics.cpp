@@ -347,7 +347,7 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
   double target_yaw;
 
   present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
-  present_yaw = RM_MATH::convertRotationToRPY(present_orientation)(2);
+  present_yaw = atan2(_manipulator.getComponentPositionToWorld(tool_name)(1),_manipulator.getComponentPositionToWorld(tool_name)(0));
   target_yaw = atan2(target_pose.position(1),target_pose.position(0));
   target_orientation = RM_MATH::getRotationZ(target_yaw) * RM_MATH::getRotationZ(-present_yaw) * present_orientation;
 
@@ -356,13 +356,13 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
   Eigen::Vector3d present_orientation_rpy2 = RM_MATH::convertRotationToRPY(RM_MATH::getRotationZ(-present_yaw) * present_orientation);
   Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationToRPY(target_orientation);
 
-  debug_.PRINT("------------------------------------");
-  debug_.PRINT("pre_ori");
-  debug_.PRINT_VECTOR(present_orientation_rpy1);
-  debug_.PRINT("pre_ori2");
-  debug_.PRINT_VECTOR(present_orientation_rpy2);
-  debug_.PRINT("tar_ori");
-  debug_.PRINT_VECTOR(target_orientation_rpy);/*
+  RM_LOG::PRINT("------------------------------------");
+  RM_LOG::PRINT("pre_ori");
+  RM_LOG::PRINT_VECTOR(present_orientation_rpy1);
+  RM_LOG::PRINT("pre_ori2");
+  RM_LOG::PRINT_VECTOR(present_orientation_rpy2);
+  RM_LOG::PRINT("tar_ori");
+  RM_LOG::PRINT_VECTOR(target_orientation_rpy);
   /////////////////////////////////////////////////////////////////////
 
 
@@ -392,7 +392,7 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
                                            target_orientation, _manipulator.getComponentOrientationToWorld(tool_name));
 
     Ek2 = pose_changed.transpose() * We * pose_changed;
-    debug_.PRINT("iter : ",count);
+    RM_LOG::PRINT("iter : ",count);
     if (Ek2 < 1E-12)
     {
       return _manipulator.getAllActiveJointValue();
