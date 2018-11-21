@@ -55,6 +55,8 @@ public:
   std::vector<double> inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
   std::vector<double> srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
   std::vector<double> positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
+  std::vector<double> srInverseKinematicsForOMChain(Manipulator *manipulator, Name tool_name, Pose target_pose);
+
 };
 
 } // namespace KINEMATICS
