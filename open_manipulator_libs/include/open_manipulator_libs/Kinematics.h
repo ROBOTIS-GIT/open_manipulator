@@ -39,9 +39,10 @@ namespace KINEMATICS
 class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 {
 private:
-  int8_t inverse_solver_option_;
+  STRING inverse_solver_option_;
+  ROBOTIS_MANIPULATOR::LOG debug_;
 public:
-  Chain():inverse_solver_option_(0){}
+  Chain():inverse_solver_option_("om_chain_inverse"){}
   virtual ~Chain(){}
 
   virtual void setOption(const void *arg);

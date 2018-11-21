@@ -106,11 +106,11 @@ void Chain::forward(Manipulator *manipulator, Name component_name)
 
 std::vector<double> Chain::inverse(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
-  if(inverse_solver_option_ == 0)
+  if(inverse_solver_option_ == "position_only_inverse")
     return positionOnlyInverseKinematics(manipulator, tool_name, target_pose);
-  else if (inverse_solver_option_ == 1)
+  else if (inverse_solver_option_ == "sr_inverse")
     return srInverseKinematics(manipulator, tool_name, target_pose);
-  else if(inverse_solver_option_ == 2)
+  else if(inverse_solver_option_ == "om_chain_inverse")
     return srInverseKinematicsForOMChain(manipulator, tool_name, target_pose);
   else{}
 }
@@ -155,7 +155,7 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
 {
   double lambda = 0.0;
   const double param = 0.002;
-  const int8_t iteration = 10;
+  const int8_t iteration = 50;
 
   Manipulator _manipulator = *manipulator;
 
@@ -206,7 +206,6 @@ std::vector<double> Chain::positionOnlyInverseKinematics(Manipulator *manipulato
     position_changed = RM_MATH::positionDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name));
 
     Ek2 = position_changed.transpose() * We * position_changed;
-
     if (Ek2 < 1E-12)
     {
       return _manipulator.getAllActiveJointValue();
@@ -313,97 +312,97 @@ std::vector<double> Chain::srInverseKinematics(Manipulator *manipulator, Name to
 std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulator, Name tool_name, Pose target_pose)
 {
   double lambda = 0.0;
-  const double param = 0.002;
-  const int8_t iteration = 10;
+  const double param = 0.0005;
+  int8_t iteration = 50;
 
-  //copy manipulator
   Manipulator _manipulator = *manipulator;
 
-  //jacobian
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Identity(6, _manipulator.getDOF());
-  Eigen::MatrixXd new_jacobian = Eigen::MatrixXd::Identity(5, _manipulator.getDOF());
-
-  Eigen::Matrix3d target_orientation;
-
   Eigen::MatrixXd updated_jacobian = Eigen::MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
-
-  //delta x and q
   Eigen::VectorXd pose_changed = Eigen::VectorXd::Zero(6);
-  Eigen::VectorXd new_pose_changed = Eigen::VectorXd::Zero(5);
   Eigen::VectorXd angle_changed = Eigen::VectorXd::Zero(_manipulator.getDOF());
-  std::vector<double> set_angle_changed;
-
-  //error
   Eigen::VectorXd gerr(_manipulator.getDOF());
 
   double wn_pos = 1 / 0.3;
   double wn_ang = 1 / (2 * M_PI);
-  double Ek = 0.0;      //error date for all axis
-  double new_Ek = 0.0;
+  double Ek = 0.0;
+  double Ek2 = 0.0;
 
-  Eigen::MatrixXd We(5, 5);
-  We << wn_pos, 0, 0, 0, 0,
-        0, wn_pos, 0, 0, 0,
-        0, 0, wn_pos, 0, 0,
-        0, 0, 0, wn_ang, 0,
-        0, 0, 0, 0, wn_ang;
+  Eigen::MatrixXd We(6, 6);
+  We << wn_pos, 0, 0, 0, 0, 0,
+      0, wn_pos, 0, 0, 0, 0,
+      0, 0, wn_pos, 0, 0, 0,
+      0, 0, 0, wn_ang, 0, 0,
+      0, 0, 0, 0, wn_ang, 0,
+      0, 0, 0, 0, 0, wn_ang;
 
   Eigen::MatrixXd Wn = Eigen::MatrixXd::Identity(_manipulator.getDOF(), _manipulator.getDOF());
 
-
   forward(&_manipulator, _manipulator.getIteratorBegin()->first);
-  target_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+
+  ///////////////////////////////////////////////////////////////////
+  Eigen::Matrix3d target_orientation;
+  Eigen::Matrix3d present_orientation;
+  double present_yaw;
+  double target_yaw;
+
+  present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+  present_yaw = RM_MATH::convertRotationToRPY(present_orientation)(2);
+  target_yaw = atan2(target_pose.position(1),target_pose.position(0));
+  target_orientation = RM_MATH::getRotationZ(target_yaw) * RM_MATH::getRotationZ(-present_yaw) * present_orientation;
+
+
+  Eigen::Vector3d present_orientation_rpy1 = RM_MATH::convertRotationToRPY(present_orientation);
+  Eigen::Vector3d present_orientation_rpy2 = RM_MATH::convertRotationToRPY(RM_MATH::getRotationZ(-present_yaw) * present_orientation);
+  Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationToRPY(target_orientation);
+
+  debug_.PRINT("------------------------------------");
+  debug_.PRINT("pre_ori");
+  debug_.PRINT_VECTOR(present_orientation_rpy1);
+  debug_.PRINT("pre_ori2");
+  debug_.PRINT_VECTOR(present_orientation_rpy2);
+  debug_.PRINT("tar_ori");
+  debug_.PRINT_VECTOR(target_orientation_rpy);/*
+  /////////////////////////////////////////////////////////////////////
+
+
   pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name),
                                          target_orientation, _manipulator.getComponentOrientationToWorld(tool_name));
-  for(int i = 0; i < 5; i++)
-    new_pose_changed[i] = pose_changed[i];
+  Ek = pose_changed.transpose() * We * pose_changed;
 
-  Ek = new_pose_changed.transpose() * We * new_pose_changed;
-
-  //start iter
   for (int8_t count = 0; count < iteration; count++)
   {
     jacobian = this->jacobian(&_manipulator, tool_name);
-    for(int i = 0; i < 5; i++)
-       new_jacobian.row(i) = jacobian.row(i);
-
     lambda = Ek + param;
 
-    updated_jacobian = (new_jacobian.transpose() * We * new_jacobian) + (lambda * Wn);
-    gerr = new_jacobian.transpose() * We * new_pose_changed;
+    updated_jacobian = (jacobian.transpose() * We * jacobian) + (lambda * Wn);
+    gerr = jacobian.transpose() * We * pose_changed;
 
     ColPivHouseholderQR<Eigen::MatrixXd> dec(updated_jacobian);
     angle_changed = dec.solve(gerr);
 
+    std::vector<double> set_angle_changed;
     for (int8_t index = 0; index < _manipulator.getDOF(); index++)
       set_angle_changed.push_back(_manipulator.getAllActiveJointValue().at(index) + angle_changed(index));
-
     _manipulator.setAllActiveJointValue(set_angle_changed);
 
-    forward(&_manipulator, _manipulator.getIteratorBegin()->first);
 
-    target_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+    forward(&_manipulator, _manipulator.getIteratorBegin()->first);
     pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name),
                                            target_orientation, _manipulator.getComponentOrientationToWorld(tool_name));
 
-    for(int i = 0; i < 5; i++)
-      new_pose_changed[i] = pose_changed[i];
-
-    new_Ek = new_pose_changed.transpose() * We * new_pose_changed;
-
-
-    //judgement
-    if (new_Ek < 1E-12)
+    Ek2 = pose_changed.transpose() * We * pose_changed;
+    debug_.PRINT("iter : ",count);
+    if (Ek2 < 1E-12)
     {
       return _manipulator.getAllActiveJointValue();
     }
-    else if (new_Ek < Ek)
+    else if (Ek2 < Ek)
     {
-      Ek = new_Ek;
+      Ek = Ek2;
     }
     else
     {
-      std::vector<double> set_angle_changed;
       for (int8_t index = 0; index < _manipulator.getDOF(); index++)
         set_angle_changed.push_back(_manipulator.getAllActiveJointValue().at(index) - angle_changed(index));
 
@@ -411,8 +410,7 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
 
       forward(&_manipulator, _manipulator.getIteratorBegin()->first);
     }
-
-  }//loop
+  }
 
   return _manipulator.getAllActiveJointValue();
 }
@@ -421,7 +419,7 @@ std::vector<double> Chain::srInverseKinematicsForOMChain(Manipulator *manipulato
 void Chain::setOption(const void *arg)
 {
   STRING *get_arg_ = (STRING *)arg;
-  uint8_t inverse_solver_option = std::atoi(get_arg_[0].c_str());
+  STRING inverse_solver_option = get_arg_[0];
   inverse_solver_option_ = inverse_solver_option;
 }
 
