@@ -40,14 +40,14 @@ OM_CONTROLLER::OM_CONTROLLER()
   chain_.initManipulator(using_platform_, usb_port, baud_rate);
 
   setTimerThread();
-  chain_.debugging().INFO("Successed to OpenManipulator initialization");
+  RM_LOG::INFO("Successed to OpenManipulator initialization");
 }
 
 OM_CONTROLLER::~OM_CONTROLLER()
 {
   timer_thread_flag_ = false;
   usleep(10 * 1000); // 10ms
-  chain_.debugging().INFO("Shutdown the OpenManipulator");
+  RM_LOG::INFO("Shutdown the OpenManipulator");
   chain_.allActuatorDisable();
   ros::shutdown();
 }
@@ -61,25 +61,25 @@ void OM_CONTROLLER::setTimerThread()
 
   error = pthread_attr_setschedpolicy(&attr, SCHED_RR);
   if (error != 0)
-    chain_.debugging().ERROR("pthread_attr_setschedpolicy error = ", (double)error);
+    RM_LOG::ERROR("pthread_attr_setschedpolicy error = ", (double)error);
   error = pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
   if (error != 0)
-    chain_.debugging().ERROR("pthread_attr_setinheritsched error = ", (double)error);
+    RM_LOG::ERROR("pthread_attr_setinheritsched error = ", (double)error);
 
   memset(&param, 0, sizeof(param));
   param.sched_priority = 31;    // RT
   error = pthread_attr_setschedparam(&attr, &param);
   if (error != 0)
-    chain_.debugging().ERROR("pthread_attr_setschedparam error = ", (double)error);
+    RM_LOG::ERROR("pthread_attr_setschedparam error = ", (double)error);
 
   // create and start the thread
   if ((error = pthread_create(&this->timer_thread_, /*&attr*/NULL, this->timerThread, this)) != 0)
   {
-    chain_.debugging().ERROR("Creating timer thread failed!!", (double)error);
+    RM_LOG::ERROR("Creating timer thread failed!!", (double)error);
     exit(-1);
   }
   timer_thread_flag_ = true;
-  chain_.debugging().INFO("Start the OpenManipulator control thread");
+  RM_LOG::INFO("Start the OpenManipulator control thread");
 }
 
 
@@ -103,10 +103,10 @@ void *OM_CONTROLLER::timerThread(void *param)
 
     /////
     double delta_nsec = (next_time.tv_sec - curr_time.tv_sec) + (next_time.tv_nsec - curr_time.tv_nsec)*0.000000001;
-    //controller->chain_.debugging().INFO("control time : ", ACTUATOR_CONTROL_TIME - delta_nsec);
+    //RM_LOG::INFO("control time : ", ACTUATOR_CONTROL_TIME - delta_nsec);
     if(delta_nsec < 0.0)
     {
-      controller->chain_.debugging().WARN("control time :", ACTUATOR_CONTROL_TIME - delta_nsec);
+      RM_LOG::WARN("control time :", ACTUATOR_CONTROL_TIME - delta_nsec);
       next_time = curr_time;
     }
     else
@@ -163,7 +163,8 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
-
+  Eigen::Vector3d a;
+  RM_LOG::PRINT_VECTOR(a);
   chain_.taskTrajectoryMove(TOOL, target_pose.position, req.path_time);
 
   res.isPlanned = true;
