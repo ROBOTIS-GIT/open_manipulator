@@ -142,11 +142,9 @@ bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, STRING dxl_dev
     }
     else
     {
-      STRING str = "Joint Dynamixel ID : ";
-      str += std::to_string(id);
-      str += ", Model Name : ";
-      str += dynamixel_workbench_->getModelName(id);
-      debug_.LOG(log);
+      char* str;
+      sprintf(str, "Joint Dynamixel ID : %d, Model Name : %s", id, dynamixel_workbench_->getModelName(id));
+      debug_.PRINT(str);      
     }
   }
   return true;
@@ -450,11 +448,9 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, STRING dxl_device_name, S
   }
   else
   {
-    STRING str = "Gripper Dynamixel ID : ";
-    str += std::to_string(dynamixel_.id.at(0));
-    str += ", Model Name : ";
-    str += dynamixel_workbench_->getModelName(dynamixel_.id.at(0));
-    debug_.LOG(log);
+    char* str;
+    sprintf(str, "Gripper Dynamixel ID : %d, Model Name : %s", dynamixel_.id.at(0), dynamixel_workbench_->getModelName(dynamixel_.id.at(0)));
+    debug_.PRINT(str);
   }
 
   return true;
