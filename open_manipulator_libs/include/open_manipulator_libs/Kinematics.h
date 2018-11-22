@@ -25,12 +25,6 @@
   #include <robotis_manipulator/robotis_manipulator.h>
 #endif
 
-#if defined(__OPENCR__)
-  typedef String		  STRING;
-#else
-  typedef std::string STRING;
-#endif
-
 using namespace Eigen;
 using namespace ROBOTIS_MANIPULATOR;
 

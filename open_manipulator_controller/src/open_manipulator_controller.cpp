@@ -106,7 +106,7 @@ void *OM_CONTROLLER::timerThread(void *param)
     //RM_LOG::INFO("control time : ", ACTUATOR_CONTROL_TIME - delta_nsec);
     if(delta_nsec < 0.0)
     {
-      RM_LOG::WARN("control time :", ACTUATOR_CONTROL_TIME - delta_nsec);
+      RM_LOG::WARN("Over the control time :", ACTUATOR_CONTROL_TIME - delta_nsec);
       next_time = curr_time;
     }
     else
@@ -163,7 +163,7 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
-  chain_.taskTrajectoryMove(TOOL, target_pose.position, req.path_time);
+  chain_.taskTrajectoryMove("tool", target_pose.position, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -190,7 +190,7 @@ bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::Se
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
-  chain_.taskTrajectoryMoveToPresentPosition(TOOL, target_pose.position, req.path_time);
+  chain_.taskTrajectoryMoveToPresentPosition("tool", target_pose.position, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -209,7 +209,7 @@ void OM_CONTROLLER::publishKinematicsPose()
 {
   open_manipulator_msgs::KinematicsPose msg;
 
-  Vector3d position = chain_.getManipulator()->getComponentPositionToWorld(TOOL);
+  Vector3d position = chain_.getManipulator()->getComponentPositionToWorld("tool");
   msg.pose.position.x = position[0];
   msg.pose.position.y = position[1];
   msg.pose.position.z = position[2];
@@ -224,7 +224,7 @@ void OM_CONTROLLER::publishJointStates()
     msg.header.stamp = ros::Time::now();
     std::vector<double> position, velocity, effort;
     chain_.getManipulator()->getAllActiveJointValue(&position, &velocity, &effort);
-    double tool_value = chain_.getManipulator()->getToolValue(TOOL);
+    double tool_value = chain_.getManipulator()->getToolValue("tool");
     msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
                                             msg.velocity.push_back(velocity.at(0));
                                             msg.effort.push_back(effort.at(0));
@@ -259,7 +259,7 @@ void OM_CONTROLLER::publishJointStates()
       msg.data = value.at(i);
       chain_joint_states_to_gazebo_pub_[i].publish(msg);
     }
-    double tool_value = chain_.getManipulator()->getToolGoalValue(TOOL);
+    double tool_value = chain_.getManipulator()->getToolGoalValue("tool");
     for(int i = 0; i < 2; i ++)
     {
       std_msgs::Float64 msg;
@@ -276,7 +276,7 @@ void OM_CONTROLLER::process(double time)
 
   if(tool_ctrl_flag_)
   {
-    chain_.toolMove(TOOL, tool_position_);
+    chain_.toolMove("tool", tool_position_);
     tool_ctrl_flag_ = false;
   }
 }

@@ -27,12 +27,6 @@
   #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
 #endif
 
-#if defined(__OPENCR__)
-  typedef String		  STRING;
-#else
-  typedef std::string STRING;
-#endif
-
 namespace DYNAMIXEL
 {
 

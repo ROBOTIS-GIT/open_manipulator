@@ -28,43 +28,43 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
   platform_ = using_platform;
   ////////// manipulator parameter initialization
 
-  addWorld(WORLD, // world name
-           COMP1);// child name
+  addWorld("world",   // world name
+           "joint1"); // child name
 
-  addComponent(COMP1, // my name
-               WORLD, // parent name
-               COMP2, // child name
+  addComponent("joint1", // my name
+               "world",  // parent name
+               "joint2", // child name
                RM_MATH::makeVector3(0.012, 0.0, 0.017), // relative position
                RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
                Z_AXIS, // axis of rotation
                11); // actuator id
 
-  addComponent(COMP2, // my name
-               COMP1, // parent name
-               COMP3, // child name
+  addComponent("joint2", // my name
+               "joint1", // parent name
+               "joint3", // child name
                RM_MATH::makeVector3(0.0, 0.0, 0.058), // relative position
                RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
                Y_AXIS, // axis of rotation
                12); // actuator id
 
-  addComponent(COMP3, // my name
-               COMP2, // parent name
-               COMP4, // child name
+  addComponent("joint3", // my name
+               "joint2", // parent name
+               "joint4", // child name
                RM_MATH::makeVector3(0.024, 0.0, 0.128), // relative position
                RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
                Y_AXIS, // axis of rotation
                13); // actuator id
 
-  addComponent(COMP4, // my name
-               COMP3, // parent name
-               TOOL, // child name
+  addComponent("joint4", // my name
+               "joint3", // parent name
+               "tool",   // child name
                RM_MATH::makeVector3(0.124, 0.0, 0.0), // relative position
                RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
                Y_AXIS, // axis of rotation
                14); // actuator id
 
-  addTool(TOOL, // my name
-          COMP4, // parent name
+  addTool("tool",   // my name
+          "joint4", // parent name
           RM_MATH::makeVector3(0.130, 0.0, 0.0), // relative position
           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
           15, // actuator id
@@ -131,7 +131,7 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     // all actuator enable
     allActuatorEnable();
     receiveAllJointActuatorValue();
-    receiveToolActuatorValue(TOOL);
+    receiveToolActuatorValue("tool");
   }
   ////////// drawing path
   addDrawingTrajectory(DRAWING_LINE, &line_);
@@ -150,7 +150,7 @@ void CHAIN::chainProcess(double present_time)
   if(platform_)
   {
     receiveAllJointActuatorValue();
-    receiveToolActuatorValue(TOOL);
+    receiveToolActuatorValue("tool");
     if(goal_value.size() != 0)  sendAllJointActuatorValue(goal_value);
     forward();
   }
