@@ -73,8 +73,10 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
   ////////// kinematics init.
   kinematics_ = new KINEMATICS::Chain();
   addKinematics(kinematics_);
-  STRING inverse_option = "inverse_maintaining_present_orientation";
-//  STRING inverse_option = "sr_inverse";
+  STRING inverse_option[2] = {"inverse_solver", "chain_custum_inverse_kinematics"};
+//  STRING inverse_option[2] = {"inverse_solver", "sr_inverse"};
+//  STRING inverse_option[2] = {"inverse_solver", "position_only_inverse"};
+//  STRING inverse_option[2] = {"inverse_solver", "normal_inverse"};
   void *inverse_option_arg = &inverse_option;
   kinematicsSetOption(inverse_option_arg);
 

@@ -25,6 +25,8 @@
   #include <robotis_manipulator/robotis_manipulator.h>
 #endif
 
+//#define KINEMATICS_DEBUG
+
 using namespace Eigen;
 using namespace ROBOTIS_MANIPULATOR;
 
@@ -35,7 +37,7 @@ class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 private:
   STRING inverse_solver_option_;
 public:
-  Chain():inverse_solver_option_("inverse_maintaining_present_orientation"){}
+  Chain():inverse_solver_option_("chain_custum_inverse_kinematics"){}
   virtual ~Chain(){}
 
   virtual void setOption(const void *arg);
@@ -44,12 +46,12 @@ public:
 
   virtual void forward(Manipulator *manipulator);
   virtual void forward(Manipulator *manipulator, Name component_name);
-  virtual std::vector<double> inverse(Manipulator *manipulator, Name tool_name, Pose target_pose);
+  virtual bool inverse(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
 
-  std::vector<double> inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> inverseKinematicsMaintainingPresentOrientation(Manipulator *manipulator, Name tool_name, Pose target_pose);
+  bool inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  bool srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  bool positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  bool chainCustumInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
 
 };
 
