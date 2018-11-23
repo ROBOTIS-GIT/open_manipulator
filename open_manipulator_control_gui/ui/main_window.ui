@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QRosApp</string>
+   <string>OpenManipulator control GUI</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/images.qrc">
@@ -491,7 +491,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_js">
      <attribute name="title">
