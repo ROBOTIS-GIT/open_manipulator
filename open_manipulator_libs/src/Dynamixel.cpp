@@ -174,7 +174,7 @@ bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, STRING d
   {
     for (uint8_t num = 0; num < actuator_id.size(); num++)
     {
-      result = dynamixel_workbench_->CurrentBasedPositionMode(actuator_id.at(num), current, &log);
+      result = dynamixel_workbench_->currentBasedPositionMode(actuator_id.at(num), current, &log);
       if (result == false)
       {
         RM_LOG::ERROR(log);
@@ -476,7 +476,7 @@ bool GripperDynamixel::setOperatingMode(STRING dynamixel_mode)
   }
   else if (dynamixel_mode == "current_based_position_mode")
   {
-    result = dynamixel_workbench_->CurrentBasedPositionMode(dynamixel_.id.at(0), current, &log);
+    result = dynamixel_workbench_->currentBasedPositionMode(dynamixel_.id.at(0), current, &log);
     if (result == false)
     {
       RM_LOG::ERROR(log);
