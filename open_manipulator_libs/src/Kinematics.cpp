@@ -169,7 +169,7 @@ bool Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_na
   //solver parameter
   double lambda = 0.0;
   const double param = 0.002;
-  const int8_t iteration = 50;
+  const int8_t iteration = 10;
 
   const double gamma = 0.5;             //rollback delta
 
@@ -326,7 +326,7 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
   //solver parameter
   double lambda = 0.0;
   const double param = 0.002;
-  const int8_t iteration = 8;
+  const int8_t iteration = 10;
 
   const double gamma = 0.5;             //rollback delta
 
@@ -449,7 +449,7 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
       #if defined(KINEMATICS_DEBUG)
       RM_LOG::WARN("iter : ", count,0);
       RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-      RM_LOG::ERROR("good");
+      RM_LOG::ERROR("Success");
       RM_LOG::PRINT("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
@@ -483,7 +483,7 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
   //solver parameter
   double lambda = 0.0;
   const double param = 0.002;
-  const int8_t iteration = 100;
+  const int8_t iteration = 10;
 
   const double gamma = 0.5;             //rollback delta
 
@@ -523,13 +523,14 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
   //////////////make target ori//////////  //only OpenManipulator Chain
   Eigen::Matrix3d present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
   Eigen::Vector3d present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
-  Eigen::Vector3d target_orientation_rpy = Eigen::VectorXd::Zero(3);
+  Eigen::Matrix3d target_orientation = target_pose.orientation;
+  Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationToRPY(target_orientation);
 
   Eigen::Vector3d joint1_rlative_position = _manipulator.getComponentRelativePositionToParent(_manipulator.getWorldChildName());
   Eigen::Vector3d target_position_from_joint1 = target_pose.position - joint1_rlative_position;
 
   target_orientation_rpy(0) = present_orientation_rpy(0);
-  target_orientation_rpy(1) = present_orientation_rpy(1);
+  target_orientation_rpy(1) = target_orientation_rpy(1);
   target_orientation_rpy(2) = atan2(target_position_from_joint1(1) ,target_position_from_joint1(0));
 
   target_pose.orientation = RM_MATH::convertRPYToRotation(target_orientation_rpy(0), target_orientation_rpy(1), target_orientation_rpy(2));
@@ -619,7 +620,7 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
       #if defined(KINEMATICS_DEBUG)
       RM_LOG::WARN("iter : ", count,0);
       RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-      RM_LOG::ERROR("good");
+      RM_LOG::ERROR("Success");
       RM_LOG::PRINT("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
