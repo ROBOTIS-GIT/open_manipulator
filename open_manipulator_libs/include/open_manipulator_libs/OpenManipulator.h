@@ -16,8 +16,8 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#ifndef CHAIN_H_
-#define CHAIN_H_
+#ifndef OPEN_MANIPULTOR_H_
+#define OPEN_MANIPULTOR_H_
 
 #include "Dynamixel.h"
 #include "Drawing.h"
@@ -41,7 +41,7 @@
 #define Z_AXIS RM_MATH::makeVector3(0.0, 0.0, 1.0)
 
 
-class CHAIN : public ROBOTIS_MANIPULATOR::RobotisManipulator
+class OPEN_MANIPULTOR : public ROBOTIS_MANIPULATOR::RobotisManipulator
 {
 private:
   ROBOTIS_MANIPULATOR::Kinematics *kinematics_;
@@ -56,15 +56,15 @@ private:
   bool platform_;
   std::vector<uint8_t> jointDxlId;
  public:
-  CHAIN();
-  virtual ~CHAIN();
+  OPEN_MANIPULTOR();
+  virtual ~OPEN_MANIPULTOR();
 
   void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
-  void chainProcess(double present_time);
+  void openManipulatorProcess(double present_time);
   bool getPlatformFlag();
 };
 
-#endif // CHAIN_H_
+#endif // OPEN_MANIPULTOR_H_
 
 
 

@@ -28,7 +28,7 @@
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 
-#include "open_manipulator_libs/Chain.h"
+#include "open_manipulator_libs/OpenManipulator.h"
 
 #define ACTUATOR_CONTROL_TIME 0.010 // ms
 #define ITERATION_FREQUENCY   100   // hz 10ms
@@ -59,7 +59,7 @@ class OM_CONTROLLER
 
   pthread_t timer_thread_;
 
-  CHAIN chain_;
+  OPEN_MANIPULTOR chain_;
 
   bool tool_ctrl_flag_;
   bool using_platform_;

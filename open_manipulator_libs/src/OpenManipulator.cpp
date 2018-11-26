@@ -16,14 +16,14 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#include "../include/open_manipulator_libs/Chain.h"
+#include "../include/open_manipulator_libs/OpenManipulator.h"
 
-CHAIN::CHAIN()
+OPEN_MANIPULTOR::OPEN_MANIPULTOR()
 {}
-CHAIN::~CHAIN()
+OPEN_MANIPULTOR::~OPEN_MANIPULTOR()
 {}
 
-void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
+void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
 {
   platform_ = using_platform;
   ////////// manipulator parameter initialization
@@ -145,7 +145,7 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
   setTrajectoryControlTime(CONTROL_TIME);
 }
 
-void CHAIN::chainProcess(double present_time)
+void OPEN_MANIPULTOR::openManipulatorProcess(double present_time)
 {
   std::vector<WayPoint> goal_value = trajectoryControllerLoop(present_time);
 
@@ -163,7 +163,7 @@ void CHAIN::chainProcess(double present_time)
   }
 }
 
-bool CHAIN::getPlatformFlag()
+bool OPEN_MANIPULTOR::getPlatformFlag()
 {
   return platform_;
 }

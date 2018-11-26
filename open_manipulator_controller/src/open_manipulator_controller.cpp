@@ -272,7 +272,7 @@ void OM_CONTROLLER::publishJointStates()
 
 void OM_CONTROLLER::process(double time)
 {
-  chain_.chainProcess(time);
+  chain_.openManipulatorProcess(time);
 
   if(tool_ctrl_flag_)
   {
