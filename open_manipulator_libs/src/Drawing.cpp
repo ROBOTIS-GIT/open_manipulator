@@ -28,7 +28,7 @@ Line::~Line() {}
 
 void Line::initLine(double move_time, double control_time, std::vector<WayPoint> start, std::vector<WayPoint> goal)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
   move_time_ = move_time;
   acc_dec_time_ = move_time_ * 0.2;
   vel_max_.resize(3);
@@ -113,7 +113,7 @@ Circle::~Circle() {}
 
 void Circle::initCircle(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
 
   start_pose_ = start;
 
@@ -192,7 +192,7 @@ Rhombus::~Rhombus() {}
 
 void Rhombus::initRhombus(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
 
   start_pose_ = start;
 
@@ -288,7 +288,7 @@ Heart::~Heart() {}
 
 void Heart::initHeart(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
 
   start_pose_ = start;
 

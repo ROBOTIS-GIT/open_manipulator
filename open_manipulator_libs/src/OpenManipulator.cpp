@@ -31,7 +31,7 @@ void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRI
   addWorld("world",   // world name
            "joint1"); // child name
 
-  addComponent("joint1", // my name
+  addJoint("joint1", // my name
                "world",  // parent name
                "joint2", // child name
                RM_MATH::makeVector3(0.012, 0.0, 0.017), // relative position
@@ -39,7 +39,7 @@ void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRI
                Z_AXIS, // axis of rotation
                11); // actuator id
 
-  addComponent("joint2", // my name
+  addJoint("joint2", // my name
                "joint1", // parent name
                "joint3", // child name
                RM_MATH::makeVector3(0.0, 0.0, 0.058), // relative position
@@ -47,7 +47,7 @@ void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRI
                Y_AXIS, // axis of rotation
                12); // actuator id
 
-  addComponent("joint3", // my name
+  addJoint("joint3", // my name
                "joint2", // parent name
                "joint4", // child name
                RM_MATH::makeVector3(0.024, 0.0, 0.128), // relative position
@@ -55,7 +55,7 @@ void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRI
                Y_AXIS, // axis of rotation
                13); // actuator id
 
-  addComponent("joint4", // my name
+  addJoint("joint4", // my name
                "joint3", // parent name
                "tool",   // child name
                RM_MATH::makeVector3(0.124, 0.0, 0.0), // relative position
