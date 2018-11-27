@@ -144,7 +144,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     // all actuator enable
     allActuatorEnable();
     receiveAllJointActuatorValue();
-    receiveToolActuatorValue("tool");
+    receiveAllToolActuatorValue();
   }
   ////////// drawing path
   addDrawingTrajectory(DRAWING_LINE, &line_);
@@ -158,17 +158,21 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
 
 void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
 {
-  std::vector<WayPoint> goal_value = trajectoryControllerLoop(present_time);
+  std::vector<WayPoint> goal_value = jointTrajectoryControllerLoop(present_time);
+  std::vector<double> tool_value = toolControllerLoop();
+
   if(platform_)
   {
     receiveAllJointActuatorValue();
-    receiveToolActuatorValue("tool");
-    if(goal_value.size() != 0)  sendAllJointActuatorValue(goal_value);
+    receiveAllToolActuatorValue();
+    if(goal_value.size() != 0) sendAllJointActuatorValue(goal_value);
+    if(tool_value.size() != 0) sendAllToolActuatorValue(tool_value);
     forward();
   }
-  else
+  else // visualization
   {
-    if(goal_value.size() != 0) setAllActiveJointValue(goal_value); // visualization
+    if(goal_value.size() != 0) setAllActiveJointWayPoint(goal_value);
+    if(tool_value.size() != 0) setAllToolValue(tool_value);
     forward();
   }
 }

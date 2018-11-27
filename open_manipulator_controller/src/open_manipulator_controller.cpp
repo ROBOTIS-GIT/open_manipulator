@@ -141,6 +141,7 @@ void OM_CONTROLLER::initSubscriber()
   goal_joint_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path_to_present", &OM_CONTROLLER::goalJointSpacePathToPresentCallback, this);
   goal_task_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path_to_present", &OM_CONTROLLER::goalTaskSpacePathToPresentCallback, this);
   goal_tool_control_server_ = node_handle_.advertiseService(robot_name_ + "/goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
+
 }
 
 bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
@@ -198,9 +199,7 @@ bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::Se
 bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
-  tool_position_ = req.joint_position.position.at(0);
-  tool_ctrl_flag_ = true;
-
+  open_manipulator_.toolMove("tool", req.joint_position.position.at(0));
   res.isPlanned = true;
   return true;
 }
@@ -259,7 +258,7 @@ void OM_CONTROLLER::publishJointStates()
       msg.data = value.at(i);
       open_manipulator_joint_states_to_gazebo_pub_[i].publish(msg);
     }
-    double tool_value = open_manipulator_.getManipulator()->getToolGoalValue("tool");
+    double tool_value = open_manipulator_.getManipulator()->getValue("tool");
     for(int i = 0; i < 2; i ++)
     {
       std_msgs::Float64 msg;
@@ -273,12 +272,6 @@ void OM_CONTROLLER::publishJointStates()
 void OM_CONTROLLER::process(double time)
 {
   open_manipulator_.openManipulatorProcess(time);
-
-  if(tool_ctrl_flag_)
-  {
-    open_manipulator_.toolMove("tool", tool_position_);
-    tool_ctrl_flag_ = false;
-  }
 }
 
 int main(int argc, char **argv)
