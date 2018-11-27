@@ -76,9 +76,9 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
           "joint4", // parent name
           RM_MATH::makeVector3(0.130, 0.0, 0.0), // relative position
           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-          15, // actuator id
-          0.01,
-          -0.01,
+          15,     // actuator id
+          0.010,  // max gripper limit (0.01 m)
+          -0.010, // min gripper limit (-0.01 m)
           -0.015); // Change unit from `meter` to `radian`
 
   ////////// kinematics init.

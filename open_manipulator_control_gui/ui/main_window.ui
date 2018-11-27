@@ -14,7 +14,7 @@
    <string>OpenManipulator control GUI</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources/images.qrc">
+   <iconset resource="../../../dynamixel-workbench/dynamixel_workbench_single_manager_gui/resources/images.qrc">
     <normaloff>:/images/icon.png</normaloff>:/images/icon.png</iconset>
   </property>
   <property name="locale">
@@ -1034,7 +1034,7 @@
      <number>3</number>
     </property>
     <property name="minimum">
-     <double>-0.015000000000000</double>
+     <double>-0.010000000000000</double>
     </property>
     <property name="maximum">
      <double>0.010000000000000</double>
@@ -1191,7 +1191,7 @@
   </action>
  </widget>
  <resources>
-  <include location="../resources/images.qrc"/>
+  <include location="../../../dynamixel-workbench/dynamixel_workbench_single_manager_gui/resources/images.qrc"/>
  </resources>
  <connections>
   <connection>
