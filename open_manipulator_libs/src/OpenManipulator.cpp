@@ -158,8 +158,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
 
 void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
 {
-  std::vector<WayPoint> goal_value = jointTrajectoryControllerLoop(present_time);
-  std::vector<double> tool_value = toolControllerLoop();
+  std::vector<WayPoint> goal_value  = getJointGoalValueFromTrajectory(present_time);
+  std::vector<double> tool_value    = getToolGoalValue();
 
   if(platform_)
   {
@@ -167,14 +167,13 @@ void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
     receiveAllToolActuatorValue();
     if(goal_value.size() != 0) sendAllJointActuatorValue(goal_value);
     if(tool_value.size() != 0) sendAllToolActuatorValue(tool_value);
-    forward();
   }
   else // visualization
   {
     if(goal_value.size() != 0) setAllActiveJointWayPoint(goal_value);
     if(tool_value.size() != 0) setAllToolValue(tool_value);
-    forward();
   }
+  forward();
 }
 
 bool OPEN_MANIPULATOR::getPlatformFlag()
