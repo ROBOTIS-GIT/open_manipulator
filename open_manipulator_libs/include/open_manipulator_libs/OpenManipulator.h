@@ -41,7 +41,7 @@
 #define Z_AXIS RM_MATH::makeVector3(0.0, 0.0, 1.0)
 
 
-class OPEN_MANIPULTOR : public ROBOTIS_MANIPULATOR::RobotisManipulator
+class OPEN_MANIPULATOR : public ROBOTIS_MANIPULATOR::RobotisManipulator
 {
 private:
   ROBOTIS_MANIPULATOR::Kinematics *kinematics_;
@@ -56,8 +56,8 @@ private:
   bool platform_;
   std::vector<uint8_t> jointDxlId;
  public:
-  OPEN_MANIPULTOR();
-  virtual ~OPEN_MANIPULTOR();
+  OPEN_MANIPULATOR();
+  virtual ~OPEN_MANIPULATOR();
 
   void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
   void openManipulatorProcess(double present_time);

@@ -125,10 +125,12 @@ void Circle::initCircle(double move_time, double control_time, std::vector<WayPo
 
   drawingStart.value = 0.0;
   drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
   drawingStart.effort = 0.0;
 
   drawingGoal.value = revolution_ * 2*M_PI;
   drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
   path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
@@ -204,10 +206,12 @@ void Rhombus::initRhombus(double move_time, double control_time, std::vector<Way
 
   drawingStart.value = 0.0;
   drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
   drawingStart.effort = 0.0;
 
   drawingGoal.value = revolution_ * M_PI;
   drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
   path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
@@ -300,10 +304,12 @@ void Heart::initHeart(double move_time, double control_time, std::vector<WayPoin
 
   drawingStart.value = 0.0;
   drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
   drawingStart.effort = 0.0;
 
   drawingGoal.value = revolution_ * M_PI;
   drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
   path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);

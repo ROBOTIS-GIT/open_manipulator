@@ -18,12 +18,12 @@
 
 #include "../include/open_manipulator_libs/OpenManipulator.h"
 
-OPEN_MANIPULTOR::OPEN_MANIPULTOR()
+OPEN_MANIPULATOR::OPEN_MANIPULATOR()
 {}
-OPEN_MANIPULTOR::~OPEN_MANIPULTOR()
+OPEN_MANIPULATOR::~OPEN_MANIPULATOR()
 {}
 
-void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
+void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
 {
   platform_ = using_platform;
   ////////// manipulator parameter initialization
@@ -32,42 +32,53 @@ void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRI
            "joint1"); // child name
 
   addJoint("joint1", // my name
-               "world",  // parent name
-               "joint2", // child name
-               RM_MATH::makeVector3(0.012, 0.0, 0.017), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Z_AXIS, // axis of rotation
-               11); // actuator id
+           "world",  // parent name
+           "joint2", // child name
+           RM_MATH::makeVector3(0.012, 0.0, 0.017), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Z_AXIS, // axis of rotation
+           11,     // actuator id
+           M_PI,   // max joint limit (3.14 rad)
+           -M_PI); // min joint limit (-3.14 rad)
+
 
   addJoint("joint2", // my name
-               "joint1", // parent name
-               "joint3", // child name
-               RM_MATH::makeVector3(0.0, 0.0, 0.058), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Y_AXIS, // axis of rotation
-               12); // actuator id
+           "joint1", // parent name
+           "joint3", // child name
+           RM_MATH::makeVector3(0.0, 0.0, 0.058), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Y_AXIS, // axis of rotation
+           12,     // actuator id
+           M_PI_2,   // max joint limit (1.67 rad)
+           -M_PI_2); // min joint limit (-1.67 rad)
 
   addJoint("joint3", // my name
-               "joint2", // parent name
-               "joint4", // child name
-               RM_MATH::makeVector3(0.024, 0.0, 0.128), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Y_AXIS, // axis of rotation
-               13); // actuator id
+           "joint2", // parent name
+           "joint4", // child name
+           RM_MATH::makeVector3(0.024, 0.0, 0.128), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Y_AXIS, // axis of rotation
+           13,     // actuator id
+           1.5,      // max joint limit (1.5 rad)
+           -M_PI_2); // min joint limit (-1.67 rad)
 
   addJoint("joint4", // my name
-               "joint3", // parent name
-               "tool",   // child name
-               RM_MATH::makeVector3(0.124, 0.0, 0.0), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Y_AXIS, // axis of rotation
-               14); // actuator id
+           "joint3", // parent name
+           "tool",   // child name
+           RM_MATH::makeVector3(0.124, 0.0, 0.0), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Y_AXIS, // axis of rotation
+           14,     // actuator id
+           2.0,    // max joint limit (2.0 rad)
+           -1.8);  // min joint limit (-1.8 rad)
 
   addTool("tool",   // my name
           "joint4", // parent name
           RM_MATH::makeVector3(0.130, 0.0, 0.0), // relative position
           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
           15, // actuator id
+          0.01,
+          -0.01,
           -0.015); // Change unit from `meter` to `radian`
 
   ////////// kinematics init.
@@ -145,10 +156,9 @@ void OPEN_MANIPULTOR::initManipulator(bool using_platform, STRING usb_port, STRI
   setTrajectoryControlTime(CONTROL_TIME);
 }
 
-void OPEN_MANIPULTOR::openManipulatorProcess(double present_time)
+void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
 {
   std::vector<WayPoint> goal_value = trajectoryControllerLoop(present_time);
-
   if(platform_)
   {
     receiveAllJointActuatorValue();
@@ -163,7 +173,7 @@ void OPEN_MANIPULTOR::openManipulatorProcess(double present_time)
   }
 }
 
-bool OPEN_MANIPULTOR::getPlatformFlag()
+bool OPEN_MANIPULATOR::getPlatformFlag()
 {
   return platform_;
 }

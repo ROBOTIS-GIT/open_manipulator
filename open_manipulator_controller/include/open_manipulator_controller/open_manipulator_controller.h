@@ -50,16 +50,16 @@ class OM_CONTROLLER
   ros::ServiceServer goal_task_space_path_to_present_server_;
   ros::ServiceServer goal_tool_control_server_;
 
-  ros::Publisher chain_kinematics_pose_pub_;
-  ros::Publisher chain_joint_states_pub_;
-  ros::Publisher chain_joint_states_to_gazebo_pub_[NUM_OF_JOINT];
-  ros::Publisher chain_gripper_states_to_gazebo_pub_[2];
+  ros::Publisher open_manipulator_kinematics_pose_pub_;
+  ros::Publisher open_manipulator_joint_states_pub_;
+  ros::Publisher open_manipulator_joint_states_to_gazebo_pub_[NUM_OF_JOINT];
+  ros::Publisher open_manipulator_gripper_states_to_gazebo_pub_[2];
 
   std::string robot_name_;
 
   pthread_t timer_thread_;
 
-  OPEN_MANIPULTOR chain_;
+  OPEN_MANIPULATOR open_manipulator_;
 
   bool tool_ctrl_flag_;
   bool using_platform_;

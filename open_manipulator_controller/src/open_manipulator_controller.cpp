@@ -37,7 +37,7 @@ OM_CONTROLLER::OM_CONTROLLER()
   initPublisher();
   initSubscriber();
 
-  chain_.initManipulator(using_platform_, usb_port, baud_rate);
+  open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate);
 
   setTimerThread();
   RM_LOG::INFO("Successed to OpenManipulator initialization");
@@ -48,7 +48,7 @@ OM_CONTROLLER::~OM_CONTROLLER()
   timer_thread_flag_ = false;
   usleep(10 * 1000); // 10ms
   RM_LOG::INFO("Shutdown the OpenManipulator");
-  chain_.allActuatorDisable();
+  open_manipulator_.allActuatorDisable();
   ros::shutdown();
 }
 
@@ -120,17 +120,17 @@ void *OM_CONTROLLER::timerThread(void *param)
 void OM_CONTROLLER::initPublisher()
 {
   // msg publisher
-  chain_kinematics_pose_pub_  = node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(robot_name_ + "/kinematics_pose", 10);
+  open_manipulator_kinematics_pose_pub_  = node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(robot_name_ + "/kinematics_pose", 10);
   if(using_platform_)
-    chain_joint_states_pub_  = node_handle_.advertise<sensor_msgs::JointState>(robot_name_ + "/joint_states", 10);
+    open_manipulator_joint_states_pub_  = node_handle_.advertise<sensor_msgs::JointState>(robot_name_ + "/joint_states", 10);
   else
   {
-    chain_joint_states_to_gazebo_pub_[0] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint1_position/command", 10);
-    chain_joint_states_to_gazebo_pub_[1] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint2_position/command", 10);
-    chain_joint_states_to_gazebo_pub_[2] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint3_position/command", 10);
-    chain_joint_states_to_gazebo_pub_[3] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint4_position/command", 10);
-    chain_gripper_states_to_gazebo_pub_[0] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_position/command", 10);
-    chain_gripper_states_to_gazebo_pub_[1] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_sub_position/command", 10);
+    open_manipulator_joint_states_to_gazebo_pub_[0] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint1_position/command", 10);
+    open_manipulator_joint_states_to_gazebo_pub_[1] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint2_position/command", 10);
+    open_manipulator_joint_states_to_gazebo_pub_[2] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint3_position/command", 10);
+    open_manipulator_joint_states_to_gazebo_pub_[3] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/joint4_position/command", 10);
+    open_manipulator_gripper_states_to_gazebo_pub_[0] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_position/command", 10);
+    open_manipulator_gripper_states_to_gazebo_pub_[1] = node_handle_.advertise<std_msgs::Float64>(robot_name_ + "/grip_joint_sub_position/command", 10);
   }
 }
 void OM_CONTROLLER::initSubscriber()
@@ -151,7 +151,7 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  chain_.jointTrajectoryMove(target_angle, req.path_time);
+  open_manipulator_.jointTrajectoryMove(target_angle, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -163,7 +163,7 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
-  chain_.taskTrajectoryMove("tool", target_pose.position, req.path_time);
+  open_manipulator_.taskTrajectoryMove("tool", target_pose.position, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -177,7 +177,7 @@ bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::S
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  chain_.jointTrajectoryMoveToPresentValue(target_angle, req.path_time);
+  open_manipulator_.jointTrajectoryMoveToPresentValue(target_angle, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -190,7 +190,7 @@ bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::Se
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
-  chain_.taskTrajectoryMoveToPresentPosition("tool", target_pose.position, req.path_time);
+  open_manipulator_.taskTrajectoryMoveToPresentPosition("tool", target_pose.position, req.path_time);
 
   res.isPlanned = true;
   return true;
@@ -209,11 +209,11 @@ void OM_CONTROLLER::publishKinematicsPose()
 {
   open_manipulator_msgs::KinematicsPose msg;
 
-  Vector3d position = chain_.getManipulator()->getComponentPositionToWorld("tool");
+  Vector3d position = open_manipulator_.getManipulator()->getComponentPositionToWorld("tool");
   msg.pose.position.x = position[0];
   msg.pose.position.y = position[1];
   msg.pose.position.z = position[2];
-  chain_kinematics_pose_pub_.publish(msg);
+  open_manipulator_kinematics_pose_pub_.publish(msg);
 }
 
 void OM_CONTROLLER::publishJointStates()
@@ -223,8 +223,8 @@ void OM_CONTROLLER::publishJointStates()
     sensor_msgs::JointState msg;
     msg.header.stamp = ros::Time::now();
     std::vector<double> position, velocity, acceleration, effort;
-    chain_.getManipulator()->getAllActiveJointValue(&position, &velocity, &acceleration, &effort);
-    double tool_value = chain_.getManipulator()->getValue("tool");
+    open_manipulator_.getManipulator()->getAllActiveJointValue(&position, &velocity, &acceleration, &effort);
+    double tool_value = open_manipulator_.getManipulator()->getValue("tool");
     msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
                                             msg.velocity.push_back(velocity.at(0));
                                             msg.effort.push_back(effort.at(0));
@@ -248,23 +248,23 @@ void OM_CONTROLLER::publishJointStates()
     msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
                                             msg.velocity.push_back(0.0);
                                             msg.effort.push_back(0.0);
-    chain_joint_states_pub_.publish(msg);
+    open_manipulator_joint_states_pub_.publish(msg);
   }
   else // gazebo
   {
-    std::vector<double> value = chain_.getManipulator()->getAllActiveJointValue();
+    std::vector<double> value = open_manipulator_.getManipulator()->getAllActiveJointValue();
     for(int i = 0; i < value.size(); i ++)
     {
       std_msgs::Float64 msg;
       msg.data = value.at(i);
-      chain_joint_states_to_gazebo_pub_[i].publish(msg);
+      open_manipulator_joint_states_to_gazebo_pub_[i].publish(msg);
     }
-    double tool_value = chain_.getManipulator()->getValue("tool");
+    double tool_value = open_manipulator_.getManipulator()->getToolGoalValue("tool");
     for(int i = 0; i < 2; i ++)
     {
       std_msgs::Float64 msg;
       msg.data = tool_value;
-      chain_gripper_states_to_gazebo_pub_[i].publish(msg);
+      open_manipulator_gripper_states_to_gazebo_pub_[i].publish(msg);
     }
   }
 }
@@ -272,11 +272,11 @@ void OM_CONTROLLER::publishJointStates()
 
 void OM_CONTROLLER::process(double time)
 {
-  chain_.openManipulatorProcess(time);
+  open_manipulator_.openManipulatorProcess(time);
 
   if(tool_ctrl_flag_)
   {
-    chain_.toolMove("tool", tool_position_);
+    open_manipulator_.toolMove("tool", tool_position_);
     tool_ctrl_flag_ = false;
   }
 }
