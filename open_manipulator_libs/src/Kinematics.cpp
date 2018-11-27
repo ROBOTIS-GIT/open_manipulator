@@ -41,11 +41,11 @@ Eigen::MatrixXd Chain::jacobian(Manipulator *manipulator, Name tool_name)
     Name parent_name = manipulator->getComponentParentName(my_name);
     if (parent_name == manipulator->getWorldName())
     {
-      joint_axis = manipulator->getWorldOrientation() * manipulator->getJointAxis(my_name);
+      joint_axis = manipulator->getWorldOrientation() * manipulator->getAxis(my_name);
     }
     else
     {
-      joint_axis = manipulator->getComponentOrientationToWorld(parent_name) * manipulator->getJointAxis(my_name);
+      joint_axis = manipulator->getComponentOrientationToWorld(parent_name) * manipulator->getAxis(my_name);
     }
 
     position_changed = RM_MATH::skewSymmetricMatrix(joint_axis) *
@@ -92,7 +92,7 @@ void Chain::forward(Manipulator *manipulator, Name component_name)
   }
 
   my_position_to_world = parent_orientation_to_world * manipulator->getComponentRelativePositionToParent(my_name) + parent_position_to_world;
-  my_orientation_to_world = parent_orientation_to_world * RM_MATH::rodriguesRotationMatrix(manipulator->getJointAxis(my_name), manipulator->getJointValue(my_name));
+  my_orientation_to_world = parent_orientation_to_world * RM_MATH::rodriguesRotationMatrix(manipulator->getAxis(my_name), manipulator->getValue(my_name));
 
   manipulator->setComponentPositionToWorld(my_name, my_position_to_world);
   manipulator->setComponentOrientationToWorld(my_name, my_orientation_to_world);
