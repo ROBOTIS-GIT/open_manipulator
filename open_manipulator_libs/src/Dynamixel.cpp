@@ -266,19 +266,56 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
   bool result = false;
   const char* log = NULL;
 
-  ROBOTIS_MANIPULATOR::Actuator actuator;
   std::vector<ROBOTIS_MANIPULATOR::Actuator> all_actuator;
-
-  int32_t get_value[actuator_id.size()];
 
   uint8_t id_array[actuator_id.size()];
   for (uint8_t index = 0; index < actuator_id.size(); index++)
     id_array[index] = actuator_id.at(index);
 
-  result = dynamixel_workbench_->syncRead(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
-                                          id_array, 
-                                          actuator_id.size(), 
+  int32_t get_current[actuator_id.size()];
+  int32_t get_velocity[actuator_id.size()];
+  int32_t get_position[actuator_id.size()];
+
+  result = dynamixel_workbench_->syncRead(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT,
+                                          id_array,
+                                          actuator_id.size(),
                                           &log);
+  if (result == false)
+  {
+    RM_LOG::ERROR(log);
+  }
+
+  result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT,
+                                                id_array,
+                                                actuator_id.size(),
+                                                ADDR_PRESENT_CURRENT_2,
+                                                LENGTH_PRESENT_CURRENT_2,
+                                                get_current,
+                                                &log);
+  if (result == false)
+  {
+    RM_LOG::ERROR(log);
+  }
+
+  result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT,
+                                                 id_array,
+                                                 actuator_id.size(),
+                                                ADDR_PRESENT_VELOCITY_2,
+                                                LENGTH_PRESENT_VELOCITY_2,
+                                                get_velocity,
+                                                &log);
+  if (result == false)
+  {
+    RM_LOG::ERROR(log);
+  }
+
+  result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT,
+                                                 id_array,
+                                                 actuator_id.size(),
+                                                ADDR_PRESENT_POSITION_2,
+                                                LENGTH_PRESENT_POSITION_2,
+                                                get_position,
+                                                &log);
   if (result == false)
   {
     RM_LOG::ERROR(log);
@@ -286,59 +323,10 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
 
   for (uint8_t index = 0; index < actuator_id.size(); index++)
   {
-    int32_t position = get_value[index];
-    int32_t velocity = 0;
-    int32_t current  = 0;
-
-    uint8_t id = actuator_id.at(index);
-
-    result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
-                                                  &id, 
-                                                  1,
-                                                  ADDR_PRESENT_CURRENT_2,
-                                                  LENGTH_PRESENT_CURRENT_2,
-                                                  &get_value[index], 
-                                                  &log);
-    if (result == false)
-    {
-      RM_LOG::ERROR(log);
-    }
-    else
-    {
-      actuator.effort = dynamixel_workbench_->convertValue2Current(actuator_id.at(index), (uint16_t)get_value[index]);
-    }
-
-    result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
-                                                  &id, 
-                                                  1,
-                                                  ADDR_PRESENT_VELOCITY_2,
-                                                  LENGTH_PRESENT_VELOCITY_2,
-                                                  &get_value[index], 
-                                                  &log);
-    if (result == false)
-    {
-      RM_LOG::ERROR(log);
-    }
-    else
-    {
-      actuator.velocity = dynamixel_workbench_->convertValue2Velocity(actuator_id.at(index), get_value[index]);
-    }
-
-    result = dynamixel_workbench_->getSyncReadData(SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT, 
-                                                  &id, 
-                                                  1,
-                                                  ADDR_PRESENT_POSITION_2,
-                                                  LENGTH_PRESENT_POSITION_2,
-                                                  &get_value[index], 
-                                                  &log);
-    if (result == false)
-    {
-      RM_LOG::ERROR(log);
-    }
-    else
-    {
-      actuator.value = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), get_value[index]);
-    }
+    ROBOTIS_MANIPULATOR::Actuator actuator;
+    actuator.effort = dynamixel_workbench_->convertValue2Current(actuator_id.at(index), get_current[index]);
+    actuator.velocity = dynamixel_workbench_->convertValue2Velocity(actuator_id.at(index), get_velocity[index]);
+    actuator.value = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), get_position[index]);
 
     all_actuator.push_back(actuator);
   }
