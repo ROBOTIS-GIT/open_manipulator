@@ -324,7 +324,7 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
   for (uint8_t index = 0; index < actuator_id.size(); index++)
   {
     ROBOTIS_MANIPULATOR::Actuator actuator;
-    actuator.effort = dynamixel_workbench_->convertValue2Current(actuator_id.at(index), get_current[index]);
+    actuator.effort = dynamixel_workbench_->convertValue2Current(get_current[index]);
     actuator.velocity = dynamixel_workbench_->convertValue2Velocity(actuator_id.at(index), get_velocity[index]);
     actuator.value = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), get_position[index]);
 
