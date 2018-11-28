@@ -50,7 +50,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
            Y_AXIS, // axis of rotation
            12,     // actuator id
            M_PI_2,   // max joint limit (1.67 rad)
-           -M_PI_2); // min joint limit (-1.67 rad)
+           -2.0); // min joint limit (-2.00 rad)
 
   addJoint("joint3", // my name
            "joint2", // parent name
