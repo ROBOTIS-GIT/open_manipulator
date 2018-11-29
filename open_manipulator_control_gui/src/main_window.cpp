@@ -289,6 +289,9 @@ void MainWindow::on_radio_drawing_line_clicked(void)
   ui.txt_drawing_arg_unit_1->setText("m");
   ui.txt_drawing_arg_unit_2->setText("m");
   ui.txt_drawing_arg_unit_3->setText("m");
+  ui.doubleSpinBox_drawing_arg_1->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_2->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_3->setValue(0.0);
 }
 void MainWindow::on_radio_drawing_circle_clicked(void)
 {
@@ -298,6 +301,9 @@ void MainWindow::on_radio_drawing_circle_clicked(void)
   ui.txt_drawing_arg_unit_1->setText("m");
   ui.txt_drawing_arg_unit_2->setText("rev");
   ui.txt_drawing_arg_unit_3->setText("rad");
+  ui.doubleSpinBox_drawing_arg_1->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_2->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_3->setValue(0.0);
 }
 void MainWindow::on_radio_drawing_rhombus_clicked(void)
 {
@@ -307,6 +313,9 @@ void MainWindow::on_radio_drawing_rhombus_clicked(void)
   ui.txt_drawing_arg_unit_1->setText("m");
   ui.txt_drawing_arg_unit_2->setText("rev");
   ui.txt_drawing_arg_unit_3->setText("rad");
+  ui.doubleSpinBox_drawing_arg_1->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_2->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_3->setValue(0.0);
 }
 void MainWindow::on_radio_drawing_heart_clicked(void)
 {
@@ -316,6 +325,9 @@ void MainWindow::on_radio_drawing_heart_clicked(void)
   ui.txt_drawing_arg_unit_1->setText("m");
   ui.txt_drawing_arg_unit_2->setText("rev");
   ui.txt_drawing_arg_unit_3->setText("rad");
+  ui.doubleSpinBox_drawing_arg_1->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_2->setValue(0.0);
+  ui.doubleSpinBox_drawing_arg_3->setValue(0.0);
 }
 void MainWindow::on_btn_send_drawing_trajectory_clicked(void)
 {

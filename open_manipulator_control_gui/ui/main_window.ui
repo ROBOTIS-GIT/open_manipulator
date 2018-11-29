@@ -1089,7 +1089,7 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string>X axis</string>
+       <string>Transpose X</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1121,7 +1121,7 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string>Z axis</string>
+       <string>Transpose Z</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1235,7 +1235,7 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string>Y axis</string>
+       <string>Transpose Y</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
