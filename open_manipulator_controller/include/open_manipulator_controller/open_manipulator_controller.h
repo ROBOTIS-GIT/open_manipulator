@@ -29,7 +29,7 @@
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 #include "open_manipulator_msgs/SetDrawingTrajectory.h"
-#include "open_manipulator_msgs/SetTorqueState.h"
+#include "open_manipulator_msgs/SetActuatorState.h"
 #include "open_manipulator_msgs/OpenManipulatorState.h"
 
 #include "open_manipulator_libs/OpenManipulator.h"
@@ -53,7 +53,7 @@ class OM_CONTROLLER
   ros::ServiceServer goal_joint_space_path_to_present_server_;
   ros::ServiceServer goal_task_space_path_to_present_server_;
   ros::ServiceServer goal_tool_control_server_;
-  ros::ServiceServer set_torque_state_server_;
+  ros::ServiceServer set_actuator_state_server_;
   ros::ServiceServer goal_drawing_trajectory_server_;
 
   ros::Publisher open_manipulator_state_pub_;
@@ -67,6 +67,7 @@ class OM_CONTROLLER
   std::string robot_name_;
 
   pthread_t timer_thread_;
+  pthread_attr_t attr_;
 
   OPEN_MANIPULATOR open_manipulator_;
 
@@ -95,12 +96,13 @@ class OM_CONTROLLER
                                           open_manipulator_msgs::SetKinematicsPose::Response &res);
   bool goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                open_manipulator_msgs::SetJointPosition::Response &res);
-  bool setTorqueStateCallback(open_manipulator_msgs::SetTorqueState::Request  &req,
-                              open_manipulator_msgs::SetTorqueState::Response &res);
+  bool setActuatorStateCallback(open_manipulator_msgs::SetActuatorState::Request  &req,
+                              open_manipulator_msgs::SetActuatorState::Response &res);
   bool goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
                                      open_manipulator_msgs::SetDrawingTrajectory::Response &res);
 
   void setTimerThread();
+  void startTimerThread();
   static void *timerThread(void *param);
 
   void process(double time);

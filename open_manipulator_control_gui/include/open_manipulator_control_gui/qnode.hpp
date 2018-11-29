@@ -39,10 +39,11 @@
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/String.h>
 
+#include "open_manipulator_msgs/OpenManipulatorState.h"
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 #include "open_manipulator_msgs/SetDrawingTrajectory.h"
-#include "open_manipulator_msgs/SetTorqueState.h"
+#include "open_manipulator_msgs/SetActuatorState.h"
 
 #define NUM_OF_JOINT_AND_TOOL 5
 
@@ -78,19 +79,21 @@ public:
 	QStringListModel* loggingModel() { return &logging_model; }
 	void log( const LogLevel &level, const std::string &msg);
 
+  void statesCallback(const open_manipulator_msgs::OpenManipulatorState::ConstPtr &msg);
   void jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
 
   std::vector<double> getPresentJointAngle();
-  std::vector<double> getPresentGripperAngle();
   std::vector<double> getPresentKinematicsPose();
+  bool getOpenManipulatorMovingState();
+  bool getOpenManipulatorActuatorState();
 
   void setOption(std::string opt);
   bool setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
   bool setTaskSpacePath(std::vector<double> kinematics_pose, double path_time);
   bool setDrawingTrajectory(std::string name, std::vector<double> arg, double path_time);
   bool setToolControl(std::vector<double> joint_angle);
-  bool setTorqueState(bool torque_state);
+  bool setActuatorState(bool actuator_state);
 
 Q_SIGNALS:
   void rosShutdown();
@@ -102,19 +105,20 @@ private:
 
   ros::Publisher open_manipulator_option_pub_;
 
+  ros::Subscriber open_manipulator_states_sub_;
   ros::Subscriber open_manipulator_joint_states_sub_;
   ros::Subscriber open_manipulator_kinematics_pose_sub_;
 
   ros::ServiceClient goal_joint_space_path_client_;
   ros::ServiceClient goal_task_space_path_client_;
   ros::ServiceClient goal_tool_control_client_;
-  ros::ServiceClient set_torque_state_client_;
+  ros::ServiceClient set_actuator_state_client_;
   ros::ServiceClient goal_drawing_trajectory_client_;
 
-  std::vector<double> present_joint_angle;
-  std::vector<double> present_gripper_angle;
-  std::vector<double> present_kinematic_position;
-
+  std::vector<double> present_joint_angle_;
+  std::vector<double> present_kinematic_position_;
+  bool open_manipulator_is_moving_;
+  bool open_manipulator_actuator_enabled_;
 };
 
 }  // namespace open_manipulator_control_gui

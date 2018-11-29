@@ -39,7 +39,9 @@ namespace open_manipulator_control_gui {
 
 QNode::QNode(int argc, char** argv ) :
 	init_argc(argc),
-	init_argv(argv)
+  init_argv(argv),
+  open_manipulator_actuator_enabled_(false),
+  open_manipulator_is_moving_(false)
 	{}
 
 QNode::~QNode() {
@@ -61,13 +63,14 @@ bool QNode::init() {
   // msg publisher
   open_manipulator_option_pub_ = n.advertise<std_msgs::String>("open_manipulator/option", 10);
   // msg subscriber
+  open_manipulator_states_sub_       = n.subscribe("open_manipulator/states", 10, &QNode::statesCallback, this);
   open_manipulator_joint_states_sub_ = n.subscribe("open_manipulator/joint_states", 10, &QNode::jointStatesCallback, this);
   open_manipulator_kinematics_pose_sub_ = n.subscribe("open_manipulator/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
   // service client
   goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_joint_space_path");
   goal_task_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>("open_manipulator/goal_task_space_path");
   goal_tool_control_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_tool_control");
-  set_torque_state_client_ = n.serviceClient<open_manipulator_msgs::SetTorqueState>("open_manipulator/set_torque_state");
+  set_actuator_state_client_ = n.serviceClient<open_manipulator_msgs::SetActuatorState>("open_manipulator/set_actuator_state");
   goal_drawing_trajectory_client_ = n.serviceClient<open_manipulator_msgs::SetDrawingTrajectory>("open_manipulator/goal_drawing_trajectory");
 
   start();
@@ -84,7 +87,18 @@ void QNode::run() {
 	Q_EMIT rosShutdown();
 }
 
+void QNode::statesCallback(const open_manipulator_msgs::OpenManipulatorState::ConstPtr &msg)
+{
+  if(msg->open_manipulator_moving_state == msg->IS_MOVING)
+    open_manipulator_is_moving_ = true;
+  else
+    open_manipulator_is_moving_ = false;
 
+  if(msg->open_manipulator_actuator_state == msg->ACTUATOR_ENABLED)
+    open_manipulator_actuator_enabled_ = true;
+  else
+    open_manipulator_actuator_enabled_ = false;
+}
 void QNode::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg)
 {
   std::vector<double> temp_angle;
@@ -97,7 +111,7 @@ void QNode::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg)
     else if(!msg->name.at(i).compare("joint4"))  temp_angle.at(3) = (msg->position.at(i));
     else if(!msg->name.at(i).compare("grip_joint"))  temp_angle.at(4) = (msg->position.at(i));
   }
-  present_joint_angle = temp_angle;
+  present_joint_angle_ = temp_angle;
 }
 
 void QNode::kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
@@ -106,20 +120,24 @@ void QNode::kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::
   temp_position.push_back(msg->pose.position.x);
   temp_position.push_back(msg->pose.position.y);
   temp_position.push_back(msg->pose.position.z);
-  present_kinematic_position = temp_position;
+  present_kinematic_position_ = temp_position;
 }
 
 std::vector<double> QNode::getPresentJointAngle()
 {
-  return present_joint_angle;
-}
-std::vector<double> QNode::getPresentGripperAngle()
-{
-  return present_gripper_angle;
+  return present_joint_angle_;
 }
 std::vector<double> QNode::getPresentKinematicsPose()
 {
-  return present_kinematic_position;
+  return present_kinematic_position_;
+}
+bool QNode::getOpenManipulatorMovingState()
+{
+  return open_manipulator_is_moving_;
+}
+bool QNode::getOpenManipulatorActuatorState()
+{
+  return open_manipulator_actuator_enabled_;
 }
 
 void QNode::setOption(std::string opt)
@@ -185,12 +203,12 @@ bool QNode::setToolControl(std::vector<double> joint_angle)
   return false;
 }
 
-bool QNode::setTorqueState(bool torque_state)
+bool QNode::setActuatorState(bool actuator_state)
 {
-  open_manipulator_msgs::SetTorqueState srv;
-  srv.request.setTorqueState = torque_state;
+  open_manipulator_msgs::SetActuatorState srv;
+  srv.request.setActuatorState = actuator_state;
 
-  if(set_torque_state_client_.call(srv))
+  if(set_actuator_state_client_.call(srv))
   {
     return srv.response.isPlanned;
   }

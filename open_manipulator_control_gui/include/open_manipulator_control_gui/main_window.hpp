@@ -58,6 +58,10 @@ public Q_SLOTS:
   void on_btn_read_kinematic_pose_clicked(void);
   void on_btn_send_kinematic_pose_clicked(void);
   void on_btn_set_gripper_clicked(void);
+  void on_btn_actuator_enable_clicked(void);
+  void on_btn_actuator_disable_clicked(void);
+  void on_btn_get_manipulator_setting_clicked(void);
+
   void tabSelected();
 
 private:

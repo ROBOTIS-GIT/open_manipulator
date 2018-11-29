@@ -40,13 +40,14 @@ OM_CONTROLLER::OM_CONTROLLER()
   open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate);
 
   setTimerThread();
+  startTimerThread();
   RM_LOG::INFO("Successed to OpenManipulator initialization");
 }
 
 OM_CONTROLLER::~OM_CONTROLLER()
 {
   timer_thread_flag_ = false;
-  usleep(10 * 1000); // 10ms
+  usleep(100 * 1000); // 100ms
   RM_LOG::INFO("Shutdown the OpenManipulator");
   open_manipulator_.allActuatorDisable();
   ros::shutdown();
@@ -56,32 +57,31 @@ void OM_CONTROLLER::setTimerThread()
 {
   int error;
   struct sched_param param;
-  pthread_attr_t attr;
-  pthread_attr_init(&attr);
+  pthread_attr_init(&attr_);
 
-  error = pthread_attr_setschedpolicy(&attr, SCHED_RR);
+  error = pthread_attr_setschedpolicy(&attr_, SCHED_RR);
   if (error != 0)
     RM_LOG::ERROR("pthread_attr_setschedpolicy error = ", (double)error);
-  error = pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
+  error = pthread_attr_setinheritsched(&attr_, PTHREAD_EXPLICIT_SCHED);
   if (error != 0)
     RM_LOG::ERROR("pthread_attr_setinheritsched error = ", (double)error);
 
   memset(&param, 0, sizeof(param));
   param.sched_priority = 31;    // RT
-  error = pthread_attr_setschedparam(&attr, &param);
+  error = pthread_attr_setschedparam(&attr_, &param);
   if (error != 0)
     RM_LOG::ERROR("pthread_attr_setschedparam error = ", (double)error);
-
-  // create and start the thread
-  if ((error = pthread_create(&this->timer_thread_, /*&attr*/NULL, this->timerThread, this)) != 0)
+}
+void OM_CONTROLLER::startTimerThread()
+{
+  int error;
+  if ((error = pthread_create(&this->timer_thread_, /*&attr_*/NULL, this->timerThread, this)) != 0)
   {
     RM_LOG::ERROR("Creating timer thread failed!!", (double)error);
     exit(-1);
   }
   timer_thread_flag_ = true;
-  RM_LOG::INFO("Start the OpenManipulator control thread");
 }
-
 
 void *OM_CONTROLLER::timerThread(void *param)
 {
@@ -140,11 +140,11 @@ void OM_CONTROLLER::initSubscriber()
   open_manipulator_option_client_ = node_handle_.subscribe("open_manipulator/option", 10, &OM_CONTROLLER::printManipulatorSettingCallback, this);
   // service server
   goal_joint_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path", &OM_CONTROLLER::goalJointSpacePathCallback, this);
-  goal_task_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
+  goal_task_space_path_server_ =  node_handle_.advertiseService(robot_name_ + "/goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
   goal_joint_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path_to_present", &OM_CONTROLLER::goalJointSpacePathToPresentCallback, this);
-  goal_task_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path_to_present", &OM_CONTROLLER::goalTaskSpacePathToPresentCallback, this);
-  goal_tool_control_server_ = node_handle_.advertiseService(robot_name_ + "/goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
-  set_torque_state_server_ = node_handle_.advertiseService(robot_name_ + "/set_torque_state", &OM_CONTROLLER::setTorqueStateCallback, this);
+  goal_task_space_path_to_present_server_ =  node_handle_.advertiseService(robot_name_ + "/goal_task_space_path_to_present", &OM_CONTROLLER::goalTaskSpacePathToPresentCallback, this);
+  goal_tool_control_server_ =      node_handle_.advertiseService(robot_name_ + "/goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
+  set_actuator_state_server_ =     node_handle_.advertiseService(robot_name_ + "/set_actuator_state", &OM_CONTROLLER::setActuatorStateCallback, this);
   goal_drawing_trajectory_server_= node_handle_.advertiseService(robot_name_ + "/goal_drawing_trajectory", &OM_CONTROLLER::goalDrawingTrajectoryCallback, this);
 
 }
@@ -209,13 +209,25 @@ bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosit
   res.isPlanned = true;
 }
 
-bool OM_CONTROLLER::setTorqueStateCallback(open_manipulator_msgs::SetTorqueState::Request  &req,
-                                           open_manipulator_msgs::SetTorqueState::Response &res)
+bool OM_CONTROLLER::setActuatorStateCallback(open_manipulator_msgs::SetActuatorState::Request  &req,
+                                             open_manipulator_msgs::SetActuatorState::Response &res)
 {
-  if(req.setTorqueState == true) // torque on
+  if(req.setActuatorState == true) // torque on
+  {
+    RM_LOG::INFO("Wait a second for actuator enable");
+    timer_thread_flag_ = false;
+    usleep(100 * 1000); // 100ms
     open_manipulator_.allActuatorEnable();
-  else
+    startTimerThread();
+  }
+  else // torque off
+  {
+    RM_LOG::INFO("Wait a second for actuator disable");
+    timer_thread_flag_ = false;
+    usleep(100 * 1000); // 100ms
     open_manipulator_.allActuatorDisable();
+    startTimerThread();
+  }
 
   res.isPlanned = true;
 }
@@ -284,9 +296,9 @@ void OM_CONTROLLER::publishOpenManipulatorStates()
     msg.open_manipulator_moving_state = msg.STOPPED;
 
   if(open_manipulator_.isEnabled(JOINT_DYNAMIXEL))
-    msg.open_manipulator_enable_state = msg.ACTUATOR_ENABLED;
+    msg.open_manipulator_actuator_state = msg.ACTUATOR_ENABLED;
   else
-    msg.open_manipulator_enable_state = msg.ACTUATOR_DISABLED;
+    msg.open_manipulator_actuator_state = msg.ACTUATOR_DISABLED;
 
   open_manipulator_state_pub_.publish(msg);
 }

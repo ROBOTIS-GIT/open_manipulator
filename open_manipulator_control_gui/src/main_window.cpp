@@ -72,6 +72,16 @@ void MainWindow::timerCallback()
   ui.txt_x->setText(QString::number(position.at(0),'f', 3));
   ui.txt_y->setText(QString::number(position.at(1),'f', 3));
   ui.txt_z->setText(QString::number(position.at(2),'f', 3));
+
+  if(qnode.getOpenManipulatorActuatorState() == true)
+    ui.txt_actuactor_state->setText("Actuator enabled");
+  else
+    ui.txt_actuactor_state->setText("Actuator disabled");
+  if(qnode.getOpenManipulatorMovingState() == true)
+    ui.txt_moving_state->setText("Robot is moving");
+  else
+    ui.txt_moving_state->setText("Robot is stopped");
+
 }
 void MainWindow::tabSelected()
 {
@@ -95,6 +105,8 @@ void MainWindow::on_btn_timer_start_clicked(void)
 
   writeLog("QTimer start : 100ms");
   ui.btn_timer_start->setEnabled(false);
+  ui.btn_actuator_disable->setEnabled(true);
+  ui.btn_actuator_enable->setEnabled(true);
   ui.btn_gripper_close->setEnabled(true);
   ui.btn_gripper_open->setEnabled(true);
   ui.btn_home_pose->setEnabled(true);
@@ -104,6 +116,28 @@ void MainWindow::on_btn_timer_start_clicked(void)
   ui.btn_send_joint_angle->setEnabled(true);
   ui.btn_send_kinematic_pose->setEnabled(true);
   ui.btn_set_gripper->setEnabled(true);
+}
+
+void MainWindow::on_btn_actuator_enable_clicked(void)
+{
+  if(!qnode.setActuatorState(true))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
+
+  writeLog("Send actuator state to enable");
+}
+
+void MainWindow::on_btn_actuator_disable_clicked(void)
+{
+  if(!qnode.setActuatorState(false))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
+
+  writeLog("Send actuator state to disable");
 }
 
 void MainWindow::on_btn_init_pose_clicked(void)
@@ -237,7 +271,12 @@ void MainWindow::on_btn_set_gripper_clicked(void)
     return;
   }
   writeLog("Send gripper value");
+}
 
+void MainWindow::on_btn_get_manipulator_setting_clicked(void)
+{
+  qnode.setOption("print_open_manipulator_setting");
+  writeLog("Check the terminal of open_manipulator_controller package");
 }
 
 

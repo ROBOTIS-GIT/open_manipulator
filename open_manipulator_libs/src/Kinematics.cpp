@@ -225,15 +225,15 @@ bool Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_na
   for(int t=0; t<3; t++)
     debug_present_pose(t+3) = present_orientation_rpy(t);
 
-  RM_LOG::PRINT("------------------------------------");
+  RM_LOG::PRINTLN("------------------------------------");
   RM_LOG::WARN("iter : first");
   RM_LOG::WARN("Ek : ", pre_Ek*1000000000000);
-  RM_LOG::PRINT("tar_pose");
-  RM_LOG::PRINT_VECTOR(debug_target_pose,16);
-  RM_LOG::PRINT("pre_pose");
-  RM_LOG::PRINT_VECTOR(debug_present_pose,16);
-  RM_LOG::PRINT("delta_pose");
-  RM_LOG::PRINT_VECTOR(debug_target_pose-debug_present_pose,16);
+  RM_LOG::PRINTLN("tar_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
+  RM_LOG::PRINTLN("pre_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
+  RM_LOG::PRINTLN("delta_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
   #endif
   ////////////////////////////debug//////////////////////////////////
 
@@ -277,12 +277,12 @@ bool Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_na
       debug_present_pose(t+3) = present_orientation_rpy(t);
     RM_LOG::WARN("iter : ", count,0);
     RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-    RM_LOG::PRINT("tar_pose");
-    RM_LOG::PRINT_VECTOR(debug_target_pose,16);
-    RM_LOG::PRINT("pre_pose");
-    RM_LOG::PRINT_VECTOR(debug_present_pose,16);
-    RM_LOG::PRINT("delta_pose");
-    RM_LOG::PRINT_VECTOR(debug_target_pose-debug_present_pose,16);
+    RM_LOG::PRINTLN("tar_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
+    RM_LOG::PRINTLN("pre_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
+    RM_LOG::PRINTLN("delta_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
     #endif
     ////////////////////////////debug//////////////////////////////////
 
@@ -293,7 +293,7 @@ bool Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_na
       RM_LOG::WARN("iter : ", count,0);
       RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
       RM_LOG::ERROR("IK Success");
-      RM_LOG::PRINT("------------------------------------");
+      RM_LOG::PRINTLN("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
       *goal_joint_value = _manipulator.getAllActiveJointValue();
@@ -385,15 +385,15 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
   for(int t=0; t<3; t++)
     debug_present_pose(t+3) = present_orientation_rpy(t);
 
-  RM_LOG::PRINT("------------------------------------");
+  RM_LOG::PRINTLN("------------------------------------");
   RM_LOG::WARN("iter : first");
   RM_LOG::WARN("Ek : ", pre_Ek*1000000000000);
-  RM_LOG::PRINT("tar_pose");
-  RM_LOG::PRINT_VECTOR(debug_target_pose,16);
-  RM_LOG::PRINT("pre_pose");
-  RM_LOG::PRINT_VECTOR(debug_present_pose,16);
-  RM_LOG::PRINT("delta_pose");
-  RM_LOG::PRINT_VECTOR(debug_target_pose-debug_present_pose,16);
+  RM_LOG::PRINTLN("tar_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
+  RM_LOG::PRINTLN("pre_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
+  RM_LOG::PRINTLN("delta_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
   #endif
   ////////////////////////////debug//////////////////////////////////
 
@@ -434,12 +434,12 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
       debug_present_pose(t+3) = present_orientation_rpy(t);
     RM_LOG::WARN("iter : ", count,0);
     RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-    RM_LOG::PRINT("tar_pose");
-    RM_LOG::PRINT_VECTOR(debug_target_pose,16);
-    RM_LOG::PRINT("pre_pose");
-    RM_LOG::PRINT_VECTOR(debug_present_pose,16);
-    RM_LOG::PRINT("delta_pose");
-    RM_LOG::PRINT_VECTOR(debug_target_pose-debug_present_pose,16);
+    RM_LOG::PRINTLN("tar_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
+    RM_LOG::PRINTLN("pre_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
+    RM_LOG::PRINTLN("delta_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
     #endif
     ////////////////////////////debug//////////////////////////////////
 
@@ -450,7 +450,7 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
       RM_LOG::WARN("iter : ", count,0);
       RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
       RM_LOG::ERROR("Success");
-      RM_LOG::PRINT("------------------------------------");
+      RM_LOG::PRINTLN("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
       *goal_joint_value = _manipulator.getAllActiveJointValue();
@@ -556,15 +556,15 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
   for(int t=0; t<3; t++)
     debug_present_pose(t+3) = present_orientation_rpy(t);
 
-  RM_LOG::PRINT("------------------------------------");
+  RM_LOG::PRINTLN("------------------------------------");
   RM_LOG::WARN("iter : first");
   RM_LOG::WARN("Ek : ", pre_Ek*1000000000000);
-  RM_LOG::PRINT("tar_pose");
-  RM_LOG::PRINT_VECTOR(debug_target_pose,16);
-  RM_LOG::PRINT("pre_pose");
-  RM_LOG::PRINT_VECTOR(debug_present_pose,16);
-  RM_LOG::PRINT("delta_pose");
-  RM_LOG::PRINT_VECTOR(debug_target_pose-debug_present_pose,16);
+  RM_LOG::PRINTLN("tar_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
+  RM_LOG::PRINTLN("pre_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
+  RM_LOG::PRINTLN("delta_pose");
+  RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
   #endif
   ////////////////////////////debug//////////////////////////////////
 
@@ -605,12 +605,12 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
       debug_present_pose(t+3) = present_orientation_rpy(t);
     RM_LOG::WARN("iter : ", count,0);
     RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-    RM_LOG::PRINT("tar_pose");
-    RM_LOG::PRINT_VECTOR(debug_target_pose,16);
-    RM_LOG::PRINT("pre_pose");
-    RM_LOG::PRINT_VECTOR(debug_present_pose,16);
-    RM_LOG::PRINT("delta_pose");
-    RM_LOG::PRINT_VECTOR(debug_target_pose-debug_present_pose,16);
+    RM_LOG::PRINTLN("tar_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
+    RM_LOG::PRINTLN("pre_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
+    RM_LOG::PRINTLN("delta_pose");
+    RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
     #endif
     ////////////////////////////debug//////////////////////////////////
 
@@ -621,7 +621,7 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
       RM_LOG::WARN("iter : ", count,0);
       RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
       RM_LOG::ERROR("Success");
-      RM_LOG::PRINT("------------------------------------");
+      RM_LOG::PRINTLN("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
       *goal_joint_value = _manipulator.getAllActiveJointValue();
