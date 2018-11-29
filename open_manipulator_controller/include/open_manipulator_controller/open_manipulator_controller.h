@@ -22,11 +22,14 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
 #include <boost/thread.hpp>
 #include <unistd.h>
 
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
+#include "open_manipulator_msgs/SetDrawingTrajectory.h"
+#include "open_manipulator_msgs/SetTorqueState.h"
 
 #include "open_manipulator_libs/OpenManipulator.h"
 
@@ -49,11 +52,15 @@ class OM_CONTROLLER
   ros::ServiceServer goal_joint_space_path_to_present_server_;
   ros::ServiceServer goal_task_space_path_to_present_server_;
   ros::ServiceServer goal_tool_control_server_;
+  ros::ServiceServer set_torque_state_server_;
+  ros::ServiceServer goal_drawing_trajectory_server_;
 
   ros::Publisher open_manipulator_kinematics_pose_pub_;
   ros::Publisher open_manipulator_joint_states_pub_;
   ros::Publisher open_manipulator_joint_states_to_gazebo_pub_[NUM_OF_JOINT];
   ros::Publisher open_manipulator_gripper_states_to_gazebo_pub_[2];
+
+  ros::Subscriber open_manipulator_option_client_;
 
   std::string robot_name_;
 
@@ -74,7 +81,7 @@ class OM_CONTROLLER
   void initPublisher();
   void initSubscriber();
 
-  void jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg);
+  void printManipulatorSettingCallback(const std_msgs::String::ConstPtr &msg);
 
   bool goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                   open_manipulator_msgs::SetJointPosition::Response &res);
@@ -86,6 +93,10 @@ class OM_CONTROLLER
                                           open_manipulator_msgs::SetKinematicsPose::Response &res);
   bool goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                open_manipulator_msgs::SetJointPosition::Response &res);
+  bool setTorqueStateCallback(open_manipulator_msgs::SetTorqueState::Request  &req,
+                              open_manipulator_msgs::SetTorqueState::Response &res);
+  bool goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
+                                     open_manipulator_msgs::SetDrawingTrajectory::Response &res);
 
   void setTimerThread();
   static void *timerThread(void *param);

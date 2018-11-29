@@ -38,9 +38,6 @@ namespace open_manipulator_control_gui {
 /*****************************************************************************
 ** Interface [MainWindow]
 *****************************************************************************/
-/**
- * @brief Qt central, all operations relating to the view part here.
- */
 class MainWindow : public QMainWindow {
 Q_OBJECT
 

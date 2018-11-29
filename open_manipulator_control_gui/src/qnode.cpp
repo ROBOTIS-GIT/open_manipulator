@@ -57,13 +57,18 @@ bool QNode::init() {
 	}
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
 	ros::NodeHandle n;
+
 	// Add your ros communications here.
-  chain_joint_states_sub_ = n.subscribe("open_manipulator/joint_states", 10, &QNode::jointStatesCallback, this);
-  chain_kinematics_pose_sub_ = n.subscribe("open_manipulator/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
+  open_manipulator_option_pub_ = n.advertise<std_msgs::String>("open_manipulator/option", 10);
+
+  open_manipulator_joint_states_sub_ = n.subscribe("open_manipulator/joint_states", 10, &QNode::jointStatesCallback, this);
+  open_manipulator_kinematics_pose_sub_ = n.subscribe("open_manipulator/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
 
   goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_joint_space_path");
   goal_task_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>("open_manipulator/goal_task_space_path");
   goal_tool_control_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_tool_control");
+  set_torque_state_client_ = n.serviceClient<open_manipulator_msgs::SetTorqueState>("open_manipulator/set_torque_state");
+  goal_drawing_trajectory_client_ = n.serviceClient<open_manipulator_msgs::SetDrawingTrajectory>("open_manipulator/goal_drawing_trajectory");
 
   start();
 	return true;
@@ -71,12 +76,9 @@ bool QNode::init() {
 
 void QNode::run() {
   ros::Rate loop_rate(10);
-  int count = 0;
 	while ( ros::ok() ) {
-
 		ros::spinOnce();
 		loop_rate.sleep();
-		++count;
 	}
 	std::cout << "Ros shutdown, proceeding to close the gui." << std::endl;
 	Q_EMIT rosShutdown();

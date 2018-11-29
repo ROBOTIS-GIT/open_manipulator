@@ -173,7 +173,7 @@ void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
     if(goal_value.size() != 0) setAllActiveJointWayPoint(goal_value);
     if(tool_value.size() != 0) setAllToolValue(tool_value);
   }
-  forward();
+  forwardKinematics();
 }
 
 bool OPEN_MANIPULATOR::getPlatformFlag()

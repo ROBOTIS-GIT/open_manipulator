@@ -37,9 +37,12 @@
 #include <QStringListModel>
 
 #include <sensor_msgs/JointState.h>
+#include <std_msgs/String.h>
 
 #include "open_manipulator_msgs/SetJointPosition.h"
 #include "open_manipulator_msgs/SetKinematicsPose.h"
+#include "open_manipulator_msgs/SetDrawingTrajectory.h"
+#include "open_manipulator_msgs/SetTorqueState.h"
 
 #define NUM_OF_JOINT_AND_TOOL 5
 
@@ -94,12 +97,16 @@ private:
 	char** init_argv;
   QStringListModel logging_model;
 
-  ros::Subscriber chain_joint_states_sub_;
-  ros::Subscriber chain_kinematics_pose_sub_;
+  ros::Publisher open_manipulator_option_pub_;
+
+  ros::Subscriber open_manipulator_joint_states_sub_;
+  ros::Subscriber open_manipulator_kinematics_pose_sub_;
 
   ros::ServiceClient goal_joint_space_path_client_;
   ros::ServiceClient goal_task_space_path_client_;
   ros::ServiceClient goal_tool_control_client_;
+  ros::ServiceClient set_torque_state_client_;
+  ros::ServiceClient goal_drawing_trajectory_client_;
 
   std::vector<double> present_joint_angle;
   std::vector<double> present_gripper_angle;

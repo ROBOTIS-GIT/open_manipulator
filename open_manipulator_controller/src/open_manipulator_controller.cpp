@@ -135,13 +135,22 @@ void OM_CONTROLLER::initPublisher()
 }
 void OM_CONTROLLER::initSubscriber()
 {
+  // msg subscriber
+  open_manipulator_option_client_ = node_handle_.subscribe("open_manipulator/option", 10, &OM_CONTROLLER::printManipulatorSettingCallback, this);
   // service server
   goal_joint_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path", &OM_CONTROLLER::goalJointSpacePathCallback, this);
   goal_task_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
   goal_joint_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path_to_present", &OM_CONTROLLER::goalJointSpacePathToPresentCallback, this);
   goal_task_space_path_to_present_server_ = node_handle_.advertiseService(robot_name_ + "/goal_task_space_path_to_present", &OM_CONTROLLER::goalTaskSpacePathToPresentCallback, this);
   goal_tool_control_server_ = node_handle_.advertiseService(robot_name_ + "/goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
+  set_torque_state_server_ = node_handle_.advertiseService(robot_name_ + "/set_torque_state", &OM_CONTROLLER::setTorqueStateCallback, this);
+  goal_drawing_trajectory_server_= node_handle_.advertiseService(robot_name_ + "/goal_drawing_trajectory", &OM_CONTROLLER::goalDrawingTrajectoryCallback, this);
 
+}
+void OM_CONTROLLER::printManipulatorSettingCallback(const std_msgs::String::ConstPtr &msg)
+{
+  if(msg->data == "print_open_manipulator_setting")
+    open_manipulator_.checkManipulatorSetting();
 }
 
 bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
@@ -155,7 +164,6 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
   open_manipulator_.jointTrajectoryMove(target_angle, req.path_time);
 
   res.isPlanned = true;
-  return true;
 }
 bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
@@ -167,7 +175,6 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   open_manipulator_.taskTrajectoryMove("tool", target_pose.position, req.path_time);
 
   res.isPlanned = true;
-  return true;
 }
 
 bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
@@ -181,7 +188,6 @@ bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::S
   open_manipulator_.jointTrajectoryMoveToPresentValue(target_angle, req.path_time);
 
   res.isPlanned = true;
-  return true;
 }
 bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                       open_manipulator_msgs::SetKinematicsPose::Response &res)
@@ -194,14 +200,78 @@ bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::Se
   open_manipulator_.taskTrajectoryMoveToPresentPosition("tool", target_pose.position, req.path_time);
 
   res.isPlanned = true;
-  return true;
 }
 bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
   open_manipulator_.toolMove("tool", req.joint_position.position.at(0));
   res.isPlanned = true;
-  return true;
+}
+
+bool OM_CONTROLLER::setTorqueStateCallback(open_manipulator_msgs::SetTorqueState::Request  &req,
+                                           open_manipulator_msgs::SetTorqueState::Response &res)
+{
+  if(req.setTorqueState == true) // torque on
+    open_manipulator_.allActuatorEnable();
+  else
+    open_manipulator_.allActuatorDisable();
+
+  res.isPlanned = true;
+}
+
+bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
+                                                  open_manipulator_msgs::SetDrawingTrajectory::Response &res)
+{
+  try
+  {
+    if(req.drawingTrajectoryName == "circle")
+    {
+      double draw_circle_arg[3];
+      draw_circle_arg[0] = req.param[0];  // radius (m)
+      draw_circle_arg[1] = req.param[1];  // revolution (rev)
+      draw_circle_arg[2] = req.param[2];  // start angle position (rad)
+      void* p_draw_circle_arg = &draw_circle_arg;
+      open_manipulator_.drawingTrajectoryMove(DRAWING_CIRCLE, "tool", p_draw_circle_arg, req.path_time);
+
+    }
+    else if(req.drawingTrajectoryName == "line")
+    {
+      Pose present_pose = open_manipulator_.getManipulator()->getComponentPoseToWorld("tool");
+      WayPoint draw_goal_pose[6];
+      draw_goal_pose[0].value = present_pose.position(0) + req.param[0];
+      draw_goal_pose[1].value = present_pose.position(1) + req.param[1];
+      draw_goal_pose[2].value = present_pose.position(2) + req.param[2];
+      draw_goal_pose[3].value = RM_MATH::convertRotationToRPY(present_pose.orientation)[0];
+      draw_goal_pose[4].value = RM_MATH::convertRotationToRPY(present_pose.orientation)[1];
+      draw_goal_pose[5].value = RM_MATH::convertRotationToRPY(present_pose.orientation)[2];
+
+      void *p_draw_goal_pose = &draw_goal_pose;
+      open_manipulator_.drawingTrajectoryMove(DRAWING_LINE, "tool", p_draw_goal_pose, req.path_time);
+    }
+    else if(req.drawingTrajectoryName == "rhombus")
+    {
+      double draw_circle_arg[3];
+      draw_circle_arg[0] = req.param[0];  // radius (m)
+      draw_circle_arg[1] = req.param[1];  // revolution (rev)
+      draw_circle_arg[2] = req.param[2];  // start angle position (rad)
+      void* p_draw_circle_arg = &draw_circle_arg;
+      open_manipulator_.drawingTrajectoryMove(DRAWING_RHOMBUS, "tool", p_draw_circle_arg, req.path_time);
+    }
+    else if(req.drawingTrajectoryName == "heart")
+    {
+      double draw_circle_arg[3];
+      draw_circle_arg[0] = req.param[0];  // radius (m)
+      draw_circle_arg[1] = req.param[1];  // revolution (rev)
+      draw_circle_arg[2] = req.param[2];  // start angle position (rad)
+      void* p_draw_circle_arg = &draw_circle_arg;
+      open_manipulator_.drawingTrajectoryMove(DRAWING_HEART, "tool", p_draw_circle_arg, req.path_time);
+    }
+    res.isPlanned = true;
+  }
+  catch ( ros::Exception &e )
+  {
+    RM_LOG::ERROR("Creation the drawing trajectory is failed!");
+  }
 }
 
 void OM_CONTROLLER::publishKinematicsPose()
