@@ -45,11 +45,11 @@ Eigen::MatrixXd Chain::jacobian(Manipulator *manipulator, Name tool_name)
     }
     else
     {
-      joint_axis = manipulator->getComponentOrientationToWorld(parent_name) * manipulator->getAxis(my_name);
+      joint_axis = manipulator->getComponentOrientationFromWorld(parent_name) * manipulator->getAxis(my_name);
     }
 
     position_changed = RM_MATH::skewSymmetricMatrix(joint_axis) *
-                       (manipulator->getComponentPositionToWorld(tool_name) - manipulator->getComponentPositionToWorld(my_name));
+                       (manipulator->getComponentPositionFromWorld(tool_name) - manipulator->getComponentPositionFromWorld(my_name));
     orientation_changed = joint_axis;
 
     pose_changed << position_changed(0),
@@ -87,15 +87,15 @@ void Chain::forward(Manipulator *manipulator, Name component_name)
   }
   else
   {
-    parent_position_to_world = manipulator->getComponentPositionToWorld(parent_name);
-    parent_orientation_to_world = manipulator->getComponentOrientationToWorld(parent_name);
+    parent_position_to_world = manipulator->getComponentPositionFromWorld(parent_name);
+    parent_orientation_to_world = manipulator->getComponentOrientationFromWorld(parent_name);
   }
 
-  my_position_to_world = parent_orientation_to_world * manipulator->getComponentRelativePositionToParent(my_name) + parent_position_to_world;
+  my_position_to_world = parent_orientation_to_world * manipulator->getComponentRelativePositionFromParent(my_name) + parent_position_to_world;
   my_orientation_to_world = parent_orientation_to_world * RM_MATH::rodriguesRotationMatrix(manipulator->getAxis(my_name), manipulator->getValue(my_name));
 
-  manipulator->setComponentPositionToWorld(my_name, my_position_to_world);
-  manipulator->setComponentOrientationToWorld(my_name, my_orientation_to_world);
+  manipulator->setComponentPositionFromWorld(my_name, my_position_to_world);
+  manipulator->setComponentOrientationFromWorld(my_name, my_orientation_to_world);
 
   for (int8_t index = 0; index < number_of_child; index++)
   {
@@ -140,8 +140,8 @@ bool Chain::inverseKinematics(Manipulator *manipulator, Name tool_name, Pose tar
 
     jacobian = this->jacobian(&_manipulator,tool_name);
 
-    pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name),
-                                           target_pose.orientation, _manipulator.getComponentOrientationToWorld(tool_name));
+    pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionFromWorld(tool_name),
+                                           target_pose.orientation, _manipulator.getComponentOrientationFromWorld(tool_name));
     if (pose_changed.norm() < 1E-6)
     {
       *goal_joint_value = _manipulator.getAllActiveJointValue();
@@ -203,7 +203,7 @@ bool Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_na
 
   forward(&_manipulator, _manipulator.getIteratorBegin()->first);
   //////////////checking dx///////////////
-  position_changed = RM_MATH::positionDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name));
+  position_changed = RM_MATH::positionDifference(target_pose.position, _manipulator.getComponentPositionFromWorld(tool_name));
   pre_Ek = position_changed.transpose() * We * position_changed;
   ///////////////////////////////////////
 
@@ -216,8 +216,8 @@ bool Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_na
   for(int t=0; t<3; t++)
     debug_target_pose(t+3) = target_orientation_rpy(t);
 
-  Eigen::Vector3d present_position = _manipulator.getComponentPositionToWorld(tool_name);
-  Eigen::MatrixXd present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+  Eigen::Vector3d present_position = _manipulator.getComponentPositionFromWorld(tool_name);
+  Eigen::MatrixXd present_orientation = _manipulator.getComponentOrientationFromWorld(tool_name);
   Eigen::Vector3d present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
   Eigen::VectorXd debug_present_pose(6);
   for(int t=0; t<3; t++)
@@ -262,14 +262,14 @@ bool Chain::positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_na
     ////////////////////////////////////////
 
     //////////////checking dx///////////////
-    position_changed = RM_MATH::positionDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name));
+    position_changed = RM_MATH::positionDifference(target_pose.position, _manipulator.getComponentPositionFromWorld(tool_name));
     new_Ek = position_changed.transpose() * We * position_changed;
     ////////////////////////////////////////
 
     /////////////////////////////debug/////////////////////////////////
     #if defined(KINEMATICS_DEBUG)
-    present_position = _manipulator.getComponentPositionToWorld(tool_name);
-    present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+    present_position = _manipulator.getComponentPositionFromWorld(tool_name);
+    present_orientation = _manipulator.getComponentOrientationFromWorld(tool_name);
     present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
     for(int t=0; t<3; t++)
       debug_present_pose(t) = present_position(t);
@@ -363,7 +363,7 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
 
   forward(&_manipulator, _manipulator.getIteratorBegin()->first);
   //////////////checking dx///////////////
-  pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationToWorld(tool_name));
+  pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionFromWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationFromWorld(tool_name));
   pre_Ek = pose_changed.transpose() * We * pose_changed;
   ///////////////////////////////////////
 
@@ -376,8 +376,8 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
   for(int t=0; t<3; t++)
     debug_target_pose(t+3) = target_orientation_rpy(t);
 
-  Eigen::Vector3d present_position = _manipulator.getComponentPositionToWorld(tool_name);
-  Eigen::MatrixXd present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+  Eigen::Vector3d present_position = _manipulator.getComponentPositionFromWorld(tool_name);
+  Eigen::MatrixXd present_orientation = _manipulator.getComponentOrientationFromWorld(tool_name);
   Eigen::Vector3d present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
   Eigen::VectorXd debug_present_pose(6);
   for(int t=0; t<3; t++)
@@ -419,14 +419,14 @@ bool Chain::srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose t
     ////////////////////////////////////////
 
     //////////////checking dx///////////////
-    pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationToWorld(tool_name));
+    pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionFromWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationFromWorld(tool_name));
     new_Ek = pose_changed.transpose() * We * pose_changed;
     ////////////////////////////////////////
 
     /////////////////////////////debug/////////////////////////////////
     #if defined(KINEMATICS_DEBUG)
-    present_position = _manipulator.getComponentPositionToWorld(tool_name);
-    present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+    present_position = _manipulator.getComponentPositionFromWorld(tool_name);
+    present_orientation = _manipulator.getComponentOrientationFromWorld(tool_name);
     present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
     for(int t=0; t<3; t++)
       debug_present_pose(t) = present_position(t);
@@ -521,12 +521,12 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
   forward(&_manipulator, _manipulator.getIteratorBegin()->first);
 
   //////////////make target ori//////////  //only OpenManipulator Chain
-  Eigen::Matrix3d present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+  Eigen::Matrix3d present_orientation = _manipulator.getComponentOrientationFromWorld(tool_name);
   Eigen::Vector3d present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
   Eigen::Matrix3d target_orientation = target_pose.orientation;
   Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationToRPY(target_orientation);
 
-  Eigen::Vector3d joint1_rlative_position = _manipulator.getComponentRelativePositionToParent(_manipulator.getWorldChildName());
+  Eigen::Vector3d joint1_rlative_position = _manipulator.getComponentRelativePositionFromParent(_manipulator.getWorldChildName());
   Eigen::Vector3d target_position_from_joint1 = target_pose.position - joint1_rlative_position;
 
   target_orientation_rpy(0) = present_orientation_rpy(0);
@@ -537,7 +537,7 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
   ///////////////////////////////////////
 
   //////////////checking dx///////////////
-  pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationToWorld(tool_name));
+  pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionFromWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationFromWorld(tool_name));
   pre_Ek = pose_changed.transpose() * We * pose_changed;
   ///////////////////////////////////////
 
@@ -549,7 +549,7 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
   for(int t=0; t<3; t++)
     debug_target_pose(t+3) = target_orientation_rpy(t);
 
-  Eigen::Vector3d present_position = _manipulator.getComponentPositionToWorld(tool_name);
+  Eigen::Vector3d present_position = _manipulator.getComponentPositionFromWorld(tool_name);
   Eigen::VectorXd debug_present_pose(6);
   for(int t=0; t<3; t++)
     debug_present_pose(t) = present_position(t);
@@ -590,14 +590,14 @@ bool Chain::chainCustumInverseKinematics(Manipulator *manipulator, Name tool_nam
     ////////////////////////////////////////
 
     //////////////checking dx///////////////
-    pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionToWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationToWorld(tool_name));
+    pose_changed = RM_MATH::poseDifference(target_pose.position, _manipulator.getComponentPositionFromWorld(tool_name), target_pose.orientation, _manipulator.getComponentOrientationFromWorld(tool_name));
     new_Ek = pose_changed.transpose() * We * pose_changed;
     ////////////////////////////////////////
 
     /////////////////////////////debug/////////////////////////////////
     #if defined(KINEMATICS_DEBUG)
-    present_position = _manipulator.getComponentPositionToWorld(tool_name);
-    present_orientation = _manipulator.getComponentOrientationToWorld(tool_name);
+    present_position = _manipulator.getComponentPositionFromWorld(tool_name);
+    present_orientation = _manipulator.getComponentOrientationFromWorld(tool_name);
     present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
     for(int t=0; t<3; t++)
       debug_present_pose(t) = present_position(t);

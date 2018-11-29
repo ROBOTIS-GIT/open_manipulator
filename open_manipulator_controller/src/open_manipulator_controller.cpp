@@ -236,7 +236,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
     }
     else if(req.drawingTrajectoryName == "line")
     {
-      Pose present_pose = open_manipulator_.getManipulator()->getComponentPoseToWorld("tool");
+      Pose present_pose = open_manipulator_.getManipulator()->getComponentPoseFromWorld("tool");
       WayPoint draw_goal_pose[6];
       draw_goal_pose[0].value = present_pose.position(0) + req.param[0];
       draw_goal_pose[1].value = present_pose.position(1) + req.param[1];
@@ -278,7 +278,7 @@ void OM_CONTROLLER::publishKinematicsPose()
 {
   open_manipulator_msgs::KinematicsPose msg;
 
-  Vector3d position = open_manipulator_.getManipulator()->getComponentPositionToWorld("tool");
+  Vector3d position = open_manipulator_.getManipulator()->getComponentPositionFromWorld("tool");
   msg.pose.position.x = position[0];
   msg.pose.position.y = position[1];
   msg.pose.position.z = position[2];
