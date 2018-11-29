@@ -115,6 +115,7 @@ void MainWindow::on_btn_timer_start_clicked(void)
   ui.btn_read_kinematic_pose->setEnabled(true);
   ui.btn_send_joint_angle->setEnabled(true);
   ui.btn_send_kinematic_pose->setEnabled(true);
+  ui.btn_send_drawing_trajectory->setEnabled(true);
   ui.btn_set_gripper->setEnabled(true);
 }
 
@@ -279,6 +280,67 @@ void MainWindow::on_btn_get_manipulator_setting_clicked(void)
   writeLog("Check the terminal of open_manipulator_controller package");
 }
 
+
+void MainWindow::on_radio_drawing_line_clicked(void)
+{
+  ui.txt_drawing_arg_1->setText("Transpose X");
+  ui.txt_drawing_arg_2->setText("Transpose Y");
+  ui.txt_drawing_arg_3->setText("Transpose Z");
+  ui.txt_drawing_arg_unit_1->setText("m");
+  ui.txt_drawing_arg_unit_2->setText("m");
+  ui.txt_drawing_arg_unit_3->setText("m");
+}
+void MainWindow::on_radio_drawing_circle_clicked(void)
+{
+  ui.txt_drawing_arg_1->setText("Radius");
+  ui.txt_drawing_arg_2->setText("Revolution");
+  ui.txt_drawing_arg_3->setText("Start angle");
+  ui.txt_drawing_arg_unit_1->setText("m");
+  ui.txt_drawing_arg_unit_2->setText("rev");
+  ui.txt_drawing_arg_unit_3->setText("rad");
+}
+void MainWindow::on_radio_drawing_rhombus_clicked(void)
+{
+  ui.txt_drawing_arg_1->setText("Radius");
+  ui.txt_drawing_arg_2->setText("Revolution");
+  ui.txt_drawing_arg_3->setText("Start angle");
+  ui.txt_drawing_arg_unit_1->setText("m");
+  ui.txt_drawing_arg_unit_2->setText("rev");
+  ui.txt_drawing_arg_unit_3->setText("rad");
+}
+void MainWindow::on_radio_drawing_heart_clicked(void)
+{
+  ui.txt_drawing_arg_1->setText("Radius");
+  ui.txt_drawing_arg_2->setText("Revolution");
+  ui.txt_drawing_arg_3->setText("Start angle");
+  ui.txt_drawing_arg_unit_1->setText("m");
+  ui.txt_drawing_arg_unit_2->setText("rev");
+  ui.txt_drawing_arg_unit_3->setText("rad");
+}
+void MainWindow::on_btn_send_drawing_trajectory_clicked(void)
+{
+  std::string name;
+  if(ui.radio_drawing_line->isChecked()) name = "line";
+  else if(ui.radio_drawing_circle->isChecked()) name = "circle";
+  else if(ui.radio_drawing_rhombus->isChecked()) name = "rhombus";
+  else if(ui.radio_drawing_heart->isChecked()) name = "heart";
+  writeLog("Send drawing trajectory");
+
+  std::vector<double> arg;
+  arg.push_back(ui.doubleSpinBox_drawing_arg_1->value());
+  arg.push_back(ui.doubleSpinBox_drawing_arg_2->value());
+  arg.push_back(ui.doubleSpinBox_drawing_arg_3->value());
+  writeLog("Send drawing trajectory");
+
+  double path_time = ui.doubleSpinBox_time_drawing->value();
+
+  if(!qnode.setDrawingTrajectory(name, arg, path_time))
+  {
+    writeLog("[ERR!!] Failed to send service");
+    return;
+  }
+  writeLog("Send drawing trajectory");
+}
 
 }  // namespace open_manipulator_control_gui
 

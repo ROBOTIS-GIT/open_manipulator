@@ -61,6 +61,11 @@ public Q_SLOTS:
   void on_btn_actuator_enable_clicked(void);
   void on_btn_actuator_disable_clicked(void);
   void on_btn_get_manipulator_setting_clicked(void);
+  void on_radio_drawing_line_clicked(void);
+  void on_radio_drawing_circle_clicked(void);
+  void on_radio_drawing_rhombus_clicked(void);
+  void on_radio_drawing_heart_clicked(void);
+  void on_btn_send_drawing_trajectory_clicked(void);
 
   void tabSelected();
 
