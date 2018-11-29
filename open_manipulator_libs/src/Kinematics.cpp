@@ -71,6 +71,22 @@ void Chain::forward(Manipulator *manipulator)
   forward(manipulator, manipulator->getWorldChildName());
 }
 
+bool Chain::inverse(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double> *goal_joint_value)
+{
+  if(inverse_solver_option_ == "position_only_inverse")
+    return positionOnlyInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
+  else if (inverse_solver_option_ == "sr_inverse")
+    return srInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
+  else if(inverse_solver_option_ == "chain_custum_inverse_kinematics")
+    return chainCustumInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
+  else if(inverse_solver_option_ == "normal_inverse")
+    return inverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
+  else
+  {
+    RM_LOG::ERROR("Wrong inverse solver name (please change the solver)");
+  }
+}
+
 void Chain::forward(Manipulator *manipulator, Name component_name)
 {
   Name my_name = component_name;
@@ -101,22 +117,6 @@ void Chain::forward(Manipulator *manipulator, Name component_name)
   {
     Name child_name = manipulator->getComponentChildName(my_name).at(index);
     forward(manipulator, child_name);
-  }
-}
-
-bool Chain::inverse(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double> *goal_joint_value)
-{
-  if(inverse_solver_option_ == "position_only_inverse")
-    return positionOnlyInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
-  else if (inverse_solver_option_ == "sr_inverse")
-    return srInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
-  else if(inverse_solver_option_ == "chain_custum_inverse_kinematics")
-    return chainCustumInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
-  else if(inverse_solver_option_ == "normal_inverse")
-    return inverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
-  else
-  {
-    RM_LOG::ERROR("Wrong inverse solver name (please change the solver)");
   }
 }
 

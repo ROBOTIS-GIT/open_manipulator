@@ -43,11 +43,10 @@ public:
   virtual void setOption(const void *arg);
   virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
-
-  virtual void forward(Manipulator *manipulator);
-  virtual void forward(Manipulator *manipulator, Name component_name);
+  virtual void forward(Manipulator *manipulator); 
   virtual bool inverse(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
 
+  void forward(Manipulator *manipulator, Name component_name);
   bool inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
   bool srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
   bool positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
