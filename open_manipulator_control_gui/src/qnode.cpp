@@ -58,12 +58,12 @@ bool QNode::init() {
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
 	ros::NodeHandle n;
 
-	// Add your ros communications here.
+  // msg publisher
   open_manipulator_option_pub_ = n.advertise<std_msgs::String>("open_manipulator/option", 10);
-
+  // msg subscriber
   open_manipulator_joint_states_sub_ = n.subscribe("open_manipulator/joint_states", 10, &QNode::jointStatesCallback, this);
   open_manipulator_kinematics_pose_sub_ = n.subscribe("open_manipulator/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
-
+  // service client
   goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_joint_space_path");
   goal_task_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>("open_manipulator/goal_task_space_path");
   goal_tool_control_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("open_manipulator/goal_tool_control");
@@ -122,6 +122,13 @@ std::vector<double> QNode::getPresentKinematicsPose()
   return present_kinematic_position;
 }
 
+void QNode::setOption(std::string opt)
+{
+  std_msgs::String msg;
+  msg.data = opt;
+  open_manipulator_option_pub_.publish(msg);
+}
+
 bool QNode::setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time)
 {
   open_manipulator_msgs::SetJointPosition srv;
@@ -130,18 +137,6 @@ bool QNode::setJointSpacePath(std::vector<std::string> joint_name, std::vector<d
   srv.request.path_time = path_time;
 
   if(goal_joint_space_path_client_.call(srv))
-  {
-    return srv.response.isPlanned;
-  }
-  return false;
-}
-
-bool QNode::setToolControl(std::vector<double> joint_angle)
-{
-  open_manipulator_msgs::SetJointPosition srv;
-  srv.request.joint_position.position = joint_angle;
-
-  if(goal_tool_control_client_.call(srv))
   {
     return srv.response.isPlanned;
   }
@@ -163,6 +158,44 @@ bool QNode::setTaskSpacePath(std::vector<double> kinematics_pose, double path_ti
   return false;
 }
 
+bool QNode::setDrawingTrajectory(std::string name, std::vector<double> arg, double path_time)
+{
+  open_manipulator_msgs::SetDrawingTrajectory srv;
+  srv.request.drawingTrajectoryName = name;
+  srv.request.path_time = path_time;
+  for(int i = 0; i < arg.size(); i ++)
+    srv.request.param[i] = arg.at(i);
+
+  if(goal_drawing_trajectory_client_.call(srv))
+  {
+    return srv.response.isPlanned;
+  }
+  return false;
+}
+
+bool QNode::setToolControl(std::vector<double> joint_angle)
+{
+  open_manipulator_msgs::SetJointPosition srv;
+  srv.request.joint_position.position = joint_angle;
+
+  if(goal_tool_control_client_.call(srv))
+  {
+    return srv.response.isPlanned;
+  }
+  return false;
+}
+
+bool QNode::setTorqueState(bool torque_state)
+{
+  open_manipulator_msgs::SetTorqueState srv;
+  srv.request.setTorqueState = torque_state;
+
+  if(set_torque_state_client_.call(srv))
+  {
+    return srv.response.isPlanned;
+  }
+  return false;
+}
 
 
 }  // namespace open_manipulator_control_gui

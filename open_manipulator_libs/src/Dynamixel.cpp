@@ -73,6 +73,7 @@ void JointDynamixel::enable()
       RM_LOG::ERROR(log);
     }
   }
+  enable_state_ = true;
 }
 
 void JointDynamixel::disable()
@@ -88,6 +89,7 @@ void JointDynamixel::disable()
       RM_LOG::ERROR(log);
     }
   }
+  enable_state_ = false;
 }
 
 bool JointDynamixel::sendJointActuatorValue(std::vector<uint8_t> actuator_id, std::vector<ROBOTIS_MANIPULATOR::Actuator> value_vector)
@@ -386,6 +388,7 @@ void GripperDynamixel::enable()
   {
     RM_LOG::ERROR(log);
   }
+  enable_state_ = true;
 }
 
 void GripperDynamixel::disable()
@@ -398,6 +401,7 @@ void GripperDynamixel::disable()
   {
     RM_LOG::ERROR(log);
   }
+  enable_state_ = false;
 }
 
 bool GripperDynamixel::sendToolActuatorValue(double value)

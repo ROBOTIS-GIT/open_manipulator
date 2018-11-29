@@ -85,9 +85,12 @@ public:
   std::vector<double> getPresentGripperAngle();
   std::vector<double> getPresentKinematicsPose();
 
+  void setOption(std::string opt);
   bool setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
   bool setTaskSpacePath(std::vector<double> kinematics_pose, double path_time);
+  bool setDrawingTrajectory(std::string name, std::vector<double> arg, double path_time);
   bool setToolControl(std::vector<double> joint_angle);
+  bool setTorqueState(bool torque_state);
 
 Q_SIGNALS:
   void rosShutdown();

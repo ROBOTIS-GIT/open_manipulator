@@ -30,6 +30,7 @@
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 #include "open_manipulator_msgs/SetDrawingTrajectory.h"
 #include "open_manipulator_msgs/SetTorqueState.h"
+#include "open_manipulator_msgs/OpenManipulatorState.h"
 
 #include "open_manipulator_libs/OpenManipulator.h"
 
@@ -55,6 +56,7 @@ class OM_CONTROLLER
   ros::ServiceServer set_torque_state_server_;
   ros::ServiceServer goal_drawing_trajectory_server_;
 
+  ros::Publisher open_manipulator_state_pub_;
   ros::Publisher open_manipulator_kinematics_pose_pub_;
   ros::Publisher open_manipulator_joint_states_pub_;
   ros::Publisher open_manipulator_joint_states_to_gazebo_pub_[NUM_OF_JOINT];
@@ -103,9 +105,9 @@ class OM_CONTROLLER
 
   void process(double time);
 
+  void publishOpenManipulatorStates();
   void publishKinematicsPose();
   void publishJointStates();
-
 };
 }
 

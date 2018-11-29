@@ -120,6 +120,7 @@ void *OM_CONTROLLER::timerThread(void *param)
 void OM_CONTROLLER::initPublisher()
 {
   // msg publisher
+  open_manipulator_state_pub_ = node_handle_.advertise<open_manipulator_msgs::OpenManipulatorState>(robot_name_ + "/states", 10);
   open_manipulator_kinematics_pose_pub_  = node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(robot_name_ + "/kinematics_pose", 10);
   if(using_platform_)
     open_manipulator_joint_states_pub_  = node_handle_.advertise<sensor_msgs::JointState>(robot_name_ + "/joint_states", 10);
@@ -236,7 +237,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
     }
     else if(req.drawingTrajectoryName == "line")
     {
-      Pose present_pose = open_manipulator_.getManipulator()->getComponentPoseFromWorld("tool");
+      Pose present_pose = open_manipulator_.getPose("tool");
       WayPoint draw_goal_pose[6];
       draw_goal_pose[0].value = present_pose.position(0) + req.param[0];
       draw_goal_pose[1].value = present_pose.position(1) + req.param[1];
@@ -274,14 +275,31 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
   }
 }
 
+void OM_CONTROLLER::publishOpenManipulatorStates()
+{
+  open_manipulator_msgs::OpenManipulatorState msg;
+  if(open_manipulator_.isMoving())
+    msg.open_manipulator_moving_state = msg.IS_MOVING;
+  else
+    msg.open_manipulator_moving_state = msg.STOPPED;
+
+  if(open_manipulator_.isEnabled(JOINT_DYNAMIXEL))
+    msg.open_manipulator_enable_state = msg.ACTUATOR_ENABLED;
+  else
+    msg.open_manipulator_enable_state = msg.ACTUATOR_DISABLED;
+
+  open_manipulator_state_pub_.publish(msg);
+}
+
+
 void OM_CONTROLLER::publishKinematicsPose()
 {
   open_manipulator_msgs::KinematicsPose msg;
 
-  Vector3d position = open_manipulator_.getManipulator()->getComponentPositionFromWorld("tool");
-  msg.pose.position.x = position[0];
-  msg.pose.position.y = position[1];
-  msg.pose.position.z = position[2];
+  Pose pose = open_manipulator_.getPose("tool");
+  msg.pose.position.x = pose.position[0];
+  msg.pose.position.y = pose.position[1];
+  msg.pose.position.z = pose.position[2];
   open_manipulator_kinematics_pose_pub_.publish(msg);
 }
 
@@ -291,24 +309,23 @@ void OM_CONTROLLER::publishJointStates()
   {
     sensor_msgs::JointState msg;
     msg.header.stamp = ros::Time::now();
-    std::vector<double> position, velocity, acceleration, effort;
-    open_manipulator_.getManipulator()->getAllActiveJointValue(&position, &velocity, &acceleration, &effort);
-    double tool_value = open_manipulator_.getManipulator()->getValue("tool");
-    msg.name.push_back("joint1");           msg.position.push_back(position.at(0));
-                                            msg.velocity.push_back(velocity.at(0));
-                                            msg.effort.push_back(effort.at(0));
+    std::vector<WayPoint> jointValue = open_manipulator_.getAllActiveJointValue();
+    double tool_value = open_manipulator_.getToolValue("tool");
+    msg.name.push_back("joint1");           msg.position.push_back(jointValue.at(0).value);
+                                            msg.velocity.push_back(jointValue.at(0).velocity);
+                                            msg.effort.push_back(jointValue.at(0).effort);
 
-    msg.name.push_back("joint2");           msg.position.push_back(position.at(1));
-                                            msg.velocity.push_back(velocity.at(1));
-                                            msg.effort.push_back(effort.at(1));
+    msg.name.push_back("joint2");           msg.position.push_back(jointValue.at(1).value);
+                                            msg.velocity.push_back(jointValue.at(1).velocity);
+                                            msg.effort.push_back(jointValue.at(1).effort);
 
-    msg.name.push_back("joint3");           msg.position.push_back(position.at(2));
-                                            msg.velocity.push_back(velocity.at(2));
-                                            msg.effort.push_back(effort.at(2));
+    msg.name.push_back("joint3");           msg.position.push_back(jointValue.at(2).value);
+                                            msg.velocity.push_back(jointValue.at(2).velocity);
+                                            msg.effort.push_back(jointValue.at(2).effort);
 
-    msg.name.push_back("joint4");           msg.position.push_back(position.at(3));
-                                            msg.velocity.push_back(velocity.at(3));
-                                            msg.effort.push_back(effort.at(3));
+    msg.name.push_back("joint4");           msg.position.push_back(jointValue.at(3).value);
+                                            msg.velocity.push_back(jointValue.at(3).velocity);
+                                            msg.effort.push_back(jointValue.at(3).effort);
 
     msg.name.push_back("grip_joint");       msg.position.push_back(tool_value);
                                             msg.velocity.push_back(0.0);
@@ -321,14 +338,15 @@ void OM_CONTROLLER::publishJointStates()
   }
   else // gazebo
   {
-    std::vector<double> value = open_manipulator_.getManipulator()->getAllActiveJointValue();
-    for(int i = 0; i < value.size(); i ++)
+    std::vector<WayPoint> jointValue = open_manipulator_.getAllActiveJointValue();
+    for(int i = 0; i < jointValue.size(); i ++)
     {
       std_msgs::Float64 msg;
-      msg.data = value.at(i);
+      msg.data = jointValue.at(i).value;
       open_manipulator_joint_states_to_gazebo_pub_[i].publish(msg);
     }
-    double tool_value = open_manipulator_.getManipulator()->getValue("tool");
+
+    double tool_value = open_manipulator_.getToolValue("tool");
     for(int i = 0; i < 2; i ++)
     {
       std_msgs::Float64 msg;
@@ -354,6 +372,7 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
+    om_controller.publishOpenManipulatorStates();
     om_controller.publishJointStates();
     om_controller.publishKinematicsPose();
     ros::spinOnce();
