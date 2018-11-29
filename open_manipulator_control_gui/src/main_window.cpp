@@ -324,13 +324,11 @@ void MainWindow::on_btn_send_drawing_trajectory_clicked(void)
   else if(ui.radio_drawing_circle->isChecked()) name = "circle";
   else if(ui.radio_drawing_rhombus->isChecked()) name = "rhombus";
   else if(ui.radio_drawing_heart->isChecked()) name = "heart";
-  writeLog("Send drawing trajectory");
 
   std::vector<double> arg;
   arg.push_back(ui.doubleSpinBox_drawing_arg_1->value());
   arg.push_back(ui.doubleSpinBox_drawing_arg_2->value());
   arg.push_back(ui.doubleSpinBox_drawing_arg_3->value());
-  writeLog("Send drawing trajectory");
 
   double path_time = ui.doubleSpinBox_time_drawing->value();
 

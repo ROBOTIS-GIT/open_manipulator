@@ -182,7 +182,7 @@ bool QNode::setDrawingTrajectory(std::string name, std::vector<double> arg, doub
   srv.request.drawingTrajectoryName = name;
   srv.request.path_time = path_time;
   for(int i = 0; i < arg.size(); i ++)
-    srv.request.param[i] = arg.at(i);
+    srv.request.param.push_back(arg.at(i));
 
   if(goal_drawing_trajectory_client_.call(srv))
   {

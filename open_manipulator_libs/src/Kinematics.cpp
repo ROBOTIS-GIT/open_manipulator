@@ -477,7 +477,7 @@ bool Chain::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_nam
 
 bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double> *goal_joint_value)
 {
-  //manipulator
+  //manipulatorW
   Manipulator _manipulator = *manipulator;
 
   //solver parameter
