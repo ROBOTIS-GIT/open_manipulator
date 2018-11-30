@@ -28,7 +28,7 @@ OM_CONTROLLER::OM_CONTROLLER()
      using_platform_(false),
      tool_position_(0.0)
 {
-  robot_name_             = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
+  robot_name_             = node_handle_.param<std::string>("robot_name", "open_manipulator");
   std::string usb_port    = priv_node_handle_.param<std::string>("usb_port", "/dev/ttyUSB0");
   std::string baud_rate   = priv_node_handle_.param<std::string>("baud_rate", "1000000");
 
@@ -137,7 +137,7 @@ void OM_CONTROLLER::initPublisher()
 void OM_CONTROLLER::initSubscriber()
 {
   // msg subscriber
-  open_manipulator_option_client_ = node_handle_.subscribe("open_manipulator/option", 10, &OM_CONTROLLER::printManipulatorSettingCallback, this);
+  open_manipulator_option_client_ = node_handle_.subscribe(robot_name_ + "/option", 10, &OM_CONTROLLER::printManipulatorSettingCallback, this);
   // service server
   goal_joint_space_path_server_ = node_handle_.advertiseService(robot_name_ + "/goal_joint_space_path", &OM_CONTROLLER::goalJointSpacePathCallback, this);
   goal_task_space_path_server_ =  node_handle_.advertiseService(robot_name_ + "/goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);

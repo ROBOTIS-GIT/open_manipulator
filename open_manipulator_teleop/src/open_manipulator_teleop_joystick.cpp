@@ -24,7 +24,7 @@ OM_TELEOP::OM_TELEOP()
     :node_handle_(""),
      priv_node_handle_("~")
 {
-  robot_name_     = priv_node_handle_.param<std::string>("robot_name", "open_manipulator");
+  robot_name_     = node_handle_.param<std::string>("robot_name", "open_manipulator");
   present_joint_angle.resize(NUM_OF_JOINT);
   present_kinematic_position.resize(3);
 
