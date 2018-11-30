@@ -85,6 +85,7 @@ bool Chain::inverseKinematics(Manipulator *manipulator, Name tool_name, Pose tar
   {
     RM_LOG::ERROR("Wrong inverse solver name (please change the solver)");
   }
+  return false;
 }
 
 void Chain::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
@@ -477,7 +478,7 @@ bool Chain::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_nam
 
 bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double> *goal_joint_value)
 {
-  //manipulatorW
+  //manipulator
   Manipulator _manipulator = *manipulator;
 
   //solver parameter

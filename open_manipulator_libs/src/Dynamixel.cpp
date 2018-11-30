@@ -33,7 +33,7 @@ void JointDynamixel::init(std::vector<uint8_t> actuator_id, const void *arg)
 void JointDynamixel::setMode(std::vector<uint8_t> actuator_id, const void *arg)
 {
   bool result = false;
-  const char* log = NULL;
+  // const char* log = NULL;
 
   STRING *get_arg_ = (STRING *)arg;
 
@@ -97,7 +97,7 @@ bool JointDynamixel::sendJointActuatorValue(std::vector<uint8_t> actuator_id, st
   bool result = false;
   std::vector<double> radian_vector;
 
-  for(int index = 0; index < value_vector.size(); index++)
+  for(uint32_t index = 0; index < value_vector.size(); index++)
   {
     radian_vector.push_back(value_vector.at(index).value);
   }
@@ -159,7 +159,6 @@ bool JointDynamixel::setOperatingMode(std::vector<uint8_t> actuator_id, STRING d
 
   const uint32_t velocity = 0;
   const uint32_t acceleration = 0;
-  const uint32_t effort = 0;
   const uint32_t current = 0;
 
   if (dynamixel_mode == "position_mode")
@@ -351,7 +350,7 @@ void GripperDynamixel::init(uint8_t actuator_id, const void *arg)
 void GripperDynamixel::setMode(const void *arg)
 {
   bool result = false;
-  const char* log = NULL;
+// const char* log = NULL;
 
   STRING *get_arg_ = (STRING *)arg;
 
@@ -456,7 +455,6 @@ bool GripperDynamixel::setOperatingMode(STRING dynamixel_mode)
   bool result = false;
 
   const uint32_t velocity = 0;
-  const uint32_t effort = 0;
   const uint32_t acceleration = 0;
   const uint32_t current = 100;
 

@@ -101,10 +101,7 @@ void Line::init(double move_time, double control_time, std::vector<WayPoint> sta
     goal.push_back(c_arg[i]);
   initLine(move_time, control_time, start, goal);
 }
-void Line::setOption(const void *arg)
-{
-
-}
+void Line::setOption(const void *arg){}
 
 //-------------------- Circle --------------------//
 
@@ -182,10 +179,8 @@ void Circle::init(double move_time, double control_time, std::vector<WayPoint> s
   double *get_arg_ = (double *)arg;
   initCircle(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
-void Circle::setOption(const void *arg)
-{
 
-}
+void Circle::setOption(const void *arg){}
 
 //-------------------- Rhombus --------------------//
 
@@ -276,14 +271,12 @@ std::vector<WayPoint> Rhombus::getJointWayPoint(double tick)
 {
   return {};
 }
+
 std::vector<WayPoint> Rhombus::getTaskWayPoint(double tick)
 {
   return drawRhombus(tick);
 }
-void Rhombus::setOption(const void *arg)
-{
-
-}
+void Rhombus::setOption(const void *arg){}
 
 //-------------------- Heart --------------------//
 
@@ -357,15 +350,13 @@ void Heart::init(double move_time, double control_time, std::vector<WayPoint> st
   double *get_arg_ = (double *)arg;
   initHeart(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
-void Heart::setOption(const void *arg)
-{
-
-}
+void Heart::setOption(const void *arg){}
 
 std::vector<WayPoint> Heart::getJointWayPoint(double tick)
 {
   return {};
 }
+
 std::vector<WayPoint> Heart::getTaskWayPoint(double tick)
 {
   return drawHeart(tick);
