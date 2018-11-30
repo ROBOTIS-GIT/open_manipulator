@@ -39,7 +39,7 @@
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/PoseStamped.h>
 
-#include "open_manipulator_msgs/State.h"
+#include "open_manipulator_msgs/OpenManipulatorState.h"
 
 #include "open_manipulator_msgs/GetJointPosition.h"
 #include "open_manipulator_msgs/GetKinematicsPose.h"

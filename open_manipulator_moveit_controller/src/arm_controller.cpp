@@ -103,7 +103,7 @@ void ArmController::initPublisher(bool using_gazebo)
     goal_joint_position_pub_ = nh_.advertise<sensor_msgs::JointState>(robot_name_ + "/goal_joint_position", 10);
   }
 
-  arm_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/arm_state", 10);
+  arm_state_pub_ = nh_.advertise<open_manipulator_msgs::OpenManipulatorState>(robot_name_ + "/arm_state", 10);
 }
 
 void ArmController::initSubscriber(bool using_gazebo)
@@ -314,7 +314,7 @@ void ArmController::process(void)
 //  sensor_msgs::JointState goal_joint_position;
 //  goal_joint_position.header.stamp = ros::Time::now();
   open_manipulator_msgs::SetJointPosition srv;
-  open_manipulator_msgs::State state;
+  open_manipulator_msgs::OpenManipulatorState state;
 
   if (is_moving_)
   {
@@ -361,12 +361,12 @@ void ArmController::process(void)
       ROS_INFO("Complete Execution");
     }
 
-    state.robot = state.IS_MOVING;
+    state.open_manipulator_moving_state = state.IS_MOVING;
     arm_state_pub_.publish(state);
   }
   else
   {
-    state.robot = state.STOPPED;
+    state.open_manipulator_moving_state = state.STOPPED;
     arm_state_pub_.publish(state);
   }
 }
