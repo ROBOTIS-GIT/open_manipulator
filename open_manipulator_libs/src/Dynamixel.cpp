@@ -253,7 +253,7 @@ bool JointDynamixel::writeGoalPosition(std::vector<uint8_t> actuator_id, std::ve
     goal_position[index] = dynamixel_workbench_->convertRadian2Value(actuator_id.at(index), radian_vector.at(index));
   }
 
-  result = dynamixel_workbench_->syncWrite(SYNC_WRITE_HANDLER_FOR_GOAL_POSITION, id_array, actuator_id.size(), goal_position, &log);
+  result = dynamixel_workbench_->syncWrite(SYNC_WRITE_HANDLER_FOR_GOAL_POSITION, id_array, actuator_id.size(), goal_position, 1, &log);
   if (result == false)
   {
     RM_LOG::ERROR(log);
