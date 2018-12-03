@@ -25,11 +25,7 @@
   #include <robotis_manipulator/robotis_manipulator.h>
 #endif
 
-#if defined(__OPENCR__)
-  typedef String		  STRING;
-#else
-  typedef std::string STRING;
-#endif
+//#define KINEMATICS_DEBUG
 
 using namespace Eigen;
 using namespace ROBOTIS_MANIPULATOR;
@@ -39,22 +35,23 @@ namespace KINEMATICS
 class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 {
 private:
-  int8_t inverse_solver_option_;
+  STRING inverse_solver_option_;
 public:
-  Chain():inverse_solver_option_(0){}
+  Chain():inverse_solver_option_("chain_custum_inverse_kinematics"){}
   virtual ~Chain(){}
 
   virtual void setOption(const void *arg);
   virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
+  virtual void forwardKinematics(Manipulator *manipulator);
+  virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
 
-  virtual void forward(Manipulator *manipulator);
-  virtual void forward(Manipulator *manipulator, Name component_name);
-  virtual std::vector<double> inverse(Manipulator *manipulator, Name tool_name, Pose target_pose);
+  void forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name);
+  bool inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  bool inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  bool inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  bool chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
 
-  std::vector<double> inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> srInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
-  std::vector<double> positionOnlyInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose);
 };
 
 } // namespace KINEMATICS

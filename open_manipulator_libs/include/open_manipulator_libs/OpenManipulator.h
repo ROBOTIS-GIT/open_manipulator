@@ -16,36 +16,23 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#ifndef CHAIN_H_
-#define CHAIN_H_
+#ifndef OPEN_MANIPULTOR_H_
+#define OPEN_MANIPULTOR_H_
 
 #include "Dynamixel.h"
 #include "Drawing.h"
 #include "Kinematics.h"
 
-#if defined(__OPENCR__)
-  typedef String		  STRING;
-#else
-  typedef std::string STRING;
-#endif
-
-#define WORLD 0
-#define COMP1 1
-#define COMP2 2
-#define COMP3 3
-#define COMP4 4
-#define TOOL 5
-
 #define NUM_OF_JOINT 4
 #define DXL_SIZE 5
 
-#define DRAWING_LINE 0
-#define DRAWING_CIRCLE 1
-#define DRAWING_RHOMBUS 2
-#define DRAWING_HEART 3
+#define DRAWING_LINE "drawing_line"
+#define DRAWING_CIRCLE "drawing_circle"
+#define DRAWING_RHOMBUS "drawing_rhombus"
+#define DRAWING_HEART "drawing_heart"
 
-#define JOINT_DYNAMIXEL 0
-#define TOOL_DYNAMIXEL 1
+#define JOINT_DYNAMIXEL "joint_dxl"
+#define TOOL_DYNAMIXEL "tool_dxl"
 
 #define CONTROL_TIME 0.010 //s
 
@@ -54,7 +41,7 @@
 #define Z_AXIS RM_MATH::makeVector3(0.0, 0.0, 1.0)
 
 
-class CHAIN : public ROBOTIS_MANIPULATOR::RobotisManipulator
+class OPEN_MANIPULATOR : public ROBOTIS_MANIPULATOR::RobotisManipulator
 {
 private:
   ROBOTIS_MANIPULATOR::Kinematics *kinematics_;
@@ -67,20 +54,17 @@ private:
   DRAWING::Heart heart_;
 
   bool platform_;
-  bool processing_;
-
   std::vector<uint8_t> jointDxlId;
-
  public:
-  CHAIN();
-  virtual ~CHAIN();
+  OPEN_MANIPULATOR();
+  virtual ~OPEN_MANIPULATOR();
 
   void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
-  void chainProcess(double present_time);
+  void openManipulatorProcess(double present_time);
   bool getPlatformFlag();
 };
 
-#endif // CHAIN_H_
+#endif // OPEN_MANIPULTOR_H_
 
 
 

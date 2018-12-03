@@ -48,7 +48,7 @@ include_directories(
 )
 
 add_library(open_manipulator_libs
-  src/Chain.cpp
+  src/OpenManipulator.cpp
   src/Drawing.cpp
   src/Dynamixel.cpp
   src/Kinematics.cpp

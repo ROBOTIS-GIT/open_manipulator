@@ -35,7 +35,7 @@
 #include <sensor_msgs/JointState.h>
 
 #include "open_manipulator_msgs/SetJointPosition.h"
-#include "open_manipulator_msgs/State.h"
+#include "open_manipulator_msgs/OpenManipulatorState.h"
 
 #include <eigen3/Eigen/Eigen>
 

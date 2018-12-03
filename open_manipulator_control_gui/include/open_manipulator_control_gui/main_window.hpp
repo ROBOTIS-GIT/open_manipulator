@@ -38,9 +38,6 @@ namespace open_manipulator_control_gui {
 /*****************************************************************************
 ** Interface [MainWindow]
 *****************************************************************************/
-/**
- * @brief Qt central, all operations relating to the view part here.
- */
 class MainWindow : public QMainWindow {
 Q_OBJECT
 
@@ -61,6 +58,15 @@ public Q_SLOTS:
   void on_btn_read_kinematic_pose_clicked(void);
   void on_btn_send_kinematic_pose_clicked(void);
   void on_btn_set_gripper_clicked(void);
+  void on_btn_actuator_enable_clicked(void);
+  void on_btn_actuator_disable_clicked(void);
+  void on_btn_get_manipulator_setting_clicked(void);
+  void on_radio_drawing_line_clicked(void);
+  void on_radio_drawing_circle_clicked(void);
+  void on_radio_drawing_rhombus_clicked(void);
+  void on_radio_drawing_heart_clicked(void);
+  void on_btn_send_drawing_trajectory_clicked(void);
+
   void tabSelected();
 
 private:

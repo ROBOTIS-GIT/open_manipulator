@@ -28,7 +28,7 @@ Line::~Line() {}
 
 void Line::initLine(double move_time, double control_time, std::vector<WayPoint> start, std::vector<WayPoint> goal)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
   move_time_ = move_time;
   acc_dec_time_ = move_time_ * 0.2;
   vel_max_.resize(3);
@@ -101,10 +101,7 @@ void Line::init(double move_time, double control_time, std::vector<WayPoint> sta
     goal.push_back(c_arg[i]);
   initLine(move_time, control_time, start, goal);
 }
-void Line::setOption(const void *arg)
-{
-
-}
+void Line::setOption(const void *arg){}
 
 //-------------------- Circle --------------------//
 
@@ -113,7 +110,7 @@ Circle::~Circle() {}
 
 void Circle::initCircle(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
 
   start_pose_ = start;
 
@@ -125,10 +122,12 @@ void Circle::initCircle(double move_time, double control_time, std::vector<WayPo
 
   drawingStart.value = 0.0;
   drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
   drawingStart.effort = 0.0;
 
   drawingGoal.value = revolution_ * 2*M_PI;
   drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
   path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
@@ -180,10 +179,8 @@ void Circle::init(double move_time, double control_time, std::vector<WayPoint> s
   double *get_arg_ = (double *)arg;
   initCircle(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
-void Circle::setOption(const void *arg)
-{
 
-}
+void Circle::setOption(const void *arg){}
 
 //-------------------- Rhombus --------------------//
 
@@ -192,7 +189,7 @@ Rhombus::~Rhombus() {}
 
 void Rhombus::initRhombus(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
 
   start_pose_ = start;
 
@@ -204,10 +201,12 @@ void Rhombus::initRhombus(double move_time, double control_time, std::vector<Way
 
   drawingStart.value = 0.0;
   drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
   drawingStart.effort = 0.0;
 
   drawingGoal.value = revolution_ * M_PI;
   drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
   path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
@@ -272,14 +271,12 @@ std::vector<WayPoint> Rhombus::getJointWayPoint(double tick)
 {
   return {};
 }
+
 std::vector<WayPoint> Rhombus::getTaskWayPoint(double tick)
 {
   return drawRhombus(tick);
 }
-void Rhombus::setOption(const void *arg)
-{
-
-}
+void Rhombus::setOption(const void *arg){}
 
 //-------------------- Heart --------------------//
 
@@ -288,7 +285,7 @@ Heart::~Heart() {}
 
 void Heart::initHeart(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position)
 {
-  output_way_point_type_ = TASK;
+  output_way_point_type_ = TASK_WAY_POINT;
 
   start_pose_ = start;
 
@@ -300,10 +297,12 @@ void Heart::initHeart(double move_time, double control_time, std::vector<WayPoin
 
   drawingStart.value = 0.0;
   drawingStart.velocity = 0.0;
+  drawingStart.acceleration = 0.0;
   drawingStart.effort = 0.0;
 
   drawingGoal.value = revolution_ * M_PI;
   drawingGoal.velocity = 0.0;
+  drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
   path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
@@ -351,15 +350,13 @@ void Heart::init(double move_time, double control_time, std::vector<WayPoint> st
   double *get_arg_ = (double *)arg;
   initHeart(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
-void Heart::setOption(const void *arg)
-{
-
-}
+void Heart::setOption(const void *arg){}
 
 std::vector<WayPoint> Heart::getJointWayPoint(double tick)
 {
   return {};
 }
+
 std::vector<WayPoint> Heart::getTaskWayPoint(double tick)
 {
   return drawHeart(tick);

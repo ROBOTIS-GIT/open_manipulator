@@ -27,12 +27,6 @@
   #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
 #endif
 
-#if defined(__OPENCR__)
-  typedef String		  STRING;
-#else
-  typedef std::string STRING;
-#endif
-
 namespace DYNAMIXEL
 {
 
@@ -68,7 +62,6 @@ class JointDynamixel : public ROBOTIS_MANIPULATOR::JointActuator
  private:
   DynamixelWorkbench *dynamixel_workbench_;
   Joint dynamixel_;
-  ROBOTIS_MANIPULATOR::DEBUG debug_;
 
  public:
   JointDynamixel() {}
@@ -99,7 +92,6 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
  private:
   DynamixelWorkbench *dynamixel_workbench_;
   Joint dynamixel_;
-  ROBOTIS_MANIPULATOR::DEBUG debug_;
 
  public:
   GripperDynamixel() {}

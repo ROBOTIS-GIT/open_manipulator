@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>909</width>
-    <height>578</height>
+    <width>793</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QRosApp</string>
+   <string>OpenManipulator control GUI</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/images.qrc">
@@ -27,8 +27,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>60</y>
+      <x>510</x>
+      <y>103</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -49,8 +49,8 @@
    <widget class="QPushButton" name="btn_timer_start">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>15</y>
+      <x>460</x>
+      <y>10</y>
       <width>321</width>
       <height>31</height>
      </rect>
@@ -65,8 +65,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>90</y>
+      <x>510</x>
+      <y>133</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -90,8 +90,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>120</y>
+      <x>510</x>
+      <y>163</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -115,8 +115,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>150</y>
+      <x>510</x>
+      <y>193</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -137,8 +137,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>64</y>
+      <x>460</x>
+      <y>107</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -150,8 +150,8 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>94</y>
+      <x>460</x>
+      <y>137</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -163,8 +163,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>124</y>
+      <x>460</x>
+      <y>167</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -176,8 +176,8 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>154</y>
+      <x>460</x>
+      <y>197</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -192,8 +192,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>116</y>
+      <x>670</x>
+      <y>159</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -214,8 +214,8 @@
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>120</y>
+      <x>650</x>
+      <y>163</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -230,8 +230,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>86</y>
+      <x>670</x>
+      <y>129</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -252,8 +252,8 @@
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>90</y>
+      <x>650</x>
+      <y>133</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -268,8 +268,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>56</y>
+      <x>670</x>
+      <y>99</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -290,8 +290,8 @@
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>60</y>
+      <x>650</x>
+      <y>103</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -303,8 +303,8 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>705</x>
-      <y>64</y>
+      <x>595</x>
+      <y>107</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -316,8 +316,8 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>705</x>
-      <y>94</y>
+      <x>595</x>
+      <y>137</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -329,8 +329,8 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>705</x>
-      <y>124</y>
+      <x>595</x>
+      <y>167</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -342,8 +342,8 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>705</x>
-      <y>154</y>
+      <x>595</x>
+      <y>197</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -355,8 +355,8 @@
    <widget class="QLabel" name="label_15">
     <property name="geometry">
      <rect>
-      <x>865</x>
-      <y>120</y>
+      <x>755</x>
+      <y>163</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -368,8 +368,8 @@
    <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
-      <x>865</x>
-      <y>90</y>
+      <x>755</x>
+      <y>133</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -381,8 +381,8 @@
    <widget class="QLabel" name="label_17">
     <property name="geometry">
      <rect>
-      <x>865</x>
-      <y>60</y>
+      <x>755</x>
+      <y>103</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -397,8 +397,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>190</y>
+      <x>460</x>
+      <y>233</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -413,8 +413,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>190</y>
+      <x>630</x>
+      <y>233</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -427,7 +427,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>7</y>
+      <y>70</y>
       <width>59</width>
       <height>21</height>
      </rect>
@@ -440,9 +440,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>37</y>
-      <width>531</width>
-      <height>481</height>
+      <y>100</y>
+      <width>421</width>
+      <height>471</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -455,8 +455,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>230</y>
+      <x>630</x>
+      <y>273</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -471,8 +471,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>230</y>
+      <x>460</x>
+      <y>273</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -484,8 +484,8 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>270</y>
+      <x>460</x>
+      <y>313</y>
       <width>321</width>
       <height>221</height>
      </rect>
@@ -910,7 +910,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Read joint angle</string>
+       <string>Read kinematic pose</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_29">
@@ -1017,12 +1017,322 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="tab_drawing">
+     <attribute name="title">
+      <string>Drawing</string>
+     </attribute>
+     <widget class="QRadioButton" name="radio_drawing_line">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Line</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_drawing_circle">
+      <property name="geometry">
+       <rect>
+        <x>73</x>
+        <y>10</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Circle</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_drawing_rhombus">
+      <property name="geometry">
+       <rect>
+        <x>146</x>
+        <y>10</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Rhombus</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_drawing_heart">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>10</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Heart</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txt_drawing_arg_1">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>50</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Transpose X</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txt_drawing_arg_unit_1">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>54</y>
+        <width>59</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>m</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txt_drawing_arg_3">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Transpose Z</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="doubleSpinBox_drawing_arg_1">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>50</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="decimals">
+       <number>3</number>
+      </property>
+      <property name="minimum">
+       <double>-10.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>10.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txt_drawing_arg_unit_3">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>114</y>
+        <width>59</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>m</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="doubleSpinBox_time_drawing">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>155</y>
+        <width>71</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="minimum">
+       <double>-3.140000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>10.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.500000000000000</double>
+      </property>
+      <property name="value">
+       <double>2.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="doubleSpinBox_drawing_arg_2">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>80</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="decimals">
+       <number>3</number>
+      </property>
+      <property name="minimum">
+       <double>-10.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>10.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_46">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>160</y>
+        <width>59</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>time</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txt_drawing_arg_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Transpose Y</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_48">
+      <property name="geometry">
+       <rect>
+        <x>144</x>
+        <y>160</y>
+        <width>59</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>s</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_send_drawing_trajectory">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>169</x>
+        <y>150</y>
+        <width>141</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Send</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="doubleSpinBox_drawing_arg_3">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>110</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="decimals">
+       <number>3</number>
+      </property>
+      <property name="minimum">
+       <double>-10.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>10.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txt_drawing_arg_unit_2">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>84</y>
+        <width>59</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>m</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_option">
+     <attribute name="title">
+      <string>Option</string>
+     </attribute>
+     <widget class="QPushButton" name="btn_get_manipulator_setting">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>150</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Get Manipulator setting</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QDoubleSpinBox" name="doubleSpinBox_gripper">
     <property name="geometry">
      <rect>
-      <x>627</x>
-      <y>503</y>
+      <x>517</x>
+      <y>546</y>
       <width>81</width>
       <height>23</height>
      </rect>
@@ -1034,7 +1344,7 @@
      <number>3</number>
     </property>
     <property name="minimum">
-     <double>-0.015000000000000</double>
+     <double>-0.010000000000000</double>
     </property>
     <property name="maximum">
      <double>0.010000000000000</double>
@@ -1049,8 +1359,8 @@
    <widget class="QLabel" name="label_37">
     <property name="geometry">
      <rect>
-      <x>573</x>
-      <y>503</y>
+      <x>463</x>
+      <y>546</y>
       <width>59</width>
       <height>20</height>
      </rect>
@@ -1065,8 +1375,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>500</y>
+      <x>630</x>
+      <y>543</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -1078,8 +1388,8 @@
    <widget class="QLabel" name="label_38">
     <property name="geometry">
      <rect>
-      <x>745</x>
-      <y>150</y>
+      <x>635</x>
+      <y>193</y>
       <width>61</width>
       <height>20</height>
      </rect>
@@ -1094,8 +1404,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>802</x>
-      <y>150</y>
+      <x>692</x>
+      <y>193</y>
       <width>60</width>
       <height>22</height>
      </rect>
@@ -1116,8 +1426,8 @@
    <widget class="QLabel" name="label_39">
     <property name="geometry">
      <rect>
-      <x>866</x>
-      <y>153</y>
+      <x>756</x>
+      <y>196</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -1129,8 +1439,8 @@
    <widget class="QLabel" name="label_40">
     <property name="geometry">
      <rect>
-      <x>713</x>
-      <y>507</y>
+      <x>603</x>
+      <y>550</y>
       <width>21</width>
       <height>16</height>
      </rect>
@@ -1139,13 +1449,94 @@
      <string>m</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btn_actuator_enable">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>50</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Actuator enable</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_actuator_disable">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>50</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Actuator disable</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_41">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>10</y>
+      <width>191</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>OpenManipulator states</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="txt_moving_state">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>42</y>
+      <width>171</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Moving state</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="txt_actuactor_state">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>42</y>
+      <width>171</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Actuator state</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>909</width>
+     <width>793</width>
      <height>19</height>
     </rect>
    </property>
@@ -1162,7 +1553,6 @@
    </widget>
    <addaction name="menu_File"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="action_Quit">
    <property name="text">
     <string>&amp;Quit</string>

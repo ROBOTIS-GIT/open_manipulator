@@ -16,63 +16,80 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#include "../include/open_manipulator_libs/Chain.h"
+#include "../include/open_manipulator_libs/OpenManipulator.h"
 
-CHAIN::CHAIN()
+OPEN_MANIPULATOR::OPEN_MANIPULATOR()
 {}
-CHAIN::~CHAIN()
+OPEN_MANIPULATOR::~OPEN_MANIPULATOR()
 {}
 
-void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
+void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
 {
   platform_ = using_platform;
   ////////// manipulator parameter initialization
 
-  addWorld(WORLD, // world name
-           COMP1);// child name
+  addWorld("world",   // world name
+           "joint1"); // child name
 
-  addComponent(COMP1, // my name
-               WORLD, // parent name
-               COMP2, // child name
-               RM_MATH::makeVector3(0.012, 0.0, 0.017), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Z_AXIS, // axis of rotation
-               11); // actuator id
+  addJoint("joint1", // my name
+           "world",  // parent name
+           "joint2", // child name
+           RM_MATH::makeVector3(0.012, 0.0, 0.017), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Z_AXIS, // axis of rotation
+           11,     // actuator id
+           M_PI,   // max joint limit (3.14 rad)
+           -M_PI); // min joint limit (-3.14 rad)
 
-  addComponent(COMP2, // my name
-               COMP1, // parent name
-               COMP3, // child name
-               RM_MATH::makeVector3(0.0, 0.0, 0.058), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Y_AXIS, // axis of rotation
-               12); // actuator id
 
-  addComponent(COMP3, // my name
-               COMP2, // parent name
-               COMP4, // child name
-               RM_MATH::makeVector3(0.024, 0.0, 0.128), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Y_AXIS, // axis of rotation
-               13); // actuator id
+  addJoint("joint2", // my name
+           "joint1", // parent name
+           "joint3", // child name
+           RM_MATH::makeVector3(0.0, 0.0, 0.058), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Y_AXIS, // axis of rotation
+           12,     // actuator id
+           M_PI_2,   // max joint limit (1.67 rad)
+           -2.05); // min joint limit (-2.05 rad)
 
-  addComponent(COMP4, // my name
-               COMP3, // parent name
-               TOOL, // child name
-               RM_MATH::makeVector3(0.124, 0.0, 0.0), // relative position
-               RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-               Y_AXIS, // axis of rotation
-               14); // actuator id
+  addJoint("joint3", // my name
+           "joint2", // parent name
+           "joint4", // child name
+           RM_MATH::makeVector3(0.024, 0.0, 0.128), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Y_AXIS, // axis of rotation
+           13,     // actuator id
+           1.53,      // max joint limit (1.53 rad)
+           -M_PI_2); // min joint limit (-1.67 rad)
 
-  addTool(TOOL, // my name
-          COMP4, // parent name
+  addJoint("joint4", // my name
+           "joint3", // parent name
+           "tool",   // child name
+           RM_MATH::makeVector3(0.124, 0.0, 0.0), // relative position
+           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           Y_AXIS, // axis of rotation
+           14,     // actuator id
+           2.0,    // max joint limit (2.0 rad)
+           -1.8);  // min joint limit (-1.8 rad)
+
+  addTool("tool",   // my name
+          "joint4", // parent name
           RM_MATH::makeVector3(0.130, 0.0, 0.0), // relative position
           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
-          15, // actuator id
+          15,     // actuator id
+          0.010,  // max gripper limit (0.01 m)
+          -0.010, // min gripper limit (-0.01 m)
           -0.015); // Change unit from `meter` to `radian`
 
   ////////// kinematics init.
   kinematics_ = new KINEMATICS::Chain();
   addKinematics(kinematics_);
+  STRING inverse_option[2] = {"inverse_solver", "chain_custum_inverse_kinematics"};
+//  STRING inverse_option[2] = {"inverse_solver", "sr_inverse"};
+//  STRING inverse_option[2] = {"inverse_solver", "position_only_inverse"};
+//  STRING inverse_option[2] = {"inverse_solver", "normal_inverse"};
+  void *inverse_option_arg = &inverse_option;
+  kinematicsSetOption(inverse_option_arg);
 
   if(platform_)
   {
@@ -121,13 +138,13 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     gripper_dxl_opt_arg[0] = "Profile_Velocity";
-    gripper_dxl_opt_arg[1] = "20";
+    gripper_dxl_opt_arg[1] = "200";
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     // all actuator enable
     allActuatorEnable();
     receiveAllJointActuatorValue();
-    receiveToolActuatorValue(TOOL);
+    receiveAllToolActuatorValue();
   }
   ////////// drawing path
   addDrawingTrajectory(DRAWING_LINE, &line_);
@@ -139,25 +156,28 @@ void CHAIN::initManipulator(bool using_platform, STRING usb_port, STRING baud_ra
   setTrajectoryControlTime(CONTROL_TIME);
 }
 
-void CHAIN::chainProcess(double present_time)
+void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
 {
-  std::vector<WayPoint> goal_value = trajectoryControllerLoop(present_time);
+  std::vector<WayPoint> goal_value  = getJointGoalValueFromTrajectory(present_time);
+  std::vector<double> tool_value    = getToolGoalValue();
 
   if(platform_)
   {
     receiveAllJointActuatorValue();
-    receiveToolActuatorValue(TOOL);
-    if(goal_value.size() != 0)  sendAllJointActuatorValue(goal_value);
-    forward();
+    receiveAllToolActuatorValue();
+    if(goal_value.size() != 0) sendAllJointActuatorValue(goal_value);
+    if(tool_value.size() != 0) sendAllToolActuatorValue(tool_value);
   }
-  else
+  else // visualization
   {
-    if(goal_value.size() != 0) setAllActiveJointValue(goal_value); // visualization
-    forward();
+    if(goal_value.size() != 0) setAllActiveJointWayPoint(goal_value);
+    if(tool_value.size() != 0) setAllToolValue(tool_value);
   }
+  forwardKinematics();
 }
 
-bool CHAIN::getPlatformFlag()
+bool OPEN_MANIPULATOR::getPlatformFlag()
 {
   return platform_;
 }
+

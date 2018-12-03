@@ -70,7 +70,7 @@ void GripperController::initPublisher(bool using_gazebo)
     gripper_position_pub_ = nh_.advertise<sensor_msgs::JointState>(robot_name_ + "/goal_gripper_position", 10);
   }
 
-  gripper_state_pub_ = nh_.advertise<open_manipulator_msgs::State>(robot_name_ + "/gripper_state", 10);
+  gripper_state_pub_ = nh_.advertise<open_manipulator_msgs::OpenManipulatorState>(robot_name_ + "/gripper_state", 10);
 }
 
 void GripperController::initSubscriber(bool using_gazebo)
@@ -214,7 +214,7 @@ void GripperController::process(void)
   static uint16_t step_cnt = 0;
   std_msgs::Float64 gazebo_goal_gripper_position;
   sensor_msgs::JointState goal_gripper_position;
-  open_manipulator_msgs::State state;
+  open_manipulator_msgs::OpenManipulatorState state;
 
   if (is_moving_)
   {
@@ -246,12 +246,12 @@ void GripperController::process(void)
       ROS_INFO("Complete Execution");
     }
 
-    state.robot = state.IS_MOVING;
+    state.open_manipulator_moving_state = state.IS_MOVING;
     gripper_state_pub_.publish(state);
   }
   else
   {
-    state.robot = state.STOPPED;
+    state.open_manipulator_moving_state = state.STOPPED;
     gripper_state_pub_.publish(state);
   }
 }
