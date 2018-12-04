@@ -52,7 +52,6 @@
 
 namespace open_manipulator
 {
-#define JOINT_NUM 4
 
 typedef struct
 {

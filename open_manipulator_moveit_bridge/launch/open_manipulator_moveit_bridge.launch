@@ -1,14 +1,11 @@
 <launch>
-  <arg name="use_gazebo"       default="false"/>
   <arg name="use_robot_name"   default="open_manipulator"/>
-  <arg name="init_position"    default="false"/>
+  <arg name="use_platform"     default="true"/>
+  <arg name="init_position"    default="true"/>
 
-  <param name="gazebo"              value="$(arg use_gazebo)" type="bool"/>
-  <param name="robot_name"          value="$(arg use_robot_name)"/>
-
-  <node name="moveit_bridge" pkg="open_manipulator_moveit_bridge" type="moveit_bridge" required="true" output="screen">
-    <param name="init_position"         value="$(arg init_position)"/>
+  <node name="moveit_bridge" pkg="open_manipulator_moveit_bridge" type="moveit_bridge" output="screen"
+  ns="$(arg use_platform)" args="joint1 joint2 joint3 joint4 grip_joint grip_joint_sub">
+    <param name="init_position"       value="$(arg init_position)"/>
+    <param name="robot_name"          value="$(arg use_robot_name)"/>
   </node>
-
-<!--  <node name="gripper_controller" pkg="open_manipulator_moveit_controller" type="gripper_controller" required="true" output="screen"/>-->
 </launch>
