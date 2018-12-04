@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>open_manipulator_moveit_controller</name>
+  <name>open_manipulator_moveit_bridge</name>
   <version>1.0.0</version>
   <description>
     This packages based on MoveIt! framework to manipulate OpenManipulator

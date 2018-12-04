@@ -6,7 +6,7 @@
   <param name="gazebo"              value="$(arg use_gazebo)" type="bool"/>
   <param name="robot_name"          value="$(arg use_robot_name)"/>
 
-  <node name="arm_controller" pkg="open_manipulator_moveit_controller" type="arm_controller" required="true" output="screen">
+  <node name="moveit_bridge" pkg="open_manipulator_moveit_bridge" type="moveit_bridge" required="true" output="screen">
     <param name="init_position"         value="$(arg init_position)"/>
   </node>
 

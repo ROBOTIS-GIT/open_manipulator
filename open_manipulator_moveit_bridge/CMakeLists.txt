@@ -2,7 +2,7 @@
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 2.8.3)
-project(open_manipulator_moveit_controller)
+project(open_manipulator_moveit_bridge)
 
 add_compile_options(-std=c++11)
 
@@ -53,18 +53,14 @@ include_directories(
   ${EIGEN3_INCLUDE_DIRS}
 )
 
-add_executable(arm_controller src/arm_controller.cpp)
-add_dependencies(arm_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(arm_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
-
-add_executable(gripper_controller src/gripper_controller.cpp)
-add_dependencies(gripper_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(gripper_controller ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+add_executable(moveit_bridge src/moveit_bridge.cpp)
+add_dependencies(moveit_bridge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(moveit_bridge ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS arm_controller gripper_controller
+install(TARGETS moveit_bridge
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

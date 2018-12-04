@@ -16,8 +16,8 @@
 
 /* Authors: Taehun Lim (Darby) */
 
-#ifndef OPEN_MANIPULATOR_GRIPPER_CONTROLLER_H
-#define OPEN_MANIPULATOR_GRIPPER_CONTROLLER_H
+#ifndef OPEN_MANIPULATOR_ARM_CONTROLLER_H
+#define OPEN_MANIPULATOR_ARM_CONTROLLER_H
 
 #include <ros/ros.h>
 
@@ -25,38 +25,44 @@
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/planning_interface/planning_interface.h>
 
+#include <moveit/robot_model_loader/robot_model_loader.h>
+#include <moveit/robot_model/robot_model.h>
+#include <moveit/robot_state/robot_state.h>
+
 #include <moveit_msgs/DisplayTrajectory.h>
 
 #include <vector>
 
 #include <std_msgs/Float64.h>
+#include <std_msgs/Float64MultiArray.h>
 #include <std_msgs/String.h>
 
 #include <sensor_msgs/JointState.h>
+#include <geometry_msgs/PoseStamped.h>
+
+#include "open_manipulator_msgs/OpenManipulatorState.h"
+
+#include "open_manipulator_msgs/GetJointPosition.h"
+#include "open_manipulator_msgs/GetKinematicsPose.h"
 
 #include "open_manipulator_msgs/SetJointPosition.h"
-#include "open_manipulator_msgs/OpenManipulatorState.h"
+#include "open_manipulator_msgs/SetKinematicsPose.h"
 
 #include <eigen3/Eigen/Eigen>
 
 namespace open_manipulator
 {
-#define LEFT_PALM   0
-#define RIGHT_PALM  1
-
-#define ITERATION_FREQUENCY 100 //Hz
-
-#define GRIP_ON   -0.008    // mm
-#define GRIP_OFF  0.008
-#define NEUTRAL   0.0
+#define JOINT_NUM 4
 
 typedef struct
 {
+  uint8_t group;
   uint16_t waypoints;                                  // planned number of via-points
+  double time_from_start;
   Eigen::MatrixXd planned_path_positions;              // planned position trajectory
 } PlannedPathInfo;
 
-class GripperController
+class MoveItBridge
 {
  private:
   // ROS NodeHandle
@@ -66,20 +72,27 @@ class GripperController
   // ROS Parameters
   bool using_gazebo_;
   std::string robot_name_;
-  int palm_num_;
-  int gripper_dxl_id_;
+  int joint_num_;
+  bool init_position_;
 
   // ROS Publisher
-  ros::Publisher gazebo_gripper_position_pub_[2];
-  ros::Publisher gripper_position_pub_;
-  ros::Publisher gripper_state_pub_;
+  ros::Publisher gazebo_goal_joint_position_pub_[10];
+  ros::Publisher open_manipulator_with_tb3_joint_position_pub_;
+  ros::Publisher open_manipulator_with_tb3_joint_move_time_pub_;
+  ros::Publisher open_manipulator_with_tb3_gripper_position_pub_;
+  ros::Publisher open_manipulator_with_tb3_gripper_move_time_pub_;
+  ros::Publisher arm_state_pub_;
 
   // ROS Subscribers
   ros::Subscriber display_planned_path_sub_;
-  ros::Subscriber gripper_onoff_sub_;
 
   // ROS Service Server
-  ros::ServiceServer set_gripper_position_server_;
+  ros::ServiceServer get_joint_position_server_;
+  ros::ServiceServer get_kinematics_pose_server_;
+  ros::ServiceServer set_joint_position_server_;
+  ros::ServiceServer set_kinematics_pose_server_;
+
+  ros::ServiceClient goal_joint_space_path_client_;
 
   // ROS Service Client
 
@@ -92,26 +105,37 @@ class GripperController
   uint16_t all_time_steps_;
 
  public:
-  GripperController();
-  virtual ~GripperController();
+  MoveItBridge();
+  virtual ~MoveItBridge();
 
-  void process(void);
+  void controlCallback(const ros::TimerEvent&);
 
  private:
   void initPublisher(bool using_gazebo);
   void initSubscriber(bool using_gazebo);
 
   void initServer();
+  void initClient();
+
+  void initJointPosition();
 
   bool calcPlannedPath(open_manipulator_msgs::JointPosition msg);
+  bool calcPlannedPath(open_manipulator_msgs::KinematicsPose msg);
 
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
-  bool setGripperPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
-                                     open_manipulator_msgs::SetJointPosition::Response &res);
+  bool setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
+                                   open_manipulator_msgs::SetJointPosition::Response &res);
 
-  void gripperOnOffMsgCallback(const std_msgs::String::ConstPtr &msg);
+  bool setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
+                                    open_manipulator_msgs::SetKinematicsPose::Response &res);
+
+  bool getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
+                                   open_manipulator_msgs::GetJointPosition::Response &res);
+
+  bool getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
+                                    open_manipulator_msgs::GetKinematicsPose::Response &res);
 };
 }
 
-#endif /*OPEN_MANIPULATOR_GRIPPER_CONTROLLER_H*/
+#endif /*OPEN_MANIPULATOR_ARM_CONTROLLER_H*/
