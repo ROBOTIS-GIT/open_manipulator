@@ -1,6 +1,8 @@
 <launch>
-  <arg name="use_gazebo"	   default="false" />
-  <arg name="debug"          default="false" />
+  <arg name="use_platform"     default="false"/>
+  <arg name="use_robot_name"   default="open_manipulator"/>
+  <arg name="publish_period"   default="0.010"/>
+  <arg name="debug"            default="false" />
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
   <include file="$(find open_manipulator_moveit)/launch/planning_context.launch">
@@ -32,8 +34,9 @@
 
   <!-- OpenManipultor Position controller-->
   <include file="$(find open_manipulator_moveit_bridge)/launch/open_manipulator_moveit_bridge.launch">
-    <arg name="use_gazebo"     value="$(arg use_gazebo)"/>
-    <arg name="use_robot_name" value="open_manipulator"/>
+    <arg name="use_platform"     value="$(arg use_platform)"/>
+    <arg name="use_robot_name"   value="$(arg use_robot_name)"/>
+    <arg name="publish_period"   value="$(arg publish_period)"/>
   </include>
 
 </launch>

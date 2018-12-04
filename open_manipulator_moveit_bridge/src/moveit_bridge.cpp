@@ -21,33 +21,21 @@
 using namespace open_manipulator;
 
 MoveItBridge::MoveItBridge()
-    :priv_nh_("~"),
-     using_gazebo_(false),
-     robot_name_(""),
-     init_position_(false),
-     joint_num_(4),
+    :nh_(""),
+     priv_nh_("~"),
+     publish_period_(0.010f),
+     use_platform_(true),
+     set_home_position_(true),
      is_moving_(false)
 {
   // Init parameter
-  nh_.getParam("gazebo", using_gazebo_);
-  nh_.getParam("robot_name", robot_name_);
-  priv_nh_.getParam("init_position", init_position_);
+  set_home_position_ = priv_nh_.param<bool>("set_home_position", true);
+  use_platform_ = priv_nh_.param<bool>("use_platform", true);
+  publish_period_ = priv_nh_.param<double>("publish_period", 0.010f);
 
-  joint_num_ = JOINT_NUM;
+  //  planned_path_info_.waypoints = 10;
+  //  planned_path_info_.planned_path_positions = Eigen::MatrixXd::Zero(planned_path_info_.waypoints, joint_num_);
 
-  planned_path_info_.waypoints = 10;
-  planned_path_info_.planned_path_positions = Eigen::MatrixXd::Zero(planned_path_info_.waypoints, joint_num_);
-
-  move_group = new moveit::planning_interface::MoveGroupInterface("arm");
-
-  initPublisher(using_gazebo_);
-  initSubscriber(using_gazebo_);
-
-  initServer();
-  initClient();
-
-  if (init_position_ == true)
-    initJointPosition();
 }
 
 MoveItBridge::~MoveItBridge()
@@ -56,60 +44,77 @@ MoveItBridge::~MoveItBridge()
   return;
 }
 
-void MoveItBridge::initJointPosition()
+bool MoveItBridge::getPlanningGroupInfo(const std::string yaml_file)
 {
-  open_manipulator_msgs::JointPosition msg;
+  YAML::Node file;
+  file = YAML::LoadFile(yaml_file.c_str());
 
-  msg.joint_name.push_back("joint1");
-  msg.joint_name.push_back("joint2");
-  msg.joint_name.push_back("joint3");
-  msg.joint_name.push_back("joint4");
+  if (file == NULL)
+    return false;
 
-  msg.position.push_back(0.0);
-  msg.position.push_back(-1.5707);
-  msg.position.push_back(1.37);
-  msg.position.push_back(0.2258);
+  for (YAML::const_iterator it_file = file.begin(); it_file != file.end(); it_file++)
+  {
+    std::string planning_group_name = it_file->first.as<std::string>();
+    if (planning_group_name.size() == 0)
+    {
+      continue;
+    }
 
-  msg.max_velocity_scaling_factor = 0.2;
-  msg.max_accelerations_scaling_factor = 0.5;
+    YAML::Node joint = file[planning_group_name];
+    uint8_t joint_size = joint["names"].size();
 
-  calcPlannedPath(msg);
+    for (uint8_t index = 0; index < joint_size; index++)
+    {
+      std::string joint_name = joint["names"][index].as<std::string>();
+      planning_group_[planning_group_name].name.push_back(joint_name);
+    }
+  }
+
+  return true;
 }
 
-void MoveItBridge::initPublisher(bool using_gazebo)
+void MoveItBridge::initPlanningGroup()
 {
-  if (using_gazebo)
+  for (auto const& group:planning_group_)
+  {
+    moveit::planning_interface::MoveGroupInterface *move_group;
+    move_group = new moveit::planning_interface::MoveGroupInterface(group.first);
+
+    move_group_[group.first] = move_group;
+  }
+}
+
+void MoveItBridge::initPublisher()
+{
+  if (use_platform_ == false)
   {
     ROS_INFO("SET Gazebo Simulation Mode(Joint)");
 
-    std::string joint_name[joint_num_] = {"joint1", "joint2", "joint3", "joint4"};
-
-    for (uint8_t index = 0; index < joint_num_; index++)
+    for (auto const& group:planning_group_)
     {
-      if (robot_name_ == "open_manipulator" || robot_name_ == "open_manipulator_with_tb3")
+      Joints joints = group.second;
+      for (auto const& joint_name:joints.name)
       {
-        gazebo_goal_joint_position_pub_[index]
-          = nh_.advertise<std_msgs::Float64>(robot_name_ + "/" + joint_name[index] + "_position/command", 10);
-      }
-      else
-      {
-        gazebo_goal_joint_position_pub_[index]
-          = nh_.advertise<std_msgs::Float64>(joint_name[index] + "_position/command", 10);
+        ros::Publisher publisher = priv_nh_.advertise<std_msgs::Float64>(joint_name + "_position/command", 10);
+        gazebo_goal_joint_position_pub_.push_back(publisher);
       }
     }
   }
   else
   {
-    open_manipulator_with_tb3_joint_position_pub_ = nh_.advertise<std_msgs::Float64MultiArray>(robot_name_ + "/joint_position", 10);
-    open_manipulator_with_tb3_joint_move_time_pub_ = nh_.advertise<std_msgs::Float64>(robot_name_ + "/joint_move_time", 10);
-    open_manipulator_with_tb3_gripper_position_pub_ = nh_.advertise<std_msgs::Float64MultiArray>(robot_name_ + "/gripper_position", 10);
-    open_manipulator_with_tb3_gripper_move_time_pub_ = nh_.advertise<std_msgs::Float64>(robot_name_ + "/gripper_move_time", 10);
+    dynamixel_workbench_pub_ = priv_nh_.advertise<trajectory_msgs::JointTrajectory>("joint_trajectory", 100);
+
+    joint_position_pub_ = priv_nh_.advertise<std_msgs::Float64MultiArray>("joint_position", 10);
+    joint_move_time_pub_ = priv_nh_.advertise<std_msgs::Float64>("joint_move_time", 10);
+
+    gripper_position_pub_ = priv_nh_.advertise<std_msgs::Float64MultiArray>("gripper_position", 10);
+    gripper_move_time_pub_ = priv_nh_.advertise<std_msgs::Float64>("gripper_move_time", 10);
   }
 
-  arm_state_pub_ = nh_.advertise<open_manipulator_msgs::OpenManipulatorState>(robot_name_ + "/arm_state", 10);
+  moving_state_pub_ = priv_nh_.advertise<open_manipulator_msgs::OpenManipulatorState>("moving_state", 10);
 }
 
-void MoveItBridge::initSubscriber(bool using_gazebo)
+void MoveItBridge::initSubscriber()
 {
   display_planned_path_sub_ = nh_.subscribe("/move_group/display_planned_path", 100,
                                             &MoveItBridge::displayPlannedPathMsgCallback, this);
@@ -117,15 +122,15 @@ void MoveItBridge::initSubscriber(bool using_gazebo)
 
 void MoveItBridge::initServer()
 {
-  get_joint_position_server_  = nh_.advertiseService(robot_name_ + "/get_joint_position", &MoveItBridge::getJointPositionMsgCallback, this);
-  get_kinematics_pose_server_ = nh_.advertiseService(robot_name_ + "/get_kinematics_pose", &MoveItBridge::getKinematicsPoseMsgCallback, this);
-  set_joint_position_server_  = nh_.advertiseService(robot_name_ + "/set_joint_position", &MoveItBridge::setJointPositionMsgCallback, this);
-  set_kinematics_pose_server_ = nh_.advertiseService(robot_name_ + "/set_kinematics_pose", &MoveItBridge::setKinematicsPoseMsgCallback, this);
+  get_joint_position_server_  = priv_nh_.advertiseService("get_joint_position", &MoveItBridge::getJointPositionMsgCallback, this);
+  get_kinematics_pose_server_ = priv_nh_.advertiseService("get_kinematics_pose", &MoveItBridge::getKinematicsPoseMsgCallback, this);
+  set_joint_position_server_  = priv_nh_.advertiseService("set_joint_position", &MoveItBridge::setJointPositionMsgCallback, this);
+  set_kinematics_pose_server_ = priv_nh_.advertiseService("set_kinematics_pose", &MoveItBridge::setKinematicsPoseMsgCallback, this);
 }
 
 void MoveItBridge::initClient()
 {
-  goal_joint_space_path_client_ = nh_.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name_ + "/goal_joint_space_path");
+  open_manipulator_joint_control_client_ = priv_nh_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
 }
 
 bool MoveItBridge::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
@@ -134,18 +139,17 @@ bool MoveItBridge::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPo
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  const std::vector<std::string> &joint_names = move_group->getJointNames();
-  std::vector<double> joint_values = move_group->getCurrentJointValues();
+  const std::vector<std::string> &joint_names = move_group_[req.planning_group]->getJointNames();
+  std::vector<double> joint_values = move_group_[req.planning_group]->getCurrentJointValues();
 
-  for (std::size_t i = 0; i < joint_names.size(); ++i)
+  for (std::size_t i = 0; i < joint_names.size(); i++)
   {
-    ROS_INFO("%s: %f", joint_names[i].c_str(), joint_values[i]);
-
     res.joint_position.joint_name.push_back(joint_names[i]);
     res.joint_position.position.push_back(joint_values[i]);
   }
 
   spinner.stop();
+  return true;
 }
 
 bool MoveItBridge::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
@@ -154,23 +158,23 @@ bool MoveItBridge::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinema
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  const std::string &pose_reference_frame = move_group->getPoseReferenceFrame();
-  ROS_INFO("Pose Reference Frame = %s", pose_reference_frame.c_str());
-
-  geometry_msgs::PoseStamped current_pose = move_group->getCurrentPose();
+//  const std::string &pose_reference_frame = move_group_[req.planning_group]->getPoseReferenceFrame();
+  geometry_msgs::PoseStamped current_pose = move_group_[req.planning_group]->getCurrentPose();
 
   res.header                     = current_pose.header;
-  res.kinematics_pose.group_name = "arm";
+  res.kinematics_pose.group_name = req.planning_group;
   res.kinematics_pose.pose       = current_pose.pose;
 
   spinner.stop();
+  return true;
 }
 
 bool MoveItBridge::setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
                                                 open_manipulator_msgs::SetJointPosition::Response &res)
 {
   open_manipulator_msgs::JointPosition msg = req.joint_position;
-  res.isPlanned = calcPlannedPath(msg);
+  res.isPlanned = calcPlannedPath(req.planning_group, msg);
+
   return true;
 }
 
@@ -178,11 +182,12 @@ bool MoveItBridge::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinema
                                                  open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   open_manipulator_msgs::KinematicsPose msg = req.kinematics_pose;
-  res.isPlanned = calcPlannedPath(msg);
+  res.isPlanned = calcPlannedPath(req.planning_group, msg);
+
   return true;
 }
 
-bool MoveItBridge::calcPlannedPath(open_manipulator_msgs::KinematicsPose msg)
+bool MoveItBridge::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::KinematicsPose msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -190,18 +195,18 @@ bool MoveItBridge::calcPlannedPath(open_manipulator_msgs::KinematicsPose msg)
   bool isPlanned = false;
   geometry_msgs::Pose target_pose = msg.pose;
 
-  move_group->setPoseTarget(target_pose);
+  move_group_[planning_group]->setPoseTarget(target_pose);
 
-  move_group->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
-  move_group->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
+  move_group_[planning_group]->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
+  move_group_[planning_group]->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
 
-  move_group->setGoalTolerance(msg.tolerance);
+  move_group_[planning_group]->setGoalTolerance(msg.tolerance);
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
   if (is_moving_ == false)
   {
-    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (move_group_[planning_group]->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
     if (success)
     {
@@ -224,38 +229,36 @@ bool MoveItBridge::calcPlannedPath(open_manipulator_msgs::KinematicsPose msg)
   return isPlanned;
 }
 
-bool MoveItBridge::calcPlannedPath(open_manipulator_msgs::JointPosition msg)
+bool MoveItBridge::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::JointPosition msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
   bool isPlanned = false;
 
-  const robot_state::JointModelGroup *joint_model_group = move_group->getCurrentState()->getJointModelGroup("arm");
+  const robot_state::JointModelGroup *joint_model_group = move_group_[planning_group]->getCurrentState()->getJointModelGroup("arm");
 
-  moveit::core::RobotStatePtr current_state = move_group->getCurrentState();
+  moveit::core::RobotStatePtr current_state = move_group_[planning_group]->getCurrentState();
 
   std::vector<double> joint_group_positions;
   current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
-  for (uint8_t index = 0; index < joint_num_; index++)
+  uint8_t joint_num = planning_group_[planning_group].name.size();
+  for (uint8_t index = 0; index < joint_num; index++)
   {
-    if (msg.joint_name[index] == ("joint" + std::to_string((index+1))))
-    {
-      joint_group_positions[index] = msg.position[index];
-    }
+    joint_group_positions[index] = msg.position[index];
   }
 
-  move_group->setJointValueTarget(joint_group_positions);
+  move_group_[planning_group]->setJointValueTarget(joint_group_positions);
 
-  move_group->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
-  move_group->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
+  move_group_[planning_group]->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
+  move_group_[planning_group]->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
   if (is_moving_ == false)
   {
-    bool success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (move_group_[planning_group]->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
     if (success)
     {
@@ -280,34 +283,31 @@ bool MoveItBridge::calcPlannedPath(open_manipulator_msgs::JointPosition msg)
 
 void MoveItBridge::displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
 {
-  // Can't find 'grip'
-  if (msg->trajectory[0].joint_trajectory.joint_names[0].find("gripper") == std::string::npos)
-  {
-    ROS_INFO("Get ARM Planned Path");
-    uint8_t joint_num = joint_num_;
+  ROS_INFO("Get Planned Path");
 
-    planned_path_info_.waypoints = msg->trajectory[0].joint_trajectory.points.size();
+  joint_trajectory_ = msg->trajectory[0].joint_trajectory;
+  all_time_steps_ = msg->trajectory[0].joint_trajectory.points.size();
 
-    planned_path_info_.planned_path_positions.resize(planned_path_info_.waypoints, joint_num);
+//  planned_path_info_.waypoints = msg->trajectory[0].joint_trajectory.points.size();
+//  planned_path_info_.planned_path_positions.resize(planned_path_info_.waypoints, joint_num);
 
-    for (uint16_t point_num = 0; point_num < planned_path_info_.waypoints; point_num++)
-    {
-      for (uint8_t num = 0; num < joint_num; num++)
-      {
-        float joint_position = msg->trajectory[0].joint_trajectory.points[point_num].positions[num];
+//  for (uint16_t point_num = 0; point_num < planned_path_info_.waypoints; point_num++)
+//  {
+//    for (uint8_t num = 0; num < joint_num; num++)
+//    {
+//      float joint_position = msg->trajectory[0].joint_trajectory.points[point_num].positions[num];
 
-        planned_path_info_.time_from_start = msg->trajectory[0].joint_trajectory.points[point_num].time_from_start.toSec();
-        planned_path_info_.planned_path_positions.coeffRef(point_num , num) = joint_position;
-      }
-    }
+//      planned_path_info_.time_from_start = msg->trajectory[0].joint_trajectory.points[point_num].time_from_start.toSec();
+//      planned_path_info_.planned_path_positions.coeffRef(point_num , num) = joint_position;
+//    }
+//  }
 
-    all_time_steps_ = planned_path_info_.waypoints;
+//  all_time_steps_ = planned_path_info_.waypoints;
 
-    ros::WallDuration sleep_time(0.5);
-    sleep_time.sleep();
+//  ros::WallDuration sleep_time(0.5);
+//  sleep_time.sleep();
 
-    is_moving_  = true;    
-  }
+  is_moving_  = true;
 }
 
 void MoveItBridge::controlCallback(const ros::TimerEvent&)
@@ -318,58 +318,56 @@ void MoveItBridge::controlCallback(const ros::TimerEvent&)
   open_manipulator_msgs::SetJointPosition srv;
   open_manipulator_msgs::OpenManipulatorState state;
 
+  trajectory_msgs::JointTrajectory jnt_tra;
+
   if (is_moving_)
   {
-    if (using_gazebo_)
+    uint8_t joint_num = joint_trajectory_.points[0].positions.size();
+    if (use_platform_ == false)
     {
-      for (uint8_t num = 0; num < joint_num_; num++)
+      for (uint8_t i = 0; i < joint_num; i++)
       {
-        gazebo_goal_joint_position.data = planned_path_info_.planned_path_positions(step_cnt, num);
-        gazebo_goal_joint_position_pub_[num].publish(gazebo_goal_joint_position);
+        gazebo_goal_joint_position.data = joint_trajectory_.points[step_cnt].positions[i];
+        gazebo_goal_joint_position_pub_.at(i).publish(gazebo_goal_joint_position);
       }
       step_cnt++;
     }
     else
     {
-      if (robot_name_ == "open_manipulator")
+      jnt_tra.points[step_cnt] = joint_trajectory_.points[step_cnt];
+
+      // dynamixel_workbench_controller
+      jnt_tra.joint_names = joint_trajectory_.joint_names;
+      dynamixel_workbench_pub_.publish(jnt_tra);
+
+      // open_manipulator_controller
+      std::vector<double> joint_angle;
+      double path_time = 0.010f;
+
+      for (uint8_t i = 0; i < joint_num; i++)
       {
-        std::vector<std::string> joint_name;
-        std::vector<double> joint_angle;
-        double path_time = 0.03f;
-
-        joint_name.push_back("joint1");
-        joint_name.push_back("joint2");
-        joint_name.push_back("joint3");
-        joint_name.push_back("joint4");
-
-        for (uint8_t num = 0; num < joint_num_; num++)
-        {
-          joint_angle.push_back(planned_path_info_.planned_path_positions(step_cnt, num));
-        }
-
-        srv.request.joint_position.joint_name = joint_name;
-        srv.request.joint_position.position = joint_angle;
-        srv.request.path_time = path_time;
-
-        if (goal_joint_space_path_client_.call(srv) == false)
-          ROS_ERROR("Failed to call");
+        joint_angle.push_back(joint_trajectory_.points[step_cnt].positions[i]);
+        path_time = joint_trajectory_.points[step_cnt].time_from_start.toSec() + 0.010f;
       }
 
-      else if (robot_name_ == "open_manipulator_with_tb3")
+      srv.request.joint_position.joint_name = joint_trajectory_.joint_names;
+      srv.request.joint_position.position = joint_angle;
+      srv.request.path_time = path_time;
+
+      if (open_manipulator_joint_control_client_.call(srv) == false)
+        ROS_ERROR("Failed to call");
+
+      // turtlebot3_with_open_manipulator_core.ino
+      std_msgs::Float64 joint_move_time;
+      joint_move_time.data = joint_trajectory_.points[step_cnt].time_from_start.toSec();
+
+      std_msgs::Float64MultiArray joint_position;
+      for (uint8_t i = 0; i < joint_num; i++)
       {
-        std_msgs::Float64 joint_move_time;
-        joint_move_time.data = planned_path_info_.time_from_start;
-
-        std_msgs::Float64MultiArray joint_position;
-
-        for (uint8_t num = 0; num < joint_num_; num++)
-        {
-          joint_position.data.push_back(planned_path_info_.planned_path_positions(all_time_steps_-1, num));
-        }
-
-        open_manipulator_with_tb3_joint_position_pub_.publish(joint_position);
-        open_manipulator_with_tb3_joint_move_time_pub_.publish(joint_move_time);
+        joint_position.data.push_back(joint_trajectory_.points[step_cnt].positions[i]);
       }
+      joint_position_pub_.publish(joint_position);
+      joint_move_time_pub_.publish(joint_move_time);
 
       step_cnt++;
     }
@@ -383,28 +381,51 @@ void MoveItBridge::controlCallback(const ros::TimerEvent&)
     }
 
     state.open_manipulator_moving_state = state.IS_MOVING;
-    arm_state_pub_.publish(state);
+    moving_state_pub_.publish(state);
   }
   else
   {
     state.open_manipulator_moving_state = state.STOPPED;
-    arm_state_pub_.publish(state);
+    moving_state_pub_.publish(state);
   }
 }
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "moveit_controller_for_OpenManipulator");
+  ros::init(argc, argv, "moveit_bridge");
   ros::NodeHandle node_handle("");
 
-  ros::WallDuration sleep_time(3.0);
-  sleep_time.sleep();
+//  ros::WallDuration sleep_time(3.0);
+//  sleep_time.sleep();
 
-  MoveItBridge arm_controller;
+  MoveItBridge bridge;
 
-  ros::Timer control_timer = node_handle.createTimer(ros::Duration(0.010f), &MoveItBridge::controlCallback, &arm_controller);
+  std::string yaml_file = node_handle.param<std::string>("planning_group", "");
 
-  ros::spin();
+  bool result = bridge.getPlanningGroupInfo(yaml_file);
+  if (result == false)
+  {
+    ROS_ERROR("Please check YAML file");
+    return 0;
+  }
+
+  bridge.initPlanningGroup();
+
+  bridge.initPublisher();
+  bridge.initSubscriber();
+
+  bridge.initServer();
+  bridge.initClient();
+
+  ros::Timer control_timer = node_handle.createTimer(ros::Duration(bridge.getPublishPeriod()), &MoveItBridge::controlCallback, &bridge);
+
+  ros::Rate loop_rate(100);
+
+  while (ros::ok())
+  {
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
 
   return 0;
 }

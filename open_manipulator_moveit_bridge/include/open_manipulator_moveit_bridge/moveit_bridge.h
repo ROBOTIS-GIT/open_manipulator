@@ -21,6 +21,8 @@
 
 #include <ros/ros.h>
 
+#include <yaml-cpp/yaml.h>
+
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/planning_interface/planning_interface.h>
@@ -30,6 +32,9 @@
 #include <moveit/robot_state/robot_state.h>
 
 #include <moveit_msgs/DisplayTrajectory.h>
+
+#include <trajectory_msgs/JointTrajectory.h>
+#include <trajectory_msgs/JointTrajectoryPoint.h>
 
 #include <vector>
 
@@ -55,6 +60,11 @@ namespace open_manipulator
 
 typedef struct
 {
+  std::vector<std::string> name;
+} Joints;
+
+typedef struct
+{
   uint8_t group;
   uint16_t waypoints;                                  // planned number of via-points
   double time_from_start;
@@ -69,18 +79,23 @@ class MoveItBridge
   ros::NodeHandle priv_nh_;
 
   // ROS Parameters
-  bool using_gazebo_;
-  std::string robot_name_;
-  int joint_num_;
-  bool init_position_;
+  bool use_platform_;
+  bool set_home_position_;
+  double publish_period_;
+  std::map<std::string, Joints> planning_group_;
 
   // ROS Publisher
-  ros::Publisher gazebo_goal_joint_position_pub_[10];
-  ros::Publisher open_manipulator_with_tb3_joint_position_pub_;
-  ros::Publisher open_manipulator_with_tb3_joint_move_time_pub_;
-  ros::Publisher open_manipulator_with_tb3_gripper_position_pub_;
-  ros::Publisher open_manipulator_with_tb3_gripper_move_time_pub_;
-  ros::Publisher arm_state_pub_;
+  std::vector<ros::Publisher> gazebo_goal_joint_position_pub_;
+
+  ros::Publisher dynamixel_workbench_pub_;
+
+  ros::Publisher joint_position_pub_;
+  ros::Publisher joint_move_time_pub_;
+
+  ros::Publisher gripper_position_pub_;
+  ros::Publisher gripper_move_time_pub_;
+
+  ros::Publisher moving_state_pub_;
 
   // ROS Subscribers
   ros::Subscriber display_planned_path_sub_;
@@ -91,12 +106,13 @@ class MoveItBridge
   ros::ServiceServer set_joint_position_server_;
   ros::ServiceServer set_kinematics_pose_server_;
 
-  ros::ServiceClient goal_joint_space_path_client_;
+  ros::ServiceClient open_manipulator_joint_control_client_;
 
   // ROS Service Client
 
   // MoveIt! interface
-  moveit::planning_interface::MoveGroupInterface *move_group;
+  std::map<std::string, moveit::planning_interface::MoveGroupInterface*> move_group_;
+  trajectory_msgs::JointTrajectory joint_trajectory_;
   PlannedPathInfo planned_path_info_;
 
   // Process state variables
@@ -108,18 +124,20 @@ class MoveItBridge
   virtual ~MoveItBridge();
 
   void controlCallback(const ros::TimerEvent&);
+  double getPublishPeriod(void){ return publish_period_;}
 
- private:
-  void initPublisher(bool using_gazebo);
-  void initSubscriber(bool using_gazebo);
+  bool getPlanningGroupInfo(const std::string yaml_file);
+
+  void initPublisher();
+  void initSubscriber();
 
   void initServer();
   void initClient();
 
-  void initJointPosition();
+  void initPlanningGroup();
 
-  bool calcPlannedPath(open_manipulator_msgs::JointPosition msg);
-  bool calcPlannedPath(open_manipulator_msgs::KinematicsPose msg);
+  bool calcPlannedPath(const std::string planning_group, open_manipulator_msgs::JointPosition msg);
+  bool calcPlannedPath(const std::string planning_group, open_manipulator_msgs::KinematicsPose msg);
 
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
