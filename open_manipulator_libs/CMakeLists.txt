@@ -45,6 +45,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 add_library(open_manipulator_libs
@@ -55,5 +56,21 @@ add_library(open_manipulator_libs
 )
 
 add_dependencies(open_manipulator_libs ${catkin_EXPORTED_TARGETS})
-target_link_libraries(open_manipulator_libs  ${catkin_LIBRARIES}
+target_link_libraries(open_manipulator_libs  ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
+
+################################################################################
+# Install
+################################################################################
+install(TARGETS open_manipulator_libs
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+################################################################################
+# Test
+################################################################################

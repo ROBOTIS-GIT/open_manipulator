@@ -343,9 +343,9 @@ void OM_CONTROLLER::publishJointStates()
                                             msg.velocity.push_back(0.0);
                                             msg.effort.push_back(0.0);
 
-    msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
-                                            msg.velocity.push_back(0.0);
-                                            msg.effort.push_back(0.0);
+//    msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
+//                                            msg.velocity.push_back(0.0);
+//                                            msg.effort.push_back(0.0);
     open_manipulator_joint_states_pub_.publish(msg);
   }
   else // gazebo
