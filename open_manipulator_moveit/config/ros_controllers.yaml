@@ -15,7 +15,6 @@ open_manipulator:
       - joint3
       - joint4
       - grip_joint
-      - grip_joint_sub
     sim_control_mode: 1  # 0: position, 1: velocity
 # Publish all joint states
 # Creates the /joint_states topic necessary in ROS
@@ -24,31 +23,3 @@ open_manipulator:
     publish_rate: 50
   controller_list:
     []
-  arm_joint_position_controller:
-    type: position_controllers/JointPositionController
-    joints:
-      - joint1
-      - joint2
-      - joint3
-      - joint4
-    gains:
-      joint1:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint2:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint3:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1
-      joint4:
-        p: 100
-        d: 1
-        i: 1
-        i_clamp: 1

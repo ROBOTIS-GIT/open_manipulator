@@ -1,0 +1,12 @@
+<launch>
+  <arg name="use_platform"     default="true"/>
+  <arg name="use_robot_name"   default="open_manipulator"/>
+  <arg name="publish_period"   default="0.010"/>
+
+  <param name="planning_group"  value="$(find open_manipulator_moveit_bridge)/config/planning_group.yaml"/>
+
+  <node name="$(arg use_robot_name)" pkg="open_manipulator_moveit_bridge" type="moveit_bridge" output="screen">
+    <param name="use_platform"        value="$(arg use_platform)"/>
+    <param name="publish_period"      value="$(arg publish_period)"/>
+  </node>
+</launch>

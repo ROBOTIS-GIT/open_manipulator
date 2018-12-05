@@ -312,6 +312,12 @@ void OM_CONTROLLER::publishKinematicsPose()
   msg.pose.position.x = pose.position[0];
   msg.pose.position.y = pose.position[1];
   msg.pose.position.z = pose.position[2];
+  Eigen::Quaterniond orientation = RM_MATH::convertRotationToQuaternion(pose.orientation);
+  msg.pose.orientation.w = orientation.w();
+  msg.pose.orientation.x = orientation.x();
+  msg.pose.orientation.y = orientation.y();
+  msg.pose.orientation.z = orientation.z();
+
   open_manipulator_kinematics_pose_pub_.publish(msg);
 }
 
@@ -343,9 +349,9 @@ void OM_CONTROLLER::publishJointStates()
                                             msg.velocity.push_back(0.0);
                                             msg.effort.push_back(0.0);
 
-    msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
-                                            msg.velocity.push_back(0.0);
-                                            msg.effort.push_back(0.0);
+//    msg.name.push_back("grip_joint_sub");   msg.position.push_back(tool_value);
+//                                            msg.velocity.push_back(0.0);
+//                                            msg.effort.push_back(0.0);
     open_manipulator_joint_states_pub_.publish(msg);
   }
   else // gazebo

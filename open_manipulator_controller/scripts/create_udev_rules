@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo ""
+echo "This script copies a udev rule to /etc to facilitate bringing"
+echo "up the OpenManipulator usb connection."
+echo ""
+
+sudo cp `rospack find open_manipulator_controller`/99-open-manipulator-cdc.rules /etc/udev/rules.d/
+
+echo ""
+echo "Reload rules"
+echo ""
+sudo udevadm control --reload-rules
+sudo udevadm trigger

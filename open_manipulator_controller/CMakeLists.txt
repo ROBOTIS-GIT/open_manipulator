@@ -65,6 +65,11 @@ install(TARGETS open_manipulator_controller
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+install(PROGRAMS
+  scripts/create_udev_rules
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}  
+)
+
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
@@ -73,6 +78,9 @@ install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
+install(FILES 99-open-manipulator-cdc.rules
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 ################################################################################
 # Test
 ################################################################################

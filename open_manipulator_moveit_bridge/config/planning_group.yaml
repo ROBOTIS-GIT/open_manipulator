@@ -1,0 +1,4 @@
+arm:
+  names: [joint1, joint2, joint3, joint4]
+#arm_2:
+  #names: [joint1, joint2, joint3, joint4]

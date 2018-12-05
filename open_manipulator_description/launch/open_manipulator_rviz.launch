@@ -1,6 +1,6 @@
 <launch>
   <include file="$(find open_manipulator_description)/launch/open_manipulator_model.launch">
-    <arg name="use_gazebo" value="true"/>
     <arg name="open_rviz" value="true"/>
+    <arg name="use_gui" value="true"/>
   </include>
 </launch>
