@@ -117,6 +117,8 @@ private:
 
   std::vector<double> present_joint_angle_;
   std::vector<double> present_kinematic_position_;
+  open_manipulator_msgs::KinematicsPose kinematics_pose_;
+
   bool open_manipulator_is_moving_;
   bool open_manipulator_actuator_enabled_;
 };

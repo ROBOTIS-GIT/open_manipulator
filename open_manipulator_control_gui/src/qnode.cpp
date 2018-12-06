@@ -122,7 +122,10 @@ void QNode::kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::
   temp_position.push_back(msg->pose.position.x);
   temp_position.push_back(msg->pose.position.y);
   temp_position.push_back(msg->pose.position.z);
+
   present_kinematic_position_ = temp_position;
+
+  kinematics_pose_.pose = msg->pose;
 }
 
 std::vector<double> QNode::getPresentJointAngle()
@@ -158,7 +161,7 @@ bool QNode::setJointSpacePath(std::vector<std::string> joint_name, std::vector<d
 
   if(goal_joint_space_path_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -169,11 +172,17 @@ bool QNode::setTaskSpacePath(std::vector<double> kinematics_pose, double path_ti
   srv.request.kinematics_pose.pose.position.x = kinematics_pose.at(0);
   srv.request.kinematics_pose.pose.position.y = kinematics_pose.at(1);
   srv.request.kinematics_pose.pose.position.z = kinematics_pose.at(2);
+
+  srv.request.kinematics_pose.pose.orientation.w = kinematics_pose_.pose.orientation.w;
+  srv.request.kinematics_pose.pose.orientation.x = kinematics_pose_.pose.orientation.x;
+  srv.request.kinematics_pose.pose.orientation.y = kinematics_pose_.pose.orientation.y;
+  srv.request.kinematics_pose.pose.orientation.z = kinematics_pose_.pose.orientation.z;
+
   srv.request.path_time = path_time;
 
   if(goal_task_space_path_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -181,14 +190,14 @@ bool QNode::setTaskSpacePath(std::vector<double> kinematics_pose, double path_ti
 bool QNode::setDrawingTrajectory(std::string name, std::vector<double> arg, double path_time)
 {
   open_manipulator_msgs::SetDrawingTrajectory srv;
-  srv.request.drawingTrajectoryName = name;
+  srv.request.drawing_trajectory_name = name;
   srv.request.path_time = path_time;
   for(int i = 0; i < arg.size(); i ++)
     srv.request.param.push_back(arg.at(i));
 
   if(goal_drawing_trajectory_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -200,7 +209,7 @@ bool QNode::setToolControl(std::vector<double> joint_angle)
 
   if(goal_tool_control_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -208,11 +217,11 @@ bool QNode::setToolControl(std::vector<double> joint_angle)
 bool QNode::setActuatorState(bool actuator_state)
 {
   open_manipulator_msgs::SetActuatorState srv;
-  srv.request.setActuatorState = actuator_state;
+  srv.request.set_actuator_state = actuator_state;
 
   if(set_actuator_state_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
