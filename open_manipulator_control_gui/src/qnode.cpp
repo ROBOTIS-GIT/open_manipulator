@@ -169,6 +169,9 @@ bool QNode::setJointSpacePath(std::vector<std::string> joint_name, std::vector<d
 bool QNode::setTaskSpacePath(std::vector<double> kinematics_pose, double path_time)
 {
   open_manipulator_msgs::SetKinematicsPose srv;
+
+  srv.request.planning_group = "gripper";
+
   srv.request.kinematics_pose.pose.position.x = kinematics_pose.at(0);
   srv.request.kinematics_pose.pose.position.y = kinematics_pose.at(1);
   srv.request.kinematics_pose.pose.position.z = kinematics_pose.at(2);
