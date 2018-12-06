@@ -1,14 +1,17 @@
 ﻿<launch>
   <arg name="use_robot_name"         default="open_manipulator"/>
+
+  <arg name="use_platform"           default="true"/>
+  <arg name="usd_moveit"             default="false"/>
+
   <arg name="dynamixel_usb_port"     default="/dev/ttyUSB0"/>
   <arg name="dynamixel_baud_rate"    default="1000000"/>
-  <arg name="use_platform"           default="true"/>
 
-  <param name="robot_name"           value="$(arg use_robot_name)"/>
+  <arg name="control_period"         default="0.010"/>
 
-  <node pkg="open_manipulator_controller" type="open_manipulator_controller" name="open_manipulator_controller" output="screen">
-      <param name="usb_port"             value="$(arg dynamixel_usb_port)"/>
-      <param name="baud_rate"            value="$(arg dynamixel_baud_rate)"/>
+  <node name="$(arg use_robot_name)" pkg="open_manipulator_controller" type="open_manipulator_controller" output="screen" args="$(arg dynamixel_usb_port) $(arg dynamixel_baud_rate)">
       <param name="using_platform"       value="$(arg use_platform)"/>
+      <param name="usd_moveit"           value="$(arg usd_moveit)"/>
+      <param name="control_period"       value="$(arg control_period)"/>
   </node>
 </launch>
