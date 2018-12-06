@@ -14,7 +14,7 @@
    <string>OpenManipulator control GUI</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../dynamixel-workbench/dynamixel_workbench_single_manager_gui/resources/images.qrc">
+   <iconset resource="../resources/images.qrc">
     <normaloff>:/images/icon.png</normaloff>:/images/icon.png</iconset>
   </property>
   <property name="locale">
@@ -491,7 +491,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_js">
      <attribute name="title">
@@ -903,9 +903,9 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>9</x>
+        <x>7</x>
         <y>150</y>
-        <width>141</width>
+        <width>151</width>
         <height>31</height>
        </rect>
       </property>
@@ -1537,7 +1537,7 @@
      <x>0</x>
      <y>0</y>
      <width>793</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -1581,7 +1581,7 @@
   </action>
  </widget>
  <resources>
-  <include location="../../../dynamixel-workbench/dynamixel_workbench_single_manager_gui/resources/images.qrc"/>
+  <include location="../resources/images.qrc"/>
  </resources>
  <connections>
   <connection>
