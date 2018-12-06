@@ -181,7 +181,7 @@ void OM_TELEOP::printText()
          getPresentJointAngle().at(1),
          getPresentJointAngle().at(2),
          getPresentJointAngle().at(3));
-  printf("Present Kinematic Position X: %.3lf Y: %.3lf Z: %.3lf\n",
+  printf("Present Kinematics Position X: %.3lf Y: %.3lf Z: %.3lf\n",
          getPresentKinematicsPose().at(0),
          getPresentKinematicsPose().at(1),
          getPresentKinematicsPose().at(2));
