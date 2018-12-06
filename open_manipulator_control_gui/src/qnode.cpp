@@ -67,7 +67,7 @@ bool QNode::init() {
   // msg subscriber
   open_manipulator_states_sub_       = n.subscribe(robot_name + "/states", 10, &QNode::statesCallback, this);
   open_manipulator_joint_states_sub_ = n.subscribe(robot_name + "/joint_states", 10, &QNode::jointStatesCallback, this);
-  open_manipulator_kinematics_pose_sub_ = n.subscribe(robot_name + "/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
+  open_manipulator_kinematics_pose_sub_ = n.subscribe(robot_name + "/gripper/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
   // service client
   goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/goal_joint_space_path");
   goal_task_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name + "/goal_task_space_path");
@@ -111,7 +111,7 @@ void QNode::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg)
     else if(!msg->name.at(i).compare("joint2"))  temp_angle.at(1) = (msg->position.at(i));
     else if(!msg->name.at(i).compare("joint3"))  temp_angle.at(2) = (msg->position.at(i));
     else if(!msg->name.at(i).compare("joint4"))  temp_angle.at(3) = (msg->position.at(i));
-    else if(!msg->name.at(i).compare("grip_joint"))  temp_angle.at(4) = (msg->position.at(i));
+    else if(!msg->name.at(i).compare("gripper"))  temp_angle.at(4) = (msg->position.at(i));
   }
   present_joint_angle_ = temp_angle;
 }
@@ -193,6 +193,7 @@ bool QNode::setTaskSpacePath(std::vector<double> kinematics_pose, double path_ti
 bool QNode::setDrawingTrajectory(std::string name, std::vector<double> arg, double path_time)
 {
   open_manipulator_msgs::SetDrawingTrajectory srv;
+  srv.request.end_effector_name = "gripper";
   srv.request.drawing_trajectory_name = name;
   srv.request.path_time = path_time;
   for(int i = 0; i < arg.size(); i ++)
@@ -208,6 +209,7 @@ bool QNode::setDrawingTrajectory(std::string name, std::vector<double> arg, doub
 bool QNode::setToolControl(std::vector<double> joint_angle)
 {
   open_manipulator_msgs::SetJointPosition srv;
+  srv.request.joint_position.joint_name.push_back("gripper");
   srv.request.joint_position.position = joint_angle;
 
   if(goal_tool_control_client_.call(srv))
