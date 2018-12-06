@@ -170,7 +170,7 @@ bool QNode::setTaskSpacePath(std::vector<double> kinematics_pose, double path_ti
 {
   open_manipulator_msgs::SetKinematicsPose srv;
 
-  srv.request.planning_group = "gripper";
+  srv.request.end_effector_name = "gripper";
 
   srv.request.kinematics_pose.pose.position.x = kinematics_pose.at(0);
   srv.request.kinematics_pose.pose.position.y = kinematics_pose.at(1);
