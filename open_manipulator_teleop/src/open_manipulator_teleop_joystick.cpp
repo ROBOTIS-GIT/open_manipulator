@@ -52,8 +52,8 @@ void OM_TELEOP::initPublisher()
 }
 void OM_TELEOP::initSubscriber()
 {
-  chain_joint_states_sub_ = node_handle_.subscribe("/open_manipulator/joint_states", 10, &OM_TELEOP::jointStatesCallback, this);
-  chain_kinematics_pose_sub_ = node_handle_.subscribe("/open_manipulator/kinematics_pose", 10, &OM_TELEOP::kinematicsPoseCallback, this);
+  chain_joint_states_sub_ = node_handle_.subscribe(robot_name_ + "/joint_states", 10, &OM_TELEOP::jointStatesCallback, this);
+  chain_kinematics_pose_sub_ = node_handle_.subscribe(robot_name_ + "/kinematics_pose", 10, &OM_TELEOP::kinematicsPoseCallback, this);
   joy_command_sub_ = node_handle_.subscribe("/joy", 10, &OM_TELEOP::joyCallback, this);
 }
 
