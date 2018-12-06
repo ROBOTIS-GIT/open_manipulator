@@ -37,7 +37,7 @@ class Chain : public ROBOTIS_MANIPULATOR::Kinematics
 private:
   STRING inverse_solver_option_;
 public:
-  Chain():inverse_solver_option_("chain_custum_inverse_kinematics"){}
+  Chain():inverse_solver_option_("chain_custom_inverse_kinematics"){}
   virtual ~Chain(){}
 
   virtual void setOption(const void *arg);
