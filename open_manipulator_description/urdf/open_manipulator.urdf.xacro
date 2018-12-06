@@ -250,8 +250,8 @@
     </inertial> -->
   </link>
 
-  <!--  Grip link -->
-  <link name="grip_link">
+  <!--  Gripper link -->
+  <link name="gripper_link">
     <visual>
       <origin xyz="0.0 0.0 0" rpy="0 0 0"/>
       <geometry>
@@ -284,20 +284,20 @@
     </inertial> -->
   </link>
 
-  <!--  Grip joint -->
-  <joint name="grip_joint" type="prismatic">
+  <!--  Gripper joint -->
+  <joint name="gripper" type="prismatic">
     <parent link="link5"/>
-    <child link="grip_link"/>
+    <child link="gripper_link"/>
     <origin xyz="0.0817 0.019 0.0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
   </joint>
 
   <!-- Transmission 5 -->
-  <xacro:SimpleTransmission n="5" joint="grip_joint" />
+  <xacro:SimpleTransmission n="5" joint="gripper" />
 
-  <!--  Grip link sub -->
-  <link name="grip_link_sub">
+  <!--  Gripper link sub -->
+  <link name="gripper_link_sub">
     <visual>
       <origin xyz="0.0 -0.0 0" rpy="0 0 0"/>
       <geometry>
@@ -330,18 +330,18 @@
     </inertial> -->
   </link>
 
-  <!--  Grip joint sub -->
-  <joint name="grip_joint_sub" type="prismatic">
+  <!--  Gripper joint sub -->
+  <joint name="gripper_sub" type="prismatic">
     <parent link="link5"/>
-    <child link="grip_link_sub"/>
+    <child link="gripper_link_sub"/>
     <origin xyz="0.0817 -0.019 0" rpy="0 0 0"/>
     <axis xyz="0 -1 0"/>
     <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
-    <mimic joint="grip_joint" multiplier="1"/>
+    <mimic joint="gripper" multiplier="1"/>
   </joint>
 
   <!-- Transmission 6 -->
-  <xacro:SimpleTransmission n="6" joint="grip_joint_sub" />
+  <xacro:SimpleTransmission n="6" joint="gripper_sub" />
 
   <!-- end effector joint -->
   <joint name="end_effector_joint" type="fixed">

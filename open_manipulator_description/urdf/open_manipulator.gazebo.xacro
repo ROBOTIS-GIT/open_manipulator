@@ -33,11 +33,11 @@
   <!-- Link5 -->
   <RefLink ref="link5"/>
 
-  <!-- grip_link -->
-  <RefLink ref="grip_link"/>
+  <!-- gripper_link -->
+  <RefLink ref="gripper_link"/>
 
-  <!-- grip_link_sub -->
-  <RefLink ref="grip_link_sub"/>
+  <!-- gripper_link_sub -->
+  <RefLink ref="gripper_link_sub"/>
 
   <!-- end effector link -->
   <gazebo reference="end_effector_link">
