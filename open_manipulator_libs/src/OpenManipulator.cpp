@@ -64,7 +64,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
 
   addJoint("joint4", // my name
            "joint3", // parent name
-           "tool",   // child name
+           "gripper",   // child name
            RM_MATH::makeVector3(0.124, 0.0, 0.0), // relative position
            RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS, // axis of rotation
