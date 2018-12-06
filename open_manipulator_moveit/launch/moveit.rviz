@@ -20,7 +20,7 @@ Visualization Manager:
     - Alpha: 0.5
       Cell Size: 1
       Class: rviz/Grid
-      Color: 160; 160; 164
+      Color: 30; 30; 31
       Enabled: true
       Line Style:
         Line Width: 0.0299999993
@@ -73,12 +73,12 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          grip_link:
+          gripper_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          grip_link_sub:
+          gripper_link_sub:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -132,7 +132,7 @@ Visualization Manager:
         Colliding Link Color: 255; 0; 0
         Goal State Alpha: 1
         Goal State Color: 250; 128; 0
-        Interactive Marker Size: 0.100000001
+        Interactive Marker Size: 0.0700000003
         Joint Violation Color: 255; 0; 255
         Planning Group: arm
         Query Goal State: true
@@ -162,12 +162,12 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          grip_link:
+          gripper_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          grip_link_sub:
+          gripper_link_sub:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -208,7 +208,7 @@ Visualization Manager:
       Velocity_Scaling_Factor: 1
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 229; 229; 229
     Default Light: true
     Fixed Frame: world
     Frame Rate: 30
@@ -229,18 +229,18 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.161289215
-        Y: 0.023541227
-        Z: 2.23517986e-07
+        X: 0.192562267
+        Y: 0.0490160435
+        Z: 1.63913342e-07
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.404796928
+      Pitch: 0.404797077
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 5.14494324
+      Yaw: 5.28494501
     Saved: ~
 Window Geometry:
   Displays:

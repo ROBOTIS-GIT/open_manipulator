@@ -14,7 +14,7 @@ open_manipulator:
       - joint2
       - joint3
       - joint4
-      - grip_joint
+      - gripper
     sim_control_mode: 1  # 0: position, 1: velocity
 # Publish all joint states
 # Creates the /joint_states topic necessary in ROS
