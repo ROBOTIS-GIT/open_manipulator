@@ -28,9 +28,11 @@ OM_CONTROLLER::OM_CONTROLLER(std::string usb_port, std::string baud_rate)
      moveit_plan_flag_(false),
      using_platform_(false),
      using_moveit_(false),
-     control_period_(0.010f)
+     control_period_(0.010f),
+     moveit_sampling_time_(0.050f)
 {
   control_period_ = priv_node_handle_.param<double>("control_period", 0.010f);
+  moveit_sampling_time_ = priv_node_handle_.param<double>("moveit_sample_duration", 0.050f);
   using_platform_ = priv_node_handle_.param<bool>("using_platform", false);
   using_moveit_ = priv_node_handle_.param<bool>("using_moveit", false);
   std::string planning_group_name = priv_node_handle_.param<std::string>("planning_group_name", "arm");
@@ -167,14 +169,23 @@ void OM_CONTROLLER::initSubscriber()
 
 void OM_CONTROLLER::initServer()
 {
-  goal_joint_space_path_server_             = priv_node_handle_.advertiseService("goal_joint_space_path", &OM_CONTROLLER::goalJointSpacePathCallback, this);
-  goal_task_space_path_server_              = priv_node_handle_.advertiseService("goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
-  goal_joint_space_path_to_present_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_present", &OM_CONTROLLER::goalJointSpacePathToPresentCallback, this);
-  goal_task_space_path_to_present_server_   = priv_node_handle_.advertiseService("goal_task_space_path_to_present", &OM_CONTROLLER::goalTaskSpacePathToPresentCallback, this);
+  goal_joint_space_path_server_                 = priv_node_handle_.advertiseService("goal_joint_space_path", &OM_CONTROLLER::goalJointSpacePathCallback, this);
+
+  goal_task_space_path_server_                  = priv_node_handle_.advertiseService("goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
+  goal_task_space_path_position_only_server_    = priv_node_handle_.advertiseService("goal_task_space_path_position_only", &OM_CONTROLLER::goalTaskSpacePathPositionOnlyCallback, this);
+  goal_task_space_path_orientation_only_server_ = priv_node_handle_.advertiseService("goal_task_space_path_orientation_only", &OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback, this);
+
+  goal_joint_space_path_to_present_server_      = priv_node_handle_.advertiseService("goal_joint_space_path_to_present", &OM_CONTROLLER::goalJointSpacePathToPresentCallback, this);
+
+  goal_task_space_path_to_present_server_                   = priv_node_handle_.advertiseService("goal_task_space_path_to_present", &OM_CONTROLLER::goalTaskSpacePathToPresentCallback, this);
+  goal_task_space_path_to_present_position_only_server_     = priv_node_handle_.advertiseService("goal_task_space_path_to_present_position_only", &OM_CONTROLLER::goalTaskSpacePathToPresentPositionOnlyCallback, this);
+  goal_task_space_path_to_present_orientation_only_server_  = priv_node_handle_.advertiseService("goal_task_space_path_to_present_orientation_only", &OM_CONTROLLER::goalTaskSpacePathToPresentOrientationOnlyCallback, this);
+
   goal_tool_control_server_                 = priv_node_handle_.advertiseService("goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
   set_actuator_state_server_                = priv_node_handle_.advertiseService("set_actuator_state", &OM_CONTROLLER::setActuatorStateCallback, this);
   goal_drawing_trajectory_server_           = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OM_CONTROLLER::goalDrawingTrajectoryCallback, this);
 
+  //MoveIt!
   get_joint_position_server_  = priv_node_handle_.advertiseService("get_joint_position", &OM_CONTROLLER::getJointPositionMsgCallback, this);
   get_kinematics_pose_server_ = priv_node_handle_.advertiseService("get_kinematics_pose", &OM_CONTROLLER::getKinematicsPoseMsgCallback, this);
   set_joint_position_server_  = priv_node_handle_.advertiseService("set_joint_position", &OM_CONTROLLER::setJointPositionMsgCallback, this);
@@ -228,6 +239,38 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   return true;
 }
 
+
+bool OM_CONTROLLER::goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                           open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  Eigen::Vector3d position;
+  position[0] = req.kinematics_pose.pose.position.x;
+  position[1] = req.kinematics_pose.pose.position.y;
+  position[2] = req.kinematics_pose.pose.position.z;
+
+  open_manipulator_.taskTrajectoryMove(req.end_effector_name, position, req.path_time);
+
+  res.is_planned = true;
+  return true;
+}
+
+bool OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                              open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  Eigen::Matrix3d orientation;
+
+  Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
+                        req.kinematics_pose.pose.orientation.x,
+                        req.kinematics_pose.pose.orientation.y,
+                        req.kinematics_pose.pose.orientation.z);
+
+  orientation = RM_MATH::convertQuaternionToRotation(q);
+  open_manipulator_.taskTrajectoryMove(req.end_effector_name, orientation, req.path_time);
+
+  res.is_planned = true;
+  return true;
+}
+
 bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                                         open_manipulator_msgs::SetJointPosition::Response &res)
 {
@@ -241,6 +284,7 @@ bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::S
   res.is_planned = true;
   return true;
 }
+
 bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                       open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
@@ -249,11 +293,50 @@ bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::Se
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
-  open_manipulator_.taskTrajectoryMoveToPresentPosition(req.planning_group, target_pose.position, req.path_time);
+  Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
+                        req.kinematics_pose.pose.orientation.x,
+                        req.kinematics_pose.pose.orientation.y,
+                        req.kinematics_pose.pose.orientation.z);
+
+  target_pose.orientation = RM_MATH::convertQuaternionToRotation(q);
+
+  open_manipulator_.taskTrajectoryMoveToPresentPose(req.planning_group, target_pose, req.path_time);
 
   res.is_planned = true;
   return true;
 }
+
+bool OM_CONTROLLER::goalTaskSpacePathToPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                    open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  Eigen::Vector3d position;
+  position[0] = req.kinematics_pose.pose.position.x;
+  position[1] = req.kinematics_pose.pose.position.y;
+  position[2] = req.kinematics_pose.pose.position.z;
+
+  open_manipulator_.taskTrajectoryMoveToPresentPose(req.planning_group, position, req.path_time);
+
+  res.is_planned = true;
+  return true;
+}
+
+bool OM_CONTROLLER::goalTaskSpacePathToPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                       open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  Eigen::Matrix3d orientation;
+  Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
+                        req.kinematics_pose.pose.orientation.x,
+                        req.kinematics_pose.pose.orientation.y,
+                        req.kinematics_pose.pose.orientation.z);
+
+  orientation = RM_MATH::convertQuaternionToRotation(q);
+
+  open_manipulator_.taskTrajectoryMoveToPresentPose(req.planning_group, orientation, req.path_time);
+
+  res.is_planned = true;
+  return true;
+}
+
 bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
@@ -594,44 +677,45 @@ void OM_CONTROLLER::publishCallback(const ros::TimerEvent&)
   publishKinematicsPose();
 }
 
-void OM_CONTROLLER::moveitCallback(double time)
+void OM_CONTROLLER::moveitTimer(double present_time)
 {
   static double priv_time = 0.0f;
   static uint32_t step_cnt = 0;
 
   if (moveit_plan_flag_ == true)
   {
-    std::vector<double> target_angle;
-    uint32_t all_time_steps = joint_trajectory_.points.size();
-    double path_time = time - priv_time;
-    ROS_INFO("time : %f, path_time : %f, step_cnt : %d", time, path_time, step_cnt);
-
-    for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
+    double path_time = present_time - priv_time;
+    if (path_time > moveit_sampling_time_)
     {
-      target_angle.push_back(joint_trajectory_.points[step_cnt].positions.at(i));
-      ROS_INFO("\tposition : %f", joint_trajectory_.points[step_cnt].positions.at(i));
-    }
+      std::vector<double> target_angle;
+      uint32_t all_time_steps = joint_trajectory_.points.size();
 
-    open_manipulator_.jointTrajectoryMove(target_angle, path_time);
+      for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
+      {
+        target_angle.push_back(joint_trajectory_.points[step_cnt].positions.at(i));
+      }
 
-    step_cnt = step_cnt + (uint32_t)(ceil(path_time/getControlPeriod()));
-    priv_time = time;
+      open_manipulator_.jointTrajectoryMove(target_angle, path_time);
 
-    if (step_cnt >= all_time_steps)
-    {
-      step_cnt = 0;
-      moveit_plan_flag_ = false;
+      step_cnt++;
+      priv_time = present_time;
+
+      if (step_cnt >= all_time_steps)
+      {
+        step_cnt = 0;
+        moveit_plan_flag_ = false;
+      }
     }
   }
   else
   {
-    priv_time = time;
+    priv_time = present_time;
   }
 }
 
 void OM_CONTROLLER::process(double time)
 {
-  moveitCallback(time);
+  moveitTimer(time);
   open_manipulator_.openManipulatorProcess(time);
 }
 

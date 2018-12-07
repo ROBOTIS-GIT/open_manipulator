@@ -1,5 +1,4 @@
 <launch>
-
   <arg name="sample_duration"        default="0.010"/>
   <arg name="debug"                  default="false" />
 

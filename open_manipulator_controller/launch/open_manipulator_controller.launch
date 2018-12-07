@@ -1,18 +1,19 @@
 ﻿<launch>
   <arg name="use_robot_name"         default="open_manipulator"/>
 
-  <arg name="use_platform"           default="false"/>
-  <arg name="use_moveit"             default="true"/>
-  <arg name="planning_group_name"    default="arm"/>
-
   <arg name="dynamixel_usb_port"     default="/dev/ttyUSB0"/>
   <arg name="dynamixel_baud_rate"    default="1000000"/>
 
   <arg name="control_period"         default="0.010"/>
 
+  <arg name="use_platform"           default="true"/>
+  <arg name="use_moveit"             default="false"/>
+  <arg name="planning_group_name"    default="arm"/>
+  <arg name="moveit_sample_duration" default="$(eval arg('control_period') * 2)"/>
+
   <group if="$(arg use_moveit)">
     <include file="$(find open_manipulator_controller)/launch/open_manipulator_moveit.launch">
-      <arg name="sample_duration" value="$(arg control_period)"/>
+      <arg name="sample_duration" value="$(arg moveit_sample_duration)"/>
     </include>
   </group>
 
@@ -21,5 +22,7 @@
       <param name="using_moveit"         value="$(arg use_moveit)"/>
       <param name="planning_group_name"  value="$(arg planning_group_name)"/>
       <param name="control_period"       value="$(arg control_period)"/>
+      <param name="moveit_sample_duration"  value="$(arg moveit_sample_duration)"/>
   </node>
+
 </launch>
