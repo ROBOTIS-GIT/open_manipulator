@@ -111,7 +111,7 @@ void *OM_CONTROLLER::timerThread(void *param)
 //    RM_LOG::INFO("control time : ", controller->getControlPeriod() - delta_nsec);
     if(delta_nsec < 0.0)
     {
-//      RM_LOG::WARN("Over the control time : ", controller->getControlPeriod() - delta_nsec);
+      RM_LOG::WARN("Over the control time : ", controller->getControlPeriod() - delta_nsec);
       next_time = curr_time;
     }
     else
@@ -687,15 +687,18 @@ void OM_CONTROLLER::moveitTimer(double present_time)
     double path_time = present_time - priv_time;
     if (path_time > moveit_sampling_time_)
     {
-      std::vector<double> target_angle;
+      std::vector<WayPoint> target;
       uint32_t all_time_steps = joint_trajectory_.points.size();
 
       for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
       {
-        target_angle.push_back(joint_trajectory_.points[step_cnt].positions.at(i));
+        WayPoint temp;
+        temp.value = joint_trajectory_.points[step_cnt].positions.at(i);
+        temp.velocity = joint_trajectory_.points[step_cnt].velocities.at(i);
+        temp.acceleration = 0.0f;
+        target.push_back(temp);
       }
-
-      open_manipulator_.jointTrajectoryMove(target_angle, path_time);
+      open_manipulator_.jointTrajectoryMove(target, path_time);
 
       step_cnt++;
       priv_time = present_time;
@@ -753,6 +756,7 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
+
     ros::spinOnce();
     loop_rate.sleep();
   }
