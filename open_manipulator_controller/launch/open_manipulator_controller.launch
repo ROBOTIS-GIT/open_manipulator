@@ -7,8 +7,10 @@
   <arg name="control_period"         default="0.010"/>
 
   <arg name="use_platform"           default="true"/>
+
   <arg name="use_moveit"             default="false"/>
   <arg name="planning_group_name"    default="arm"/>
+<!--  <arg name="" default="5"/>-->
   <arg name="moveit_sample_duration" default="$(eval arg('control_period') * 5)"/>
 
   <group if="$(arg use_moveit)">
