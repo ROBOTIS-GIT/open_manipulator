@@ -110,7 +110,7 @@ private:
   ros::Subscriber open_manipulator_kinematics_pose_sub_;
 
   ros::ServiceClient goal_joint_space_path_client_;
-  ros::ServiceClient goal_task_space_path_client_;
+  ros::ServiceClient goal_task_space_path_position_only_client_;
   ros::ServiceClient goal_tool_control_client_;
   ros::ServiceClient set_actuator_state_client_;
   ros::ServiceClient goal_drawing_trajectory_client_;

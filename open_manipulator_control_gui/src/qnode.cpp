@@ -70,7 +70,7 @@ bool QNode::init() {
   open_manipulator_kinematics_pose_sub_ = n.subscribe(robot_name + "/gripper/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
   // service client
   goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/goal_joint_space_path");
-  goal_task_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name + "/goal_task_space_path");
+  goal_task_space_path_position_only_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name + "/goal_task_space_path_position_only");
   goal_tool_control_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/goal_tool_control");
   set_actuator_state_client_ = n.serviceClient<open_manipulator_msgs::SetActuatorState>(robot_name + "/set_actuator_state");
   goal_drawing_trajectory_client_ = n.serviceClient<open_manipulator_msgs::SetDrawingTrajectory>(robot_name + "/goal_drawing_trajectory");
@@ -183,7 +183,7 @@ bool QNode::setTaskSpacePath(std::vector<double> kinematics_pose, double path_ti
 
   srv.request.path_time = path_time;
 
-  if(goal_task_space_path_client_.call(srv))
+  if(goal_task_space_path_position_only_client_.call(srv))
   {
     return srv.response.is_planned;
   }
