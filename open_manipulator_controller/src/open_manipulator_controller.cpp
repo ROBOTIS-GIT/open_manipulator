@@ -186,10 +186,10 @@ void OM_CONTROLLER::initServer()
   goal_drawing_trajectory_server_           = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OM_CONTROLLER::goalDrawingTrajectoryCallback, this);
 
   //MoveIt!
-  get_joint_position_server_  = priv_node_handle_.advertiseService("get_joint_position", &OM_CONTROLLER::getJointPositionMsgCallback, this);
-  get_kinematics_pose_server_ = priv_node_handle_.advertiseService("get_kinematics_pose", &OM_CONTROLLER::getKinematicsPoseMsgCallback, this);
-  set_joint_position_server_  = priv_node_handle_.advertiseService("set_joint_position", &OM_CONTROLLER::setJointPositionMsgCallback, this);
-  set_kinematics_pose_server_ = priv_node_handle_.advertiseService("set_kinematics_pose", &OM_CONTROLLER::setKinematicsPoseMsgCallback, this);
+  get_joint_position_server_  = priv_node_handle_.advertiseService("moveit/get_joint_position", &OM_CONTROLLER::getJointPositionMsgCallback, this);
+  get_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/get_kinematics_pose", &OM_CONTROLLER::getKinematicsPoseMsgCallback, this);
+  set_joint_position_server_  = priv_node_handle_.advertiseService("moveit/set_joint_position", &OM_CONTROLLER::setJointPositionMsgCallback, this);
+  set_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/set_kinematics_pose", &OM_CONTROLLER::setKinematicsPoseMsgCallback, this);
 }
 
 void OM_CONTROLLER::printManipulatorSettingCallback(const std_msgs::String::ConstPtr &msg)
@@ -695,7 +695,7 @@ void OM_CONTROLLER::moveitTimer(double present_time)
         WayPoint temp;
         temp.value = joint_trajectory_.points[step_cnt].positions.at(i);
         temp.velocity = joint_trajectory_.points[step_cnt].velocities.at(i);
-        temp.acceleration = 0.0f;
+        temp.acceleration = joint_trajectory_.points[step_cnt].accelerations.at(i);
         target.push_back(temp);
       }
       open_manipulator_.jointTrajectoryMove(target, path_time);
@@ -756,7 +756,6 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
-
     ros::spinOnce();
     loop_rate.sleep();
   }
