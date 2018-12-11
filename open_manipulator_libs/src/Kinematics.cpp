@@ -34,7 +34,7 @@ Eigen::MatrixXd Chain::jacobian(Manipulator *manipulator, Name tool_name)
   Eigen::VectorXd pose_changed = Eigen::VectorXd::Zero(6);
 
   int8_t index = 0;
-  Name my_name = manipulator->getIteratorBegin()->first;
+  Name my_name =  manipulator->getWorldChildName();
 
   for (int8_t size = 0; size < manipulator->getDOF(); size++)
   {
@@ -642,7 +642,7 @@ bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_nam
       forwardKinematics(&_manipulator);
     }
   }
-  RM_LOG::ERROR("[chain Custum]fail to solve inverse kinematics");
+  RM_LOG::ERROR("[OpenManipulator Chain Custom]fail to solve inverse kinematics");
   *goal_joint_value = _manipulator.getAllActiveJointValue();
   return false;
 }

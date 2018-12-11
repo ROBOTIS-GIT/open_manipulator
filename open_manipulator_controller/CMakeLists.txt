@@ -13,9 +13,15 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     std_msgs
     sensor_msgs
+    geometry_msgs
+    moveit_msgs
+    trajectory_msgs
     open_manipulator_msgs
     robotis_manipulator
     open_manipulator_libs
+    moveit_core
+    moveit_ros_planning
+    moveit_ros_planning_interface
     cmake_modules
 )
 find_package(Boost REQUIRED)
@@ -37,7 +43,7 @@ find_package(Boost REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs open_manipulator_msgs robotis_manipulator open_manipulator_libs cmake_modules
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs moveit_msgs trajectory_msgs open_manipulator_msgs robotis_manipulator open_manipulator_libs moveit_core moveit_ros_planning  moveit_ros_planning_interface cmake_modules
   DEPENDS Boost
 )
 
@@ -50,19 +56,20 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
-#file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
-
 add_executable(open_manipulator_controller src/open_manipulator_controller.cpp)
 add_dependencies(open_manipulator_controller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(open_manipulator_controller ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
-
 
 ################################################################################
 # Install
 ################################################################################
 install(TARGETS open_manipulator_controller
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(PROGRAMS
+  scripts/create_udev_rules
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}  
 )
 
 install(DIRECTORY include/${PROJECT_NAME}/
@@ -73,6 +80,9 @@ install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
+install(FILES 99-open-manipulator-cdc.rules
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 ################################################################################
 # Test
 ################################################################################

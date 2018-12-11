@@ -2,6 +2,8 @@
 
   <include file="$(find open_manipulator_moveit)/launch/planning_context.launch" />
 
+  <arg name="sample_duration" default="0.010"/>
+
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
@@ -41,6 +43,7 @@
   <!-- Planning Functionality -->
   <include ns="move_group" file="$(find open_manipulator_moveit)/launch/planning_pipeline.launch.xml">
     <arg name="pipeline" value="ompl" />
+    <arg name="sample_duration" value="$(arg sample_duration)"/>
   </include>
 
   <!-- Trajectory Execution Functionality -->

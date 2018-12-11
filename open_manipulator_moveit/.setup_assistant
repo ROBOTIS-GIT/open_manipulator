@@ -8,4 +8,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: Darby Lim
     author_email: thlim@robotis.com
-    generated_timestamp: 1541667412
+    generated_timestamp: 1544082569

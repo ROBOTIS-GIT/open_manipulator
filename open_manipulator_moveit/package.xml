@@ -5,20 +5,17 @@
   <description>
      An automatically generated package with all the configuration and launch files for using the open_manipulator with the MoveIt! Motion Planning Framework
   </description>
+  <license>Apache 2.0</license>
   <author email="thlim@robotis.com">Darby Lim</author>
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
   <author email="jhshim@robotis.com">Ryan Shim</author>
   <author email="yhna@robotis.com">Yong-Ho Na</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
-
-  <license>BSD</license>
-
-  <url type="website">http://moveit.ros.org/</url>
-  <url type="bugtracker">https://github.com/ros-planning/moveit/issues</url>
-  <url type="repository">https://github.com/ros-planning/moveit</url>
-
+  <url type="website">http://wiki.ros.org/open_manipulator_description</url>
+  <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <buildtool_depend>catkin</buildtool_depend>
-
   <run_depend>moveit_ros_move_group</run_depend>
   <run_depend>moveit_fake_controller_manager</run_depend>
   <run_depend>moveit_kinematics</run_depend>

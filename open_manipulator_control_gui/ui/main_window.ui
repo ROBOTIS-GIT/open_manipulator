@@ -903,9 +903,9 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>9</x>
+        <x>7</x>
         <y>150</y>
-        <width>141</width>
+        <width>151</width>
         <height>31</height>
        </rect>
       </property>
@@ -1316,14 +1316,14 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>130</x>
-        <y>150</y>
-        <width>181</width>
-        <height>31</height>
+        <x>0</x>
+        <y>10</y>
+        <width>311</width>
+        <height>51</height>
        </rect>
       </property>
       <property name="text">
-       <string>Get Manipulator setting</string>
+       <string>Get Manipulator Setting</string>
       </property>
      </widget>
     </widget>
@@ -1537,7 +1537,7 @@
      <x>0</x>
      <y>0</y>
      <width>793</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

@@ -99,7 +99,7 @@ bool OM_TELEOP::setJointSpacePathToPresent(std::vector<std::string> joint_name, 
 
   if(goal_joint_space_path_to_present_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -113,7 +113,7 @@ bool OM_TELEOP::setJointSpacePath(std::vector<std::string> joint_name, std::vect
 
   if(goal_joint_space_path_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -125,7 +125,7 @@ bool OM_TELEOP::setToolControl(std::vector<double> joint_angle)
 
   if(goal_tool_control_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -140,7 +140,7 @@ bool OM_TELEOP::setTaskSpacePathToPresent(std::vector<double> kinematics_pose, d
 
   if(goal_task_space_path_to_present_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -151,12 +151,12 @@ void OM_TELEOP::printText()
   printf("---------------------------\n");
   printf("Control Your OpenManipulator!\n");
   printf("---------------------------\n");
-  printf("w : increase x axis in cartesian space\n");
-  printf("s : decrease x axis in cartesian space\n");
-  printf("a : increase y axis in cartesian space\n");
-  printf("d : decrease y axis in cartesian space\n");
-  printf("z : increase z axis in cartesian space\n");
-  printf("x : decrease z axis in cartesian space\n");
+  printf("w : increase x axis in task space\n");
+  printf("s : decrease x axis in task space\n");
+  printf("a : increase y axis in task space\n");
+  printf("d : decrease y axis in task space\n");
+  printf("z : increase z axis in task space\n");
+  printf("x : decrease z axis in task space\n");
   printf("\n");
   printf("y : increase joint 1 angle\n");
   printf("h : decrease joint 1 angle\n");
@@ -181,7 +181,7 @@ void OM_TELEOP::printText()
          getPresentJointAngle().at(1),
          getPresentJointAngle().at(2),
          getPresentJointAngle().at(3));
-  printf("Present Kinematic Position X: %.3lf Y: %.3lf Z: %.3lf\n",
+  printf("Present Kinematics Position X: %.3lf Y: %.3lf Z: %.3lf\n",
          getPresentKinematicsPose().at(0),
          getPresentKinematicsPose().at(1),
          getPresentKinematicsPose().at(2));
@@ -196,37 +196,37 @@ void OM_TELEOP::setGoal(char ch)
 
   if(ch == 'w' || ch == 'W')
   {
-    printf("input : w \tincrease(++) x axis in cartesian space\n");
+    printf("input : w \tincrease(++) x axis in task space\n");
     goalPose.at(0) = DELTA;
     setTaskSpacePathToPresent(goalPose, PATH_TIME);
   }
   else if(ch == 's' || ch == 'S')
   {
-    printf("input : s \tdecrease(--) x axis in cartesian space\n");
+    printf("input : s \tdecrease(--) x axis in task space\n");
     goalPose.at(0) = -DELTA;
     setTaskSpacePathToPresent(goalPose, PATH_TIME);
   }
   else if(ch == 'a' || ch == 'A')
   {
-    printf("input : a \tincrease(++) y axis in cartesian space\n");
+    printf("input : a \tincrease(++) y axis in task space\n");
     goalPose.at(1) = DELTA;
     setTaskSpacePathToPresent(goalPose, PATH_TIME);
   }
   else if(ch == 'd' || ch == 'D')
   {
-    printf("input : d \tdecrease(--) y axis in cartesian space\n");
+    printf("input : d \tdecrease(--) y axis in task space\n");
     goalPose.at(1) = -DELTA;
     setTaskSpacePathToPresent(goalPose, PATH_TIME);
   }
   else if(ch == 'z' || ch == 'Z')
   {
-    printf("input : z \tincrease(++) z axis in cartesian space\n");
+    printf("input : z \tincrease(++) z axis in task space\n");
     goalPose.at(2) = DELTA;
     setTaskSpacePathToPresent(goalPose, PATH_TIME);
   }
   else if(ch == 'x' || ch == 'X')
   {
-    printf("input : x \tdecrease(--) z axis in cartesian space\n");
+    printf("input : x \tdecrease(--) z axis in task space\n");
     goalPose.at(2) = -DELTA;
     setTaskSpacePathToPresent(goalPose, PATH_TIME);
   }

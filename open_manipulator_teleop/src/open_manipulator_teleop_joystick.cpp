@@ -113,7 +113,7 @@ bool OM_TELEOP::setJointSpacePath(std::vector<std::string> joint_name, std::vect
 
   if(goal_joint_space_path_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -125,7 +125,7 @@ bool OM_TELEOP::setToolControl(std::vector<double> joint_angle)
 
   if(goal_tool_control_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }
@@ -140,7 +140,7 @@ bool OM_TELEOP::setTaskSpacePathToPresent(std::vector<double> kinematics_pose, d
 
   if(goal_task_space_path_to_present_client_.call(srv))
   {
-    return srv.response.isPlanned;
+    return srv.response.is_planned;
   }
   return false;
 }

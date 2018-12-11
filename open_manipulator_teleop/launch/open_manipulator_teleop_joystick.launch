@@ -1,4 +1,6 @@
 <launch>
+  <include file="$(find teleop_twist_joy)/launch/teleop.launch">
+  </include>
   <node pkg="open_manipulator_teleop" type="open_manipulator_teleop_joystick" name="open_manipulator_teleop_joystick"  output="screen">
   </node>
 </launch>

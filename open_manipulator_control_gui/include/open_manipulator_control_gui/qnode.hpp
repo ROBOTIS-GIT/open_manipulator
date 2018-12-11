@@ -110,13 +110,15 @@ private:
   ros::Subscriber open_manipulator_kinematics_pose_sub_;
 
   ros::ServiceClient goal_joint_space_path_client_;
-  ros::ServiceClient goal_task_space_path_client_;
+  ros::ServiceClient goal_task_space_path_position_only_client_;
   ros::ServiceClient goal_tool_control_client_;
   ros::ServiceClient set_actuator_state_client_;
   ros::ServiceClient goal_drawing_trajectory_client_;
 
   std::vector<double> present_joint_angle_;
   std::vector<double> present_kinematic_position_;
+  open_manipulator_msgs::KinematicsPose kinematics_pose_;
+
   bool open_manipulator_is_moving_;
   bool open_manipulator_actuator_enabled_;
 };

@@ -1,5 +1,7 @@
 <launch>
 
+  <arg name="sample_duration" default="0.010"/>
+
   <!-- OMPL Plugin for MoveIt! -->
   <arg name="planning_plugin" value="ompl_interface/OMPLPlanner" />
 
@@ -19,8 +21,8 @@
   <param name="planning_plugin" value="$(arg planning_plugin)" />
   <param name="request_adapters" value="$(arg planning_adapters)" />
   <param name="start_state_max_bounds_error" value="$(arg start_state_max_bounds_error)" />
-  
-  <param name="sample_duration" value="0.010" />
+
+  <param name="sample_duration" value="$(arg sample_duration)" />
 
   <rosparam command="load" file="$(find open_manipulator_moveit)/config/ompl_planning.yaml"/>
   <rosparam command="load" file="$(find open_manipulator_moveit)/config/smoothing_filter_params.yaml"/>
