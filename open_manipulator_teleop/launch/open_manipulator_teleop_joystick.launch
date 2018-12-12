@@ -1,6 +1,10 @@
 <launch>
-  <include file="$(find teleop_twist_joy)/launch/teleop.launch">
-  </include>
-  <node pkg="open_manipulator_teleop" type="open_manipulator_teleop_joystick" name="open_manipulator_teleop_joystick"  output="screen">
-  </node>
+  <arg name="robot_name"   default="open_manipulator"/>
+  <arg name="end_effector" default="gripper"/>
+
+  <group ns="$(arg robot_name)">
+    <node name="teleop_joystick" pkg="open_manipulator_teleop" type="open_manipulator_teleop_joystick" output="screen">
+      <remap from="kinematics_pose" to="$(arg end_effector)/kinematics_pose"/>
+    </node>
+  </group>
 </launch>

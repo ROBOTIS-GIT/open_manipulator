@@ -24,7 +24,6 @@ OM_TELEOP::OM_TELEOP()
     :node_handle_(""),
      priv_node_handle_("~")
 {
-  robot_name_     = node_handle_.param<std::string>("robot_name", "open_manipulator");
   present_joint_angle.resize(NUM_OF_JOINT);
   present_kinematic_position.resize(3);
 
@@ -45,16 +44,16 @@ OM_TELEOP::~OM_TELEOP()
 
 void OM_TELEOP::initPublisher()
 {
-  goal_joint_space_path_to_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name_ + "/goal_joint_space_path_to_present");
-  goal_task_space_path_to_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name_ + "/goal_task_space_path_to_present");
-  goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name_ + "/goal_joint_space_path");
-  goal_tool_control_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name_ + "/goal_tool_control");
+  goal_joint_space_path_to_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path_to_present");
+  goal_task_space_path_to_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_to_present");
+  goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
+  goal_tool_control_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_tool_control");
 
 }
 void OM_TELEOP::initSubscriber()
 {
-  chain_joint_states_sub_ = node_handle_.subscribe("/open_manipulator/joint_states", 10, &OM_TELEOP::jointStatesCallback, this);
-  chain_kinematics_pose_sub_ = node_handle_.subscribe("/open_manipulator/kinematics_pose", 10, &OM_TELEOP::kinematicsPoseCallback, this);
+  chain_joint_states_sub_ = node_handle_.subscribe("joint_states", 10, &OM_TELEOP::jointStatesCallback, this);
+  chain_kinematics_pose_sub_ = node_handle_.subscribe("kinematics_pose", 10, &OM_TELEOP::kinematicsPoseCallback, this);
 }
 
 void OM_TELEOP::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg)

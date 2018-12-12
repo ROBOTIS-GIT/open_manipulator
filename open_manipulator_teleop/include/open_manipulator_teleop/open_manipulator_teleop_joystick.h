@@ -35,7 +35,6 @@ class OM_TELEOP
   std::vector<double> present_joint_angle;
   std::vector<double> present_kinematic_position;
 
-  std::string robot_name_;
  public:
 
   OM_TELEOP();

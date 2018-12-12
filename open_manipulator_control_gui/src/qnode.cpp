@@ -58,22 +58,20 @@ bool QNode::init() {
 		return false;
 	}
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
-	ros::NodeHandle n;
-
-  std::string robot_name = n.param<std::string>("robot_name", "open_manipulator");
+  ros::NodeHandle n("");
 
   // msg publisher
-  open_manipulator_option_pub_ = n.advertise<std_msgs::String>(robot_name + "/option", 10);
+  open_manipulator_option_pub_ = n.advertise<std_msgs::String>("option", 10);
   // msg subscriber
-  open_manipulator_states_sub_       = n.subscribe(robot_name + "/states", 10, &QNode::statesCallback, this);
-  open_manipulator_joint_states_sub_ = n.subscribe(robot_name + "/joint_states", 10, &QNode::jointStatesCallback, this);
-  open_manipulator_kinematics_pose_sub_ = n.subscribe(robot_name + "/gripper/kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
+  open_manipulator_states_sub_       = n.subscribe("states", 10, &QNode::statesCallback, this);
+  open_manipulator_joint_states_sub_ = n.subscribe("joint_states", 10, &QNode::jointStatesCallback, this);
+  open_manipulator_kinematics_pose_sub_ = n.subscribe("kinematics_pose", 10, &QNode::kinematicsPoseCallback, this);
   // service client
-  goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/goal_joint_space_path");
-  goal_task_space_path_position_only_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>(robot_name + "/goal_task_space_path_position_only");
-  goal_tool_control_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>(robot_name + "/goal_tool_control");
-  set_actuator_state_client_ = n.serviceClient<open_manipulator_msgs::SetActuatorState>(robot_name + "/set_actuator_state");
-  goal_drawing_trajectory_client_ = n.serviceClient<open_manipulator_msgs::SetDrawingTrajectory>(robot_name + "/goal_drawing_trajectory");
+  goal_joint_space_path_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
+  goal_task_space_path_position_only_client_ = n.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_position_only");
+  goal_tool_control_client_ = n.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_tool_control");
+  set_actuator_state_client_ = n.serviceClient<open_manipulator_msgs::SetActuatorState>("set_actuator_state");
+  goal_drawing_trajectory_client_ = n.serviceClient<open_manipulator_msgs::SetDrawingTrajectory>("goal_drawing_trajectory");
 
   start();
 	return true;
