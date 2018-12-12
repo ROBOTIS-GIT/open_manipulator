@@ -92,3 +92,17 @@ add_executable(open_manipulator_control_gui ${open_manipulator_control_gui_SRCS}
 add_dependencies(open_manipulator_control_gui ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(open_manipulator_control_gui Qt5::Widgets ${catkin_LIBRARIES})
 
+#################################################################################
+## Install
+#################################################################################
+install(TARGETS open_manipulator_control_gui
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(DIRECTORY resources ui launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)

@@ -54,5 +54,20 @@ add_dependencies(open_manipulator_teleop_joystick ${${PROJECT_NAME}_EXPORTED_TAR
 target_link_libraries(open_manipulator_teleop_joystick ${catkin_LIBRARIES} )
 
 ################################################################################
+# Install
+################################################################################
+install(TARGETS open_manipulator_teleop_keyboard open_manipulator_teleop_joystick
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+################################################################################
 # Test
 ################################################################################
