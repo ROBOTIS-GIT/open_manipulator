@@ -22,6 +22,7 @@
 #include "Dynamixel.h"
 #include "Drawing.h"
 #include "Kinematics.h"
+#include "Kinematics_Dynamics.h"
 
 #define NUM_OF_JOINT 4
 #define DXL_SIZE 5
