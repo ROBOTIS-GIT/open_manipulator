@@ -32,14 +32,10 @@ using namespace Eigen;
 
 namespace DRAWING
 {
-
 enum AXIS{
     X_AXIS,
     Y_AXIS,
     Z_AXIS,
-    ROLL,
-    PITCH,
-    YAW
 };
 //-------------------- Line --------------------//
 
