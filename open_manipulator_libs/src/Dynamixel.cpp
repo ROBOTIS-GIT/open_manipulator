@@ -99,7 +99,7 @@ bool JointDynamixel::sendJointActuatorValue(std::vector<uint8_t> actuator_id, st
 
   for(uint32_t index = 0; index < value_vector.size(); index++)
   {
-    radian_vector.push_back(value_vector.at(index).value);
+    radian_vector.push_back(value_vector.at(index).position);
   }
 
   result = JointDynamixel::writeGoalPosition(actuator_id, radian_vector);
@@ -327,7 +327,7 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
     ROBOTIS_MANIPULATOR::Actuator actuator;
     actuator.effort = dynamixel_workbench_->convertValue2Current(get_current[index]);
     actuator.velocity = dynamixel_workbench_->convertValue2Velocity(actuator_id.at(index), get_velocity[index]);
-    actuator.value = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), get_position[index]);
+    actuator.position = dynamixel_workbench_->convertValue2Radian(actuator_id.at(index), get_position[index]);
 
     all_actuator.push_back(actuator);
   }
@@ -403,14 +403,19 @@ void GripperDynamixel::disable()
   enable_state_ = false;
 }
 
-bool GripperDynamixel::sendToolActuatorValue(double value)
+bool GripperDynamixel::sendToolActuatorValue(ROBOTIS_MANIPULATOR::Actuator value)
 {
-  return GripperDynamixel::writeGoalPosition(value);
+  return GripperDynamixel::writeGoalPosition(value.position);
 }
 
-double GripperDynamixel::receiveToolActuatorValue()
+ROBOTIS_MANIPULATOR::Actuator GripperDynamixel::receiveToolActuatorValue()
 {
-  return GripperDynamixel::receiveDynamixelValue();
+  ROBOTIS_MANIPULATOR::Actuator result;
+  result.position = GripperDynamixel::receiveDynamixelValue();
+  result.velocity = 0.0;
+  result.acceleration = 0.0;
+  result.effort = 0.0;
+  return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

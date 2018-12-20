@@ -147,10 +147,10 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     receiveAllToolActuatorValue();
   }
   ////////// drawing path
-  addDrawingTrajectory(DRAWING_LINE, &line_);
-  addDrawingTrajectory(DRAWING_CIRCLE, &circle_);
-  addDrawingTrajectory(DRAWING_RHOMBUS, &rhombus_);
-  addDrawingTrajectory(DRAWING_HEART, &heart_);
+  addCustomTrajectory(DRAWING_LINE, &line_);
+  addCustomTrajectory(DRAWING_CIRCLE, &circle_);
+  addCustomTrajectory(DRAWING_RHOMBUS, &rhombus_);
+  addCustomTrajectory(DRAWING_HEART, &heart_);
 
   ////////// manipulator trajectory & control time initialization
   setTrajectoryControlTime(CONTROL_TIME);
@@ -158,23 +158,25 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
 
 void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
 {
-  std::vector<WayPoint> goal_value  = getJointGoalValueFromTrajectory(present_time);
-  std::vector<double> tool_value    = getToolGoalValue();
+  JointWayPoint goal_value  = getJointGoalValueFromTrajectory(present_time);
+  std::vector<JointValue> tool_value    = getToolGoalValue();
 
-  if(platform_)
-  {
+//  if(platform_)
+//  {
     receiveAllJointActuatorValue();
     receiveAllToolActuatorValue();
     if(goal_value.size() != 0) sendAllJointActuatorValue(goal_value);
     if(tool_value.size() != 0) sendAllToolActuatorValue(tool_value);
-  }
-  else // visualization
-  {
-    if(goal_value.size() != 0) setAllActiveJointWayPoint(goal_value);
-    if(tool_value.size() != 0) setAllToolValue(tool_value);
-  }
+//  }
+//  else // visualization
+//  {
+//    if(goal_value.size() != 0) setAllActiveJointWayPoint(goal_value);
+//    if(tool_value.size() != 0) setAllToolValue(tool_value);
+//  }
   forwardKinematics();
 }
+
+
 
 bool OPEN_MANIPULATOR::getPlatformFlag()
 {

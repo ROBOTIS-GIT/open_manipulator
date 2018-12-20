@@ -104,8 +104,8 @@ class GripperDynamixel : public ROBOTIS_MANIPULATOR::ToolActuator
   virtual void enable();
   virtual void disable();
 
-  virtual bool sendToolActuatorValue(double value);
-  virtual double receiveToolActuatorValue();
+  virtual bool sendToolActuatorValue(ROBOTIS_MANIPULATOR::Actuator value);
+  virtual ROBOTIS_MANIPULATOR::Actuator receiveToolActuatorValue();
 
 ////////////////////////////////////////////////////////////////
 

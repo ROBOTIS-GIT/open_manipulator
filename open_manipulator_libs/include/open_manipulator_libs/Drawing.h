@@ -43,13 +43,11 @@ enum AXIS{
 };
 //-------------------- Line --------------------//
 
-class Line : public ROBOTIS_MANIPULATOR::DrawingTrajectory
+class Line : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
 {
 private:
-  WayPointType output_way_point_type_;
-
-  std::vector<WayPoint> start_pose_;
-  std::vector<WayPoint> goal_pose_;
+  TaskWayPoint start_pose_;
+  TaskWayPoint goal_pose_;
 
   double acc_dec_time_;
   double move_time_;
@@ -59,27 +57,24 @@ public:
   Line();
   virtual ~Line();
 
-  void initLine(double move_time, double control_time, std::vector<WayPoint> start, std::vector<WayPoint> goal);
-  std::vector<WayPoint> drawLine(double time_var);
+  void initLine(double move_time, double control_time, TaskWayPoint start, TaskWayPoint goal);
+  TaskWayPoint drawLine(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
-  virtual std::vector<WayPoint> getJointWayPoint(double tick);
-  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
+  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
 //-------------------- Circle --------------------//
 
-class Circle : public ROBOTIS_MANIPULATOR::DrawingTrajectory
+class Circle : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
 {
 private:
-  WayPointType output_way_point_type_;
-
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
   VectorXd coefficient_;
 
-  std::vector<WayPoint> start_pose_;
-  std::vector<WayPoint> goal_pose_;
+  TaskWayPoint start_pose_;
+  TaskWayPoint goal_pose_;
 
   double radius_;
   double start_angular_position_;
@@ -89,27 +84,24 @@ public:
   Circle();
   virtual ~Circle();
 
-  void initCircle(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
-  std::vector<WayPoint> drawCircle(double time_var);
+  void initCircle(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
+  TaskWayPoint drawCircle(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
-  virtual std::vector<WayPoint> getJointWayPoint(double tick);
-  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
+  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
 //-------------------- Rhombus --------------------//
 
-class Rhombus : public ROBOTIS_MANIPULATOR::DrawingTrajectory
+class Rhombus : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
 {
 private:
-  WayPointType output_way_point_type_;
-
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
   VectorXd coefficient_;
 
-  std::vector<WayPoint> start_pose_;
-  std::vector<WayPoint> goal_pose_;
+  TaskWayPoint start_pose_;
+  TaskWayPoint goal_pose_;
 
   double radius_;
   double start_angular_position_;
@@ -119,27 +111,24 @@ public:
   Rhombus();
   virtual ~Rhombus();
 
-  void initRhombus(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
-  std::vector<WayPoint> drawRhombus(double time_var);
+  void initRhombus(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
+  TaskWayPoint drawRhombus(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
-  virtual std::vector<WayPoint> getJointWayPoint(double tick);
-  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
+  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
 //-------------------- Heart --------------------//
 
-class Heart : public ROBOTIS_MANIPULATOR::DrawingTrajectory
+class Heart : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
 {
 private:
-  WayPointType output_way_point_type_;
-
   ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
   VectorXd coefficient_;
 
-  std::vector<WayPoint> start_pose_;
-  std::vector<WayPoint> goal_pose_;
+  TaskWayPoint start_pose_;
+  TaskWayPoint goal_pose_;
 
   double radius_;
   double start_angular_position_;
@@ -149,13 +138,12 @@ public:
   Heart();
   virtual ~Heart();
 
-  void initHeart(double move_time, double control_time, std::vector<WayPoint> start, double radius, double revolution, double start_angular_position);
-  std::vector<WayPoint> drawHeart(double tick);
+  void initHeart(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
+  TaskWayPoint drawHeart(double tick);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, std::vector<WayPoint> start, const void *arg);
-  virtual std::vector<WayPoint> getJointWayPoint(double tick);
-  virtual std::vector<WayPoint> getTaskWayPoint(double tick);
+  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
 

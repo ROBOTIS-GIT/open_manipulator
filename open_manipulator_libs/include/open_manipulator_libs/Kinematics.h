@@ -44,13 +44,13 @@ public:
   virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void forwardKinematics(Manipulator *manipulator);
-  virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
 
   void forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name);
-  bool inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
-  bool inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
-  bool inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
-  bool chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  bool inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
+  bool inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
+  bool inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
+  bool chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
 
 };
 

@@ -71,16 +71,16 @@ void Chain::forwardKinematics(Manipulator *manipulator)
   forwardSolverUsingChainRule(manipulator, manipulator->getWorldChildName());
 }
 
-bool Chain::inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double> *goal_joint_value)
+bool Chain::inverseKinematics(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double> *goal_joint_position)
 {
   if(inverse_solver_option_ == "position_only_inverse")
-    return inverseSolverUsingPositionOnlySRJacobian(manipulator, tool_name, target_pose, goal_joint_value);
+    return inverseSolverUsingPositionOnlySRJacobian(manipulator, tool_name, target_pose, goal_joint_position);
   else if (inverse_solver_option_ == "sr_inverse")
-    return inverseSolverUsingSRJacobian(manipulator, tool_name, target_pose, goal_joint_value);
+    return inverseSolverUsingSRJacobian(manipulator, tool_name, target_pose, goal_joint_position);
   else if(inverse_solver_option_ == "chain_custum_inverse_kinematics")
-    return chainCustomInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
+    return chainCustomInverseKinematics(manipulator, tool_name, target_pose, goal_joint_position);
   else if(inverse_solver_option_ == "normal_inverse")
-    return inverseSolverUsingJacobian(manipulator, tool_name, target_pose, goal_joint_value);
+    return inverseSolverUsingJacobian(manipulator, tool_name, target_pose, goal_joint_position);
   else
   {
     RM_LOG::ERROR("Wrong inverse solver name (please change the solver)");
@@ -109,7 +109,7 @@ void Chain::forwardSolverUsingChainRule(Manipulator *manipulator, Name component
   }
 
   my_position_to_world = parent_orientation_to_world * manipulator->getComponentRelativePositionFromParent(my_name) + parent_position_to_world;
-  my_orientation_to_world = parent_orientation_to_world * RM_MATH::rodriguesRotationMatrix(manipulator->getAxis(my_name), manipulator->getValue(my_name));
+  my_orientation_to_world = parent_orientation_to_world * RM_MATH::rodriguesRotationMatrix(manipulator->getAxis(my_name), manipulator->getJointPosition(my_name));
 
   manipulator->setComponentPositionFromWorld(my_name, my_position_to_world);
   manipulator->setComponentOrientationFromWorld(my_name, my_orientation_to_world);
@@ -121,7 +121,7 @@ void Chain::forwardSolverUsingChainRule(Manipulator *manipulator, Name component
   }
 }
 
-bool Chain::inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value)
+bool Chain::inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position)
 {
   const double lambda = 0.7;
   const int8_t iteration = 10;
@@ -145,7 +145,7 @@ bool Chain::inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name,
                                            target_pose.orientation, _manipulator.getComponentOrientationFromWorld(tool_name));
     if (pose_changed.norm() < 1E-6)
     {
-      *goal_joint_value = _manipulator.getAllActiveJointValue();
+      *goal_joint_position = _manipulator.getAllActiveJointPosition();
       return true;
     }
 
@@ -154,15 +154,15 @@ bool Chain::inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name,
 
     std::vector<double> set_angle_changed;
     for (int8_t index = 0; index < _manipulator.getDOF(); index++)
-      set_angle_changed.push_back(_manipulator.getAllActiveJointValue().at(index) + angle_changed(index));
+      set_angle_changed.push_back(_manipulator.getAllActiveJointPosition().at(index) + angle_changed(index));
 
-    _manipulator.setAllActiveJointValue(set_angle_changed);
+    _manipulator.setAllActiveJointPosition(set_angle_changed);
   }
-  *goal_joint_value = _manipulator.getAllActiveJointValue();
+  *goal_joint_position = _manipulator.getAllActiveJointPosition();
   return false;
 }
 
-bool Chain::inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value)
+bool Chain::inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position)
 {
   //manipulator
   Manipulator _manipulator = *manipulator;
@@ -254,11 +254,11 @@ bool Chain::inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, N
     ColPivHouseholderQR<Eigen::MatrixXd> dec(sr_jacobian);                    //solving (get dq)
     angle_changed = dec.solve(gerr);                                          //(J^T*we) * dx = (J^T*we*J + lamda*Wn) * dq
 
-    present_angle = _manipulator.getAllActiveJointValue();
+    present_angle = _manipulator.getAllActiveJointPosition();
     set_angle.clear();
     for (int8_t index = 0; index < _manipulator.getDOF(); index++)
-      set_angle.push_back(_manipulator.getAllActiveJointValue().at(index) + angle_changed(index));
-    _manipulator.setAllActiveJointValue(set_angle);
+      set_angle.push_back(_manipulator.getAllActiveJointPosition().at(index) + angle_changed(index));
+    _manipulator.setAllActiveJointPosition(set_angle);
     forwardKinematics(&_manipulator);
     ////////////////////////////////////////
 
@@ -297,7 +297,7 @@ bool Chain::inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, N
       RM_LOG::PRINTLN("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
-      *goal_joint_value = _manipulator.getAllActiveJointValue();
+      *goal_joint_position = _manipulator.getAllActiveJointPosition();
       return true;
     }
     else if (new_Ek < pre_Ek)
@@ -306,20 +306,20 @@ bool Chain::inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, N
     }
     else
     {
-      present_angle = _manipulator.getAllActiveJointValue();
+      present_angle = _manipulator.getAllActiveJointPosition();
       for (int8_t index = 0; index < _manipulator.getDOF(); index++)
-        set_angle.push_back(_manipulator.getAllActiveJointValue().at(index) - (gamma * angle_changed(index)));
-      _manipulator.setAllActiveJointValue(set_angle);
+        set_angle.push_back(_manipulator.getAllActiveJointPosition().at(index) - (gamma * angle_changed(index)));
+      _manipulator.setAllActiveJointPosition(set_angle);
 
       forwardKinematics(&_manipulator);
     }
   }
   RM_LOG::ERROR("[position_only]fail to solve inverse kinematics (please change the solver)");
-  *goal_joint_value = _manipulator.getAllActiveJointValue();
+  *goal_joint_position = _manipulator.getAllActiveJointPosition();
   return false;
 }
 
-bool Chain::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value)
+bool Chain::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position)
 {
   //manipulator
   Manipulator _manipulator = *manipulator;
@@ -411,11 +411,11 @@ bool Chain::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_nam
     ColPivHouseholderQR<Eigen::MatrixXd> dec(sr_jacobian);                    //solving (get dq)
     angle_changed = dec.solve(gerr);                                          //(J^T*we) * dx = (J^T*we*J + lamda*Wn) * dq
 
-    present_angle = _manipulator.getAllActiveJointValue();
+    present_angle = _manipulator.getAllActiveJointPosition();
     set_angle.clear();
     for (int8_t index = 0; index < _manipulator.getDOF(); index++)
       set_angle.push_back(present_angle.at(index) + angle_changed(index));
-    _manipulator.setAllActiveJointValue(set_angle);
+    _manipulator.setAllActiveJointPosition(set_angle);
     forwardKinematics(&_manipulator);
     ////////////////////////////////////////
 
@@ -454,7 +454,7 @@ bool Chain::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_nam
       RM_LOG::PRINTLN("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
-      *goal_joint_value = _manipulator.getAllActiveJointValue();
+      *goal_joint_position = _manipulator.getAllActiveJointPosition();
       return true;
     }
     else if (new_Ek < pre_Ek)
@@ -463,20 +463,20 @@ bool Chain::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_nam
     }
     else
     {
-      present_angle = _manipulator.getAllActiveJointValue();
+      present_angle = _manipulator.getAllActiveJointPosition();
       for (int8_t index = 0; index < _manipulator.getDOF(); index++)
         set_angle.push_back(present_angle.at(index) - (gamma * angle_changed(index)));
-      _manipulator.setAllActiveJointValue(set_angle);
+      _manipulator.setAllActiveJointPosition(set_angle);
 
       forwardKinematics(&_manipulator);
     }
   }
   RM_LOG::ERROR("[sr]fail to solve inverse kinematics (please change the solver)");
-  *goal_joint_value = _manipulator.getAllActiveJointValue();
+  *goal_joint_position = _manipulator.getAllActiveJointPosition();
   return false;
 }
 
-bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double> *goal_joint_value)
+bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double> *goal_joint_position)
 {
   //manipulator
   Manipulator _manipulator = *manipulator;
@@ -582,11 +582,11 @@ bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_nam
     ColPivHouseholderQR<Eigen::MatrixXd> dec(sr_jacobian);                    //solving (get dq)
     angle_changed = dec.solve(gerr);                                          //(J^T*we) * dx = (J^T*we*J + lamda*Wn) * dq
 
-    present_angle = _manipulator.getAllActiveJointValue();
+    present_angle = _manipulator.getAllActiveJointPosition();
     set_angle.clear();
     for (int8_t index = 0; index < _manipulator.getDOF(); index++)
       set_angle.push_back(present_angle.at(index) + angle_changed(index));
-    _manipulator.setAllActiveJointValue(set_angle);
+    _manipulator.setAllActiveJointPosition(set_angle);
     forwardKinematics(&_manipulator);
     ////////////////////////////////////////
 
@@ -625,7 +625,7 @@ bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_nam
       RM_LOG::PRINTLN("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
-      *goal_joint_value = _manipulator.getAllActiveJointValue();
+      *goal_joint_position = _manipulator.getAllActiveJointPosition();
       return true;
     }
     else if (new_Ek < pre_Ek)
@@ -634,16 +634,16 @@ bool Chain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_nam
     }
     else
     {
-      present_angle = _manipulator.getAllActiveJointValue();
+      present_angle = _manipulator.getAllActiveJointPosition();
       for (int8_t index = 0; index < _manipulator.getDOF(); index++)
         set_angle.push_back(present_angle.at(index) - (gamma * angle_changed(index)));
-      _manipulator.setAllActiveJointValue(set_angle);
+      _manipulator.setAllActiveJointPosition(set_angle);
 
       forwardKinematics(&_manipulator);
     }
   }
   RM_LOG::ERROR("[OpenManipulator Chain Custom]fail to solve inverse kinematics");
-  *goal_joint_value = _manipulator.getAllActiveJointValue();
+  *goal_joint_position = _manipulator.getAllActiveJointPosition();
   return false;
 }
 

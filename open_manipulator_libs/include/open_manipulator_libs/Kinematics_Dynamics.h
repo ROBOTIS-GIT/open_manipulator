@@ -27,23 +27,22 @@ public:
 
   //kinematics
   virtual void forwardKinematics(Manipulator *manipulator);
-  virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
 
   //dynamics
   virtual bool forwardDynamics(Manipulator *manipulator);
-  virtual bool inverseDynamics(Manipulator *manipulator, Name tool_name, std::vector<WayPoint> tool_way_point, std::vector<WayPoint>* active_joint_way_point);
-
+  virtual bool inverseDynamics(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* active_joint_value);
 
   //kinematics solver
-  void FKSolverUsingChainRule(Manipulator *manipulator, Name component_name);
-  bool IKSolverUsingJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
-  bool IKSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
-  bool IKSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
-  bool chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<double>* goal_joint_value);
+  void forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name);
+  bool inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
+  bool inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
+  bool inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
+  bool chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, KinematicPose target_pose, std::vector<double>* goal_joint_position);
 
   //dynamics solver
-  bool FDSolverUsingJacobian(Manipulator *manipulator);
-  bool IDSolverUsingJacobian(Manipulator *manipulator, Name tool_name, WayPoint tool_way_point, std::vector<WayPoint>* active_joint_way_point);
+  bool FDSolverUsingChainRule(Manipulator *manipulator);
+  bool IDSolverUsingJacobian(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* active_joint_value);
 };
 
 }
