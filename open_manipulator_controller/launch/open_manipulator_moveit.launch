@@ -1,4 +1,5 @@
 <launch>
+  <arg name="robot_name"             default="open_manipulator"/>
   <arg name="sample_duration"        default="0.010"/>
   <arg name="debug"                  default="false" />
 
@@ -10,7 +11,7 @@
   <!-- We do not have a robot connected, so publish fake joint states -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="false"/>
-    <rosparam param="source_list">["open_manipulator/joint_states"]</rosparam>
+    <rosparam param="source_list" subst_value="true">["$(arg robot_name)/joint_states"]</rosparam>
   </node>
 
   <!-- Given the published joint states, publish tf for the robot links -->
