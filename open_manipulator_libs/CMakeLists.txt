@@ -50,7 +50,7 @@ include_directories(
 
 add_library(open_manipulator_libs
   src/OpenManipulator.cpp
-  src/Drawing.cpp
+  src/CustomTrajectory.cpp
   src/Dynamixel.cpp
   src/Kinematics.cpp
 )

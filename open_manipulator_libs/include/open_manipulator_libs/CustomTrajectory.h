@@ -16,8 +16,8 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#ifndef DRAWING_H_
-#define DRAWING_H_
+#ifndef CUSTOM_TRAJECTORY_H_
+#define CUSTOM_TRAJECTORY_H_
 
 #if defined(__OPENCR__)
   #include <RobotisManipulator.h>
@@ -30,7 +30,7 @@
 using namespace ROBOTIS_MANIPULATOR;
 using namespace Eigen;
 
-namespace DRAWING
+namespace CUSTOM_TRAJECTORY
 {
 enum AXIS{
     X_AXIS,
@@ -143,8 +143,8 @@ public:
 };
 
 
-} // namespace DRAWING
-#endif // DRAWING_H_
+} // namespace CUSTOM_TRAJECTORY
+#endif // CUSTOM_TRAJECTORY_H_
 
 
 

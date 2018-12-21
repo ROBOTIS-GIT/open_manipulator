@@ -20,17 +20,16 @@
 #define OPEN_MANIPULTOR_H_
 
 #include "Dynamixel.h"
-#include "Drawing.h"
+#include "CustomTrajectory.h"
 #include "Kinematics.h"
-#include "Kinematics_Dynamics.h"
 
 #define NUM_OF_JOINT 4
 #define DXL_SIZE 5
 
-#define DRAWING_LINE "drawing_line"
-#define DRAWING_CIRCLE "drawing_circle"
-#define DRAWING_RHOMBUS "drawing_rhombus"
-#define DRAWING_HEART "drawing_heart"
+#define DRAWING_LINE "custom_trajectory_line"
+#define DRAWING_CIRCLE "custom_trajectory_circle"
+#define DRAWING_RHOMBUS "custom_trajectory_rhombus"
+#define DRAWING_HEART "custom_trajectory_heart"
 
 #define JOINT_DYNAMIXEL "joint_dxl"
 #define TOOL_DYNAMIXEL "tool_dxl"
@@ -49,24 +48,19 @@ private:
   ROBOTIS_MANIPULATOR::JointActuator *actuator_;
   ROBOTIS_MANIPULATOR::ToolActuator *tool_;
 
-  DRAWING::Line line_;
-  DRAWING::Circle circle_;
-  DRAWING::Rhombus rhombus_;
-  DRAWING::Heart heart_;
+  CUSTOM_TRAJECTORY::Line line_;
+  CUSTOM_TRAJECTORY::Circle circle_;
+  CUSTOM_TRAJECTORY::Rhombus rhombus_;
+  CUSTOM_TRAJECTORY::Heart heart_;
 
-  bool platform_;
   std::vector<uint8_t> jointDxlId;
  public:
   OPEN_MANIPULATOR();
   virtual ~OPEN_MANIPULATOR();
 
   void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
-  void openManipulatorProcess(double present_time);
-  bool getPlatformFlag();
+  void communicationProcessToActuator(JointWayPoint goal_joint_value, JointWayPoint goal_tool_value);
+  void calculationProcess(double present_time, JointWayPoint* goal_joint_value, JointWayPoint *goal_tool_value);
 };
 
 #endif // OPEN_MANIPULTOR_H_
-
-
-
-

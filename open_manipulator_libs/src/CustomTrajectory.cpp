@@ -16,9 +16,9 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#include "../include/open_manipulator_libs/Drawing.h"
+#include "../include/open_manipulator_libs/CustomTrajectory.h"
 
-using namespace DRAWING;
+using namespace CUSTOM_TRAJECTORY;
 using namespace Eigen;
 
 //-------------------- Line --------------------//

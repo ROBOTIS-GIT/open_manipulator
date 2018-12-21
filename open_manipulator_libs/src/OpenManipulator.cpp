@@ -25,9 +25,7 @@ OPEN_MANIPULATOR::~OPEN_MANIPULATOR()
 
 void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
 {
-  platform_ = using_platform;
   ////////// manipulator parameter initialization
-
   addWorld("world",   // world name
            "joint1"); // child name
 
@@ -91,7 +89,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   void *inverse_option_arg = &inverse_option;
   kinematicsSetOption(inverse_option_arg);
 
-  if(platform_)
+  if(using_platform)
   {
     ////////// joint actuator init.
     actuator_ = new DYNAMIXEL::JointDynamixel();
@@ -104,7 +102,6 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     jointDxlId.push_back(12);
     jointDxlId.push_back(13);
     jointDxlId.push_back(14);
-
     addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
 
     // set joint actuator parameter
@@ -141,7 +138,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     gripper_dxl_opt_arg[1] = "200";
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
-    // all actuator enable
+    ////////// all actuator enable
     allActuatorEnable();
     receiveAllJointActuatorValue();
     receiveAllToolActuatorValue();
@@ -156,30 +153,18 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   setTrajectoryControlTime(CONTROL_TIME);
 }
 
-void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
+void OPEN_MANIPULATOR::communicationProcessToActuator(JointWayPoint goal_joint_value, JointWayPoint goal_tool_value)
 {
-  JointWayPoint goal_value  = getJointGoalValueFromTrajectory(present_time);
-  std::vector<JointValue> tool_value    = getToolGoalValue();
+  receiveAllJointActuatorValue();
+  receiveAllToolActuatorValue();
+  if(goal_joint_value.size()) sendAllJointActuatorValue(goal_joint_value);
+  if(goal_tool_value.size())  sendAllToolActuatorValue(goal_tool_value);
 
-//  if(platform_)
-//  {
-    receiveAllJointActuatorValue();
-    receiveAllToolActuatorValue();
-    if(goal_value.size() != 0) sendAllJointActuatorValue(goal_value);
-    if(tool_value.size() != 0) sendAllToolActuatorValue(tool_value);
-//  }
-//  else // visualization
-//  {
-//    if(goal_value.size() != 0) setAllActiveJointWayPoint(goal_value);
-//    if(tool_value.size() != 0) setAllToolValue(tool_value);
-//  }
   forwardKinematics();
 }
 
-
-
-bool OPEN_MANIPULATOR::getPlatformFlag()
+void OPEN_MANIPULATOR::calculationProcess(double present_time, JointWayPoint* goal_joint_value, JointWayPoint* goal_tool_value)
 {
-  return platform_;
+  *goal_joint_value = getJointGoalValueFromTrajectory(present_time);
+  *goal_tool_value  = getToolGoalValue();
 }
-
