@@ -1,5 +1,6 @@
 <launch>
-  <arg name="open_rviz"	     default="true" />
+  <arg name="robot_name"     default="open_manipulator"/>
+  <arg name="open_rviz"      default="true" />
   <arg name="use_gui"        default="false" />
 
   <param name="robot_description"
@@ -8,7 +9,7 @@
   <!-- Send joint values -->
   <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
     <param name="/use_gui" value="$(arg use_gui)"/>
-    <rosparam param="source_list">["/open_manipulator/joint_states"]</rosparam>
+    <rosparam param="source_list" subst_value="true">["$(arg robot_name)/joint_states"]</rosparam>
   </node>
 
   <!-- Combine joint values to TF-->
