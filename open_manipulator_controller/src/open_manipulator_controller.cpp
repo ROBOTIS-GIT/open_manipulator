@@ -224,7 +224,7 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
 bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
-  Pose target_pose;
+  KinematicPose target_pose;
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
@@ -281,7 +281,7 @@ bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::S
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  open_manipulator_.jointTrajectoryMoveToPresentValue(target_angle, req.path_time);
+  open_manipulator_.jointTrajectoryMoveToPresentPosition(target_angle, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -290,7 +290,7 @@ bool OM_CONTROLLER::goalJointSpacePathToPresentCallback(open_manipulator_msgs::S
 bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                       open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
-  Pose target_pose;
+  KinematicPose target_pose;
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
@@ -386,22 +386,20 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_circle_arg[1] = req.param[1];  // revolution (rev)
       draw_circle_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_circle_arg = &draw_circle_arg;
-      open_manipulator_.drawingTrajectoryMove(DRAWING_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time);
+      open_manipulator_.customTrajectoryMove(DRAWING_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time);
 
     }
     else if(req.drawing_trajectory_name == "line")
     {
-      Pose present_pose = open_manipulator_.getPose(req.end_effector_name);
-      WayPoint draw_goal_pose[6];
-      draw_goal_pose[0].value = present_pose.position(0) + req.param[0];
-      draw_goal_pose[1].value = present_pose.position(1) + req.param[1];
-      draw_goal_pose[2].value = present_pose.position(2) + req.param[2];
-      draw_goal_pose[3].value = RM_MATH::convertRotationToRPY(present_pose.orientation)[0];
-      draw_goal_pose[4].value = RM_MATH::convertRotationToRPY(present_pose.orientation)[1];
-      draw_goal_pose[5].value = RM_MATH::convertRotationToRPY(present_pose.orientation)[2];
+      KinematicPose present_pose = open_manipulator_.getKinematicPose(req.end_effector_name);
+      TaskWayPoint draw_goal_pose;
+      draw_goal_pose.kinematic.position[0] = present_pose.position(0) + req.param[0];
+      draw_goal_pose.kinematic.position[1] = present_pose.position(1) + req.param[1];
+      draw_goal_pose.kinematic.position[2] = present_pose.position(2) + req.param[2];
+      draw_goal_pose.kinematic.orientation = present_pose.orientation;
 
       void *p_draw_goal_pose = &draw_goal_pose;
-      open_manipulator_.drawingTrajectoryMove(DRAWING_LINE, req.end_effector_name, p_draw_goal_pose, req.path_time);
+      open_manipulator_.customTrajectoryMove(DRAWING_LINE, req.end_effector_name, p_draw_goal_pose, req.path_time);
     }
     else if(req.drawing_trajectory_name == "rhombus")
     {
@@ -410,7 +408,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_circle_arg[1] = req.param[1];  // revolution (rev)
       draw_circle_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_circle_arg = &draw_circle_arg;
-      open_manipulator_.drawingTrajectoryMove(DRAWING_RHOMBUS, req.end_effector_name, p_draw_circle_arg, req.path_time);
+      open_manipulator_.customTrajectoryMove(DRAWING_RHOMBUS, req.end_effector_name, p_draw_circle_arg, req.path_time);
     }
     else if(req.drawing_trajectory_name == "heart")
     {
@@ -419,7 +417,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_circle_arg[1] = req.param[1];  // revolution (rev)
       draw_circle_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_circle_arg = &draw_circle_arg;
-      open_manipulator_.drawingTrajectoryMove(DRAWING_HEART, req.end_effector_name, p_draw_circle_arg, req.path_time);
+      open_manipulator_.customTrajectoryMove(DRAWING_HEART, req.end_effector_name, p_draw_circle_arg, req.path_time);
     }
     res.is_planned = true;
     return true;
@@ -602,7 +600,7 @@ void OM_CONTROLLER::publishKinematicsPose()
   uint8_t index = 0;
   for (auto const& tools:opm_tools_name)
   {
-    Pose pose = open_manipulator_.getPose(tools);
+    KinematicPose pose = open_manipulator_.getKinematicPose(tools);
     msg.pose.position.x = pose.position[0];
     msg.pose.position.y = pose.position[1];
     msg.pose.position.z = pose.position[2];
@@ -632,7 +630,7 @@ void OM_CONTROLLER::publishJointStates()
   {
     msg.name.push_back(joints_name.at(i));
 
-    msg.position.push_back(joint_value.at(i).value);
+    msg.position.push_back(joint_value.at(i).position);
     msg.velocity.push_back(joint_value.at(i).velocity);
     msg.effort.push_back(joint_value.at(i).effort);
   }
@@ -641,7 +639,7 @@ void OM_CONTROLLER::publishJointStates()
   {
     msg.name.push_back(tool_name.at(i));
 
-    msg.position.push_back(tool_value.at(i));
+    msg.position.push_back(tool_value.at(i).position);
     msg.velocity.push_back(0.0f);
     msg.effort.push_back(0.0f);
   }
@@ -650,13 +648,13 @@ void OM_CONTROLLER::publishJointStates()
 
 void OM_CONTROLLER::publishGazeboCommand()
 {
-  std::vector<WayPoint> joint_value = open_manipulator_.getAllActiveJointValue();
-  std::vector<double> tool_value = open_manipulator_.getAllToolValue();
+  std::vector<JointValue> joint_value = open_manipulator_.getAllActiveJointValue();
+  std::vector<JointValue> tool_value = open_manipulator_.getAllToolValue();
 
   for(uint8_t i = 0; i < joint_value.size(); i ++)
   {
     std_msgs::Float64 msg;
-    msg.data = joint_value.at(i).value;
+    msg.data = joint_value.at(i).position;
 
     gazebo_goal_joint_position_pub_.at(i).publish(msg);
   }
@@ -664,7 +662,7 @@ void OM_CONTROLLER::publishGazeboCommand()
   for(uint8_t i = 0; i < tool_value.size(); i ++)
   {
     std_msgs::Float64 msg;
-    msg.data = tool_value.at(i);
+    msg.data = tool_value.at(i).position;
 
     gazebo_goal_joint_position_pub_.at(joint_value.size() + i).publish(msg);
   }
@@ -689,13 +687,13 @@ void OM_CONTROLLER::moveitTimer(double present_time)
     double path_time = present_time - priv_time;
     if (path_time > moveit_sampling_time_)
     {
-      std::vector<WayPoint> target;
+      std::vector<JointValue> target;
       uint32_t all_time_steps = joint_trajectory_.points.size();
 
       for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
       {
-        WayPoint temp;
-        temp.value = joint_trajectory_.points[step_cnt].positions.at(i);
+        Point temp;
+        temp.position = joint_trajectory_.points[step_cnt].positions.at(i);
         temp.velocity = joint_trajectory_.points[step_cnt].velocities.at(i);
         temp.acceleration = joint_trajectory_.points[step_cnt].accelerations.at(i);
         target.push_back(temp);
@@ -720,8 +718,12 @@ void OM_CONTROLLER::moveitTimer(double present_time)
 
 void OM_CONTROLLER::process(double time)
 {
+  static JointWayPoint goal_joint_value;
+  static JointWayPoint goal_tool_value;
+
   moveitTimer(time);
-  open_manipulator_.openManipulatorProcess(time);
+  open_manipulator_.calculationProcess(time, &goal_joint_value, &goal_tool_value);
+  open_manipulator_.communicationProcessToActuator(goal_joint_value, goal_tool_value);
 }
 
 int main(int argc, char **argv)
