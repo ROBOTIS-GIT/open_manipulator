@@ -189,8 +189,7 @@ class OM_CONTROLLER
 
   void jointWayPointBufClear();
 
-  void moveitTimer(double present_time);
-  void process(double time);
+  void moveitTimer(double tick_time, JointWayPoint *goal_joint_value, JointWayPoint *goal_tool_value);
 
   void publishOpenManipulatorStates();
   void publishKinematicsPose();
