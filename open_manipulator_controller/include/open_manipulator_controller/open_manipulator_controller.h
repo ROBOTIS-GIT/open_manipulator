@@ -20,23 +20,24 @@
 #define OPEN_MANIPULATOR_CONTROLLER_H
 
 #include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <std_msgs/Float64.h>
-#include <std_msgs/String.h>
 #include <boost/thread.hpp>
 #include <unistd.h>
+#include <queue>
 
+// MoveIt! libs.
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/planning_interface/planning_interface.h>
-
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/robot_model/robot_model.h>
 #include <moveit/robot_state/robot_state.h>
 
+// msg & srv libs.
+#include <sensor_msgs/JointState.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
 #include <moveit_msgs/DisplayTrajectory.h>
-
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 
@@ -44,12 +45,11 @@
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 #include "open_manipulator_msgs/SetDrawingTrajectory.h"
 #include "open_manipulator_msgs/SetActuatorState.h"
-
 #include "open_manipulator_msgs/GetJointPosition.h"
 #include "open_manipulator_msgs/GetKinematicsPose.h"
-
 #include "open_manipulator_msgs/OpenManipulatorState.h"
 
+// open_manipulator libs.
 #include "open_manipulator_libs/OpenManipulator.h"
 
 namespace open_manipulator_controller
@@ -76,7 +76,6 @@ class OM_CONTROLLER
 
   // ROS Subscribers
   ros::Subscriber open_manipulator_option_sub_;
-
   ros::Subscriber display_planned_path_sub_;
 
   // ROS Service Server
@@ -91,7 +90,6 @@ class OM_CONTROLLER
   ros::ServiceServer goal_tool_control_server_;
   ros::ServiceServer set_actuator_state_server_;
   ros::ServiceServer goal_drawing_trajectory_server_;
-
   ros::ServiceServer get_joint_position_server_;
   ros::ServiceServer get_kinematics_pose_server_;
   ros::ServiceServer set_joint_position_server_;
@@ -102,19 +100,25 @@ class OM_CONTROLLER
   trajectory_msgs::JointTrajectory joint_trajectory_;
 
   // Thread parameter
-  pthread_t timer_thread_;
-  pthread_attr_t attr_;
+  pthread_t comm_timer_thread_;
+  pthread_t cal_thread_;
+  pthread_mutex_t mutex_;
+
+  // shared variables
+  std::queue<JointWayPoint> joint_way_point_buf_;
+  std::queue<JointWayPoint> tool_way_point_buf_;
+  JointWayPoint present_joint_value;
 
   // Related robotis_manipulator
   OPEN_MANIPULATOR open_manipulator_;
 
   // flag parameter
   bool tool_ctrl_flag_;
-  bool timer_thread_flag_;
+  bool comm_timer_thread_flag_;
+  bool cal_thread_flag_;
   bool moveit_plan_flag_;
 
  public:
-
   OM_CONTROLLER(std::string usb_port, std::string baud_rate);
   ~OM_CONTROLLER();
 
@@ -125,7 +129,7 @@ class OM_CONTROLLER
 
   void initServer();
 
-  void printManipulatorSettingCallback(const std_msgs::String::ConstPtr &msg);
+  void openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg);
   void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
 
   double getControlPeriod(void){return control_period_;}
@@ -175,9 +179,15 @@ class OM_CONTROLLER
   bool getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
                                     open_manipulator_msgs::GetKinematicsPose::Response &res);
 
-  void setTimerThread();
-  void startTimerThread();
-  static void *timerThread(void *param);
+  void startCommTimerThread();
+  static void *commTimerThread(void *param);
+  void waitCommThreadToTerminate();
+
+  void startCalThread();
+  static void *calThread(void *param);
+  void waitCalThreadToTerminate();
+
+  void jointWayPointBufClear();
 
   void moveitTimer(double present_time);
   void process(double time);
@@ -189,7 +199,6 @@ class OM_CONTROLLER
 
   bool calcPlannedPath(const std::string planning_group, open_manipulator_msgs::JointPosition msg);
   bool calcPlannedPath(const std::string planning_group, open_manipulator_msgs::KinematicsPose msg);
-
 };
 }
 

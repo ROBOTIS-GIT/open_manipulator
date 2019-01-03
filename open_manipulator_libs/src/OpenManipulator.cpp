@@ -163,8 +163,8 @@ void OPEN_MANIPULATOR::communicationProcessToActuator(JointWayPoint goal_joint_v
   forwardKinematics();
 }
 
-void OPEN_MANIPULATOR::calculationProcess(double present_time, JointWayPoint* goal_joint_value, JointWayPoint* goal_tool_value)
+void OPEN_MANIPULATOR::calculationProcess(double tick_time, JointWayPoint* goal_joint_value, JointWayPoint* goal_tool_value)
 {
-  *goal_joint_value = getJointGoalValueFromTrajectory(present_time);
+  *goal_joint_value = getJointGoalValueFromTrajectoryTickTime(tick_time);
   *goal_tool_value  = getToolGoalValue();
 }

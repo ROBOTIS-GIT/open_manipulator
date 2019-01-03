@@ -2,7 +2,7 @@
   <arg name="use_robot_name"         default="open_manipulator"/>
 
   <arg name="dynamixel_usb_port"     default="/dev/ttyUSB0"/>
-  <arg name="dynamixel_baud_rate"    default="1000000"/>
+  <arg name="dynamixel_baud_rate"    default="3000000"/>
 
   <arg name="control_period"         default="0.010"/>
 

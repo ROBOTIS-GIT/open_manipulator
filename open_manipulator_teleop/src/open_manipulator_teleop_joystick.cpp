@@ -27,7 +27,7 @@ OM_TELEOP::OM_TELEOP()
   present_joint_angle.resize(NUM_OF_JOINT);
   present_kinematic_position.resize(3);
 
-  initPublisher();
+  initClient();
   initSubscriber();
 
   ROS_INFO("OpenManipulator initialization");
@@ -42,9 +42,9 @@ OM_TELEOP::~OM_TELEOP()
   wait();
 }
 
-void OM_TELEOP::initPublisher()
+void OM_TELEOP::initClient()
 {
-  goal_task_space_path_to_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_to_present");
+  goal_task_space_path_to_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_to_present_position_only");
   goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
   goal_tool_control_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_tool_control");
 
@@ -60,7 +60,7 @@ void OM_TELEOP::jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg
 {
   std::vector<double> temp_angle;
   temp_angle.resize(NUM_OF_JOINT);
-  for(int i = 0; i < msg->name.size(); i ++)
+  for(std::vector<int>::size_type i = 0; i < msg->name.size(); i ++)
   {
     if(!msg->name.at(i).compare("joint1"))  temp_angle.at(0) = (msg->position.at(i));
     else if(!msg->name.at(i).compare("joint2"))  temp_angle.at(1) = (msg->position.at(i));
@@ -120,6 +120,7 @@ bool OM_TELEOP::setJointSpacePath(std::vector<std::string> joint_name, std::vect
 bool OM_TELEOP::setToolControl(std::vector<double> joint_angle)
 {
   open_manipulator_msgs::SetJointPosition srv;
+  srv.request.joint_position.joint_name.push_back(priv_node_handle_.param<std::string>("end_effector_name", "gripper"));
   srv.request.joint_position.position = joint_angle;
 
   if(goal_tool_control_client_.call(srv))
@@ -129,15 +130,16 @@ bool OM_TELEOP::setToolControl(std::vector<double> joint_angle)
   return false;
 }
 
-bool OM_TELEOP::setTaskSpacePathToPresent(std::vector<double> kinematics_pose, double path_time)
+bool OM_TELEOP::setTaskSpacePathToPresentPositionOnly(std::vector<double> kinematics_pose, double path_time)
 {
   open_manipulator_msgs::SetKinematicsPose srv;
+  srv.request.planning_group = priv_node_handle_.param<std::string>("end_effector_name", "gripper");
   srv.request.kinematics_pose.pose.position.x = kinematics_pose.at(0);
   srv.request.kinematics_pose.pose.position.y = kinematics_pose.at(1);
   srv.request.kinematics_pose.pose.position.z = kinematics_pose.at(2);
   srv.request.path_time = path_time;
 
-  if(goal_task_space_path_to_present_client_.call(srv))
+  if(goal_task_space_path_to_present_position_only_client_.call(srv))
   {
     return srv.response.is_planned;
   }
@@ -153,37 +155,37 @@ void OM_TELEOP::setGoal(const char* str)
   {
     printf("increase(++) x axis in cartesian space\n");
     goalPose.at(0) = DELTA;
-    setTaskSpacePathToPresent(goalPose, PATH_TIME);
+    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "x-")
   {
     printf("decrease(--) x axis in cartesian space\n");
     goalPose.at(0) = -DELTA;
-    setTaskSpacePathToPresent(goalPose, PATH_TIME);
+    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "y+")
   {
     printf("increase(++) y axis in cartesian space\n");
     goalPose.at(1) = DELTA;
-    setTaskSpacePathToPresent(goalPose, PATH_TIME);
+    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "y-")
   {
     printf("decrease(--) y axis in cartesian space\n");
     goalPose.at(1) = -DELTA;
-    setTaskSpacePathToPresent(goalPose, PATH_TIME);
+    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "z+")
   {
     printf("increase(++) z axis in cartesian space\n");
     goalPose.at(2) = DELTA;
-    setTaskSpacePathToPresent(goalPose, PATH_TIME);
+    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "z-")
   {
     printf("decrease(--) z axis in cartesian space\n");
     goalPose.at(2) = -DELTA;
-    setTaskSpacePathToPresent(goalPose, PATH_TIME);
+    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
   }
 
   else if(str == "gripper open")
