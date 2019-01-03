@@ -127,22 +127,22 @@ void *OM_CONTROLLER::commTimerThread(void *param)
       tx_joint_way_point = controller->joint_way_point_buf_.front();
       controller->present_joint_value = tx_joint_way_point;
       controller->joint_way_point_buf_.pop();
-      RM_LOG::PRINT("[comm thread] ", "BLUE");
-      RM_LOG::PRINT(" j1 ", tx_joint_way_point.at(0).position, 3, "BLUE");
-      RM_LOG::PRINT(" j2 ", tx_joint_way_point.at(1).position, 3, "BLUE");
-      RM_LOG::PRINT(" j3 ", tx_joint_way_point.at(2).position, 3, "BLUE");
-      RM_LOG::PRINT(" j4 ", tx_joint_way_point.at(3).position, 3, "BLUE");
-      RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size(), 3, "BLUE");
-      RM_LOG::PRINTLN(" ");
+//      RM_LOG::PRINT("[comm thread] ", "BLUE");
+//      RM_LOG::PRINT(" j1 ", tx_joint_way_point.at(0).position, 3, "BLUE");
+//      RM_LOG::PRINT(" j2 ", tx_joint_way_point.at(1).position, 3, "BLUE");
+//      RM_LOG::PRINT(" j3 ", tx_joint_way_point.at(2).position, 3, "BLUE");
+//      RM_LOG::PRINT(" j4 ", tx_joint_way_point.at(3).position, 3, "BLUE");
+//      RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size(), 3, "BLUE");
+//      RM_LOG::PRINTLN(" ");
     }
     if(controller->tool_way_point_buf_.size())  // get ToolWayPoint for transfer to actuator
     {
       tx_tool_way_point = controller->tool_way_point_buf_.front();
       controller->tool_way_point_buf_.pop();
-      RM_LOG::PRINT("[comm thread] ", "BLUE");
-      RM_LOG::PRINT(" tool ", tx_tool_way_point.at(0).position, 3, "BLUE");
-      RM_LOG::PRINT(" size ", controller->tool_way_point_buf_.size(), 3, "BLUE");
-      RM_LOG::PRINTLN(" ");
+//      RM_LOG::PRINT("[comm thread] ", "BLUE");
+//      RM_LOG::PRINT(" tool ", tx_tool_way_point.at(0).position, 3, "BLUE");
+//      RM_LOG::PRINT(" size ", controller->tool_way_point_buf_.size(), 3, "BLUE");
+//      RM_LOG::PRINTLN(" ");
     }
 
 
@@ -204,23 +204,24 @@ void *OM_CONTROLLER::calThread(void *param)
     if(tempJointWayPoint.size() != 0)
     {
       controller->joint_way_point_buf_.push(tempJointWayPoint);
-      RM_LOG::PRINT("[cal thread]");
-      RM_LOG::PRINT(" j1 ", tempJointWayPoint.at(0).position);
-      RM_LOG::PRINT(" j2 ", tempJointWayPoint.at(1).position);
-      RM_LOG::PRINT(" j3 ", tempJointWayPoint.at(2).position);
-      RM_LOG::PRINT(" j4 ", tempJointWayPoint.at(3).position);
-      RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size());
-      RM_LOG::PRINT(" tick_time : ", tick_time);
-      RM_LOG::PRINTLN(" ");
+//      RM_LOG::PRINT("[cal thread]");
+//      RM_LOG::PRINT(" j1 ", tempJointWayPoint.at(0).position);
+//      RM_LOG::PRINT(" j2 ", tempJointWayPoint.at(1).position);
+//      RM_LOG::PRINT(" j3 ", tempJointWayPoint.at(2).position);
+//      RM_LOG::PRINT(" j4 ", tempJointWayPoint.at(3).position);
+//      RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size());
+//      RM_LOG::PRINT(" tick_time : ", tick_time);
+//      RM_LOG::PRINTLN(" ");
     }
     if(controller->tool_ctrl_flag_)
     {
       controller->tool_way_point_buf_.push(tempToolWayPoint);
-      RM_LOG::PRINT("[cal thread]");
-      RM_LOG::PRINT(" tool ", tempToolWayPoint.at(0).position);
-      RM_LOG::PRINT(" size ", controller->tool_way_point_buf_.size());
-      RM_LOG::PRINTLN(" ");
       controller->tool_ctrl_flag_ = false;
+//      RM_LOG::PRINT("[cal thread]");
+//      RM_LOG::PRINT(" tool ", tempToolWayPoint.at(0).position);
+//      RM_LOG::PRINT(" size ", controller->tool_way_point_buf_.size());
+//      RM_LOG::PRINTLN(" ");
+
     }
     pthread_mutex_unlock(&(controller->mutex_)); // mutex unlock
 
@@ -333,8 +334,6 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
 
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
-
-  RM_LOG::PRINTLN("[service server] Recv joint goal position", "GREEN");
 
   waitCalThreadToTerminate();
   pthread_mutex_lock(&mutex_); // mutex lock
@@ -464,8 +463,6 @@ bool OM_CONTROLLER::goalTaskSpacePathToPresentCallback(open_manipulator_msgs::Se
 bool OM_CONTROLLER::goalTaskSpacePathToPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                     open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
-  RM_LOG::PRINTLN("[service server] Recv goalTaskSpacePathPositionOnlyCallback", "GREEN");
-
   Eigen::Vector3d position;
   position[0] = req.kinematics_pose.pose.position.x;
   position[1] = req.kinematics_pose.pose.position.y;
