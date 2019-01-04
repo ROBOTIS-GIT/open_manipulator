@@ -10,11 +10,9 @@
 
   <arg name="use_moveit"             default="false"/>
   <arg name="planning_group_name"    default="arm"/>
-  <arg name="moveit_sample_duration" default="0.050"/>
 
   <group if="$(arg use_moveit)">
     <include file="$(find open_manipulator_controller)/launch/open_manipulator_moveit.launch">
-      <arg name="sample_duration" value="$(arg moveit_sample_duration)"/>
     </include>
   </group>
 
@@ -23,7 +21,6 @@
       <param name="using_moveit"         value="$(arg use_moveit)"/>
       <param name="planning_group_name"  value="$(arg planning_group_name)"/>
       <param name="control_period"       value="$(arg control_period)"/>
-      <param name="moveit_sample_duration"  value="$(arg moveit_sample_duration)"/>
   </node>
 
 </launch>

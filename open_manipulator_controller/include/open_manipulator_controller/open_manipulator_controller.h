@@ -38,6 +38,8 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
 #include <moveit_msgs/DisplayTrajectory.h>
+#include <moveit_msgs/ExecuteTrajectoryActionGoal.h>
+#include <moveit_msgs/MoveGroupActionGoal.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 
@@ -66,7 +68,6 @@ class OM_CONTROLLER
   bool using_platform_;
   bool using_moveit_;
   double control_period_;
-  double moveit_sampling_time_;
 
   // ROS Publisher
   ros::Publisher open_manipulator_state_pub_;
@@ -77,6 +78,8 @@ class OM_CONTROLLER
   // ROS Subscribers
   ros::Subscriber open_manipulator_option_sub_;
   ros::Subscriber display_planned_path_sub_;
+  ros::Subscriber move_group_goal_sub_;
+  ros::Subscriber execute_traj_goal_sub_;
 
   // ROS Service Server
   ros::ServiceServer goal_joint_space_path_server_;
@@ -98,6 +101,7 @@ class OM_CONTROLLER
   // MoveIt! interface
   moveit::planning_interface::MoveGroupInterface* move_group_;
   trajectory_msgs::JointTrajectory joint_trajectory_;
+  bool moveit_plan_only_;
 
   // Thread parameter
   pthread_t comm_timer_thread_;
@@ -130,7 +134,9 @@ class OM_CONTROLLER
   void initServer();
 
   void openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg);
-  void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
+  void displayPlannedPathCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
+  void moveGroupGoalCallback(const moveit_msgs::MoveGroupActionGoal::ConstPtr &msg);
+  void executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectoryActionGoal::ConstPtr &msg);
 
   double getControlPeriod(void){return control_period_;}
 
@@ -189,7 +195,7 @@ class OM_CONTROLLER
 
   void jointWayPointBufClear();
 
-  void moveitTimer(double tick_time, JointWayPoint *goal_joint_value, JointWayPoint *goal_tool_value);
+  void moveitProcess(JointWayPoint *goal_joint_value);
 
   void publishOpenManipulatorStates();
   void publishKinematicsPose();
