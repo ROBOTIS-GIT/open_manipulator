@@ -26,7 +26,7 @@ using namespace Eigen;
 Line::Line() {}
 Line::~Line() {}
 
-void Line::initLine(double move_time, TaskWayPoint start, TaskWayPoint goal)
+void Line::initLine(double move_time, TaskWayPoint start, TaskWayPoint delta)
 {
   move_time_ = move_time;
   acc_dec_time_ = move_time_ * 0.2;
@@ -35,12 +35,13 @@ void Line::initLine(double move_time, TaskWayPoint start, TaskWayPoint goal)
   TaskWayPoint start_to_goal;
 
   start_pose_ = start;
-  goal_pose_ = goal;
 
-  start_to_goal.kinematic.position = goal.kinematic.position - start.kinematic.position;
-  vel_max_.at(X_AXIS) = start_to_goal.kinematic.position(X_AXIS)/(move_time_ - acc_dec_time_);
-  vel_max_.at(Y_AXIS) = start_to_goal.kinematic.position(Y_AXIS)/(move_time_ - acc_dec_time_);
-  vel_max_.at(Z_AXIS) = start_to_goal.kinematic.position(Z_AXIS)/(move_time_ - acc_dec_time_);
+  goal_pose_ .kinematic.orientation = start_pose_.kinematic.orientation;
+  goal_pose_ .kinematic.position = start.kinematic.position + delta.kinematic.position;
+
+  vel_max_.at(X_AXIS) = delta.kinematic.position(X_AXIS)/(move_time_ - acc_dec_time_);
+  vel_max_.at(Y_AXIS) = delta.kinematic.position(Y_AXIS)/(move_time_ - acc_dec_time_);
+  vel_max_.at(Z_AXIS) = delta.kinematic.position(Z_AXIS)/(move_time_ - acc_dec_time_);
 }
 
 TaskWayPoint Line::drawLine(double time_var)

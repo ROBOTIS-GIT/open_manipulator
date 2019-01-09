@@ -53,7 +53,7 @@ public:
   Line();
   virtual ~Line();
 
-  void initLine(double move_time, TaskWayPoint start, TaskWayPoint goal);
+  void initLine(double move_time, TaskWayPoint start, TaskWayPoint delta);
   TaskWayPoint drawLine(double time_var);
 
   virtual void setOption(const void *arg);

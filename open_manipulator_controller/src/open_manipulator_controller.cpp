@@ -610,19 +610,17 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
     }
     else if(req.drawing_trajectory_name == "line")
     {
-      KinematicPose present_pose = open_manipulator_.getKinematicPose(req.end_effector_name);
-      TaskWayPoint draw_goal_pose;
-      draw_goal_pose.kinematic.position(0) = present_pose.position(0) + req.param[0];
-      draw_goal_pose.kinematic.position(1) = present_pose.position(1) + req.param[1];
-      draw_goal_pose.kinematic.position(2) = present_pose.position(2) + req.param[2];
-      draw_goal_pose.kinematic.orientation = present_pose.orientation;
-      void *p_draw_goal_pose = &draw_goal_pose;
+      TaskWayPoint draw_line_arg;
+      draw_line_arg.kinematic.position(0) = req.param[0];
+      draw_line_arg.kinematic.position(1) = req.param[1];
+      draw_line_arg.kinematic.position(2) = req.param[2];
+      void *p_draw_line_arg = &draw_line_arg;
 
       waitCalThreadToTerminate();
       pthread_mutex_lock(&mutex_); // mutex lock
       {
         jointWayPointBufClear();
-        open_manipulator_.customTrajectoryMove(DRAWING_LINE, req.end_effector_name, p_draw_goal_pose, req.path_time);//, present_joint_value);
+        open_manipulator_.customTrajectoryMove(DRAWING_LINE, req.end_effector_name, p_draw_line_arg, req.path_time);//, present_joint_value);
       }
       pthread_mutex_unlock(&mutex_); // mutex unlock
       startCalThread();
@@ -820,7 +818,7 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
 void OM_CONTROLLER::publishOpenManipulatorStates()
 {
   open_manipulator_msgs::OpenManipulatorState msg;
-  if(open_manipulator_.isMoving())
+  if(joint_way_point_buf_.size())
     msg.open_manipulator_moving_state = msg.IS_MOVING;
   else
     msg.open_manipulator_moving_state = msg.STOPPED;

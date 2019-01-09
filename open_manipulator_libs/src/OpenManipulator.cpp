@@ -87,7 +87,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   if(using_platform)
   {
     ////////// joint actuator init.
-//    actuator_ = new DYNAMIXEL::JointDynamixel();
+    //actuator_ = new DYNAMIXEL::JointDynamixel();
     actuator_ = new DYNAMIXEL::JointDynamixelProfileControl();
     // communication setting argument
     STRING dxl_comm_arg[2] = {usb_port, baud_rate};
