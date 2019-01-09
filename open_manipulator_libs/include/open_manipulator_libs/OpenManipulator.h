@@ -23,9 +23,6 @@
 #include "CustomTrajectory.h"
 #include "Kinematics.h"
 
-#define NUM_OF_JOINT 4
-#define DXL_SIZE 5
-
 #define DRAWING_LINE "custom_trajectory_line"
 #define DRAWING_CIRCLE "custom_trajectory_circle"
 #define DRAWING_RHOMBUS "custom_trajectory_rhombus"
@@ -33,8 +30,6 @@
 
 #define JOINT_DYNAMIXEL "joint_dxl"
 #define TOOL_DYNAMIXEL "tool_dxl"
-
-#define CONTROL_TIME 0.010 //s
 
 #define X_AXIS RM_MATH::makeVector3(1.0, 0.0, 0.0)
 #define Y_AXIS RM_MATH::makeVector3(0.0, 1.0, 0.0)
@@ -60,7 +55,7 @@ private:
 
   void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
   void communicationProcessToActuator(JointWayPoint goal_joint_value, JointWayPoint goal_tool_value);
-  void calculationProcess(double tick_time, JointWayPoint* goal_joint_value, JointWayPoint *goal_tool_value);
+  void calculationProcess(double present_time, JointWayPoint* goal_joint_value, JointWayPoint *goal_tool_value);
 };
 
 #endif // OPEN_MANIPULTOR_H_

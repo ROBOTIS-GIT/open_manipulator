@@ -53,11 +53,11 @@ public:
   Line();
   virtual ~Line();
 
-  void initLine(double move_time, double control_time, TaskWayPoint start, TaskWayPoint goal);
+  void initLine(double move_time, TaskWayPoint start, TaskWayPoint goal);
   TaskWayPoint drawLine(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual void init(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
@@ -80,11 +80,11 @@ public:
   Circle();
   virtual ~Circle();
 
-  void initCircle(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
+  void initCircle(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
   TaskWayPoint drawCircle(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual void init(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
@@ -107,11 +107,11 @@ public:
   Rhombus();
   virtual ~Rhombus();
 
-  void initRhombus(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
+  void initRhombus(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
   TaskWayPoint drawRhombus(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual void init(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
@@ -134,11 +134,11 @@ public:
   Heart();
   virtual ~Heart();
 
-  void initHeart(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
+  void initHeart(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
   TaskWayPoint drawHeart(double tick);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, double control_time, TaskWayPoint start, const void *arg);
+  virtual void init(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 

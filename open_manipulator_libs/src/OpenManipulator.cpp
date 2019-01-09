@@ -80,19 +80,15 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
           -0.015); // Change unit from `meter` to `radian`
 
   ////////// kinematics init.
-  kinematics_ = new KINEMATICS::Chain();
+  kinematics_ = new KINEMATICS::CR_Custom_Solver();
+//  kinematics_ = new KINEMATICS::CR_Position_Only_Jacobian_Solver();
   addKinematics(kinematics_);
-  STRING inverse_option[2] = {"inverse_solver", "chain_custum_inverse_kinematics"};
-//  STRING inverse_option[2] = {"inverse_solver", "sr_inverse"};
-//  STRING inverse_option[2] = {"inverse_solver", "position_only_inverse"};
-//  STRING inverse_option[2] = {"inverse_solver", "normal_inverse"};
-  void *inverse_option_arg = &inverse_option;
-  kinematicsSetOption(inverse_option_arg);
 
   if(using_platform)
   {
     ////////// joint actuator init.
-    actuator_ = new DYNAMIXEL::JointDynamixel();
+//    actuator_ = new DYNAMIXEL::JointDynamixel();
+    actuator_ = new DYNAMIXEL::JointDynamixelProfileControl();
     // communication setting argument
     STRING dxl_comm_arg[2] = {usb_port, baud_rate};
     void *p_dxl_comm_arg = &dxl_comm_arg;
@@ -110,7 +106,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_opt_arg);
 
     // set joint actuator control mode
-    STRING joint_dxl_mode_arg = "position_mode";
+//    STRING joint_dxl_mode_arg = "position_mode";
+    STRING joint_dxl_mode_arg[2] = {"position_mode", "0.010"};
     void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
     jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
@@ -148,9 +145,6 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addCustomTrajectory(DRAWING_CIRCLE, &circle_);
   addCustomTrajectory(DRAWING_RHOMBUS, &rhombus_);
   addCustomTrajectory(DRAWING_HEART, &heart_);
-
-  ////////// manipulator trajectory & control time initialization
-  setTrajectoryControlTime(CONTROL_TIME);
 }
 
 void OPEN_MANIPULATOR::communicationProcessToActuator(JointWayPoint goal_joint_value, JointWayPoint goal_tool_value)
@@ -159,6 +153,13 @@ void OPEN_MANIPULATOR::communicationProcessToActuator(JointWayPoint goal_joint_v
   receiveAllToolActuatorValue();
   if(goal_joint_value.size()) sendAllJointActuatorValue(goal_joint_value);
   if(goal_tool_value.size())  sendAllToolActuatorValue(goal_tool_value);
+
+   if(goal_joint_value.size())
+   {
+     RM_LOG::PRINT("",goal_joint_value.at(1).position);
+     RM_LOG::PRINT(", ",goal_joint_value.at(1).velocity);
+     RM_LOG::PRINTLN(", ",goal_joint_value.at(1).acceleration);
+   }
 
   forwardKinematics();
 }

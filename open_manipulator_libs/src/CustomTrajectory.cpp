@@ -26,7 +26,7 @@ using namespace Eigen;
 Line::Line() {}
 Line::~Line() {}
 
-void Line::initLine(double move_time, double control_time, TaskWayPoint start, TaskWayPoint goal)
+void Line::initLine(double move_time, TaskWayPoint start, TaskWayPoint goal)
 {
   move_time_ = move_time;
   acc_dec_time_ = move_time_ * 0.2;
@@ -73,6 +73,11 @@ TaskWayPoint Line::drawLine(double time_var)
   }
 
   pose.kinematic.orientation = start_pose_.kinematic.orientation;
+  pose.dynamic.linear.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.linear.acceleration = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.acceleration = Eigen::Vector3d::Zero(3);
+
   return pose;
 }
 
@@ -82,10 +87,10 @@ TaskWayPoint Line::getTaskWayPoint(double tick)
 }
 
 
-void Line::init(double move_time, double control_time, TaskWayPoint start, const void *arg)
+void Line::init(double move_time, TaskWayPoint start, const void *arg)
 {
   TaskWayPoint *c_arg = (TaskWayPoint *)arg;
-  initLine(move_time, control_time, start, c_arg[0]);
+  initLine(move_time, start, c_arg[0]);
 }
 void Line::setOption(const void *arg){}
 
@@ -94,7 +99,7 @@ void Line::setOption(const void *arg){}
 Circle::Circle() {}
 Circle::~Circle() {}
 
-void Circle::initCircle(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position)
+void Circle::initCircle(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position)
 {
   start_pose_ = start;
 
@@ -114,7 +119,7 @@ void Circle::initCircle(double move_time, double control_time, TaskWayPoint star
   drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
-  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
+  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time);
   coefficient_ = path_generator_.getCoefficient();
 }
 
@@ -132,6 +137,7 @@ TaskWayPoint Circle::drawCircle(double tick)
 
   // set drawing trajectory
   TaskWayPoint pose;
+
   double diff_pose[2];
 
   diff_pose[0] = (cos(get_time_var)-1)*cos(start_angular_position_) - sin(get_time_var)*sin(start_angular_position_);
@@ -143,6 +149,11 @@ TaskWayPoint Circle::drawCircle(double tick)
 
   pose.kinematic.orientation = start_pose_.kinematic.orientation;
 
+  pose.dynamic.linear.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.linear.acceleration = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.acceleration = Eigen::Vector3d::Zero(3);
+
   return pose;
 }
 
@@ -151,10 +162,10 @@ TaskWayPoint Circle::getTaskWayPoint(double tick)
   return drawCircle(tick);
 }
 
-void Circle::init(double move_time, double control_time, TaskWayPoint start, const void *arg)
+void Circle::init(double move_time, TaskWayPoint start, const void *arg)
 {
   double *get_arg_ = (double *)arg;
-  initCircle(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
+  initCircle(move_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
 
 void Circle::setOption(const void *arg){}
@@ -164,7 +175,7 @@ void Circle::setOption(const void *arg){}
 Rhombus::Rhombus() {}
 Rhombus::~Rhombus() {}  
 
-void Rhombus::initRhombus(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position)
+void Rhombus::initRhombus(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position)
 {
   start_pose_ = start;
 
@@ -184,7 +195,7 @@ void Rhombus::initRhombus(double move_time, double control_time, TaskWayPoint st
   drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
-  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
+  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time);
   coefficient_ = path_generator_.getCoefficient();
 }
 
@@ -229,14 +240,19 @@ TaskWayPoint Rhombus::drawRhombus(double tick)
 
   pose.kinematic.orientation = start_pose_.kinematic.orientation;
 
+  pose.dynamic.linear.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.linear.acceleration = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.acceleration = Eigen::Vector3d::Zero(3);
+
   return pose;
 }
 
 
-void Rhombus::init(double move_time, double control_time, TaskWayPoint start, const void *arg)
+void Rhombus::init(double move_time, TaskWayPoint start, const void *arg)
 {
   double *get_arg_ = (double *)arg;
-  initRhombus(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
+  initRhombus(move_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
 
 TaskWayPoint Rhombus::getTaskWayPoint(double tick)
@@ -250,7 +266,7 @@ void Rhombus::setOption(const void *arg){}
 Heart::Heart() {}
 Heart::~Heart() {}
 
-void Heart::initHeart(double move_time, double control_time, TaskWayPoint start, double radius, double revolution, double start_angular_position)
+void Heart::initHeart(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position)
 {
   start_pose_ = start;
 
@@ -270,7 +286,7 @@ void Heart::initHeart(double move_time, double control_time, TaskWayPoint start,
   drawingGoal.acceleration = 0.0;
   drawingGoal.effort = 0.0;
 
-  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time, control_time);
+  path_generator_.calcCoefficient(drawingStart, drawingGoal, move_time);
   coefficient_ = path_generator_.getCoefficient();
 }
 
@@ -304,13 +320,18 @@ TaskWayPoint Heart::drawHeart(double tick)
 
   pose.kinematic.orientation = start_pose_.kinematic.orientation;
 
+  pose.dynamic.linear.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.linear.acceleration = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.velocity = Eigen::Vector3d::Zero(3);
+  pose.dynamic.angular.acceleration = Eigen::Vector3d::Zero(3);
+
   return pose;
 }
 
-void Heart::init(double move_time, double control_time, TaskWayPoint start, const void *arg)
+void Heart::init(double move_time, TaskWayPoint start, const void *arg)
 {
   double *get_arg_ = (double *)arg;
-  initHeart(move_time, control_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
+  initHeart(move_time, start, get_arg_[0], get_arg_[1], get_arg_[2]);
 }
 void Heart::setOption(const void *arg){}
 

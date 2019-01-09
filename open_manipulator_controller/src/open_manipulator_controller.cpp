@@ -622,7 +622,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       pthread_mutex_lock(&mutex_); // mutex lock
       {
         jointWayPointBufClear();
-        open_manipulator_.customTrajectoryMove(DRAWING_LINE, req.end_effector_name, p_draw_goal_pose, req.path_time, present_joint_value);
+        open_manipulator_.customTrajectoryMove(DRAWING_LINE, req.end_effector_name, p_draw_goal_pose, req.path_time);//, present_joint_value);
       }
       pthread_mutex_unlock(&mutex_); // mutex unlock
       startCalThread();
