@@ -53,7 +53,7 @@ private:
   OPEN_MANIPULATOR();
   virtual ~OPEN_MANIPULATOR();
 
-  void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
+  void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000", float control_loop_time = 0.010);
   void communicationProcessToActuator(JointWayPoint goal_joint_value, JointWayPoint goal_tool_value);
   void calculationProcess(double present_time, JointWayPoint* goal_joint_value, JointWayPoint *goal_tool_value);
 };

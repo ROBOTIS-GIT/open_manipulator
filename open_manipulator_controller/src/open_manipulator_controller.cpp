@@ -38,7 +38,7 @@ OM_CONTROLLER::OM_CONTROLLER(std::string usb_port, std::string baud_rate)
   using_moveit_ = priv_node_handle_.param<bool>("using_moveit", false);
   std::string planning_group_name = priv_node_handle_.param<std::string>("planning_group_name", "arm");
 
-  open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate);
+  open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate, control_period_);
 
   if (using_platform_ == true)        RM_LOG::INFO("Succeeded to init " + priv_node_handle_.getNamespace());
   else if (using_platform_ == false)  RM_LOG::INFO("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");

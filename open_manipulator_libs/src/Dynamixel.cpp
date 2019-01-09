@@ -125,6 +125,9 @@ bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, STRING dxl_dev
   bool result = false;
   const char* log = NULL;
 
+  STRING return_delay_time_st = "Return_Delay_Time";
+  const char * return_delay_time_char = return_delay_time_st.c_str();
+
   dynamixel_.id = actuator_id;
   dynamixel_.num = actuator_id.size();
 
@@ -152,6 +155,20 @@ bool JointDynamixel::initialize(std::vector<uint8_t> actuator_id, STRING dxl_dev
       char str[100];
       sprintf(str, "Joint Dynamixel ID : %d, Model Name : %s", id, dynamixel_workbench_->getModelName(id));
       RM_LOG::PRINTLN(str);
+
+      result = dynamixel_workbench_->setVelocityBasedProfile(id, &log);
+      if(result == false)
+      {
+        RM_LOG::ERROR(log);
+        RM_LOG::ERROR("Please check your Dynamixel firmware version (v38~)");
+      }
+
+      result = dynamixel_workbench_->writeRegister(id, return_delay_time_char, 0, &log);
+      if (result == false)
+      {
+        RM_LOG::ERROR(log);
+        RM_LOG::ERROR("Please check your Dynamixel firmware version");
+      }
     }
   }
   return true;
@@ -351,6 +368,11 @@ std::vector<ROBOTIS_MANIPULATOR::Actuator> JointDynamixel::receiveAllDynamixelVa
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////JointDynamixelProfileControl//////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+JointDynamixelProfileControl::JointDynamixelProfileControl(float control_loop_time)
+{
+  control_loop_time_ = control_loop_time;
+}
+
 void JointDynamixelProfileControl::init(std::vector<uint8_t> actuator_id, const void *arg)
 {
   STRING *get_arg_ = (STRING *)arg;
@@ -370,16 +392,13 @@ void JointDynamixelProfileControl::setMode(std::vector<uint8_t> actuator_id, con
 
   if (get_arg_[0] == "position_mode" || get_arg_[0] == "current_based_position_mode")
   {
-    control_loop_time_ = 0.010;
-    if(!get_arg_[1].empty())
-      control_loop_time_ = std::stof(get_arg_[1]);
     result = JointDynamixelProfileControl::setOperatingMode(actuator_id, get_arg_[0]);
     if (result == false)
       return;
 
     result = JointDynamixelProfileControl::setSDKHandler(actuator_id.at(0));
     if (result == false)
-      return;  
+      return;
   }
   else
   {
@@ -450,6 +469,9 @@ bool JointDynamixelProfileControl::initialize(std::vector<uint8_t> actuator_id, 
   bool result = false;
   const char* log = NULL;
 
+  STRING return_delay_time_st = "Return_Delay_Time";
+  const char * return_delay_time_char = return_delay_time_st.c_str();
+
   dynamixel_.id = actuator_id;
   dynamixel_.num = actuator_id.size();
 
@@ -477,6 +499,20 @@ bool JointDynamixelProfileControl::initialize(std::vector<uint8_t> actuator_id, 
       char str[100];
       sprintf(str, "Joint Dynamixel ID : %d, Model Name : %s", id, dynamixel_workbench_->getModelName(id));
       RM_LOG::PRINTLN(str);
+
+      result = dynamixel_workbench_->setTimeBasedProfile(id, &log);
+      if(result == false)
+      {
+        RM_LOG::ERROR(log);
+        RM_LOG::ERROR("Please check your Dynamixel firmware version (v38~)");
+      }
+
+      result = dynamixel_workbench_->writeRegister(id, return_delay_time_char, 0, &log);
+      if (result == false)
+      {
+        RM_LOG::ERROR(log);
+        RM_LOG::ERROR("Please check your Dynamixel firmware version");
+      }
     }
   }
   return true;
@@ -487,8 +523,8 @@ bool JointDynamixelProfileControl::setOperatingMode(std::vector<uint8_t> actuato
   const char* log = NULL;
   bool result = false;
 
-  const uint32_t velocity = control_loop_time_*1000 * 2;
-  const uint32_t acceleration = control_loop_time_*1000;
+  const uint32_t velocity = uint32_t(control_loop_time_*1000) * 3;
+  const uint32_t acceleration = uint32_t(control_loop_time_*1000);
   const uint32_t current = 0;
 
   if (dynamixel_mode == "position_mode")
@@ -580,14 +616,14 @@ bool JointDynamixelProfileControl::writeGoalProfilingControlValue(std::vector<ui
   for(uint8_t index = 0; index < actuator_id.size(); index++)
   {
     float result_position;
-    float time_control = control_loop_time_*1000;       //ms
+    float time_control = control_loop_time_;       //ms
 
     if(previous_goal_value_.find(actuator_id.at(index)) == previous_goal_value_.end())
     {
       previous_goal_value_.insert(std::make_pair(actuator_id.at(index), value_vector.at(index)));
     }
 
-    result_position = value_vector.at(index).position + (value_vector.at(index).velocity * (time_control*0.001))/2;
+    result_position = value_vector.at(index).position + 3*(value_vector.at(index).velocity * (time_control))/2;
 
     id_array[index] = actuator_id.at(index);
     goal_value[index] = dynamixel_workbench_->convertRadian2Value(actuator_id.at(index), result_position);
@@ -776,6 +812,9 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, STRING dxl_device_name, S
   const char* log = NULL;
   bool result = false;
 
+  STRING return_delay_time_st = "Return_Delay_Time";
+  const char * return_delay_time_char = return_delay_time_st.c_str();
+
   dynamixel_.id.push_back(actuator_id);
   dynamixel_.num = 1;
 
@@ -800,6 +839,20 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, STRING dxl_device_name, S
     sprintf(str, "Gripper Dynamixel ID : %d, Model Name :", dynamixel_.id.at(0));
     strcat(str, dynamixel_workbench_->getModelName(dynamixel_.id.at(0)));
     RM_LOG::PRINTLN(str);
+
+    result = dynamixel_workbench_->setVelocityBasedProfile(dynamixel_.id.at(0), &log);
+    if(result == false)
+    {
+      RM_LOG::ERROR(log);
+      RM_LOG::ERROR("Please check your Dynamixel firmware version (v38~)");
+    }
+
+    result = dynamixel_workbench_->writeRegister(dynamixel_.id.at(0), return_delay_time_char, 0, &log);
+    if (result == false)
+    {
+      RM_LOG::ERROR(log);
+      RM_LOG::ERROR("Please check your Dynamixel firmware version");
+    }
   }
 
   return true;
@@ -807,6 +860,7 @@ bool GripperDynamixel::initialize(uint8_t actuator_id, STRING dxl_device_name, S
 
 bool GripperDynamixel::setOperatingMode(STRING dynamixel_mode)
 {
+
   const char* log = NULL;
   bool result = false;
 

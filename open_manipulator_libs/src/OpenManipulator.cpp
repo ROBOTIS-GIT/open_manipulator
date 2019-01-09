@@ -23,7 +23,7 @@ OPEN_MANIPULATOR::OPEN_MANIPULATOR()
 OPEN_MANIPULATOR::~OPEN_MANIPULATOR()
 {}
 
-void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate)
+void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate, float control_loop_time)
 {
   ////////// manipulator parameter initialization
   addWorld("world",   // world name
@@ -87,8 +87,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   if(using_platform)
   {
     ////////// joint actuator init.
-    //actuator_ = new DYNAMIXEL::JointDynamixel();
-    actuator_ = new DYNAMIXEL::JointDynamixelProfileControl();
+//    actuator_ = new DYNAMIXEL::JointDynamixel();
+    actuator_ = new DYNAMIXEL::JointDynamixelProfileControl(control_loop_time);
     // communication setting argument
     STRING dxl_comm_arg[2] = {usb_port, baud_rate};
     void *p_dxl_comm_arg = &dxl_comm_arg;
@@ -100,14 +100,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     jointDxlId.push_back(14);
     addJointActuator(JOINT_DYNAMIXEL, actuator_, jointDxlId, p_dxl_comm_arg);
 
-    // set joint actuator parameter
-    STRING joint_dxl_opt_arg[2] = {"Return_Delay_Time", "0"};
-    void *p_joint_dxl_opt_arg = &joint_dxl_opt_arg;
-    jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_opt_arg);
-
     // set joint actuator control mode
-//    STRING joint_dxl_mode_arg = "position_mode";
-    STRING joint_dxl_mode_arg[2] = {"position_mode", "0.010"};
+    STRING joint_dxl_mode_arg = "position_mode";
     void *p_joint_dxl_mode_arg = &joint_dxl_mode_arg;
     jointActuatorSetMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
@@ -117,16 +111,15 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     uint8_t gripperDxlId = 15;
     addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
 
-    // set gripper actuator parameter
-    STRING gripper_dxl_opt_arg[2] = {"Return_Delay_Time", "0"};
-    void *p_gripper_dxl_opt_arg = &gripper_dxl_opt_arg;
-    toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
 
     // set gripper actuator control mode
     STRING gripper_dxl_mode_arg = "current_based_position_mode";
     void *p_gripper_dxl_mode_arg = &gripper_dxl_mode_arg;
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_mode_arg);
 
+    // set gripper actuator parameter
+    STRING gripper_dxl_opt_arg[2];
+    void *p_gripper_dxl_opt_arg = &gripper_dxl_opt_arg;
     gripper_dxl_opt_arg[0] = "Profile_Acceleration";
     gripper_dxl_opt_arg[1] = "20";
     toolActuatorSetMode(TOOL_DYNAMIXEL, p_gripper_dxl_opt_arg);
@@ -153,13 +146,6 @@ void OPEN_MANIPULATOR::communicationProcessToActuator(JointWayPoint goal_joint_v
   receiveAllToolActuatorValue();
   if(goal_joint_value.size()) sendAllJointActuatorValue(goal_joint_value);
   if(goal_tool_value.size())  sendAllToolActuatorValue(goal_tool_value);
-
-   if(goal_joint_value.size())
-   {
-     RM_LOG::PRINT("",goal_joint_value.at(1).position);
-     RM_LOG::PRINT(", ",goal_joint_value.at(1).velocity);
-     RM_LOG::PRINTLN(", ",goal_joint_value.at(1).acceleration);
-   }
 
   forwardKinematics();
 }

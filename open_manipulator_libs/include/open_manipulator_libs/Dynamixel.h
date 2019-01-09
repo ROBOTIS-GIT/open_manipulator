@@ -39,16 +39,22 @@ namespace DYNAMIXEL
 #define ADDR_PRESENT_CURRENT_2 126
 #define ADDR_PRESENT_VELOCITY_2 128
 #define ADDR_PRESENT_POSITION_2 132
+#define ADDR_VELOCITY_TRAJECTORY_2 136
+#define ADDR_POSITION_TRAJECTORY_2 140
 #define ADDR_PROFILE_ACCELERATION_2 108
 #define ADDR_PROFILE_VELOCITY_2 112
 #define ADDR_GOAL_POSITION_2 116
 
+
 #define LENGTH_PRESENT_CURRENT_2 2
 #define LENGTH_PRESENT_VELOCITY_2 4
 #define LENGTH_PRESENT_POSITION_2 4
+#define LENGTH_VELOCITY_TRAJECTORY_2 4
+#define LENGTH_POSITION_TRAJECTORY_2 4
 #define LENGTH_PROFILE_ACCELERATION_2 4
 #define LENGTH_PROFILE_VELOCITY_2 4
 #define LENGTH_GOAL_POSITION_2 4
+
 
 // Protocol 1.0
 #define ADDR_PRESENT_CURRENT_1 = 40;
@@ -104,7 +110,7 @@ class JointDynamixelProfileControl : public ROBOTIS_MANIPULATOR::JointActuator
   std::map<uint8_t, ROBOTIS_MANIPULATOR::Actuator> previous_goal_value_;
 
  public:
-  JointDynamixelProfileControl(){}
+  JointDynamixelProfileControl(float control_loop_time = 0.010);
   virtual ~JointDynamixelProfileControl(){}
 
   virtual void init(std::vector<uint8_t> actuator_id, const void *arg);
