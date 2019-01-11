@@ -81,7 +81,7 @@
   <!--  Link 2 -->
   <link name="link2">
     <visual>
-      <origin xyz="0 0 0.018" rpy="0 0 0"/>
+      <origin xyz="0 0 0.019" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://open_manipulator_description/meshes/chain_link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -89,7 +89,7 @@
     </visual>
 
     <collision>
-      <origin xyz="0 0 0.018" rpy="0 0 0"/>
+      <origin xyz="0 0 0.019" rpy="0 0 0"/>
       <geometry>
         <mesh filename="package://open_manipulator_description/meshes/chain_link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -116,7 +116,7 @@
   <joint name="joint2" type="revolute">
     <parent link="link2"/>
     <child link="link3"/>
-    <origin xyz="0.0 0.0 0.058" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 0.0595" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit velocity="4.8" effort="1" lower="${-pi*0.57}" upper="${pi*0.5}" />
   </joint>
