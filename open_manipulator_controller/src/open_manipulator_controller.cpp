@@ -78,7 +78,6 @@ void OM_CONTROLLER::startCommTimerThread()
   //  error = pthread_attr_setschedparam(&attr_, &param);
   //  if (error != 0)   RM_LOG::ERROR("pthread_attr_setschedparam error = ", (double)error);
 
-  //  int error;
   //  if ((error = pthread_create(&this->comm_timer_thread_, &attr_, this->commTimerThread, this)) != 0)
   //  {
   //    RM_LOG::ERROR("Creating timer thread failed!!", (double)error);
@@ -117,17 +116,13 @@ void *OM_CONTROLLER::commTimerThread(void *param)
       tx_joint_way_point = controller->joint_way_point_buf_.front();
       controller->present_joint_value = tx_joint_way_point;
       controller->joint_way_point_buf_.pop();
-      // RM_LOG::PRINT("[comm thread] ", "BLUE");
-      // RM_LOG::PRINT(" j1 ", tx_joint_way_point.at(0).position, 3, "BLUE");
-      // RM_LOG::PRINT(" j2 ", tx_joint_way_point.at(1).position, 3, "BLUE");
-      // RM_LOG::PRINT(" j3 ", tx_joint_way_point.at(2).position, 3, "BLUE");
-      // RM_LOG::PRINT(" j4 ", tx_joint_way_point.at(3).position, 3, "BLUE");
-      // RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size(), 3, "BLUE");
-      // RM_LOG::PRINTLN(" ");
-    }
-    else if(controller->open_manipulator_.isMoving())
-    {
-      RM_LOG::ERROR("Calculation cycle time exceeded.");
+       RM_LOG::PRINT("[comm thread] ", "BLUE");
+       RM_LOG::PRINT(" j1 ", tx_joint_way_point.at(0).position, 3, "BLUE");
+       RM_LOG::PRINT(" j2 ", tx_joint_way_point.at(1).position, 3, "BLUE");
+       RM_LOG::PRINT(" j3 ", tx_joint_way_point.at(2).position, 3, "BLUE");
+       RM_LOG::PRINT(" j4 ", tx_joint_way_point.at(3).position, 3, "BLUE");
+       RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size(), 3, "BLUE");
+       RM_LOG::PRINTLN(" ");
     }
     if(controller->tool_way_point_buf_.size())  // get ToolWayPoint for transfer to actuator
     {
@@ -148,14 +143,17 @@ void *OM_CONTROLLER::commTimerThread(void *param)
     clock_gettime(CLOCK_MONOTONIC, &curr_time);
 
     /////
-     double delta_nsec = controller->getControlPeriod() - ((next_time.tv_sec - curr_time.tv_sec) + (next_time.tv_nsec - curr_time.tv_nsec)*0.000000001);
+     double delta_nsec = controller->getControlPeriod() - ((next_time.tv_sec - curr_time.tv_sec) + ((double)(next_time.tv_nsec - curr_time.tv_nsec)*0.000000001));
      if(delta_nsec > controller->getControlPeriod())
      {
-       RM_LOG::WARN("Communication cycle time exceeded. : ", delta_nsec);
+       RM_LOG::WARN("Communication cycle time exceeded. : ", delta_nsec,5);
        next_time = curr_time;
      }
      else
+     {
+       RM_LOG::PRINTLN("Communication cycle time : ", delta_nsec, 5, "GREEN");
        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
+     }
      /////
   }
   return 0;
@@ -199,14 +197,14 @@ void *OM_CONTROLLER::calThread(void *param)
     if(tempJointWayPoint.size() != 0)
     {
       controller->joint_way_point_buf_.push(tempJointWayPoint);
-      // RM_LOG::PRINT("[cal thread]");
-      // RM_LOG::PRINT(" j1 ", tempJointWayPoint.at(0).position);
-      // RM_LOG::PRINT(" j2 ", tempJointWayPoint.at(1).position);
-      // RM_LOG::PRINT(" j3 ", tempJointWayPoint.at(2).position);
-      // RM_LOG::PRINT(" j4 ", tempJointWayPoint.at(3).position);
-      // RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size());
-      // RM_LOG::PRINT(" tick_time : ", tick_time);
-      // RM_LOG::PRINTLN(" ");
+       RM_LOG::PRINT("[cal thread]");
+       RM_LOG::PRINT(" j1 ", tempJointWayPoint.at(0).position);
+       RM_LOG::PRINT(" j2 ", tempJointWayPoint.at(1).position);
+       RM_LOG::PRINT(" j3 ", tempJointWayPoint.at(2).position);
+       RM_LOG::PRINT(" j4 ", tempJointWayPoint.at(3).position);
+       RM_LOG::PRINT(" size ", controller->joint_way_point_buf_.size());
+       RM_LOG::PRINT(" tick_time : ", tick_time);
+       RM_LOG::PRINTLN(" ");
     }
     if(controller->tool_ctrl_flag_)
     {
