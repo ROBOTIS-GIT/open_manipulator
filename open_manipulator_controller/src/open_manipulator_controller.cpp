@@ -111,7 +111,7 @@ void *OM_CONTROLLER::timerThread(void *param)
 //    RM_LOG::INFO("control time : ", controller->getControlPeriod() - delta_nsec);
     if(delta_nsec < 0.0)
     {
-      RM_LOG::WARN("Over the control time : ", controller->getControlPeriod() - delta_nsec);
+      // RM_LOG::WARN("Over the control time : ", controller->getControlPeriod() - delta_nsec);
       next_time = curr_time;
     }
     else
