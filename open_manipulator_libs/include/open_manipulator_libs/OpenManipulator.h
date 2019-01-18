@@ -23,13 +23,13 @@
 #include "CustomTrajectory.h"
 #include "Kinematics.h"
 
-#define CUSTOM_TRAJECTORY_LINE "custom_trajectory_line"
-#define CUSTOM_TRAJECTORY_CIRCLE "custom_trajectory_circle"
+#define CUSTOM_TRAJECTORY_LINE    "custom_trajectory_line"
+#define CUSTOM_TRAJECTORY_CIRCLE  "custom_trajectory_circle"
 #define CUSTOM_TRAJECTORY_RHOMBUS "custom_trajectory_rhombus"
-#define CUSTOM_TRAJECTORY_HEART "custom_trajectory_heart"
+#define CUSTOM_TRAJECTORY_HEART   "custom_trajectory_heart"
 
 #define JOINT_DYNAMIXEL "joint_dxl"
-#define TOOL_DYNAMIXEL "tool_dxl"
+#define TOOL_DYNAMIXEL  "tool_dxl"
 
 #define X_AXIS RM_MATH::makeVector3(1.0, 0.0, 0.0)
 #define Y_AXIS RM_MATH::makeVector3(0.0, 1.0, 0.0)
@@ -46,7 +46,6 @@ private:
   CUSTOM_TRAJECTORY::Circle circle_;
   CUSTOM_TRAJECTORY::Rhombus rhombus_;
   CUSTOM_TRAJECTORY::Heart heart_;
-
 
 public:
   OPEN_MANIPULATOR();

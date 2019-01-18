@@ -40,7 +40,6 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
            M_PI,    // max joint limit (3.14 rad)
            -M_PI);  // min joint limit (-3.14 rad)
 
-
   addJoint("joint2",  // my name
            "joint1",  // parent name
            "joint3",  // child name

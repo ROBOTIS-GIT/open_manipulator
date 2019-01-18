@@ -32,10 +32,10 @@ OM_CONTROLLER::OM_CONTROLLER(std::string usb_port, std::string baud_rate)
      control_period_(0.010f),
      moveit_sampling_time_(0.050f)
 {
-  control_period_ = priv_node_handle_.param<double>("control_period", 0.010f);
+  control_period_       = priv_node_handle_.param<double>("control_period", 0.010f);
   moveit_sampling_time_ = priv_node_handle_.param<double>("moveit_sample_duration", 0.050f);
-  using_platform_ = priv_node_handle_.param<bool>("using_platform", false);
-  using_moveit_ = priv_node_handle_.param<bool>("using_moveit", false);
+  using_platform_       = priv_node_handle_.param<bool>("using_platform", false);
+  using_moveit_         = priv_node_handle_.param<bool>("using_moveit", false);
   std::string planning_group_name = priv_node_handle_.param<std::string>("planning_group_name", "arm");
 
   open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate);
@@ -124,7 +124,7 @@ void *OM_CONTROLLER::timerThread(void *param)
       clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
     /////
   }
-  return 0;
+  return;
 }
 
 void OM_CONTROLLER::initPublisher()
@@ -148,9 +148,7 @@ void OM_CONTROLLER::initPublisher()
   {
     auto gazebo_joints_name = open_manipulator_.getManipulator()->getAllActiveJointComponentName();
     gazebo_joints_name.reserve(gazebo_joints_name.size() + opm_tools_name.size());
-    gazebo_joints_name.insert(gazebo_joints_name.end(),
-                            opm_tools_name.begin(),
-                            opm_tools_name. end());
+    gazebo_joints_name.insert(gazebo_joints_name.end(), opm_tools_name.begin(), opm_tools_name.end());
 
     for (auto const& name:gazebo_joints_name)
     {
@@ -190,9 +188,9 @@ void OM_CONTROLLER::initServer()
   goal_task_space_path_from_present_position_only_server_     = priv_node_handle_.advertiseService("goal_task_space_path_from_present_position_only", &OM_CONTROLLER::goalTaskSpacePathFromPresentPositionOnlyCallback, this);
   goal_task_space_path_from_present_orientation_only_server_  = priv_node_handle_.advertiseService("goal_task_space_path_from_present_orientation_only", &OM_CONTROLLER::goalTaskSpacePathFromPresentOrientationOnlyCallback, this);
 
-  goal_tool_control_server_                 = priv_node_handle_.advertiseService("goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
-  set_actuator_state_server_                = priv_node_handle_.advertiseService("set_actuator_state", &OM_CONTROLLER::setActuatorStateCallback, this);
-  goal_drawing_trajectory_server_           = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OM_CONTROLLER::goalDrawingTrajectoryCallback, this);
+  goal_tool_control_server_         = priv_node_handle_.advertiseService("goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
+  set_actuator_state_server_        = priv_node_handle_.advertiseService("set_actuator_state", &OM_CONTROLLER::setActuatorStateCallback, this);
+  goal_drawing_trajectory_server_   = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OM_CONTROLLER::goalDrawingTrajectoryCallback, this);
 
   if (using_moveit_ == true)
   {
@@ -234,7 +232,6 @@ void OM_CONTROLLER::executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectory
   moveit_plan_flag_ = true;
 }
 
-
 bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                                open_manipulator_msgs::SetJointPosition::Response &res)
 {
@@ -268,7 +265,6 @@ bool OM_CONTROLLER::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_
   
   res.is_planned = true;
   return true;
-
 }
 
 bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
@@ -290,7 +286,6 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   res.is_planned = true;
   return true;
 }
-
 
 bool OM_CONTROLLER::goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                           open_manipulator_msgs::SetKinematicsPose::Response &res)
@@ -563,7 +558,6 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
   }
 
   spinner.stop();
-
   return is_planned;
 }
 
@@ -632,7 +626,6 @@ void OM_CONTROLLER::publishOpenManipulatorStates()
 
   open_manipulator_state_pub_.publish(msg);
 }
-
 
 void OM_CONTROLLER::publishKinematicsPose()
 {
