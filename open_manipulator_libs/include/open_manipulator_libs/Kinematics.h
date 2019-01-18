@@ -45,7 +45,6 @@ public:
   virtual ~CR_Jacobian_Solver(){}
 
   virtual void setOption(const void *arg);
-  virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void forwardKinematics(Manipulator *manipulator);
   virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);
@@ -64,7 +63,6 @@ public:
   virtual ~CR_SRJacobian_Solver(){}
 
   virtual void setOption(const void *arg);
-  virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void forwardKinematics(Manipulator *manipulator);
   virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);
@@ -83,7 +81,6 @@ public:
   virtual ~CR_Position_Only_Jacobian_Solver(){}
 
   virtual void setOption(const void *arg);
-  virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void forwardKinematics(Manipulator *manipulator);
   virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);
@@ -102,7 +99,6 @@ public:
   virtual ~CR_Custom_Solver(){}
 
   virtual void setOption(const void *arg);
-  virtual void updatePassiveJointValue(Manipulator *manipulator);
   virtual MatrixXd jacobian(Manipulator *manipulator, Name tool_name);
   virtual void forwardKinematics(Manipulator *manipulator);
   virtual bool inverseKinematics(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);

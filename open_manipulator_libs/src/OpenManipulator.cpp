@@ -43,7 +43,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addJoint("joint2", // my name
            "joint1", // parent name
            "joint3", // child name
-           RM_MATH::makeVector3(0.0, 0.0, 0.058), // relative position
+           RM_MATH::makeVector3(0.0, 0.0, 0.0595), // relative position
            RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS, // axis of rotation
            12,     // actuator id
@@ -140,6 +140,12 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addCustomTrajectory(DRAWING_HEART, &heart_);
 }
 
+void OPEN_MANIPULATOR::calculationProcess(double tick_time, JointWayPoint* goal_joint_value, JointWayPoint* goal_tool_value)
+{
+  *goal_joint_value = getJointGoalValueFromTrajectoryTickTime(tick_time);
+  *goal_tool_value  = getToolGoalValue();
+}
+
 void OPEN_MANIPULATOR::communicationProcessToActuator(JointWayPoint goal_joint_value, JointWayPoint goal_tool_value)
 {
   receiveAllJointActuatorValue();
@@ -150,8 +156,4 @@ void OPEN_MANIPULATOR::communicationProcessToActuator(JointWayPoint goal_joint_v
   forwardKinematics();
 }
 
-void OPEN_MANIPULATOR::calculationProcess(double tick_time, JointWayPoint* goal_joint_value, JointWayPoint* goal_tool_value)
-{
-  *goal_joint_value = getJointGoalValueFromTrajectoryTickTime(tick_time);
-  *goal_tool_value  = getToolGoalValue();
-}
+
