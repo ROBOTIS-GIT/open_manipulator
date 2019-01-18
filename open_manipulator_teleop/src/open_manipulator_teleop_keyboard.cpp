@@ -44,8 +44,8 @@ OM_TELEOP::~OM_TELEOP()
 
 void OM_TELEOP::initClient()
 {
-  goal_joint_space_path_to_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path_to_present");
-  goal_task_space_path_to_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_to_present_position_only");
+  goal_joint_space_path_from_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path_from_present");
+  goal_task_space_path_from_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_from_present_position_only");
   goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
   goal_tool_control_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_tool_control");
 }
@@ -88,14 +88,14 @@ std::vector<double> OM_TELEOP::getPresentKinematicsPose()
   return present_kinematic_position;
 }
 
-bool OM_TELEOP::setJointSpacePathToPresent(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time)
+bool OM_TELEOP::setJointSpacePathFromPresent(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time)
 {
   open_manipulator_msgs::SetJointPosition srv;
   srv.request.joint_position.joint_name = joint_name;
   srv.request.joint_position.position = joint_angle;
   srv.request.path_time = path_time;
 
-  if(goal_joint_space_path_to_present_client_.call(srv))
+  if(goal_joint_space_path_from_present_client_.call(srv))
   {
     return srv.response.is_planned;
   }
@@ -129,7 +129,7 @@ bool OM_TELEOP::setToolControl(std::vector<double> joint_angle)
   return false;
 }
 
-bool OM_TELEOP::setTaskSpacePathToPresentPositionOnly(std::vector<double> kinematics_pose, double path_time)
+bool OM_TELEOP::setTaskSpacePathFromPresentPositionOnly(std::vector<double> kinematics_pose, double path_time)
 {
   open_manipulator_msgs::SetKinematicsPose srv;
   srv.request.planning_group = priv_node_handle_.param<std::string>("end_effector_name", "gripper");
@@ -138,7 +138,7 @@ bool OM_TELEOP::setTaskSpacePathToPresentPositionOnly(std::vector<double> kinema
   srv.request.kinematics_pose.pose.position.z = kinematics_pose.at(2);
   srv.request.path_time = path_time;
 
-  if(goal_task_space_path_to_present_position_only_client_.call(srv))
+  if(goal_task_space_path_from_present_position_only_client_.call(srv))
   {
     return srv.response.is_planned;
   }
@@ -198,37 +198,37 @@ void OM_TELEOP::setGoal(char ch)
   {
     printf("input : w \tincrease(++) x axis in task space\n");
     goalPose.at(0) = DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(ch == 's' || ch == 'S')
   {
     printf("input : s \tdecrease(--) x axis in task space\n");
     goalPose.at(0) = -DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(ch == 'a' || ch == 'A')
   {
     printf("input : a \tincrease(++) y axis in task space\n");
     goalPose.at(1) = DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(ch == 'd' || ch == 'D')
   {
     printf("input : d \tdecrease(--) y axis in task space\n");
     goalPose.at(1) = -DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(ch == 'z' || ch == 'Z')
   {
     printf("input : z \tincrease(++) z axis in task space\n");
     goalPose.at(2) = DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(ch == 'x' || ch == 'X')
   {
     printf("input : x \tdecrease(--) z axis in task space\n");
     goalPose.at(2) = -DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(ch == 'y' || ch == 'Y')
   {
@@ -238,7 +238,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
   else if(ch == 'h' || ch == 'H')
   {
@@ -248,7 +248,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
 
   else if(ch == 'u' || ch == 'U')
@@ -259,7 +259,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2"); goalJoint.at(1) = JOINT_DELTA;
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
   else if(ch == 'j' || ch == 'J')
   {
@@ -269,7 +269,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2"); goalJoint.at(1) = -JOINT_DELTA;
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
 
   else if(ch == 'i' || ch == 'I')
@@ -280,7 +280,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2");
     joint_name.push_back("joint3"); goalJoint.at(2) = JOINT_DELTA;
     joint_name.push_back("joint4");
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
   else if(ch == 'k' || ch == 'K')
   {
@@ -290,7 +290,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2");
     joint_name.push_back("joint3"); goalJoint.at(2) = -JOINT_DELTA;
     joint_name.push_back("joint4");
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
 
   else if(ch == 'o' || ch == 'O')
@@ -301,7 +301,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
     joint_name.push_back("joint4"); goalJoint.at(3) = JOINT_DELTA;
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
   else if(ch == 'l' || ch == 'L')
   {
@@ -311,7 +311,7 @@ void OM_TELEOP::setGoal(char ch)
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
     joint_name.push_back("joint4"); goalJoint.at(3) = -JOINT_DELTA;
-    setJointSpacePathToPresent(joint_name, goalJoint, PATH_TIME);
+    setJointSpacePathFromPresent(joint_name, goalJoint, PATH_TIME);
   }
 
   else if(ch == 'g' || ch == 'G')

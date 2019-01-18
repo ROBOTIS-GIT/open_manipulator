@@ -83,13 +83,14 @@ class OM_CONTROLLER
 
   // ROS Service Server
   ros::ServiceServer goal_joint_space_path_server_;
+  ros::ServiceServer goal_joint_space_path_to_kinematics_pose_server_;
   ros::ServiceServer goal_task_space_path_server_;
   ros::ServiceServer goal_task_space_path_position_only_server_;
   ros::ServiceServer goal_task_space_path_orientation_only_server_;
-  ros::ServiceServer goal_joint_space_path_to_present_server_;
-  ros::ServiceServer goal_task_space_path_to_present_position_only_server_;
-  ros::ServiceServer goal_task_space_path_to_present_orientation_only_server_;
-  ros::ServiceServer goal_task_space_path_to_present_server_;
+  ros::ServiceServer goal_joint_space_path_from_present_server_;
+  ros::ServiceServer goal_task_space_path_from_present_position_only_server_;
+  ros::ServiceServer goal_task_space_path_from_present_orientation_only_server_;
+  ros::ServiceServer goal_task_space_path_from_present_server_;
   ros::ServiceServer goal_tool_control_server_;
   ros::ServiceServer set_actuator_state_server_;
   ros::ServiceServer goal_drawing_trajectory_server_;
@@ -143,6 +144,9 @@ class OM_CONTROLLER
   bool goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                   open_manipulator_msgs::SetJointPosition::Response &res);
 
+  bool goalJointSpacePathToKinematicsPoseCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                  open_manipulator_msgs::SetKinematicsPose::Response &res);
+
   bool goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                   open_manipulator_msgs::SetKinematicsPose::Response &res);
 
@@ -152,16 +156,16 @@ class OM_CONTROLLER
   bool goalTaskSpacePathOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                 open_manipulator_msgs::SetKinematicsPose::Response &res);
 
-  bool goalJointSpacePathToPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
+  bool goalJointSpacePathFromPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                            open_manipulator_msgs::SetJointPosition::Response &res);
 
-  bool goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+  bool goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                           open_manipulator_msgs::SetKinematicsPose::Response &res);
 
-  bool goalTaskSpacePathToPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+  bool goalTaskSpacePathFromPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                       open_manipulator_msgs::SetKinematicsPose::Response &res);
 
-  bool goalTaskSpacePathToPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+  bool goalTaskSpacePathFromPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                          open_manipulator_msgs::SetKinematicsPose::Response &res);
 
   bool goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,

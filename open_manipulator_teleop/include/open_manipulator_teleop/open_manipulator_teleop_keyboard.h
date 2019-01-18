@@ -23,8 +23,8 @@ class OM_TELEOP
   ros::NodeHandle node_handle_;
   ros::NodeHandle priv_node_handle_;
 
-  ros::ServiceClient goal_joint_space_path_to_present_client_;
-  ros::ServiceClient goal_task_space_path_to_present_position_only_client_;
+  ros::ServiceClient goal_joint_space_path_from_present_client_;
+  ros::ServiceClient goal_task_space_path_from_present_position_only_client_;
   ros::ServiceClient goal_joint_space_path_client_;
   ros::ServiceClient goal_tool_control_client_;
 
@@ -50,9 +50,9 @@ class OM_TELEOP
   std::vector<double> getPresentJointAngle();
   std::vector<double> getPresentKinematicsPose();
 
-  bool setJointSpacePathToPresent(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
+  bool setJointSpacePathFromPresent(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
   bool setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
-  bool setTaskSpacePathToPresentPositionOnly(std::vector<double> kinematics_pose, double path_time);
+  bool setTaskSpacePathFromPresentPositionOnly(std::vector<double> kinematics_pose, double path_time);
   bool setToolControl(std::vector<double> joint_angle);
 
   void printText();

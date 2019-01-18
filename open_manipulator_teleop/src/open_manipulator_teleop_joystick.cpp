@@ -44,7 +44,7 @@ OM_TELEOP::~OM_TELEOP()
 
 void OM_TELEOP::initClient()
 {
-  goal_task_space_path_to_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_to_present_position_only");
+  goal_task_space_path_from_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_from_present_position_only");
   goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
   goal_tool_control_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_tool_control");
 
@@ -130,7 +130,7 @@ bool OM_TELEOP::setToolControl(std::vector<double> joint_angle)
   return false;
 }
 
-bool OM_TELEOP::setTaskSpacePathToPresentPositionOnly(std::vector<double> kinematics_pose, double path_time)
+bool OM_TELEOP::setTaskSpacePathFromPresentPositionOnly(std::vector<double> kinematics_pose, double path_time)
 {
   open_manipulator_msgs::SetKinematicsPose srv;
   srv.request.planning_group = priv_node_handle_.param<std::string>("end_effector_name", "gripper");
@@ -139,7 +139,7 @@ bool OM_TELEOP::setTaskSpacePathToPresentPositionOnly(std::vector<double> kinema
   srv.request.kinematics_pose.pose.position.z = kinematics_pose.at(2);
   srv.request.path_time = path_time;
 
-  if(goal_task_space_path_to_present_position_only_client_.call(srv))
+  if(goal_task_space_path_from_present_position_only_client_.call(srv))
   {
     return srv.response.is_planned;
   }
@@ -155,37 +155,37 @@ void OM_TELEOP::setGoal(const char* str)
   {
     printf("increase(++) x axis in cartesian space\n");
     goalPose.at(0) = DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "x-")
   {
     printf("decrease(--) x axis in cartesian space\n");
     goalPose.at(0) = -DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "y+")
   {
     printf("increase(++) y axis in cartesian space\n");
     goalPose.at(1) = DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "y-")
   {
     printf("decrease(--) y axis in cartesian space\n");
     goalPose.at(1) = -DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "z+")
   {
     printf("increase(++) z axis in cartesian space\n");
     goalPose.at(2) = DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
   else if(str == "z-")
   {
     printf("decrease(--) z axis in cartesian space\n");
     goalPose.at(2) = -DELTA;
-    setTaskSpacePathToPresentPositionOnly(goalPose, PATH_TIME);
+    setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
 
   else if(str == "gripper open")
