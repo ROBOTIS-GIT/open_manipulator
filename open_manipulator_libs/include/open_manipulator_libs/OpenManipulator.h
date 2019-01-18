@@ -23,10 +23,10 @@
 #include "CustomTrajectory.h"
 #include "Kinematics.h"
 
-#define DRAWING_LINE "custom_trajectory_line"
-#define DRAWING_CIRCLE "custom_trajectory_circle"
-#define DRAWING_RHOMBUS "custom_trajectory_rhombus"
-#define DRAWING_HEART "custom_trajectory_heart"
+#define CUSTOM_TRAJECTORY_LINE "custom_trajectory_line"
+#define CUSTOM_TRAJECTORY_CIRCLE "custom_trajectory_circle"
+#define CUSTOM_TRAJECTORY_RHOMBUS "custom_trajectory_rhombus"
+#define CUSTOM_TRAJECTORY_HEART "custom_trajectory_heart"
 
 #define JOINT_DYNAMIXEL "joint_dxl"
 #define TOOL_DYNAMIXEL "tool_dxl"
@@ -34,7 +34,6 @@
 #define X_AXIS RM_MATH::makeVector3(1.0, 0.0, 0.0)
 #define Y_AXIS RM_MATH::makeVector3(0.0, 1.0, 0.0)
 #define Z_AXIS RM_MATH::makeVector3(0.0, 0.0, 1.0)
-
 
 class OPEN_MANIPULATOR : public ROBOTIS_MANIPULATOR::RobotisManipulator
 {
@@ -48,14 +47,13 @@ private:
   CUSTOM_TRAJECTORY::Rhombus rhombus_;
   CUSTOM_TRAJECTORY::Heart heart_;
 
-  std::vector<uint8_t> jointDxlId;
- public:
+
+public:
   OPEN_MANIPULATOR();
   virtual ~OPEN_MANIPULATOR();
 
-  void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000", float control_loop_time = 0.010);
-  void communicationProcessToActuator(JointWayPoint goal_joint_value, JointWayPoint goal_tool_value);
-  void calculationProcess(double present_time, JointWayPoint* goal_joint_value, JointWayPoint *goal_tool_value);
+  void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000");
+  void openManipulatorProcess(double present_time);
 };
 
 #endif // OPEN_MANIPULTOR_H_
