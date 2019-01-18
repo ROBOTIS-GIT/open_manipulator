@@ -35,8 +35,6 @@ namespace KINEMATICS
 class CR_Jacobian_Solver : public ROBOTIS_MANIPULATOR::Kinematics
 {
 private:
-  Eigen::MatrixXd jacobianDot(Manipulator *manipulator, Name tool_name);
-  std::vector<JointValue> inverseDynamicSolver(Manipulator manipulator, Name tool_name, PoseValue target_pose);
   void forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name);
   bool inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);
 
@@ -53,8 +51,6 @@ public:
 class CR_SRJacobian_Solver : public ROBOTIS_MANIPULATOR::Kinematics
 {
 private:
-  Eigen::MatrixXd jacobianDot(Manipulator *manipulator, Name tool_name);
-  std::vector<JointValue> inverseDynamicSolver(Manipulator manipulator, Name tool_name, PoseValue target_pose);
   void forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name);
   bool inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);
 
@@ -71,8 +67,6 @@ public:
 class CR_Position_Only_Jacobian_Solver : public ROBOTIS_MANIPULATOR::Kinematics
 {
 private:
-  Eigen::MatrixXd jacobianDot(Manipulator *manipulator, Name tool_name);
-  std::vector<JointValue> inverseDynamicSolver(Manipulator manipulator, Name tool_name, PoseValue target_pose);
   void forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name);
   bool inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);
 
@@ -89,8 +83,6 @@ public:
 class CR_Custom_Solver : public ROBOTIS_MANIPULATOR::Kinematics
 {
 private:
-  Eigen::MatrixXd jacobianDot(Manipulator *manipulator, Name tool_name);
-  std::vector<JointValue> inverseDynamicSolver(Manipulator manipulator, Name tool_name, PoseValue target_pose);
   void forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name);
   bool chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, PoseValue target_pose, std::vector<JointValue>* goal_joint_value);
 
