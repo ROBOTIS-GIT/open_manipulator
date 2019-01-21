@@ -124,7 +124,7 @@ void *OM_CONTROLLER::timerThread(void *param)
       clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
     /////
   }
-  return;
+  return 0;
 }
 
 void OM_CONTROLLER::initPublisher()
