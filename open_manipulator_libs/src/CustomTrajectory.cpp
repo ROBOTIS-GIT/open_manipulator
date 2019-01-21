@@ -48,7 +48,7 @@ TaskWayPoint Line::drawLine(double time_var)
 {
   TaskWayPoint pose;
 
-  if(acc_dec_time_ >= time_var) // acc time
+  if(acc_dec_time_ >= time_var)
   {
     pose.kinematic.position(X_AXIS) = 0.5*vel_max_.at(X_AXIS)*pow(time_var, 2)/acc_dec_time_ + start_pose_.kinematic.position(X_AXIS);
     pose.kinematic.position(Y_AXIS) = 0.5*vel_max_.at(Y_AXIS)*pow(time_var, 2)/acc_dec_time_ + start_pose_.kinematic.position(Y_AXIS);

@@ -79,7 +79,7 @@ void OM_CONTROLLER::startTimerThread()
   //  error = pthread_attr_setschedparam(&attr_, &param);
   //  if (error != 0)   RM_LOG::ERROR("pthread_attr_setschedparam error = ", (double)error);
 
-  //  if ((error = pthread_create(&this->timer_thread_, &attr_, this->commTimerThread, this)) != 0)
+  //  if ((error = pthread_create(&this->timer_thread_, &attr_, this->timerThread, this)) != 0)
   //  {
   //    RM_LOG::ERROR("Creating timer thread failed!!", (double)error);
   //    exit(-1);
@@ -255,9 +255,9 @@ bool OM_CONTROLLER::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
-                        req.kinematics_pose.pose.orientation.x,
-                        req.kinematics_pose.pose.orientation.y,
-                        req.kinematics_pose.pose.orientation.z);
+                       req.kinematics_pose.pose.orientation.x,
+                       req.kinematics_pose.pose.orientation.y,
+                       req.kinematics_pose.pose.orientation.z);
 
   target_pose.orientation = RM_MATH::convertQuaternionToRotation(q);
 
@@ -276,9 +276,9 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
-                        req.kinematics_pose.pose.orientation.x,
-                        req.kinematics_pose.pose.orientation.y,
-                        req.kinematics_pose.pose.orientation.z);
+                       req.kinematics_pose.pose.orientation.x,
+                       req.kinematics_pose.pose.orientation.y,
+                       req.kinematics_pose.pose.orientation.z);
 
   target_pose.orientation = RM_MATH::convertQuaternionToRotation(q);
   open_manipulator_.taskTrajectoryMove(req.end_effector_name, target_pose, req.path_time);
@@ -305,9 +305,9 @@ bool OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_ms
                                                              open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
-                        req.kinematics_pose.pose.orientation.x,
-                        req.kinematics_pose.pose.orientation.y,
-                        req.kinematics_pose.pose.orientation.z);
+                       req.kinematics_pose.pose.orientation.x,
+                       req.kinematics_pose.pose.orientation.y,
+                       req.kinematics_pose.pose.orientation.z);
 
   Eigen::Matrix3d orientation = RM_MATH::convertQuaternionToRotation(q);
 
@@ -340,9 +340,9 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
-                        req.kinematics_pose.pose.orientation.x,
-                        req.kinematics_pose.pose.orientation.y,
-                        req.kinematics_pose.pose.orientation.z);
+                       req.kinematics_pose.pose.orientation.x,
+                       req.kinematics_pose.pose.orientation.y,
+                       req.kinematics_pose.pose.orientation.z);
 
   target_pose.orientation = RM_MATH::convertQuaternionToRotation(q);
 
@@ -387,6 +387,7 @@ bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosit
 {
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     open_manipulator_.toolMove(req.joint_position.joint_name.at(i), req.joint_position.position.at(i));
+
   res.is_planned = true;
   return true;
 }
@@ -427,8 +428,8 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_circle_arg[1] = req.param[1];  // revolution (rev)
       draw_circle_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_circle_arg = &draw_circle_arg;
-      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time);
 
+      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time);
     }
     else if(req.drawing_trajectory_name == "line")
     {
@@ -442,21 +443,23 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
     }
     else if(req.drawing_trajectory_name == "rhombus")
     {
-      double draw_circle_arg[3];
-      draw_circle_arg[0] = req.param[0];  // radius (m)
-      draw_circle_arg[1] = req.param[1];  // revolution (rev)
-      draw_circle_arg[2] = req.param[2];  // start angle position (rad)
-      void* p_draw_circle_arg = &draw_circle_arg;
-      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_RHOMBUS, req.end_effector_name, p_draw_circle_arg, req.path_time);
+      double draw_rhombus_arg[3];
+      draw_rhombus_arg[0] = req.param[0];  // radius (m)
+      draw_rhombus_arg[1] = req.param[1];  // revolution (rev)
+      draw_rhombus_arg[2] = req.param[2];  // start angle position (rad)
+      void* p_draw_rhombus_arg = &draw_rhombus_arg;
+
+      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_RHOMBUS, req.end_effector_name, p_draw_rhombus_arg, req.path_time);
     }
     else if(req.drawing_trajectory_name == "heart")
     {
-      double draw_circle_arg[3];
-      draw_circle_arg[0] = req.param[0];  // radius (m)
-      draw_circle_arg[1] = req.param[1];  // revolution (rev)
-      draw_circle_arg[2] = req.param[2];  // start angle position (rad)
-      void* p_draw_circle_arg = &draw_circle_arg;
-      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_HEART, req.end_effector_name, p_draw_circle_arg, req.path_time);
+      double draw_heart_arg[3];
+      draw_heart_arg[0] = req.param[0];  // radius (m)
+      draw_heart_arg[1] = req.param[1];  // revolution (rev)
+      draw_heart_arg[2] = req.param[2];  // start angle position (rad)
+      void* p_draw_heart_arg = &draw_heart_arg;
+
+      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_HEART, req.end_effector_name, p_draw_heart_arg, req.path_time);
     }
     res.is_planned = true;
     return true;

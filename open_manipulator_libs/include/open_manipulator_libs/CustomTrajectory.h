@@ -25,8 +25,6 @@
   #include <robotis_manipulator/robotis_manipulator.h>
 #endif
 
-//#define PI 3.141592
-
 using namespace ROBOTIS_MANIPULATOR;
 using namespace Eigen;
 
