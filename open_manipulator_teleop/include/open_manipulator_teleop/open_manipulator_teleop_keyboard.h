@@ -53,6 +53,7 @@ class OM_TELEOP
   bool setJointSpacePathFromPresent(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
   bool setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
   bool setTaskSpacePathFromPresentPositionOnly(std::vector<double> kinematics_pose, double path_time);
+
   bool setToolControl(std::vector<double> joint_angle);
 
   void printText();
