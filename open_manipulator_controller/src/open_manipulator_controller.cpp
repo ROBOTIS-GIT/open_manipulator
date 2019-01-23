@@ -210,6 +210,7 @@ void OM_CONTROLLER::openManipulatorOptionCallback(const std_msgs::String::ConstP
 void OM_CONTROLLER::displayPlannedPathCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
 {
   trajectory_msgs::JointTrajectory joint_trajectory_planned = msg->trajectory[0].joint_trajectory;
+  joint_trajectory_ = joint_trajectory_planned;
 
   if(moveit_plan_only_ == false)
   {
