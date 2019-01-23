@@ -72,7 +72,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
 
   addTool("gripper",  // my name
           "joint4",   // parent name
-          RM_MATH::makeVector3(0.130, 0.0, 0.0), // relative position
+          RM_MATH::makeVector3(0.126, 0.0, 0.0), // relative position
           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
           15,       // actuator id
           0.010,    // max gripper limit (0.01 m)
