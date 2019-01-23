@@ -308,9 +308,10 @@ TaskWayPoint Heart::drawHeart(double tick)
   double diff_pose[2];
   double traj[2];
 
-  traj[0] =  - 1.0f/17.0f*radius_*7
-    + (1.0f/17.0f*radius_*(13*cos(get_time_var) - 5*cos(2*get_time_var) - 2*cos(3*get_time_var) - cos(4*get_time_var)));
-  traj[1] = 1.0f/17.0f*radius_*(16*sin(get_time_var)*sin(get_time_var)*sin(get_time_var));
+  double shift_offset = -5.0f;
+
+  traj[0] = shift_offset + (13*cos(get_time_var) - 5*cos(2*get_time_var) - 2*cos(3*get_time_var) - cos(4*get_time_var));
+  traj[1] = 16*sin(get_time_var)*sin(get_time_var)*sin(get_time_var);
 
   diff_pose[0] = traj[0]*cos(start_angular_position_) - traj[1]*sin(start_angular_position_);
   diff_pose[1] = traj[0]*sin(start_angular_position_) + traj[1]*cos(start_angular_position_);
