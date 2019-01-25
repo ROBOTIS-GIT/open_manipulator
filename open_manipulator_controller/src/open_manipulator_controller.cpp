@@ -38,7 +38,7 @@ OM_CONTROLLER::OM_CONTROLLER(std::string usb_port, std::string baud_rate)
   using_moveit_         = priv_node_handle_.param<bool>("using_moveit", false);
   std::string planning_group_name = priv_node_handle_.param<std::string>("planning_group_name", "arm");
 
-  open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate);
+  open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate, control_period_);
 
   if (using_platform_ == true)        RM_LOG::INFO("Succeeded to init " + priv_node_handle_.getNamespace());
   else if (using_platform_ == false)  RM_LOG::INFO("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");
@@ -55,7 +55,7 @@ OM_CONTROLLER::~OM_CONTROLLER()
   timer_thread_flag_ = false;
   pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
   RM_LOG::INFO("Shutdown the OpenManipulator");
-  open_manipulator_.allActuatorDisable();
+  open_manipulator_.disableAllActuator();
   ros::shutdown();
 }
 
@@ -204,7 +204,7 @@ void OM_CONTROLLER::initServer()
 void OM_CONTROLLER::openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg)
 {
   if(msg->data == "print_open_manipulator_setting")
-    open_manipulator_.checkManipulatorSetting();
+    open_manipulator_.printManipulatorSetting();
 }
 
 void OM_CONTROLLER::displayPlannedPathCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
@@ -241,7 +241,7 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  open_manipulator_.jointTrajectoryMove(target_angle, req.path_time);
+  open_manipulator_.makeJointTrajectory(target_angle, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -262,7 +262,7 @@ bool OM_CONTROLLER::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_
 
   target_pose.orientation = RM_MATH::convertQuaternionToRotation(q);
 
-  open_manipulator_.jointTrajectoryMove(req.end_effector_name, target_pose, req.path_time);
+  open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose, req.path_time);
   
   res.is_planned = true;
   return true;
@@ -282,7 +282,7 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
                        req.kinematics_pose.pose.orientation.z);
 
   target_pose.orientation = RM_MATH::convertQuaternionToRotation(q);
-  open_manipulator_.taskTrajectoryMove(req.end_effector_name, target_pose, req.path_time);
+  open_manipulator_.makeTaskTrajectory(req.end_effector_name, target_pose, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -296,7 +296,7 @@ bool OM_CONTROLLER::goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs:
   position[1] = req.kinematics_pose.pose.position.y;
   position[2] = req.kinematics_pose.pose.position.z;
 
-  open_manipulator_.taskTrajectoryMove(req.end_effector_name, position, req.path_time);
+  open_manipulator_.makeTaskTrajectory(req.end_effector_name, position, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -312,7 +312,7 @@ bool OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_ms
 
   Eigen::Matrix3d orientation = RM_MATH::convertQuaternionToRotation(q);
 
-  open_manipulator_.taskTrajectoryMove(req.end_effector_name, orientation, req.path_time);
+  open_manipulator_.makeTaskTrajectory(req.end_effector_name, orientation, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -326,7 +326,7 @@ bool OM_CONTROLLER::goalJointSpacePathFromPresentCallback(open_manipulator_msgs:
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  open_manipulator_.jointTrajectoryMoveFromPresentPosition(target_angle, req.path_time);
+  open_manipulator_.makeJointTrajectoryFromPresentPosition(target_angle, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -347,7 +347,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::
 
   target_pose.orientation = RM_MATH::convertQuaternionToRotation(q);
 
-  open_manipulator_.taskTrajectoryMoveFromPresentPose(req.planning_group, target_pose, req.path_time);
+  open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, target_pose, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -361,7 +361,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentPositionOnlyCallback(open_manipu
   position[1] = req.kinematics_pose.pose.position.y;
   position[2] = req.kinematics_pose.pose.position.z;
 
-  open_manipulator_.taskTrajectoryMoveFromPresentPose(req.planning_group, position, req.path_time);
+  open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, position, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -377,7 +377,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentOrientationOnlyCallback(open_man
 
   Eigen::Matrix3d orientation = RM_MATH::convertQuaternionToRotation(q);
 
-  open_manipulator_.taskTrajectoryMoveFromPresentPose(req.planning_group, orientation, req.path_time);
+  open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, orientation, req.path_time);
 
   res.is_planned = true;
   return true;
@@ -387,7 +387,7 @@ bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosit
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
-    open_manipulator_.toolMove(req.joint_position.joint_name.at(i), req.joint_position.position.at(i));
+    open_manipulator_.makeToolTrajectory(req.joint_position.joint_name.at(i), req.joint_position.position.at(i));
 
   res.is_planned = true;
   return true;
@@ -401,7 +401,7 @@ bool OM_CONTROLLER::setActuatorStateCallback(open_manipulator_msgs::SetActuatorS
     RM_LOG::PRINTLN("Wait a second for actuator enable", "GREEN");
     timer_thread_flag_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
-    open_manipulator_.allActuatorEnable();
+    open_manipulator_.enableAllActuator();
     startTimerThread();
   }
   else // torque off
@@ -409,7 +409,7 @@ bool OM_CONTROLLER::setActuatorStateCallback(open_manipulator_msgs::SetActuatorS
     RM_LOG::PRINTLN("Wait a second for actuator disable", "GREEN");
     timer_thread_flag_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
-    open_manipulator_.allActuatorDisable();
+    open_manipulator_.disableAllActuator();
     startTimerThread();
   }
 
@@ -430,7 +430,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_circle_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_circle_arg = &draw_circle_arg;
 
-      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time);
+      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time);
     }
     else if(req.drawing_trajectory_name == "line")
     {
@@ -440,7 +440,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_line_arg.kinematic.position(2) = req.param[2];
       void *p_draw_line_arg = &draw_line_arg;
       
-      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_LINE, req.end_effector_name, p_draw_line_arg, req.path_time);
+      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_LINE, req.end_effector_name, p_draw_line_arg, req.path_time);
     }
     else if(req.drawing_trajectory_name == "rhombus")
     {
@@ -450,7 +450,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_rhombus_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_rhombus_arg = &draw_rhombus_arg;
 
-      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_RHOMBUS, req.end_effector_name, p_draw_rhombus_arg, req.path_time);
+      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_RHOMBUS, req.end_effector_name, p_draw_rhombus_arg, req.path_time);
     }
     else if(req.drawing_trajectory_name == "heart")
     {
@@ -460,7 +460,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
       draw_heart_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_heart_arg = &draw_heart_arg;
 
-      open_manipulator_.customTrajectoryMove(CUSTOM_TRAJECTORY_HEART, req.end_effector_name, p_draw_heart_arg, req.path_time);
+      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_HEART, req.end_effector_name, p_draw_heart_arg, req.path_time);
     }
     res.is_planned = true;
     return true;
@@ -541,7 +541,7 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
-  if (open_manipulator_.isMoving() == false)
+  if (open_manipulator_.getMovingState() == false)
   {
     bool success = (move_group_->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
@@ -591,7 +591,7 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
-  if (open_manipulator_.isMoving() == false)
+  if (open_manipulator_.getMovingState() == false)
   {
     bool success = (move_group_->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
@@ -618,12 +618,12 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
 void OM_CONTROLLER::publishOpenManipulatorStates()
 {
   open_manipulator_msgs::OpenManipulatorState msg;
-  if(open_manipulator_.isMoving())
+  if(open_manipulator_.getMovingState())
     msg.open_manipulator_moving_state = msg.IS_MOVING;
   else
     msg.open_manipulator_moving_state = msg.STOPPED;
 
-  if(open_manipulator_.isEnabled(JOINT_DYNAMIXEL))
+  if(open_manipulator_.getActuatorEnabledState(JOINT_DYNAMIXEL))
     msg.open_manipulator_actuator_state = msg.ACTUATOR_ENABLED;
   else
     msg.open_manipulator_actuator_state = msg.ACTUATOR_DISABLED;
@@ -737,7 +737,7 @@ void OM_CONTROLLER::moveitTimer(double present_time)
         temp.acceleration = joint_trajectory_.points[step_cnt].accelerations.at(i);
         target.push_back(temp);
       }
-      open_manipulator_.jointTrajectoryMove(target, path_time);
+      open_manipulator_.makeJointTrajectory(target, path_time);
 
       step_cnt++;
       priv_time = present_time;

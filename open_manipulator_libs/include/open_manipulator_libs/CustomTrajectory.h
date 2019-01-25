@@ -55,7 +55,7 @@ public:
   TaskWayPoint drawLine(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, TaskWayPoint start, const void *arg);
+  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
@@ -82,7 +82,7 @@ public:
   TaskWayPoint drawCircle(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, TaskWayPoint start, const void *arg);
+  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
@@ -109,7 +109,7 @@ public:
   TaskWayPoint drawRhombus(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, TaskWayPoint start, const void *arg);
+  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
@@ -136,7 +136,7 @@ public:
   TaskWayPoint drawHeart(double tick);
 
   virtual void setOption(const void *arg);
-  virtual void init(double move_time, TaskWayPoint start, const void *arg);
+  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
   virtual TaskWayPoint getTaskWayPoint(double tick);
 };
 
