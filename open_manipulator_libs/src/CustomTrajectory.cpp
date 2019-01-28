@@ -220,8 +220,8 @@ TaskWayPoint Rhombus::drawRhombus(double tick)
 
   while(true)
   {
-    get_time_var = get_time_var - PI*2;
     if (get_time_var < PI*2) break;
+    get_time_var = get_time_var - PI*2;
   }
 
   if (get_time_var >= 0 && get_time_var < PI/2){
