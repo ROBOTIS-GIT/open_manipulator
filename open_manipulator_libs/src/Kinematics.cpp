@@ -880,9 +880,9 @@ bool CR_Custom_Solver::chainCustomInverseKinematics(Manipulator *manipulator, Na
 
   //////////////make target ori//////////  //only OpenManipulator Chain
   Eigen::Matrix3d present_orientation = _manipulator.getComponentOrientationFromWorld(tool_name);
-  Eigen::Vector3d present_orientation_rpy = RM_MATH::convertRotationToRPY(present_orientation);
+  Eigen::Vector3d present_orientation_rpy = RM_MATH::convertRotationMatrixToRPYVector(present_orientation);
   Eigen::Matrix3d target_orientation = target_pose.kinematic.orientation;
-  Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationToRPY(target_orientation);
+  Eigen::Vector3d target_orientation_rpy = RM_MATH::convertRotationMatrixToRPYVector(target_orientation);
 
   Eigen::Vector3d joint1_rlative_position = _manipulator.getComponentRelativePositionFromParent(_manipulator.getWorldChildName());
   Eigen::Vector3d target_position_from_joint1 = target_pose.kinematic.position - joint1_rlative_position;
@@ -891,7 +891,7 @@ bool CR_Custom_Solver::chainCustomInverseKinematics(Manipulator *manipulator, Na
   target_orientation_rpy(1) = target_orientation_rpy(1);
   target_orientation_rpy(2) = atan2(target_position_from_joint1(1) ,target_position_from_joint1(0));
 
-  target_pose.kinematic.orientation = RM_MATH::convertRPYToRotation(target_orientation_rpy(0), target_orientation_rpy(1), target_orientation_rpy(2));
+  target_pose.kinematic.orientation = RM_MATH::convertRPYToRotationMatrix(target_orientation_rpy(0), target_orientation_rpy(1), target_orientation_rpy(2));
   ///////////////////////////////////////
 
   //////////////checking dx///////////////

@@ -34,7 +34,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
            "world",   // parent name
            "joint2",  // child name
            RM_MATH::Vector3(0.012, 0.0, 0.017), // relative position
-           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Z_AXIS,  // axis of rotation
            11,      // actuator id
            M_PI,    // max joint limit (3.14 rad)
@@ -44,7 +44,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
            "joint1",  // parent name
            "joint3",  // child name
            RM_MATH::Vector3(0.0, 0.0, 0.0595), // relative position
-           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS,  // axis of rotation
            12,      // actuator id
            M_PI_2,  // max joint limit (1.67 rad)
@@ -54,7 +54,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
            "joint2",  // parent name
            "joint4",  // child name
            RM_MATH::Vector3(0.024, 0.0, 0.128), // relative position
-           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS,    // axis of rotation
            13,        // actuator id
            1.53,      // max joint limit (1.53 rad)
@@ -64,7 +64,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
            "joint3",  // parent name
            "gripper", // child name
            RM_MATH::Vector3(0.124, 0.0, 0.0), // relative position
-           RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS,  // axis of rotation
            14,      // actuator id
            2.0,     // max joint limit (2.0 rad)
@@ -73,7 +73,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addTool("gripper",  // my name
           "joint4",   // parent name
           RM_MATH::Vector3(0.126, 0.0, 0.0), // relative position
-          RM_MATH::convertRPYToRotation(0.0, 0.0, 0.0), // relative orientation
+          RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
           15,       // actuator id
           0.010,    // max gripper limit (0.01 m)
           -0.010,   // min gripper limit (-0.01 m)
