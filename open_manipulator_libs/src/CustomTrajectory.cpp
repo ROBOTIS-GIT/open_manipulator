@@ -211,26 +211,33 @@ TaskWayPoint Rhombus::drawRhombus(double tick)
                  coefficient_(2) * pow(tick, 2) +
                  coefficient_(3) * pow(tick, 3) +
                  coefficient_(4) * pow(tick, 4) +
-                 coefficient_(5) * pow(tick, 5);
+                 coefficient_(5) * pow(tick, 5); 
 
   // set drawing trajectory
   TaskWayPoint pose;
   double diff_pose[2];
   double traj[2];
 
-  if (get_time_var >= 0 && get_time_var < PI/2){
-    traj[0] = - get_time_var / (PI/2) * radius_;
-    traj[1] = - get_time_var / (PI/2) * radius_;
-  } else if (get_time_var >= PI/2 && get_time_var < PI){
-    traj[0] = - get_time_var / (PI/2) * radius_;
-    traj[1] = get_time_var / (PI/2) * radius_ - 2 * radius_;
-  } else if (get_time_var >= PI && get_time_var < PI*3/2){
-    traj[0] = get_time_var / (PI/2) * radius_ - 4 * radius_;
-    traj[1] = get_time_var / (PI/2) * radius_ - 2 * radius_;
-  } else {
-    traj[0] = get_time_var / (PI/2) * radius_ - 4 * radius_;
-    traj[1] = - get_time_var / (PI/2) * radius_ + 4 * radius_;
+  while(true)
+  {
+    get_time_var = get_time_var - PI*2;
+    if (get_time_var < PI*2) break;
   }
+
+  if (get_time_var >= 0 && get_time_var < PI/2){
+    traj[0] = - get_time_var / (PI/2);
+    traj[1] = - get_time_var / (PI/2);
+  } else if (get_time_var >= PI/2 && get_time_var < PI){
+    traj[0] = - get_time_var / (PI/2);
+    traj[1] = get_time_var / (PI/2) - 2;
+  } else if (get_time_var >= PI && get_time_var < PI*3/2){
+    traj[0] = get_time_var / (PI/2) - 4;
+    traj[1] = get_time_var / (PI/2) - 2;
+  } else {
+    traj[0] = get_time_var / (PI/2) - 4;
+    traj[1] = - get_time_var / (PI/2) + 4;
+  }
+  
 
   diff_pose[0] = traj[0]*cos(start_angular_position_) - traj[1]*sin(start_angular_position_);
   diff_pose[1] = traj[0]*sin(start_angular_position_) + traj[1]*cos(start_angular_position_);
@@ -310,8 +317,8 @@ TaskWayPoint Heart::drawHeart(double tick)
 
   double shift_offset = -5.0f;
 
-  traj[0] = shift_offset + (13*cos(get_time_var) - 5*cos(2*get_time_var) - 2*cos(3*get_time_var) - cos(4*get_time_var));
-  traj[1] = 16*sin(get_time_var)*sin(get_time_var)*sin(get_time_var);
+  traj[0] = (shift_offset + (13*cos(get_time_var) - 5*cos(2*get_time_var) - 2*cos(3*get_time_var) - cos(4*get_time_var))) / 16;
+  traj[1] = (16*sin(get_time_var)*sin(get_time_var)*sin(get_time_var)) / 16;
 
   diff_pose[0] = traj[0]*cos(start_angular_position_) - traj[1]*sin(start_angular_position_);
   diff_pose[1] = traj[0]*sin(start_angular_position_) + traj[1]*cos(start_angular_position_);
