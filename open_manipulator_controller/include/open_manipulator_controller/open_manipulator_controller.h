@@ -24,6 +24,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Empty.h>
 #include <boost/thread.hpp>
 #include <unistd.h>
 
@@ -71,6 +72,7 @@ class OpenManipulatorController
   std::vector<ros::Publisher> open_manipulator_kinematics_pose_pub_;
   ros::Publisher open_manipulator_joint_states_pub_;
   std::vector<ros::Publisher> gazebo_goal_joint_position_pub_;
+  ros::Publisher moveit_update_start_state_;
 
   // ROS Subscribers
   ros::Subscriber open_manipulator_option_sub_;

@@ -157,6 +157,10 @@ void OpenManipulatorController::initPublisher()
       gazebo_goal_joint_position_pub_.push_back(pb);
     }
   }
+  if (using_moveit_ == true)
+  {
+    moveit_update_start_state_ = node_handle_.advertise<std_msgs::Empty>("rviz/moveit/update_start_state", 10);
+  }
 }
 void OpenManipulatorController::initSubscriber()
 {
@@ -746,6 +750,12 @@ void OpenManipulatorController::moveitTimer(double present_time)
       {
         step_cnt = 0;
         moveit_plan_flag_ = false;
+        if (moveit_update_start_state_.getNumSubscribers() == 0)
+        {
+          robotis_manipulator_log::warn("Could not update the start state! Enable External Communications at the Moveit Plugin");
+        }
+        std_msgs::Empty msg;
+        moveit_update_start_state_.publish(msg);
       }
     }
   }

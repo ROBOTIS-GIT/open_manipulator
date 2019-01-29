@@ -40,7 +40,7 @@ Visualization Manager:
       Enabled: true
       Move Group Namespace: ""
       MoveIt_Allow_Approximate_IK: false
-      MoveIt_Allow_External_Program: false
+      MoveIt_Allow_External_Program: true
       MoveIt_Allow_Replanning: false
       MoveIt_Allow_Sensor_Positioning: false
       MoveIt_Goal_Tolerance: 0
