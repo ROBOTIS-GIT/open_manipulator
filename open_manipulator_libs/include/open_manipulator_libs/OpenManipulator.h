@@ -23,6 +23,7 @@
 #include "CustomTrajectory.h"
 #include "Kinematics.h"
 
+#define CUSTOM_TRAJECTORY_SIZE 4
 #define CUSTOM_TRAJECTORY_LINE    "custom_trajectory_line"
 #define CUSTOM_TRAJECTORY_CIRCLE  "custom_trajectory_circle"
 #define CUSTOM_TRAJECTORY_RHOMBUS "custom_trajectory_rhombus"
@@ -36,6 +37,7 @@
 #define Z_AXIS robotis_manipulator_math::vector3(0.0, 0.0, 1.0)
 
 
+
 class OpenManipulator : public robotis_manipulator::RobotisManipulator
 {
 private:
@@ -43,10 +45,7 @@ private:
   robotis_manipulator::JointActuator *actuator_;
   robotis_manipulator::ToolActuator *tool_;
 
-  custom_trajectory::Line line_;
-  custom_trajectory::Circle circle_;
-  custom_trajectory::Rhombus rhombus_;
-  custom_trajectory::Heart heart_;
+  robotis_manipulator::CustomTaskTrajectory *custom_trajectory_[CUSTOM_TRAJECTORY_SIZE];
 
  public:
   OpenManipulator();

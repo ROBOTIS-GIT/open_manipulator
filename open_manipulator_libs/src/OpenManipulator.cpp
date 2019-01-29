@@ -21,7 +21,13 @@
 OpenManipulator::OpenManipulator()
 {}
 OpenManipulator::~OpenManipulator()
-{}
+{
+  delete kinematics_;
+  delete actuator_;
+  delete tool_;
+  for(uint8_t index = 0; index < CUSTOM_TRAJECTORY_SIZE; index++)
+    delete custom_trajectory_[index];
+}
 
 void OpenManipulator::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate, float control_loop_time)
 {
@@ -79,8 +85,8 @@ void OpenManipulator::initManipulator(bool using_platform, STRING usb_port, STRI
           -0.010,   // min gripper limit (-0.01 m)
           -0.015);  // Change unit from `meter` to `radian`
   ////////// kinematics initialization
-  kinematics_ = new kinematics::CR_Custom_Solver();
-//  kinematics_ = new KINEMATICS::CR_Position_Only_Jacobian_Solver();
+  kinematics_ = new kinematics::SolverCustomizedforOpenManipulatorChain();
+//  kinematics_ = new KINEMATICS::SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian();
   addKinematics(kinematics_);
 
   if(using_platform)
@@ -133,10 +139,15 @@ void OpenManipulator::initManipulator(bool using_platform, STRING usb_port, STRI
     receiveAllToolActuatorValue();
   }
   ////////// custom trajectory initialization
-  addCustomTrajectory(CUSTOM_TRAJECTORY_LINE, &line_);
-  addCustomTrajectory(CUSTOM_TRAJECTORY_CIRCLE, &circle_);
-  addCustomTrajectory(CUSTOM_TRAJECTORY_RHOMBUS, &rhombus_);
-  addCustomTrajectory(CUSTOM_TRAJECTORY_HEART, &heart_);
+  custom_trajectory_[0] = new custom_trajectory::Line();
+  custom_trajectory_[1] = new custom_trajectory::Circle();
+  custom_trajectory_[2] = new custom_trajectory::Rhombus();
+  custom_trajectory_[3] = new custom_trajectory::Heart();
+
+  addCustomTrajectory(CUSTOM_TRAJECTORY_LINE, custom_trajectory_[0]);
+  addCustomTrajectory(CUSTOM_TRAJECTORY_CIRCLE, custom_trajectory_[1]);
+  addCustomTrajectory(CUSTOM_TRAJECTORY_RHOMBUS, custom_trajectory_[2]);
+  addCustomTrajectory(CUSTOM_TRAJECTORY_HEART, custom_trajectory_[3]);
 }
 
 void OpenManipulator::openManipulatorProcess(double present_time)
