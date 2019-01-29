@@ -31,12 +31,15 @@ using namespace Eigen;
 namespace custom_trajectory
 {
 enum AXIS{
-    X_AXIS,
-    Y_AXIS,
-    Z_AXIS,
+	X_AXIS,
+	Y_AXIS,
+	Z_AXIS,
 };
-//-------------------- Line --------------------//
 
+
+/*****************************************************************************
+** Line
+*****************************************************************************/
 class Line : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
@@ -48,8 +51,8 @@ private:
   std::vector<double> vel_max_;
 
 public:
-  Line();
-  virtual ~Line();
+	Line() {}
+	virtual ~Line() {}
 
   void initLine(double move_time, TaskWaypoint start, TaskWaypoint delta);
   TaskWaypoint drawLine(double time_var);
@@ -59,8 +62,10 @@ public:
   virtual TaskWaypoint getTaskWaypoint(double tick);
 };
 
-//-------------------- Circle --------------------//
 
+/*****************************************************************************
+** Circle
+*****************************************************************************/
 class Circle : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
@@ -75,8 +80,8 @@ private:
   double revolution_;
 
 public:
-  Circle();
-  virtual ~Circle();
+	Circle() {}
+	virtual ~Circle() {}
 
   void initCircle(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position);
   TaskWaypoint drawCircle(double time_var);
@@ -86,8 +91,10 @@ public:
   virtual TaskWaypoint getTaskWaypoint(double tick);
 };
 
-//-------------------- Rhombus --------------------//
 
+/*****************************************************************************
+** Rhombus
+*****************************************************************************/
 class Rhombus : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
@@ -102,8 +109,8 @@ private:
   double revolution_;
 
 public:
-  Rhombus();
-  virtual ~Rhombus();
+	Rhombus() {}
+	virtual ~Rhombus() {}
 
   void initRhombus(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position);
   TaskWaypoint drawRhombus(double time_var);
@@ -113,8 +120,10 @@ public:
   virtual TaskWaypoint getTaskWaypoint(double tick);
 };
 
-//-------------------- Heart --------------------//
 
+/*****************************************************************************
+** Heart
+*****************************************************************************/
 class Heart : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
@@ -129,8 +138,8 @@ private:
   double revolution_;
 
 public:
-  Heart();
-  virtual ~Heart();
+	Heart() {}
+	virtual ~Heart() {}
 
   void initHeart(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position);
   TaskWaypoint drawHeart(double tick);

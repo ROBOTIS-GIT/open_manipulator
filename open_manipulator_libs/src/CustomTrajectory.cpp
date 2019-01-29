@@ -21,11 +21,10 @@
 using namespace custom_trajectory;
 using namespace Eigen;
 
-//-------------------- Line --------------------//
 
-Line::Line() {}
-Line::~Line() {}
-
+/*****************************************************************************
+** Line
+*****************************************************************************/
 void Line::initLine(double move_time, TaskWaypoint start, TaskWaypoint delta)
 {
   move_time_ = move_time;
@@ -93,13 +92,12 @@ void Line::makeTaskTrajectory(double move_time, TaskWaypoint start, const void *
   TaskWaypoint *c_arg = (TaskWaypoint *)arg;
   initLine(move_time, start, c_arg[0]);
 }
-void Line::setOption(const void *arg){}
+void Line::setOption(const void *arg) {}
 
-//-------------------- Circle --------------------//
 
-Circle::Circle() {}
-Circle::~Circle() {}
-
+/*****************************************************************************
+** Circle
+*****************************************************************************/
 void Circle::initCircle(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position)
 {
   start_pose_ = start;
@@ -171,11 +169,10 @@ void Circle::makeTaskTrajectory(double move_time, TaskWaypoint start, const void
 
 void Circle::setOption(const void *arg){}
 
-//-------------------- Rhombus --------------------//
 
-Rhombus::Rhombus() {}
-Rhombus::~Rhombus() {}  
-
+/*****************************************************************************
+** Rhombus
+*****************************************************************************/
 void Rhombus::initRhombus(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position)
 {
   start_pose_ = start;
@@ -269,11 +266,10 @@ TaskWaypoint Rhombus::getTaskWaypoint(double tick)
 }
 void Rhombus::setOption(const void *arg){}
 
-//-------------------- Heart --------------------//
 
-Heart::Heart() {}
-Heart::~Heart() {}
-
+/*****************************************************************************
+** Heart
+*****************************************************************************/
 void Heart::initHeart(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position)
 {
   start_pose_ = start;
@@ -315,7 +311,7 @@ TaskWaypoint Heart::drawHeart(double tick)
   double diff_pose[2];
   double traj[2];
 
-  double shift_offset = -5.0f;
+	double shift_offset = - 5.0;
 
   traj[0] = (shift_offset + (13*cos(get_time_var) - 5*cos(2*get_time_var) - 2*cos(3*get_time_var) - cos(4*get_time_var))) / 16;
   traj[1] = (16*sin(get_time_var)*sin(get_time_var)*sin(get_time_var)) / 16;

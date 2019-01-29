@@ -44,10 +44,9 @@ private:
   robotis_manipulator::Kinematics *kinematics_;
   robotis_manipulator::JointActuator *actuator_;
   robotis_manipulator::ToolActuator *tool_;
-
   robotis_manipulator::CustomTaskTrajectory *custom_trajectory_[CUSTOM_TRAJECTORY_SIZE];
 
- public:
+public:
   OpenManipulator();
   virtual ~OpenManipulator();
 

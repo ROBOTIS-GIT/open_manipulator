@@ -32,6 +32,9 @@ using namespace robotis_manipulator;
 
 namespace kinematics
 {
+/*****************************************************************************
+** Kinematics Solver Using Chain Rule and Jacobian
+*****************************************************************************/
 class SolverUsingChainRuleandJacobian : public robotis_manipulator::Kinematics
 {
 private:
@@ -48,6 +51,10 @@ public:
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
 };
 
+
+/*****************************************************************************
+** Kinematics Solver Using Chain Rule and Singularity Robust Jacobian
+*****************************************************************************/
 class SolverUsingChainRuleandSingularityRobustJacobian : public robotis_manipulator::Kinematics
 {
 private:
@@ -64,6 +71,10 @@ public:
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
 };
 
+
+/*****************************************************************************
+** Kinematics Solver Using Chain Rule and Singularity Robust Position Only Jacobian
+*****************************************************************************/
 class SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian : public robotis_manipulator::Kinematics
 {
 private:
@@ -80,6 +91,10 @@ public:
   virtual bool solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue>* goal_joint_value);
 };
 
+
+/*****************************************************************************
+** Kinematics Solver Customized for OpenManipulator Chain
+*****************************************************************************/
 class SolverCustomizedforOpenManipulatorChain : public robotis_manipulator::Kinematics
 {
 private:
