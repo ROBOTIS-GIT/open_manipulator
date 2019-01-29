@@ -40,6 +40,7 @@
 
 class OpenManipulator : public robotis_manipulator::RobotisManipulator
 {
+  
 private:
   robotis_manipulator::Kinematics *kinematics_;
   robotis_manipulator::JointActuator *actuator_;
@@ -50,7 +51,7 @@ public:
   OpenManipulator();
   virtual ~OpenManipulator();
 
-  void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000", float control_loop_time = 0.010);
+  void initManipulator(bool using_actual_robot_state, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000", float control_loop_time = 0.010);
   void openManipulatorProcess(double present_time);
 };
 

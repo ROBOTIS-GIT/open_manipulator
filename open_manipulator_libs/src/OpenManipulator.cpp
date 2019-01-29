@@ -29,7 +29,7 @@ OpenManipulator::~OpenManipulator()
     delete custom_trajectory_[index];
 }
 
-void OpenManipulator::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate, float control_loop_time)
+void OpenManipulator::initManipulator(bool using_actual_robot_state, STRING usb_port, STRING baud_rate, float control_loop_time)
 {
   /*****************************************************************************
   ** Initialize Manipulator Parameter 
@@ -94,7 +94,7 @@ void OpenManipulator::initManipulator(bool using_platform, STRING usb_port, STRI
 //  kinematics_ = new KINEMATICS::SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian();
   addKinematics(kinematics_);
 
-  if(using_platform)
+  if(using_actual_robot_state)
   {
     /*****************************************************************************
     ** Initialize ㅓoint Actuator

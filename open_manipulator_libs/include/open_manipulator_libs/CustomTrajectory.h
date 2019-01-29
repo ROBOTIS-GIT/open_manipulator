@@ -30,6 +30,7 @@ using namespace Eigen;
 
 namespace custom_trajectory
 {
+  
 enum AXIS{
 	X_AXIS,
 	Y_AXIS,

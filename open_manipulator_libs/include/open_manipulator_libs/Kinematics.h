@@ -32,6 +32,7 @@ using namespace robotis_manipulator;
 
 namespace kinematics
 {
+  
 /*****************************************************************************
 ** Kinematics Solver Using Chain Rule and Jacobian
 *****************************************************************************/
