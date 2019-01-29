@@ -18,12 +18,12 @@
 
 #include "../include/open_manipulator_libs/OpenManipulator.h"
 
-OPEN_MANIPULATOR::OPEN_MANIPULATOR()
+OpenManipulator::OpenManipulator()
 {}
-OPEN_MANIPULATOR::~OPEN_MANIPULATOR()
+OpenManipulator::~OpenManipulator()
 {}
 
-void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate, float control_loop_time)
+void OpenManipulator::initManipulator(bool using_platform, STRING usb_port, STRING baud_rate, float control_loop_time)
 {
   ////////// manipulator parameter initialization
 
@@ -33,8 +33,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addJoint("joint1",  // my name
            "world",   // parent name
            "joint2",  // child name
-           RM_MATH::Vector3(0.012, 0.0, 0.017), // relative position
-           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
+           robotis_manipulator_math::vector3(0.012, 0.0, 0.017), // relative position
+           robotis_manipulator_math::convertRPY2RotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Z_AXIS,  // axis of rotation
            11,      // actuator id
            M_PI,    // max joint limit (3.14 rad)
@@ -43,8 +43,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addJoint("joint2",  // my name
            "joint1",  // parent name
            "joint3",  // child name
-           RM_MATH::Vector3(0.0, 0.0, 0.0595), // relative position
-           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
+           robotis_manipulator_math::vector3(0.0, 0.0, 0.0595), // relative position
+           robotis_manipulator_math::convertRPY2RotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS,  // axis of rotation
            12,      // actuator id
            M_PI_2,  // max joint limit (1.67 rad)
@@ -53,8 +53,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addJoint("joint3",  // my name
            "joint2",  // parent name
            "joint4",  // child name
-           RM_MATH::Vector3(0.024, 0.0, 0.128), // relative position
-           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
+           robotis_manipulator_math::vector3(0.024, 0.0, 0.128), // relative position
+           robotis_manipulator_math::convertRPY2RotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS,    // axis of rotation
            13,        // actuator id
            1.53,      // max joint limit (1.53 rad)
@@ -63,8 +63,8 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addJoint("joint4",  // my name
            "joint3",  // parent name
            "gripper", // child name
-           RM_MATH::Vector3(0.124, 0.0, 0.0), // relative position
-           RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
+           robotis_manipulator_math::vector3(0.124, 0.0, 0.0), // relative position
+           robotis_manipulator_math::convertRPY2RotationMatrix(0.0, 0.0, 0.0), // relative orientation
            Y_AXIS,  // axis of rotation
            14,      // actuator id
            2.0,     // max joint limit (2.0 rad)
@@ -72,14 +72,14 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
 
   addTool("gripper",  // my name
           "joint4",   // parent name
-          RM_MATH::Vector3(0.126, 0.0, 0.0), // relative position
-          RM_MATH::convertRPYToRotationMatrix(0.0, 0.0, 0.0), // relative orientation
+          robotis_manipulator_math::vector3(0.126, 0.0, 0.0), // relative position
+          robotis_manipulator_math::convertRPY2RotationMatrix(0.0, 0.0, 0.0), // relative orientation
           15,       // actuator id
           0.010,    // max gripper limit (0.01 m)
           -0.010,   // min gripper limit (-0.01 m)
           -0.015);  // Change unit from `meter` to `radian`
   ////////// kinematics initialization
-  kinematics_ = new KINEMATICS::CR_Custom_Solver();
+  kinematics_ = new kinematics::CR_Custom_Solver();
 //  kinematics_ = new KINEMATICS::CR_Position_Only_Jacobian_Solver();
   addKinematics(kinematics_);
 
@@ -87,7 +87,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   {
     ////////// joint actuator initialization
 //    actuator_ = new DYNAMIXEL::JointDynamixel();
-    actuator_ = new DYNAMIXEL::JointDynamixelProfileControl(control_loop_time);
+    actuator_ = new dynamixel::JointDynamixelProfileControl(control_loop_time);
     // communication setting argument
     STRING dxl_comm_arg[2] = {usb_port, baud_rate};
     void *p_dxl_comm_arg = &dxl_comm_arg;
@@ -106,7 +106,7 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
     setJointActuatorMode(JOINT_DYNAMIXEL, jointDxlId, p_joint_dxl_mode_arg);
 
     ////////// tool actuator init.
-    tool_ = new DYNAMIXEL::GripperDynamixel();
+    tool_ = new dynamixel::GripperDynamixel();
 
     uint8_t gripperDxlId = 15;
     addToolActuator(TOOL_DYNAMIXEL, tool_, gripperDxlId, p_dxl_comm_arg);
@@ -139,10 +139,10 @@ void OPEN_MANIPULATOR::initManipulator(bool using_platform, STRING usb_port, STR
   addCustomTrajectory(CUSTOM_TRAJECTORY_HEART, &heart_);
 }
 
-void OPEN_MANIPULATOR::openManipulatorProcess(double present_time)
+void OpenManipulator::openManipulatorProcess(double present_time)
 {
-  JointWayPoint goal_joint_value = getJointGoalValueFromTrajectory(present_time);
-  JointWayPoint goal_tool_value  = getToolGoalValue();
+  JointWaypoint goal_joint_value = getJointGoalValueFromTrajectory(present_time);
+  JointWaypoint goal_tool_value  = getToolGoalValue();
 
   receiveAllJointActuatorValue();
   receiveAllToolActuatorValue();

@@ -25,10 +25,10 @@
   #include <robotis_manipulator/robotis_manipulator.h>
 #endif
 
-using namespace ROBOTIS_MANIPULATOR;
+using namespace robotis_manipulator;
 using namespace Eigen;
 
-namespace CUSTOM_TRAJECTORY
+namespace custom_trajectory
 {
 enum AXIS{
     X_AXIS,
@@ -37,11 +37,11 @@ enum AXIS{
 };
 //-------------------- Line --------------------//
 
-class Line : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
+class Line : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
-  TaskWayPoint start_pose_;
-  TaskWayPoint goal_pose_;
+  TaskWaypoint start_pose_;
+  TaskWaypoint goal_pose_;
 
   double acc_dec_time_;
   double move_time_;
@@ -51,24 +51,24 @@ public:
   Line();
   virtual ~Line();
 
-  void initLine(double move_time, TaskWayPoint start, TaskWayPoint delta);
-  TaskWayPoint drawLine(double time_var);
+  void initLine(double move_time, TaskWaypoint start, TaskWaypoint delta);
+  TaskWaypoint drawLine(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
-  virtual TaskWayPoint getTaskWayPoint(double tick);
+  virtual void makeTaskTrajectory(double move_time, TaskWaypoint start, const void *arg);
+  virtual TaskWaypoint getTaskWaypoint(double tick);
 };
 
 //-------------------- Circle --------------------//
 
-class Circle : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
+class Circle : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
-  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
+  robotis_manipulator::MinimumJerk path_generator_;
   VectorXd coefficient_;
 
-  TaskWayPoint start_pose_;
-  TaskWayPoint goal_pose_;
+  TaskWaypoint start_pose_;
+  TaskWaypoint goal_pose_;
 
   double radius_;
   double start_angular_position_;
@@ -78,24 +78,24 @@ public:
   Circle();
   virtual ~Circle();
 
-  void initCircle(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
-  TaskWayPoint drawCircle(double time_var);
+  void initCircle(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position);
+  TaskWaypoint drawCircle(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
-  virtual TaskWayPoint getTaskWayPoint(double tick);
+  virtual void makeTaskTrajectory(double move_time, TaskWaypoint start, const void *arg);
+  virtual TaskWaypoint getTaskWaypoint(double tick);
 };
 
 //-------------------- Rhombus --------------------//
 
-class Rhombus : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
+class Rhombus : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
-  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
+  robotis_manipulator::MinimumJerk path_generator_;
   VectorXd coefficient_;
 
-  TaskWayPoint start_pose_;
-  TaskWayPoint goal_pose_;
+  TaskWaypoint start_pose_;
+  TaskWaypoint goal_pose_;
 
   double radius_;
   double start_angular_position_;
@@ -105,24 +105,24 @@ public:
   Rhombus();
   virtual ~Rhombus();
 
-  void initRhombus(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
-  TaskWayPoint drawRhombus(double time_var);
+  void initRhombus(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position);
+  TaskWaypoint drawRhombus(double time_var);
 
   virtual void setOption(const void *arg);
-  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
-  virtual TaskWayPoint getTaskWayPoint(double tick);
+  virtual void makeTaskTrajectory(double move_time, TaskWaypoint start, const void *arg);
+  virtual TaskWaypoint getTaskWaypoint(double tick);
 };
 
 //-------------------- Heart --------------------//
 
-class Heart : public ROBOTIS_MANIPULATOR::CustomTaskTrajectory
+class Heart : public robotis_manipulator::CustomTaskTrajectory
 {
 private:
-  ROBOTIS_MANIPULATOR::MinimumJerk path_generator_;
+  robotis_manipulator::MinimumJerk path_generator_;
   VectorXd coefficient_;
 
-  TaskWayPoint start_pose_;
-  TaskWayPoint goal_pose_;
+  TaskWaypoint start_pose_;
+  TaskWaypoint goal_pose_;
 
   double radius_;
   double start_angular_position_;
@@ -132,12 +132,12 @@ public:
   Heart();
   virtual ~Heart();
 
-  void initHeart(double move_time, TaskWayPoint start, double radius, double revolution, double start_angular_position);
-  TaskWayPoint drawHeart(double tick);
+  void initHeart(double move_time, TaskWaypoint start, double radius, double revolution, double start_angular_position);
+  TaskWaypoint drawHeart(double tick);
 
   virtual void setOption(const void *arg);
-  virtual void makeTaskTrajectory(double move_time, TaskWayPoint start, const void *arg);
-  virtual TaskWayPoint getTaskWayPoint(double tick);
+  virtual void makeTaskTrajectory(double move_time, TaskWaypoint start, const void *arg);
+  virtual TaskWaypoint getTaskWaypoint(double tick);
 };
 
 

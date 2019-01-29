@@ -20,7 +20,7 @@
 
 using namespace open_manipulator_controller;
 
-OM_CONTROLLER::OM_CONTROLLER(std::string usb_port, std::string baud_rate)
+OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::string baud_rate)
     :node_handle_(""),
      priv_node_handle_("~"),
      tool_ctrl_flag_(false),
@@ -40,26 +40,26 @@ OM_CONTROLLER::OM_CONTROLLER(std::string usb_port, std::string baud_rate)
 
   open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate, control_period_);
 
-  if (using_platform_ == true)        RM_LOG::INFO("Succeeded to init " + priv_node_handle_.getNamespace());
-  else if (using_platform_ == false)  RM_LOG::INFO("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");
+  if (using_platform_ == true)        robotis_manipulator_log::info("Succeeded to init " + priv_node_handle_.getNamespace());
+  else if (using_platform_ == false)  robotis_manipulator_log::info("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");
 
   if (using_moveit_ == true)
   {
     move_group_ = new moveit::planning_interface::MoveGroupInterface(planning_group_name);
-    RM_LOG::INFO("Ready to control " + planning_group_name + " group");
+    robotis_manipulator_log::info("Ready to control " + planning_group_name + " group");
   }
 }
 
-OM_CONTROLLER::~OM_CONTROLLER()
+OpenManipulatorController::~OpenManipulatorController()
 {
   timer_thread_flag_ = false;
   pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
-  RM_LOG::INFO("Shutdown the OpenManipulator");
+  robotis_manipulator_log::info("Shutdown the OpenManipulator");
   open_manipulator_.disableAllActuator();
   ros::shutdown();
 }
 
-void OM_CONTROLLER::startTimerThread()
+void OpenManipulatorController::startTimerThread()
 {
   ////////////////////////////////////////////////////////////////////
   /// Use this when you want to increase the priority of threads.
@@ -70,18 +70,18 @@ void OM_CONTROLLER::startTimerThread()
   //  pthread_attr_init(&attr_);
 
   //  error = pthread_attr_setschedpolicy(&attr_, SCHED_RR);
-  //  if (error != 0)   RM_LOG::ERROR("pthread_attr_setschedpolicy error = ", (double)error);
+  //  if (error != 0)   robotis_manipulator_log::error("pthread_attr_setschedpolicy error = ", (double)error);
   //  error = pthread_attr_setinheritsched(&attr_, PTHREAD_EXPLICIT_SCHED);
-  //  if (error != 0)   RM_LOG::ERROR("pthread_attr_setinheritsched error = ", (double)error);
+  //  if (error != 0)   robotis_manipulator_log::error("pthread_attr_setinheritsched error = ", (double)error);
 
   //  memset(&param, 0, sizeof(param));
   //  param.sched_priority = 31;    // RT
   //  error = pthread_attr_setschedparam(&attr_, &param);
-  //  if (error != 0)   RM_LOG::ERROR("pthread_attr_setschedparam error = ", (double)error);
+  //  if (error != 0)   robotis_manipulator_log::error("pthread_attr_setschedparam error = ", (double)error);
 
   //  if ((error = pthread_create(&this->timer_thread_, &attr_, this->timerThread, this)) != 0)
   //  {
-  //    RM_LOG::ERROR("Creating timer thread failed!!", (double)error);
+  //    robotis_manipulator_log::error("Creating timer thread failed!!", (double)error);
   //    exit(-1);
   //  }
   ////////////////////////////////////////////////////////////////////
@@ -89,15 +89,15 @@ void OM_CONTROLLER::startTimerThread()
   int error;
   if ((error = pthread_create(&this->timer_thread_, NULL, this->timerThread, this)) != 0)
   {
-    RM_LOG::ERROR("Creating timer thread failed!!", (double)error);
+    robotis_manipulator_log::error("Creating timer thread failed!!", (double)error);
     exit(-1);
   }
   timer_thread_flag_ = true;
 }
 
-void *OM_CONTROLLER::timerThread(void *param)
+void *OpenManipulatorController::timerThread(void *param)
 {
-  OM_CONTROLLER *controller = (OM_CONTROLLER *) param;
+  OpenManipulatorController *controller = (OpenManipulatorController *) param;
   static struct timespec next_time;
   static struct timespec curr_time;
 
@@ -114,10 +114,10 @@ void *OM_CONTROLLER::timerThread(void *param)
     clock_gettime(CLOCK_MONOTONIC, &curr_time);
     /////
     double delta_nsec = controller->getControlPeriod() - ((next_time.tv_sec - curr_time.tv_sec) + ((double)(next_time.tv_nsec - curr_time.tv_nsec)*0.000000001));
-    //RM_LOG::INFO("control time : ", controller->getControlPeriod() - delta_nsec);
+    //robotis_manipulator_log::info("control time : ", controller->getControlPeriod() - delta_nsec);
     if(delta_nsec > controller->getControlPeriod())
     {
-      //RM_LOG::WARN("Over the control time : ", delta_nsec);
+      //robotis_manipulator_log::warn("Over the control time : ", delta_nsec);
       next_time = curr_time;
     }
     else
@@ -127,7 +127,7 @@ void *OM_CONTROLLER::timerThread(void *param)
   return 0;
 }
 
-void OM_CONTROLLER::initPublisher()
+void OpenManipulatorController::initPublisher()
 {
   // ros message publisher
   auto opm_tools_name = open_manipulator_.getManipulator()->getAllToolComponentName();
@@ -158,82 +158,82 @@ void OM_CONTROLLER::initPublisher()
     }
   }
 }
-void OM_CONTROLLER::initSubscriber()
+void OpenManipulatorController::initSubscriber()
 {
   // ros message subscriber
-  open_manipulator_option_sub_ = priv_node_handle_.subscribe("option", 10, &OM_CONTROLLER::openManipulatorOptionCallback, this);
+  open_manipulator_option_sub_ = priv_node_handle_.subscribe("option", 10, &OpenManipulatorController::openManipulatorOptionCallback, this);
   if (using_moveit_ == true)
   {
     display_planned_path_sub_ = node_handle_.subscribe("/move_group/display_planned_path", 100,
-                                                       &OM_CONTROLLER::displayPlannedPathCallback, this);
+                                                       &OpenManipulatorController::displayPlannedPathCallback, this);
     move_group_goal_sub_ = node_handle_.subscribe("/move_group/goal", 100,
-                                                       &OM_CONTROLLER::moveGroupGoalCallback, this);
+                                                       &OpenManipulatorController::moveGroupGoalCallback, this);
     execute_traj_goal_sub_ = node_handle_.subscribe("/execute_trajectory/goal", 100,
-                                                       &OM_CONTROLLER::executeTrajGoalCallback, this);
+                                                       &OpenManipulatorController::executeTrajGoalCallback, this);
   }
 }
 
-void OM_CONTROLLER::initServer()
+void OpenManipulatorController::initServer()
 {
-  goal_joint_space_path_server_                     = priv_node_handle_.advertiseService("goal_joint_space_path", &OM_CONTROLLER::goalJointSpacePathCallback, this);
-  goal_joint_space_path_to_kinematics_pose_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_pose", &OM_CONTROLLER::goalJointSpacePathToKinematicsPoseCallback, this);
+  goal_joint_space_path_server_                     = priv_node_handle_.advertiseService("goal_joint_space_path", &OpenManipulatorController::goalJointSpacePathCallback, this);
+  goal_joint_space_path_to_kinematics_pose_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_pose", &OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback, this);
 
-  goal_task_space_path_server_                  = priv_node_handle_.advertiseService("goal_task_space_path", &OM_CONTROLLER::goalTaskSpacePathCallback, this);
-  goal_task_space_path_position_only_server_    = priv_node_handle_.advertiseService("goal_task_space_path_position_only", &OM_CONTROLLER::goalTaskSpacePathPositionOnlyCallback, this);
-  goal_task_space_path_orientation_only_server_ = priv_node_handle_.advertiseService("goal_task_space_path_orientation_only", &OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback, this);
+  goal_task_space_path_server_                  = priv_node_handle_.advertiseService("goal_task_space_path", &OpenManipulatorController::goalTaskSpacePathCallback, this);
+  goal_task_space_path_position_only_server_    = priv_node_handle_.advertiseService("goal_task_space_path_position_only", &OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback, this);
+  goal_task_space_path_orientation_only_server_ = priv_node_handle_.advertiseService("goal_task_space_path_orientation_only", &OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback, this);
 
-  goal_joint_space_path_from_present_server_      = priv_node_handle_.advertiseService("goal_joint_space_path_from_present", &OM_CONTROLLER::goalJointSpacePathFromPresentCallback, this);
+  goal_joint_space_path_from_present_server_      = priv_node_handle_.advertiseService("goal_joint_space_path_from_present", &OpenManipulatorController::goalJointSpacePathFromPresentCallback, this);
 
-  goal_task_space_path_from_present_server_                   = priv_node_handle_.advertiseService("goal_task_space_path_from_present", &OM_CONTROLLER::goalTaskSpacePathFromPresentCallback, this);
-  goal_task_space_path_from_present_position_only_server_     = priv_node_handle_.advertiseService("goal_task_space_path_from_present_position_only", &OM_CONTROLLER::goalTaskSpacePathFromPresentPositionOnlyCallback, this);
-  goal_task_space_path_from_present_orientation_only_server_  = priv_node_handle_.advertiseService("goal_task_space_path_from_present_orientation_only", &OM_CONTROLLER::goalTaskSpacePathFromPresentOrientationOnlyCallback, this);
+  goal_task_space_path_from_present_server_                   = priv_node_handle_.advertiseService("goal_task_space_path_from_present", &OpenManipulatorController::goalTaskSpacePathFromPresentCallback, this);
+  goal_task_space_path_from_present_position_only_server_     = priv_node_handle_.advertiseService("goal_task_space_path_from_present_position_only", &OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback, this);
+  goal_task_space_path_from_present_orientation_only_server_  = priv_node_handle_.advertiseService("goal_task_space_path_from_present_orientation_only", &OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallback, this);
 
-  goal_tool_control_server_         = priv_node_handle_.advertiseService("goal_tool_control", &OM_CONTROLLER::goalToolControlCallback, this);
-  set_actuator_state_server_        = priv_node_handle_.advertiseService("set_actuator_state", &OM_CONTROLLER::setActuatorStateCallback, this);
-  goal_drawing_trajectory_server_   = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OM_CONTROLLER::goalDrawingTrajectoryCallback, this);
+  goal_tool_control_server_         = priv_node_handle_.advertiseService("goal_tool_control", &OpenManipulatorController::goalToolControlCallback, this);
+  set_actuator_state_server_        = priv_node_handle_.advertiseService("set_actuator_state", &OpenManipulatorController::setActuatorStateCallback, this);
+  goal_drawing_trajectory_server_   = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OpenManipulatorController::goalDrawingTrajectoryCallback, this);
 
   if (using_moveit_ == true)
   {
-    get_joint_position_server_  = priv_node_handle_.advertiseService("moveit/get_joint_position", &OM_CONTROLLER::getJointPositionMsgCallback, this);
-    get_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/get_kinematics_pose", &OM_CONTROLLER::getKinematicsPoseMsgCallback, this);
-    set_joint_position_server_  = priv_node_handle_.advertiseService("moveit/set_joint_position", &OM_CONTROLLER::setJointPositionMsgCallback, this);
-    set_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/set_kinematics_pose", &OM_CONTROLLER::setKinematicsPoseMsgCallback, this);
+    get_joint_position_server_  = priv_node_handle_.advertiseService("moveit/get_joint_position", &OpenManipulatorController::getJointPositionMsgCallback, this);
+    get_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/get_kinematics_pose", &OpenManipulatorController::getKinematicsPoseMsgCallback, this);
+    set_joint_position_server_  = priv_node_handle_.advertiseService("moveit/set_joint_position", &OpenManipulatorController::setJointPositionMsgCallback, this);
+    set_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/set_kinematics_pose", &OpenManipulatorController::setKinematicsPoseMsgCallback, this);
   }
 }
 
-void OM_CONTROLLER::openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg)
+void OpenManipulatorController::openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg)
 {
   if(msg->data == "print_open_manipulator_setting")
     open_manipulator_.printManipulatorSetting();
 }
 
-void OM_CONTROLLER::displayPlannedPathCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
+void OpenManipulatorController::displayPlannedPathCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
 {
   trajectory_msgs::JointTrajectory joint_trajectory_planned = msg->trajectory[0].joint_trajectory;
   joint_trajectory_ = joint_trajectory_planned;
 
   if(moveit_plan_only_ == false)
   {
-    RM_LOG::PRINTLN("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
+    robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
     moveit_plan_flag_ = true;
   }
   else
-    RM_LOG::PRINTLN("[INFO] [OpenManipulator Controller] Get Moveit planned path", "GREEN");
+    robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Get Moveit planned path", "GREEN");
 }
 
-void OM_CONTROLLER::moveGroupGoalCallback(const moveit_msgs::MoveGroupActionGoal::ConstPtr &msg)
+void OpenManipulatorController::moveGroupGoalCallback(const moveit_msgs::MoveGroupActionGoal::ConstPtr &msg)
 {
-  RM_LOG::PRINTLN("[INFO] [OpenManipulator Controller] Get Moveit plnning option", "GREEN");
+  robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Get Moveit plnning option", "GREEN");
   moveit_plan_only_ = msg->goal.planning_options.plan_only; // click "plan & execute" or "plan" button
 
 }
-void OM_CONTROLLER::executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectoryActionGoal::ConstPtr &msg)
+void OpenManipulatorController::executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectoryActionGoal::ConstPtr &msg)
 {
-  RM_LOG::PRINTLN("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
+  robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
   moveit_plan_flag_ = true;
 }
 
-bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
+bool OpenManipulatorController::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                                open_manipulator_msgs::SetJointPosition::Response &res)
 {
   std::vector <double> target_angle;
@@ -247,7 +247,7 @@ bool OM_CONTROLLER::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPo
   return true;
 }
 
-bool OM_CONTROLLER::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+bool OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                                open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
@@ -260,7 +260,7 @@ bool OM_CONTROLLER::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = RM_MATH::convertQuaternionToRotationMatrix(q);
+  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose, req.path_time);
   
@@ -268,7 +268,7 @@ bool OM_CONTROLLER::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_
   return true;
 }
 
-bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+bool OpenManipulatorController::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
@@ -281,14 +281,14 @@ bool OM_CONTROLLER::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinemati
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = RM_MATH::convertQuaternionToRotationMatrix(q);
+  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
   open_manipulator_.makeTaskTrajectory(req.end_effector_name, target_pose, req.path_time);
 
   res.is_planned = true;
   return true;
 }
 
-bool OM_CONTROLLER::goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+bool OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                           open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Vector3d position;
@@ -302,7 +302,7 @@ bool OM_CONTROLLER::goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs:
   return true;
 }
 
-bool OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+bool OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                              open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
@@ -310,7 +310,7 @@ bool OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_ms
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  Eigen::Matrix3d orientation = RM_MATH::convertQuaternionToRotationMatrix(q);
+  Eigen::Matrix3d orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectory(req.end_effector_name, orientation, req.path_time);
 
@@ -318,7 +318,7 @@ bool OM_CONTROLLER::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_ms
   return true;
 }
 
-bool OM_CONTROLLER::goalJointSpacePathFromPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
+bool OpenManipulatorController::goalJointSpacePathFromPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                                           open_manipulator_msgs::SetJointPosition::Response &res)
 {
   std::vector <double> target_angle;
@@ -332,7 +332,7 @@ bool OM_CONTROLLER::goalJointSpacePathFromPresentCallback(open_manipulator_msgs:
   return true;
 }
 
-bool OM_CONTROLLER::goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+bool OpenManipulatorController::goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                          open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
@@ -345,7 +345,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = RM_MATH::convertQuaternionToRotationMatrix(q);
+  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, target_pose, req.path_time);
 
@@ -353,7 +353,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::
   return true;
 }
 
-bool OM_CONTROLLER::goalTaskSpacePathFromPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+bool OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                                      open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Vector3d position;
@@ -367,7 +367,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentPositionOnlyCallback(open_manipu
   return true;
 }
 
-bool OM_CONTROLLER::goalTaskSpacePathFromPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+bool OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                        open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
@@ -375,7 +375,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentOrientationOnlyCallback(open_man
                         req.kinematics_pose.pose.orientation.y,
                         req.kinematics_pose.pose.orientation.z);
 
-  Eigen::Matrix3d orientation = RM_MATH::convertQuaternionToRotationMatrix(q);
+  Eigen::Matrix3d orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, orientation, req.path_time);
 
@@ -383,7 +383,7 @@ bool OM_CONTROLLER::goalTaskSpacePathFromPresentOrientationOnlyCallback(open_man
   return true;
 }
 
-bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
+bool OpenManipulatorController::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                             open_manipulator_msgs::SetJointPosition::Response &res)
 {
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
@@ -393,12 +393,12 @@ bool OM_CONTROLLER::goalToolControlCallback(open_manipulator_msgs::SetJointPosit
   return true;
 }
 
-bool OM_CONTROLLER::setActuatorStateCallback(open_manipulator_msgs::SetActuatorState::Request  &req,
+bool OpenManipulatorController::setActuatorStateCallback(open_manipulator_msgs::SetActuatorState::Request  &req,
                                              open_manipulator_msgs::SetActuatorState::Response &res)
 {
   if(req.set_actuator_state == true) // torque on
   {
-    RM_LOG::PRINTLN("Wait a second for actuator enable", "GREEN");
+    robotis_manipulator_log::println("Wait a second for actuator enable", "GREEN");
     timer_thread_flag_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
     open_manipulator_.enableAllActuator();
@@ -406,7 +406,7 @@ bool OM_CONTROLLER::setActuatorStateCallback(open_manipulator_msgs::SetActuatorS
   }
   else // torque off
   {
-    RM_LOG::PRINTLN("Wait a second for actuator disable", "GREEN");
+    robotis_manipulator_log::println("Wait a second for actuator disable", "GREEN");
     timer_thread_flag_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
     open_manipulator_.disableAllActuator();
@@ -417,7 +417,7 @@ bool OM_CONTROLLER::setActuatorStateCallback(open_manipulator_msgs::SetActuatorS
   return true;
 }
 
-bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
+bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
                                                   open_manipulator_msgs::SetDrawingTrajectory::Response &res)
 {
   try
@@ -434,7 +434,7 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
     }
     else if(req.drawing_trajectory_name == "line")
     {
-      TaskWayPoint draw_line_arg;
+      TaskWaypoint draw_line_arg;
       draw_line_arg.kinematic.position(0) = req.param[0];
       draw_line_arg.kinematic.position(1) = req.param[1];
       draw_line_arg.kinematic.position(2) = req.param[2];
@@ -467,12 +467,12 @@ bool OM_CONTROLLER::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDraw
   }
   catch ( ros::Exception &e )
   {
-    RM_LOG::ERROR("Creation the custom trajectory is failed!");
+    robotis_manipulator_log::error("Creation the custom trajectory is failed!");
   }
   return true;
 }
 
-bool OM_CONTROLLER::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
+bool OpenManipulatorController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
                                                 open_manipulator_msgs::GetJointPosition::Response &res)
 {
   ros::AsyncSpinner spinner(1);
@@ -491,7 +491,7 @@ bool OM_CONTROLLER::getJointPositionMsgCallback(open_manipulator_msgs::GetJointP
   return true;
 }
 
-bool OM_CONTROLLER::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
+bool OpenManipulatorController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
                                                  open_manipulator_msgs::GetKinematicsPose::Response &res)
 {
   ros::AsyncSpinner spinner(1);
@@ -506,7 +506,7 @@ bool OM_CONTROLLER::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinem
   return true;
 }
 
-bool OM_CONTROLLER::setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
+bool OpenManipulatorController::setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
                                                 open_manipulator_msgs::SetJointPosition::Response &res)
 {
   open_manipulator_msgs::JointPosition msg = req.joint_position;
@@ -515,7 +515,7 @@ bool OM_CONTROLLER::setJointPositionMsgCallback(open_manipulator_msgs::SetJointP
   return true;
 }
 
-bool OM_CONTROLLER::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
+bool OpenManipulatorController::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
                                                  open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   open_manipulator_msgs::KinematicsPose msg = req.kinematics_pose;
@@ -524,7 +524,7 @@ bool OM_CONTROLLER::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinem
   return true;
 }
 
-bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::KinematicsPose msg)
+bool OpenManipulatorController::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::KinematicsPose msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -551,13 +551,13 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
     }
     else
     {
-      RM_LOG::WARN("Failed to Plan (task space goal)");
+      robotis_manipulator_log::warn("Failed to Plan (task space goal)");
       is_planned = false;
     }
   }
   else
   {
-    RM_LOG::WARN("Robot is Moving");
+    robotis_manipulator_log::warn("Robot is Moving");
     is_planned = false;
   }
 
@@ -565,7 +565,7 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
   return is_planned;
 }
 
-bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::JointPosition msg)
+bool OpenManipulatorController::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::JointPosition msg)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -601,13 +601,13 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
     }
     else
     {
-      RM_LOG::WARN("Failed to Plan (joint space goal)");
+      robotis_manipulator_log::warn("Failed to Plan (joint space goal)");
       is_planned = false;
     }
   }
   else
   {
-    RM_LOG::WARN("Robot is moving");
+    robotis_manipulator_log::warn("Robot is moving");
     is_planned = false;
   }
 
@@ -615,7 +615,7 @@ bool OM_CONTROLLER::calcPlannedPath(const std::string planning_group, open_manip
   return is_planned;
 }
 
-void OM_CONTROLLER::publishOpenManipulatorStates()
+void OpenManipulatorController::publishOpenManipulatorStates()
 {
   open_manipulator_msgs::OpenManipulatorState msg;
   if(open_manipulator_.getMovingState())
@@ -631,7 +631,7 @@ void OM_CONTROLLER::publishOpenManipulatorStates()
   open_manipulator_state_pub_.publish(msg);
 }
 
-void OM_CONTROLLER::publishKinematicsPose()
+void OpenManipulatorController::publishKinematicsPose()
 {
   open_manipulator_msgs::KinematicsPose msg;
   auto opm_tools_name = open_manipulator_.getManipulator()->getAllToolComponentName();
@@ -643,7 +643,7 @@ void OM_CONTROLLER::publishKinematicsPose()
     msg.pose.position.x = pose.position[0];
     msg.pose.position.y = pose.position[1];
     msg.pose.position.z = pose.position[2];
-    Eigen::Quaterniond orientation = RM_MATH::convertRotationMatrixToQuaternion(pose.orientation);
+    Eigen::Quaterniond orientation = robotis_manipulator_math::convertRotationMatrix2Quaternion(pose.orientation);
     msg.pose.orientation.w = orientation.w();
     msg.pose.orientation.x = orientation.x();
     msg.pose.orientation.y = orientation.y();
@@ -654,7 +654,7 @@ void OM_CONTROLLER::publishKinematicsPose()
   }
 }
 
-void OM_CONTROLLER::publishJointStates()
+void OpenManipulatorController::publishJointStates()
 {
   sensor_msgs::JointState msg;
   msg.header.stamp = ros::Time::now();
@@ -685,10 +685,10 @@ void OM_CONTROLLER::publishJointStates()
   open_manipulator_joint_states_pub_.publish(msg);
 }
 
-void OM_CONTROLLER::publishGazeboCommand()
+void OpenManipulatorController::publishGazeboCommand()
 {
-  JointWayPoint joint_value = open_manipulator_.getAllActiveJointValue();
-  JointWayPoint tool_value = open_manipulator_.getAllToolValue();
+  JointWaypoint joint_value = open_manipulator_.getAllActiveJointValue();
+  JointWaypoint tool_value = open_manipulator_.getAllToolValue();
 
   for(uint8_t i = 0; i < joint_value.size(); i ++)
   {
@@ -707,7 +707,7 @@ void OM_CONTROLLER::publishGazeboCommand()
   }
 }
 
-void OM_CONTROLLER::publishCallback(const ros::TimerEvent&)
+void OpenManipulatorController::publishCallback(const ros::TimerEvent&)
 {
   if (using_platform_ == true)  publishJointStates();
   else  publishGazeboCommand();
@@ -716,7 +716,7 @@ void OM_CONTROLLER::publishCallback(const ros::TimerEvent&)
   publishKinematicsPose();
 }
 
-void OM_CONTROLLER::moveitTimer(double present_time)
+void OpenManipulatorController::moveitTimer(double present_time)
 {
   static double priv_time = 0.0f;
   static uint32_t step_cnt = 0;
@@ -726,7 +726,7 @@ void OM_CONTROLLER::moveitTimer(double present_time)
     double path_time = present_time - priv_time;
     if (path_time > moveit_sampling_time_)
     {
-      JointWayPoint target;
+      JointWaypoint target;
       uint32_t all_time_steps = joint_trajectory_.points.size();
 
       for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
@@ -755,7 +755,7 @@ void OM_CONTROLLER::moveitTimer(double present_time)
   }
 }
 
-void OM_CONTROLLER::process(double time)
+void OpenManipulatorController::process(double time)
 {
   moveitTimer(time);
   open_manipulator_.openManipulatorProcess(time);
@@ -771,7 +771,7 @@ int main(int argc, char **argv)
 
   if (argc < 3)
   {
-    RM_LOG::ERROR("Please set '-port_name' and  '-baud_rate' arguments for connected Dynamixels");
+    robotis_manipulator_log::error("Please set '-port_name' and  '-baud_rate' arguments for connected Dynamixels");
     return 0;
   }
   else
@@ -780,7 +780,7 @@ int main(int argc, char **argv)
     baud_rate = argv[2];
   }
 
-  OM_CONTROLLER om_controller(usb_port, baud_rate);
+  OpenManipulatorController om_controller(usb_port, baud_rate);
 
   om_controller.initPublisher();
   om_controller.initSubscriber();
@@ -788,7 +788,7 @@ int main(int argc, char **argv)
 
   om_controller.startTimerThread();
 
-  ros::Timer publish_timer = node_handle.createTimer(ros::Duration(om_controller.getControlPeriod()), &OM_CONTROLLER::publishCallback, &om_controller);
+  ros::Timer publish_timer = node_handle.createTimer(ros::Duration(om_controller.getControlPeriod()), &OpenManipulatorController::publishCallback, &om_controller);
 
   ros::Rate loop_rate(100);
 

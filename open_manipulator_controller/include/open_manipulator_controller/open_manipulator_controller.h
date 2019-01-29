@@ -54,7 +54,7 @@
 namespace open_manipulator_controller
 {
 
-class OM_CONTROLLER
+class OpenManipulatorController
 {
  private:
   // ROS NodeHandle
@@ -107,7 +107,7 @@ class OM_CONTROLLER
   pthread_attr_t attr_;
 
   // Related robotis_manipulator
-  OPEN_MANIPULATOR open_manipulator_;
+  OpenManipulator open_manipulator_;
 
   // flag parameter
   bool tool_ctrl_flag_;
@@ -116,8 +116,8 @@ class OM_CONTROLLER
 
  public:
 
-  OM_CONTROLLER(std::string usb_port, std::string baud_rate);
-  ~OM_CONTROLLER();
+  OpenManipulatorController(std::string usb_port, std::string baud_rate);
+  ~OpenManipulatorController();
 
   void publishCallback(const ros::TimerEvent&);
 

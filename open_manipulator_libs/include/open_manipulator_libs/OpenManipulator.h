@@ -31,26 +31,26 @@
 #define JOINT_DYNAMIXEL "joint_dxl"
 #define TOOL_DYNAMIXEL  "tool_dxl"
 
-#define X_AXIS RM_MATH::Vector3(1.0, 0.0, 0.0)
-#define Y_AXIS RM_MATH::Vector3(0.0, 1.0, 0.0)
-#define Z_AXIS RM_MATH::Vector3(0.0, 0.0, 1.0)
+#define X_AXIS robotis_manipulator_math::vector3(1.0, 0.0, 0.0)
+#define Y_AXIS robotis_manipulator_math::vector3(0.0, 1.0, 0.0)
+#define Z_AXIS robotis_manipulator_math::vector3(0.0, 0.0, 1.0)
 
 
-class OPEN_MANIPULATOR : public ROBOTIS_MANIPULATOR::RobotisManipulator
+class OpenManipulator : public robotis_manipulator::RobotisManipulator
 {
 private:
-  ROBOTIS_MANIPULATOR::Kinematics *kinematics_;
-  ROBOTIS_MANIPULATOR::JointActuator *actuator_;
-  ROBOTIS_MANIPULATOR::ToolActuator *tool_;
+  robotis_manipulator::Kinematics *kinematics_;
+  robotis_manipulator::JointActuator *actuator_;
+  robotis_manipulator::ToolActuator *tool_;
 
-  CUSTOM_TRAJECTORY::Line line_;
-  CUSTOM_TRAJECTORY::Circle circle_;
-  CUSTOM_TRAJECTORY::Rhombus rhombus_;
-  CUSTOM_TRAJECTORY::Heart heart_;
+  custom_trajectory::Line line_;
+  custom_trajectory::Circle circle_;
+  custom_trajectory::Rhombus rhombus_;
+  custom_trajectory::Heart heart_;
 
  public:
-  OPEN_MANIPULATOR();
-  virtual ~OPEN_MANIPULATOR();
+  OpenManipulator();
+  virtual ~OpenManipulator();
 
   void initManipulator(bool using_platform, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000", float control_loop_time = 0.010);
   void openManipulatorProcess(double present_time);
