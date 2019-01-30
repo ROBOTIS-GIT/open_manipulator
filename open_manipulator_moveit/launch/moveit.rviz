@@ -136,7 +136,7 @@ Visualization Manager:
         Joint Violation Color: 255; 0; 255
         Planning Group: arm
         Query Goal State: true
-        Query Start State: true
+        Query Start State: false
         Show Workspace: false
         Start State Alpha: 0.5
         Start State Color: 0; 255; 0
