@@ -181,6 +181,8 @@ void OpenManipulatorController::initServer()
 {
   goal_joint_space_path_server_                     = priv_node_handle_.advertiseService("goal_joint_space_path", &OpenManipulatorController::goalJointSpacePathCallback, this);
   goal_joint_space_path_to_kinematics_pose_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_pose", &OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback, this);
+  goal_joint_space_path_to_kinematics_position_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_position", &OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback, this);
+  goal_joint_space_path_to_kinematics_orientation_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_orientation", &OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallback, this);
 
   goal_task_space_path_server_                  = priv_node_handle_.advertiseService("goal_task_space_path", &OpenManipulatorController::goalTaskSpacePathCallback, this);
   goal_task_space_path_position_only_server_    = priv_node_handle_.advertiseService("goal_task_space_path_position_only", &OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback, this);
@@ -268,6 +270,38 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback(open_
 
   open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose, req.path_time);
   
+  res.is_planned = true;
+  return true;
+}
+
+bool OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  KinematicPose target_pose;
+  target_pose.position[0] = req.kinematics_pose.pose.position.x;
+  target_pose.position[1] = req.kinematics_pose.pose.position.y;
+  target_pose.position[2] = req.kinematics_pose.pose.position.z;
+
+  open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.position, req.path_time);
+
+  res.is_planned = true;
+  return true;
+}
+
+bool OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
+{
+  KinematicPose target_pose;
+
+  Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
+                       req.kinematics_pose.pose.orientation.x,
+                       req.kinematics_pose.pose.orientation.y,
+                       req.kinematics_pose.pose.orientation.z);
+
+  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
+
+  open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.orientation, req.path_time);
+
   res.is_planned = true;
   return true;
 }

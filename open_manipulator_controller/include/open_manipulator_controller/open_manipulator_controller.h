@@ -83,6 +83,8 @@ class OpenManipulatorController
   // ROS Service Server
   ros::ServiceServer goal_joint_space_path_server_;
   ros::ServiceServer goal_joint_space_path_to_kinematics_pose_server_;
+  ros::ServiceServer goal_joint_space_path_to_kinematics_position_server_;
+  ros::ServiceServer goal_joint_space_path_to_kinematics_orientation_server_;
   ros::ServiceServer goal_task_space_path_server_;
   ros::ServiceServer goal_task_space_path_position_only_server_;
   ros::ServiceServer goal_task_space_path_orientation_only_server_;
@@ -139,6 +141,12 @@ class OpenManipulatorController
                                   open_manipulator_msgs::SetJointPosition::Response &res);
 
   bool goalJointSpacePathToKinematicsPoseCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                  open_manipulator_msgs::SetKinematicsPose::Response &res);
+
+  bool goalJointSpacePathToKinematicsPositionCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                  open_manipulator_msgs::SetKinematicsPose::Response &res);
+
+  bool goalJointSpacePathToKinematicsOrientationCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                   open_manipulator_msgs::SetKinematicsPose::Response &res);
 
   bool goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
