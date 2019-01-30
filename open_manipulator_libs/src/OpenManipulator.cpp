@@ -29,7 +29,7 @@ OpenManipulator::~OpenManipulator()
     delete custom_trajectory_[index];
 }
 
-void OpenManipulator::initManipulator(bool using_actual_robot_state, STRING usb_port, STRING baud_rate, float control_loop_time)
+void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING usb_port, STRING baud_rate, float control_loop_time)
 {
   /*****************************************************************************
   ** Initialize Manipulator Parameter 
@@ -167,7 +167,7 @@ void OpenManipulator::initManipulator(bool using_actual_robot_state, STRING usb_
   addCustomTrajectory(CUSTOM_TRAJECTORY_HEART, custom_trajectory_[3]);
 }
 
-void OpenManipulator::openManipulatorProcess(double present_time)
+void OpenManipulator::processOpenManipulator(double present_time)
 {
   JointWaypoint goal_joint_value = getJointGoalValueFromTrajectory(present_time);
   JointWaypoint goal_tool_value  = getToolGoalValue();

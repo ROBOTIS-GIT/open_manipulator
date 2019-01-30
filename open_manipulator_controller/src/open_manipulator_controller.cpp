@@ -38,7 +38,7 @@ OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::
   using_moveit_         = priv_node_handle_.param<bool>("using_moveit", false);
   std::string planning_group_name = priv_node_handle_.param<std::string>("planning_group_name", "arm");
 
-  open_manipulator_.initManipulator(using_platform_, usb_port, baud_rate, control_period_);
+  open_manipulator_.initOpenManipulator(using_platform_, usb_port, baud_rate, control_period_);
 
   if (using_platform_ == true)        robotis_manipulator_log::info("Succeeded to init " + priv_node_handle_.getNamespace());
   else if (using_platform_ == false)  robotis_manipulator_log::info("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");
@@ -802,7 +802,7 @@ void OpenManipulatorController::moveitTimer(double present_time)
 void OpenManipulatorController::process(double time)
 {
   moveitTimer(time);
-  open_manipulator_.openManipulatorProcess(time);
+  open_manipulator_.processOpenManipulator(time);
 }
 
 int main(int argc, char **argv)
