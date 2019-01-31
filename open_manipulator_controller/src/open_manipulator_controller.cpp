@@ -266,7 +266,7 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback(open_
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
 
   open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose, req.path_time);
   
@@ -298,7 +298,7 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallbac
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
 
   open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.orientation, req.path_time);
 
@@ -319,7 +319,7 @@ bool OpenManipulatorController::goalTaskSpacePathCallback(open_manipulator_msgs:
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
   open_manipulator_.makeTaskTrajectory(req.end_effector_name, target_pose, req.path_time);
 
   res.is_planned = true;
@@ -348,7 +348,7 @@ bool OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback(open_ma
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  Eigen::Matrix3d orientation = math::convertQuaternion2RotationMatrix(q);
+  Eigen::Matrix3d orientation = math::convertQuaternionToRotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectory(req.end_effector_name, orientation, req.path_time);
 
@@ -383,7 +383,7 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentCallback(open_manipu
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, target_pose, req.path_time);
 
@@ -413,7 +413,7 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallb
                         req.kinematics_pose.pose.orientation.y,
                         req.kinematics_pose.pose.orientation.z);
 
-  Eigen::Matrix3d orientation = math::convertQuaternion2RotationMatrix(q);
+  Eigen::Matrix3d orientation = math::convertQuaternionToRotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, orientation, req.path_time);
 
@@ -681,7 +681,7 @@ void OpenManipulatorController::publishKinematicsPose()
     msg.pose.position.x = pose.position[0];
     msg.pose.position.y = pose.position[1];
     msg.pose.position.z = pose.position[2];
-    Eigen::Quaterniond orientation = math::convertRotationMatrix2Quaternion(pose.orientation);
+    Eigen::Quaterniond orientation = math::convertRotationMatrixToQuaternion(pose.orientation);
     msg.pose.orientation.w = orientation.w();
     msg.pose.orientation.x = orientation.x();
     msg.pose.orientation.y = orientation.y();
