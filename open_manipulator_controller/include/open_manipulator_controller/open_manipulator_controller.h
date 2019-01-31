@@ -24,6 +24,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Empty.h>
 #include <boost/thread.hpp>
 #include <unistd.h>
 
@@ -36,7 +37,8 @@
 #include <moveit/robot_state/robot_state.h>
 
 #include <moveit_msgs/DisplayTrajectory.h>
-
+#include <moveit_msgs/ExecuteTrajectoryActionGoal.h>
+#include <moveit_msgs/MoveGroupActionGoal.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
 
@@ -44,18 +46,16 @@
 #include "open_manipulator_msgs/SetKinematicsPose.h"
 #include "open_manipulator_msgs/SetDrawingTrajectory.h"
 #include "open_manipulator_msgs/SetActuatorState.h"
-
 #include "open_manipulator_msgs/GetJointPosition.h"
 #include "open_manipulator_msgs/GetKinematicsPose.h"
-
 #include "open_manipulator_msgs/OpenManipulatorState.h"
 
-#include "open_manipulator_libs/OpenManipulator.h"
+#include "open_manipulator_libs/open_manipulator.h"
 
 namespace open_manipulator_controller
 {
 
-class OM_CONTROLLER
+class OpenManipulatorController
 {
  private:
   // ROS NodeHandle
@@ -66,32 +66,35 @@ class OM_CONTROLLER
   bool using_platform_;
   bool using_moveit_;
   double control_period_;
-  double moveit_sampling_time_;
 
   // ROS Publisher
-  ros::Publisher open_manipulator_state_pub_;
+  ros::Publisher open_manipulator_states_pub_;
   std::vector<ros::Publisher> open_manipulator_kinematics_pose_pub_;
   ros::Publisher open_manipulator_joint_states_pub_;
   std::vector<ros::Publisher> gazebo_goal_joint_position_pub_;
+  ros::Publisher moveit_update_start_state_;
 
   // ROS Subscribers
   ros::Subscriber open_manipulator_option_sub_;
-
   ros::Subscriber display_planned_path_sub_;
+  ros::Subscriber move_group_goal_sub_;
+  ros::Subscriber execute_traj_goal_sub_;
 
   // ROS Service Server
   ros::ServiceServer goal_joint_space_path_server_;
+  ros::ServiceServer goal_joint_space_path_to_kinematics_pose_server_;
+  ros::ServiceServer goal_joint_space_path_to_kinematics_position_server_;
+  ros::ServiceServer goal_joint_space_path_to_kinematics_orientation_server_;
   ros::ServiceServer goal_task_space_path_server_;
   ros::ServiceServer goal_task_space_path_position_only_server_;
   ros::ServiceServer goal_task_space_path_orientation_only_server_;
-  ros::ServiceServer goal_joint_space_path_to_present_server_;
-  ros::ServiceServer goal_task_space_path_to_present_position_only_server_;
-  ros::ServiceServer goal_task_space_path_to_present_orientation_only_server_;
-  ros::ServiceServer goal_task_space_path_to_present_server_;
+  ros::ServiceServer goal_joint_space_path_from_present_server_;
+  ros::ServiceServer goal_task_space_path_from_present_position_only_server_;
+  ros::ServiceServer goal_task_space_path_from_present_orientation_only_server_;
+  ros::ServiceServer goal_task_space_path_from_present_server_;
   ros::ServiceServer goal_tool_control_server_;
   ros::ServiceServer set_actuator_state_server_;
   ros::ServiceServer goal_drawing_trajectory_server_;
-
   ros::ServiceServer get_joint_position_server_;
   ros::ServiceServer get_kinematics_pose_server_;
   ros::ServiceServer set_joint_position_server_;
@@ -100,23 +103,25 @@ class OM_CONTROLLER
   // MoveIt! interface
   moveit::planning_interface::MoveGroupInterface* move_group_;
   trajectory_msgs::JointTrajectory joint_trajectory_;
+  double moveit_sampling_time_;
+  bool moveit_plan_only_;
 
   // Thread parameter
   pthread_t timer_thread_;
   pthread_attr_t attr_;
 
   // Related robotis_manipulator
-  OPEN_MANIPULATOR open_manipulator_;
+  OpenManipulator open_manipulator_;
 
   // flag parameter
-  bool tool_ctrl_flag_;
-  bool timer_thread_flag_;
-  bool moveit_plan_flag_;
+  bool tool_ctrl_state_;
+  bool timer_thread_state_;
+  bool moveit_plan_state_;
 
  public:
 
-  OM_CONTROLLER(std::string usb_port, std::string baud_rate);
-  ~OM_CONTROLLER();
+  OpenManipulatorController(std::string usb_port, std::string baud_rate);
+  ~OpenManipulatorController();
 
   void publishCallback(const ros::TimerEvent&);
 
@@ -125,16 +130,27 @@ class OM_CONTROLLER
 
   void initServer();
 
-  void printManipulatorSettingCallback(const std_msgs::String::ConstPtr &msg);
-  void displayPlannedPathMsgCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
+  void openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg);
+  void displayPlannedPathCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg);
+  void moveGroupGoalCallback(const moveit_msgs::MoveGroupActionGoal::ConstPtr &msg);
+  void executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectoryActionGoal::ConstPtr &msg);
 
   double getControlPeriod(void){return control_period_;}
 
   bool goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                   open_manipulator_msgs::SetJointPosition::Response &res);
 
+  bool goalJointSpacePathToKinematicsPoseCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                  open_manipulator_msgs::SetKinematicsPose::Response &res);
+
+  bool goalJointSpacePathToKinematicsPositionCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                  open_manipulator_msgs::SetKinematicsPose::Response &res);
+
+  bool goalJointSpacePathToKinematicsOrientationCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                  open_manipulator_msgs::SetKinematicsPose::Response &res);
+
   bool goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                  open_manipulator_msgs::SetKinematicsPose::Response &res);
+                                 open_manipulator_msgs::SetKinematicsPose::Response &res);
 
   bool goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                              open_manipulator_msgs::SetKinematicsPose::Response &res);
@@ -142,23 +158,23 @@ class OM_CONTROLLER
   bool goalTaskSpacePathOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
                                                 open_manipulator_msgs::SetKinematicsPose::Response &res);
 
-  bool goalJointSpacePathToPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
-                                           open_manipulator_msgs::SetJointPosition::Response &res);
+  bool goalJointSpacePathFromPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
+                                             open_manipulator_msgs::SetJointPosition::Response &res);
 
-  bool goalTaskSpacePathToPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                          open_manipulator_msgs::SetKinematicsPose::Response &res);
+  bool goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                            open_manipulator_msgs::SetKinematicsPose::Response &res);
 
-  bool goalTaskSpacePathToPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                      open_manipulator_msgs::SetKinematicsPose::Response &res);
+  bool goalTaskSpacePathFromPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                        open_manipulator_msgs::SetKinematicsPose::Response &res);
 
-  bool goalTaskSpacePathToPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                         open_manipulator_msgs::SetKinematicsPose::Response &res);
+  bool goalTaskSpacePathFromPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
+                                                           open_manipulator_msgs::SetKinematicsPose::Response &res);
 
   bool goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                open_manipulator_msgs::SetJointPosition::Response &res);
 
   bool setActuatorStateCallback(open_manipulator_msgs::SetActuatorState::Request  &req,
-                              open_manipulator_msgs::SetActuatorState::Response &res);
+                                open_manipulator_msgs::SetActuatorState::Response &res);
 
   bool goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
                                      open_manipulator_msgs::SetDrawingTrajectory::Response &res);
@@ -175,7 +191,6 @@ class OM_CONTROLLER
   bool getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
                                     open_manipulator_msgs::GetKinematicsPose::Response &res);
 
-  void setTimerThread();
   void startTimerThread();
   static void *timerThread(void *param);
 
