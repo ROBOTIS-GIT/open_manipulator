@@ -39,6 +39,8 @@
 - [robotis_math](https://github.com/ROBOTIS-GIT/ROBOTIS-Math)
 - [OpenCR-Hardware](https://github.com/ROBOTIS-GIT/OpenCR-Hardware)
 - [OpenCR](https://github.com/ROBOTIS-GIT/OpenCR)
+- [open_manipulator_processing](https://github.com/ROBOTIS-GIT/open_manipulator_processing)
+
 
 ## Documents and Videos related to OpenManipulator
 - [ROBOTIS e-Manual for OpenManipulator](http://emanual.robotis.com/docs/en/platform/openmanipulator/)
