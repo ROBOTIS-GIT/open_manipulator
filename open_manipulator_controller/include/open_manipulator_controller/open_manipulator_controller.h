@@ -50,7 +50,7 @@
 #include "open_manipulator_msgs/GetKinematicsPose.h"
 #include "open_manipulator_msgs/OpenManipulatorState.h"
 
-#include "open_manipulator_libs/OpenManipulator.h"
+#include "open_manipulator_libs/open_manipulator.h"
 
 namespace open_manipulator_controller
 {
@@ -68,7 +68,7 @@ class OpenManipulatorController
   double control_period_;
 
   // ROS Publisher
-  ros::Publisher open_manipulator_state_pub_;
+  ros::Publisher open_manipulator_states_pub_;
   std::vector<ros::Publisher> open_manipulator_kinematics_pose_pub_;
   ros::Publisher open_manipulator_joint_states_pub_;
   std::vector<ros::Publisher> gazebo_goal_joint_position_pub_;
@@ -114,9 +114,9 @@ class OpenManipulatorController
   OpenManipulator open_manipulator_;
 
   // flag parameter
-  bool tool_ctrl_flag_;
-  bool timer_thread_flag_;
-  bool moveit_plan_flag_;
+  bool tool_ctrl_state_;
+  bool timer_thread_state_;
+  bool moveit_plan_state_;
 
  public:
 

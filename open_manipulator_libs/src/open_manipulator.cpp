@@ -16,7 +16,7 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#include "../include/open_manipulator_libs/OpenManipulator.h"
+#include "../include/open_manipulator_libs/open_manipulator.h"
 
 OpenManipulator::OpenManipulator()
 {}
@@ -91,7 +91,7 @@ void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING 
   ** Initialize Kinematics 
   *****************************************************************************/
   kinematics_ = new kinematics::SolverCustomizedforOMChain();
-//  kinematics_ = new KINEMATICS::SolverUsingCRAndSRPositionOnlyJacobian();
+//  kinematics_ = new kinematics::SolverUsingCRAndSRPositionOnlyJacobian();
   addKinematics(kinematics_);
 
   if(using_actual_robot_state)
@@ -99,7 +99,7 @@ void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING 
     /*****************************************************************************
     ** Initialize ㅓoint Actuator
     *****************************************************************************/
-    // actuator_ = new DYNAMIXEL::JointDynamixel();
+    // actuator_ = new dynamixel::JointDynamixel();
     actuator_ = new dynamixel::JointDynamixelProfileControl(control_loop_time);
     
     // Set communication arguments
@@ -151,7 +151,6 @@ void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING 
     receiveAllJointActuatorValue();
     receiveAllToolActuatorValue();
   }
-
 
   /*****************************************************************************
   ** Initialize Custom Trajectory

@@ -23,9 +23,9 @@ using namespace open_manipulator_controller;
 OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::string baud_rate)
     :node_handle_(""),
      priv_node_handle_("~"),
-     tool_ctrl_flag_(false),
-     timer_thread_flag_(false),
-     moveit_plan_flag_(false),
+     tool_ctrl_state_(false),
+     timer_thread_state_(false),
+     moveit_plan_state_(false),
      using_platform_(false),
      using_moveit_(false),
      moveit_plan_only_(true),
@@ -52,7 +52,7 @@ OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::
 
 OpenManipulatorController::~OpenManipulatorController()
 {
-  timer_thread_flag_ = false;
+  timer_thread_state_ = false;
   pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
   log::info("Shutdown the OpenManipulator");
   open_manipulator_.disableAllActuator();
@@ -92,7 +92,7 @@ void OpenManipulatorController::startTimerThread()
     log::error("Creating timer thread failed!!", (double)error);
     exit(-1);
   }
-  timer_thread_flag_ = true;
+  timer_thread_state_ = true;
 }
 
 void *OpenManipulatorController::timerThread(void *param)
@@ -103,7 +103,7 @@ void *OpenManipulatorController::timerThread(void *param)
 
   clock_gettime(CLOCK_MONOTONIC, &next_time);
 
-  while(controller->timer_thread_flag_)
+  while(controller->timer_thread_state_)
   {
     next_time.tv_sec += (next_time.tv_nsec + ((int)(controller->getControlPeriod() * 1000)) * 1000000) / 1000000000;
     next_time.tv_nsec = (next_time.tv_nsec + ((int)(controller->getControlPeriod() * 1000)) * 1000000) % 1000000000;
@@ -138,7 +138,7 @@ void OpenManipulatorController::initPublisher()
     pb = priv_node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(name + "/kinematics_pose", 10);
     open_manipulator_kinematics_pose_pub_.push_back(pb);
   }
-  open_manipulator_state_pub_ = priv_node_handle_.advertise<open_manipulator_msgs::OpenManipulatorState>("states", 10);
+  open_manipulator_states_pub_ = priv_node_handle_.advertise<open_manipulator_msgs::OpenManipulatorState>("states", 10);
 
   if(using_platform_ == true)
   {
@@ -221,7 +221,7 @@ void OpenManipulatorController::displayPlannedPathCallback(const moveit_msgs::Di
   if(moveit_plan_only_ == false)
   {
     log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
-    moveit_plan_flag_ = true;
+    moveit_plan_state_ = true;
   }
   else
     log::println("[INFO] [OpenManipulator Controller] Get Moveit planned path", "GREEN");
@@ -236,11 +236,11 @@ void OpenManipulatorController::moveGroupGoalCallback(const moveit_msgs::MoveGro
 void OpenManipulatorController::executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectoryActionGoal::ConstPtr &msg)
 {
   log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
-  moveit_plan_flag_ = true;
+  moveit_plan_state_ = true;
 }
 
 bool OpenManipulatorController::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
-                                               open_manipulator_msgs::SetJointPosition::Response &res)
+                                                           open_manipulator_msgs::SetJointPosition::Response &res)
 {
   std::vector <double> target_angle;
 
@@ -254,7 +254,7 @@ bool OpenManipulatorController::goalJointSpacePathCallback(open_manipulator_msgs
 }
 
 bool OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                           open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
@@ -275,7 +275,7 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback(open_
 }
 
 bool OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
@@ -289,7 +289,7 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback(o
 }
 
 bool OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                               open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                                  open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
 
@@ -307,7 +307,7 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallbac
 }
 
 bool OpenManipulatorController::goalTaskSpacePathCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                              open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                          open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
@@ -327,7 +327,7 @@ bool OpenManipulatorController::goalTaskSpacePathCallback(open_manipulator_msgs:
 }
 
 bool OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                          open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                      open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Vector3d position;
   position[0] = req.kinematics_pose.pose.position.x;
@@ -341,7 +341,7 @@ bool OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback(open_manip
 }
 
 bool OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                             open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                         open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
                        req.kinematics_pose.pose.orientation.x,
@@ -357,7 +357,7 @@ bool OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback(open_ma
 }
 
 bool OpenManipulatorController::goalJointSpacePathFromPresentCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
-                                                          open_manipulator_msgs::SetJointPosition::Response &res)
+                                                                      open_manipulator_msgs::SetJointPosition::Response &res)
 {
   std::vector <double> target_angle;
 
@@ -371,7 +371,7 @@ bool OpenManipulatorController::goalJointSpacePathFromPresentCallback(open_manip
 }
 
 bool OpenManipulatorController::goalTaskSpacePathFromPresentCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                         open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                     open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   KinematicPose target_pose;
   target_pose.position[0] = req.kinematics_pose.pose.position.x;
@@ -392,7 +392,7 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentCallback(open_manipu
 }
 
 bool OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                                     open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                                 open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Vector3d position;
   position[0] = req.kinematics_pose.pose.position.x;
@@ -406,7 +406,7 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback
 }
 
 bool OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallback(open_manipulator_msgs::SetKinematicsPose::Request  &req,
-                                                       open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                                                    open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   Eigen::Quaterniond q(req.kinematics_pose.pose.orientation.w,
                         req.kinematics_pose.pose.orientation.x,
@@ -422,7 +422,7 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallb
 }
 
 bool OpenManipulatorController::goalToolControlCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
-                                            open_manipulator_msgs::SetJointPosition::Response &res)
+                                                        open_manipulator_msgs::SetJointPosition::Response &res)
 {
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     open_manipulator_.makeToolTrajectory(req.joint_position.joint_name.at(i), req.joint_position.position.at(i));
@@ -432,20 +432,20 @@ bool OpenManipulatorController::goalToolControlCallback(open_manipulator_msgs::S
 }
 
 bool OpenManipulatorController::setActuatorStateCallback(open_manipulator_msgs::SetActuatorState::Request  &req,
-                                             open_manipulator_msgs::SetActuatorState::Response &res)
+                                                         open_manipulator_msgs::SetActuatorState::Response &res)
 {
-  if(req.set_actuator_state == true) // torque on
+  if(req.set_actuator_state == true) // enable actuators
   {
     log::println("Wait a second for actuator enable", "GREEN");
-    timer_thread_flag_ = false;
+    timer_thread_state_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
     open_manipulator_.enableAllActuator();
     startTimerThread();
   }
-  else // torque off
+  else // disable actuators
   {
     log::println("Wait a second for actuator disable", "GREEN");
-    timer_thread_flag_ = false;
+    timer_thread_state_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
     open_manipulator_.disableAllActuator();
     startTimerThread();
@@ -456,7 +456,7 @@ bool OpenManipulatorController::setActuatorStateCallback(open_manipulator_msgs::
 }
 
 bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
-                                                  open_manipulator_msgs::SetDrawingTrajectory::Response &res)
+                                                              open_manipulator_msgs::SetDrawingTrajectory::Response &res)
 {
   try
   {
@@ -473,9 +473,9 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
     else if(req.drawing_trajectory_name == "line")
     {
       TaskWaypoint draw_line_arg;
-      draw_line_arg.kinematic.position(0) = req.param[0];
-      draw_line_arg.kinematic.position(1) = req.param[1];
-      draw_line_arg.kinematic.position(2) = req.param[2];
+      draw_line_arg.kinematic.position(0) = req.param[0]; // x axis (m)
+      draw_line_arg.kinematic.position(1) = req.param[1]; // y axis (m)
+      draw_line_arg.kinematic.position(2) = req.param[2]; // z axis (m)
       void *p_draw_line_arg = &draw_line_arg;
       
       open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_LINE, req.end_effector_name, p_draw_line_arg, req.path_time);
@@ -511,7 +511,7 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
 }
 
 bool OpenManipulatorController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
-                                                open_manipulator_msgs::GetJointPosition::Response &res)
+                                                            open_manipulator_msgs::GetJointPosition::Response &res)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -530,7 +530,7 @@ bool OpenManipulatorController::getJointPositionMsgCallback(open_manipulator_msg
 }
 
 bool OpenManipulatorController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
-                                                 open_manipulator_msgs::GetKinematicsPose::Response &res)
+                                                             open_manipulator_msgs::GetKinematicsPose::Response &res)
 {
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -545,7 +545,7 @@ bool OpenManipulatorController::getKinematicsPoseMsgCallback(open_manipulator_ms
 }
 
 bool OpenManipulatorController::setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
-                                                open_manipulator_msgs::SetJointPosition::Response &res)
+                                                            open_manipulator_msgs::SetJointPosition::Response &res)
 {
   open_manipulator_msgs::JointPosition msg = req.joint_position;
   res.is_planned = calcPlannedPath(req.planning_group, msg);
@@ -554,7 +554,7 @@ bool OpenManipulatorController::setJointPositionMsgCallback(open_manipulator_msg
 }
 
 bool OpenManipulatorController::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
-                                                 open_manipulator_msgs::SetKinematicsPose::Response &res)
+                                                             open_manipulator_msgs::SetKinematicsPose::Response &res)
 {
   open_manipulator_msgs::KinematicsPose msg = req.kinematics_pose;
   res.is_planned = calcPlannedPath(req.planning_group, msg);
@@ -666,7 +666,7 @@ void OpenManipulatorController::publishOpenManipulatorStates()
   else
     msg.open_manipulator_actuator_state = msg.ACTUATOR_DISABLED;
 
-  open_manipulator_state_pub_.publish(msg);
+  open_manipulator_states_pub_.publish(msg);
 }
 
 void OpenManipulatorController::publishKinematicsPose()
@@ -759,7 +759,7 @@ void OpenManipulatorController::moveitTimer(double present_time)
   static double priv_time = 0.0f;
   static uint32_t step_cnt = 0;
 
-  if (moveit_plan_flag_ == true)
+  if (moveit_plan_state_ == true)
   {
     double path_time = present_time - priv_time;
     if (path_time > moveit_sampling_time_)
@@ -783,7 +783,7 @@ void OpenManipulatorController::moveitTimer(double present_time)
       if (step_cnt >= all_time_steps)
       {
         step_cnt = 0;
-        moveit_plan_flag_ = false;
+        moveit_plan_state_ = false;
         if (moveit_update_start_state_.getNumSubscribers() == 0)
         {
           log::warn("Could not update the start state! Enable External Communications at the Moveit Plugin");

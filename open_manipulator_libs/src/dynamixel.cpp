@@ -16,7 +16,7 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#include "../include/open_manipulator_libs/Dynamixel.h"
+#include "../include/open_manipulator_libs/dynamixel.h"
 
 using namespace dynamixel;
 using namespace robotis_manipulator;

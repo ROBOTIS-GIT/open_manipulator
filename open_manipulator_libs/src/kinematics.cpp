@@ -16,7 +16,7 @@
 
 /* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#include "../include/open_manipulator_libs/Kinematics.h"
+#include "../include/open_manipulator_libs/kinematics.h"
 
 using namespace robotis_manipulator;
 using namespace kinematics;

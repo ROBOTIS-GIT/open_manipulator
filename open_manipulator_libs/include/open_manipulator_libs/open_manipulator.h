@@ -19,9 +19,9 @@
 #ifndef OPEN_MANIPULTOR_H_
 #define OPEN_MANIPULTOR_H_
 
-#include "Dynamixel.h"
-#include "CustomTrajectory.h"
-#include "Kinematics.h"
+#include "dynamixel.h"
+#include "custom_trajectory.h"
+#include "kinematics.h"
 
 #define CUSTOM_TRAJECTORY_SIZE 4
 #define CUSTOM_TRAJECTORY_LINE    "custom_trajectory_line"
