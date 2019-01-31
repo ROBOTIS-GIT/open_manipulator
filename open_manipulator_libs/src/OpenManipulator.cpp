@@ -91,7 +91,7 @@ void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING 
   ** Initialize Kinematics 
   *****************************************************************************/
   kinematics_ = new kinematics::SolverCustomizedforOMChain();
-//  kinematics_ = new KINEMATICS::SolverUsingCRandSRPositionOnlyJacobian();
+//  kinematics_ = new KINEMATICS::SolverUsingCRAndSRPositionOnlyJacobian();
   addKinematics(kinematics_);
 
   if(using_actual_robot_state)
