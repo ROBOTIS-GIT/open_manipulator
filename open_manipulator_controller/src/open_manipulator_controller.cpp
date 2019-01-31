@@ -84,6 +84,7 @@ void OpenManipulatorController::startTimerThread()
   //    log::error("Creating timer thread failed!!", (double)error);
   //    exit(-1);
   //  }
+  // timer_thread_state_ = true;
   ////////////////////////////////////////////////////////////////////
 
   int error;
@@ -159,7 +160,7 @@ void OpenManipulatorController::initPublisher()
   }
   if (using_moveit_ == true)
   {
-    moveit_update_start_state_ = node_handle_.advertise<std_msgs::Empty>("rviz/moveit/update_start_state", 10);
+    moveit_update_start_state_pub_ = node_handle_.advertise<std_msgs::Empty>("rviz/moveit/update_start_state", 10);
   }
 }
 void OpenManipulatorController::initSubscriber()
@@ -784,12 +785,12 @@ void OpenManipulatorController::moveitTimer(double present_time)
       {
         step_cnt = 0;
         moveit_plan_state_ = false;
-        if (moveit_update_start_state_.getNumSubscribers() == 0)
+        if (moveit_update_start_state_pub_.getNumSubscribers() == 0)
         {
           log::warn("Could not update the start state! Enable External Communications at the Moveit Plugin");
         }
         std_msgs::Empty msg;
-        moveit_update_start_state_.publish(msg);
+        moveit_update_start_state_pub_.publish(msg);
       }
     }
   }

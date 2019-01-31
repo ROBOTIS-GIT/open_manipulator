@@ -72,7 +72,7 @@ class OpenManipulatorController
   std::vector<ros::Publisher> open_manipulator_kinematics_pose_pub_;
   ros::Publisher open_manipulator_joint_states_pub_;
   std::vector<ros::Publisher> gazebo_goal_joint_position_pub_;
-  ros::Publisher moveit_update_start_state_;
+  ros::Publisher moveit_update_start_state_pub_;
 
   // ROS Subscribers
   ros::Subscriber open_manipulator_option_sub_;
