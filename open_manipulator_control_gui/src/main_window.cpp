@@ -54,7 +54,6 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::timerCallback()
 {
-
   std::vector<double> joint_angle = qnode.getPresentJointAngle();
   if(joint_angle.size() != 5)
     return;

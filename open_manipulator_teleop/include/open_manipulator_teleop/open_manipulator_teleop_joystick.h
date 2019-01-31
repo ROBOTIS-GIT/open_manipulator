@@ -1,5 +1,5 @@
-﻿#ifndef OPEN_MANIPULATOR_CONTROLLER_H
-#define OPEN_MANIPULATOR_CONTROLLER_H
+﻿#ifndef OPEN_MANIPULATOR_TELEOP_H
+#define OPEN_MANIPULATOR_TELEOP_H
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
@@ -14,10 +14,7 @@
 #define JOINT_DELTA 0.05
 #define PATH_TIME 0.5
 
-namespace open_manipulator_teleop
-{
-
-class OM_TELEOP
+class OpenManipulatorTeleop
 {
  private:
   // ROS NodeHandle
@@ -28,17 +25,17 @@ class OM_TELEOP
   ros::ServiceClient goal_joint_space_path_client_;
   ros::ServiceClient goal_tool_control_client_;
 
-  ros::Subscriber chain_joint_states_sub_;
-  ros::Subscriber chain_kinematics_pose_sub_;
+  ros::Subscriber joint_states_sub_;
+  ros::Subscriber kinematics_pose_sub_;
   ros::Subscriber joy_command_sub_;
 
-  std::vector<double> present_joint_angle;
-  std::vector<double> present_kinematic_position;
+  std::vector<double> present_joint_angle_;
+  std::vector<double> present_kinematic_position_;
 
  public:
 
-  OM_TELEOP();
-  ~OM_TELEOP();
+  OpenManipulatorTeleop();
+  ~OpenManipulatorTeleop();
 
   void initClient();
   void initSubscriber();
@@ -58,6 +55,5 @@ class OM_TELEOP
 
   void setGoal(const char *str);
 };
-}
 
-#endif //OPEN_MANIPULATOR_CONTROLLER_H
+#endif //OPEN_MANIPULATOR_TELEOP_H
