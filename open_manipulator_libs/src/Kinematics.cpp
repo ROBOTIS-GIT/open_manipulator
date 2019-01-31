@@ -25,9 +25,9 @@ using namespace kinematics;
 /*****************************************************************************
 ** Kinematics Solver Using Chain Rule and Jacobian
 *****************************************************************************/
-void SolverUsingChainRuleandJacobian::setOption(const void *arg){}
+void SolverUsingCRandJacobian::setOption(const void *arg){}
 
-Eigen::MatrixXd SolverUsingChainRuleandJacobian::jacobian(Manipulator *manipulator, Name tool_name)
+Eigen::MatrixXd SolverUsingCRandJacobian::jacobian(Manipulator *manipulator, Name tool_name)
 {
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Identity(6, manipulator->getDOF());
 
@@ -72,19 +72,19 @@ Eigen::MatrixXd SolverUsingChainRuleandJacobian::jacobian(Manipulator *manipulat
   return jacobian;
 }
 
-void SolverUsingChainRuleandJacobian::solveForwardKinematics(Manipulator *manipulator)
+void SolverUsingCRandJacobian::solveForwardKinematics(Manipulator *manipulator)
 {
   forwardSolverUsingChainRule(manipulator, manipulator->getWorldChildName());
 }
 
-bool SolverUsingChainRuleandJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRandJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return inverseSolverUsingJacobian(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
 
 //private
-void SolverUsingChainRuleandJacobian::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
+void SolverUsingCRandJacobian::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
 {
   Name my_name = component_name;
   Name parent_name = manipulator->getComponentParentName(my_name);
@@ -126,7 +126,7 @@ void SolverUsingChainRuleandJacobian::forwardSolverUsingChainRule(Manipulator *m
   }
 }
 
-bool SolverUsingChainRuleandJacobian::inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRandJacobian::inverseSolverUsingJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   const double lambda = 0.7;
   const int8_t iteration = 10;
@@ -180,9 +180,9 @@ bool SolverUsingChainRuleandJacobian::inverseSolverUsingJacobian(Manipulator *ma
 /*****************************************************************************
 ** Kinematics Solver Using Chain Rule and Singularity Robust Jacobian
 *****************************************************************************/
-void SolverUsingChainRuleandSingularityRobustJacobian::setOption(const void *arg){}
+void SolverUsingCRandSRJacobian::setOption(const void *arg){}
 
-Eigen::MatrixXd SolverUsingChainRuleandSingularityRobustJacobian::jacobian(Manipulator *manipulator, Name tool_name)
+Eigen::MatrixXd SolverUsingCRandSRJacobian::jacobian(Manipulator *manipulator, Name tool_name)
 {
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Identity(6, manipulator->getDOF());
 
@@ -227,19 +227,19 @@ Eigen::MatrixXd SolverUsingChainRuleandSingularityRobustJacobian::jacobian(Manip
   return jacobian;
 }
 
-void SolverUsingChainRuleandSingularityRobustJacobian::solveForwardKinematics(Manipulator *manipulator)
+void SolverUsingCRandSRJacobian::solveForwardKinematics(Manipulator *manipulator)
 {
   forwardSolverUsingChainRule(manipulator, manipulator->getWorldChildName());
 }
 
-bool SolverUsingChainRuleandSingularityRobustJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRandSRJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return inverseSolverUsingSRJacobian(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
 
 //private
-void SolverUsingChainRuleandSingularityRobustJacobian::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
+void SolverUsingCRandSRJacobian::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
 {
   Name my_name = component_name;
   Name parent_name = manipulator->getComponentParentName(my_name);
@@ -281,7 +281,7 @@ void SolverUsingChainRuleandSingularityRobustJacobian::forwardSolverUsingChainRu
   }
 }
 
-bool SolverUsingChainRuleandSingularityRobustJacobian::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRandSRJacobian::inverseSolverUsingSRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   //manipulator
   Manipulator _manipulator = *manipulator;
@@ -348,15 +348,15 @@ bool SolverUsingChainRuleandSingularityRobustJacobian::inverseSolverUsingSRJacob
   for(int t=0; t<3; t++)
     debug_present_pose(t+3) = present_orientation_rpy(t);
 
-  RM_LOG::PRINTLN("------------------------------------");
-  RM_LOG::WARN("iter : first");
-  RM_LOG::WARN("Ek : ", pre_Ek*1000000000000);
-  RM_LOG::PRINTLN("tar_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
-  RM_LOG::PRINTLN("pre_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
-  RM_LOG::PRINTLN("delta_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
+  log::println("------------------------------------");
+  log::warn("iter : first");
+  log::warn("Ek : ", pre_Ek*1000000000000);
+  log::println("tar_pose");
+  log::println_VECTOR(debug_target_pose,16);
+  log::println("pre_pose");
+  log::println_VECTOR(debug_present_pose,16);
+  log::println("delta_pose");
+  log::println_VECTOR(debug_target_pose-debug_present_pose,16);
   #endif
   ////////////////////////////debug//////////////////////////////////
 
@@ -395,14 +395,14 @@ bool SolverUsingChainRuleandSingularityRobustJacobian::inverseSolverUsingSRJacob
       debug_present_pose(t) = present_position(t);
     for(int t=0; t<3; t++)
       debug_present_pose(t+3) = present_orientation_rpy(t);
-    RM_LOG::WARN("iter : ", count,0);
-    RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-    RM_LOG::PRINTLN("tar_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
-    RM_LOG::PRINTLN("pre_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
-    RM_LOG::PRINTLN("delta_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
+    log::warn("iter : ", count,0);
+    log::warn("Ek : ", new_Ek*1000000000000);
+    log::println("tar_pose");
+    log::println_VECTOR(debug_target_pose,16);
+    log::println("pre_pose");
+    log::println_VECTOR(debug_present_pose,16);
+    log::println("delta_pose");
+    log::println_VECTOR(debug_target_pose-debug_present_pose,16);
     #endif
     ////////////////////////////debug//////////////////////////////////
 
@@ -410,10 +410,10 @@ bool SolverUsingChainRuleandSingularityRobustJacobian::inverseSolverUsingSRJacob
     {
       /////////////////////////////debug/////////////////////////////////
       #if defined(KINEMATICS_DEBUG)
-      RM_LOG::WARN("iter : ", count,0);
-      RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-      RM_LOG::ERROR("Success");
-      RM_LOG::PRINTLN("------------------------------------");
+      log::warn("iter : ", count,0);
+      log::warn("Ek : ", new_Ek*1000000000000);
+      log::error("Success");
+      log::println("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
       *goal_joint_value = _manipulator.getAllActiveJointValue();
@@ -448,9 +448,9 @@ bool SolverUsingChainRuleandSingularityRobustJacobian::inverseSolverUsingSRJacob
 /*****************************************************************************
 ** Kinematics Solver Using Chain Rule and Singularity Robust Position Only Jacobian
 *****************************************************************************/
-void SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::setOption(const void *arg){}
+void SolverUsingCRandSRPositionOnlyJacobian::setOption(const void *arg){}
 
-Eigen::MatrixXd SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::jacobian(Manipulator *manipulator, Name tool_name)
+Eigen::MatrixXd SolverUsingCRandSRPositionOnlyJacobian::jacobian(Manipulator *manipulator, Name tool_name)
 {
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Identity(6, manipulator->getDOF());
 
@@ -495,19 +495,19 @@ Eigen::MatrixXd SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::ja
   return jacobian;
 }
 
-void SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::solveForwardKinematics(Manipulator *manipulator)
+void SolverUsingCRandSRPositionOnlyJacobian::solveForwardKinematics(Manipulator *manipulator)
 {
   forwardSolverUsingChainRule(manipulator, manipulator->getWorldChildName());
 }
 
-bool SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRandSRPositionOnlyJacobian::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return inverseSolverUsingPositionOnlySRJacobian(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
 
 //private
-void SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
+void SolverUsingCRandSRPositionOnlyJacobian::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
 {
   Name my_name = component_name;
   Name parent_name = manipulator->getComponentParentName(my_name);
@@ -549,7 +549,7 @@ void SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::forwardSolver
   }
 }
 
-bool SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverUsingCRandSRPositionOnlyJacobian::inverseSolverUsingPositionOnlySRJacobian(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   //manipulator
   Manipulator _manipulator = *manipulator;
@@ -613,15 +613,15 @@ bool SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::inverseSolver
   for(int t=0; t<3; t++)
     debug_present_pose(t+3) = present_orientation_rpy(t);
 
-  RM_LOG::PRINTLN("------------------------------------");
-  RM_LOG::WARN("iter : first");
-  RM_LOG::WARN("Ek : ", pre_Ek*1000000000000);
-  RM_LOG::PRINTLN("tar_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
-  RM_LOG::PRINTLN("pre_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
-  RM_LOG::PRINTLN("delta_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
+  log::println("------------------------------------");
+  log::warn("iter : first");
+  log::warn("Ek : ", pre_Ek*1000000000000);
+  log::println("tar_pose");
+  log::println_VECTOR(debug_target_pose,16);
+  log::println("pre_pose");
+  log::println_VECTOR(debug_present_pose,16);
+  log::println("delta_pose");
+  log::println_VECTOR(debug_target_pose-debug_present_pose,16);
   #endif
   ////////////////////////////debug//////////////////////////////////
 
@@ -663,14 +663,14 @@ bool SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::inverseSolver
       debug_present_pose(t) = present_position(t);
     for(int t=0; t<3; t++)
       debug_present_pose(t+3) = present_orientation_rpy(t);
-    RM_LOG::WARN("iter : ", count,0);
-    RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-    RM_LOG::PRINTLN("tar_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
-    RM_LOG::PRINTLN("pre_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
-    RM_LOG::PRINTLN("delta_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
+    log::warn("iter : ", count,0);
+    log::warn("Ek : ", new_Ek*1000000000000);
+    log::println("tar_pose");
+    log::println_VECTOR(debug_target_pose,16);
+    log::println("pre_pose");
+    log::println_VECTOR(debug_present_pose,16);
+    log::println("delta_pose");
+    log::println_VECTOR(debug_target_pose-debug_present_pose,16);
     #endif
     ////////////////////////////debug//////////////////////////////////
 
@@ -678,10 +678,10 @@ bool SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::inverseSolver
     {
       /////////////////////////////debug/////////////////////////////////
       #if defined(KINEMATICS_DEBUG)
-      RM_LOG::WARN("iter : ", count,0);
-      RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-      RM_LOG::ERROR("IK Success");
-      RM_LOG::PRINTLN("------------------------------------");
+      log::warn("iter : ", count,0);
+      log::warn("Ek : ", new_Ek*1000000000000);
+      log::error("IK Success");
+      log::println("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
       *goal_joint_value = _manipulator.getAllActiveJointValue();
@@ -716,9 +716,9 @@ bool SolverUsingChainRuleandSingularityRobustPositionOnlyJacobian::inverseSolver
 /*****************************************************************************
 ** Kinematics Solver Customized for OpenManipulator Chain
 *****************************************************************************/
-void SolverCustomizedforOpenManipulatorChain::setOption(const void *arg){}
+void SolverCustomizedforOMChain::setOption(const void *arg){}
 
-Eigen::MatrixXd SolverCustomizedforOpenManipulatorChain::jacobian(Manipulator *manipulator, Name tool_name)
+Eigen::MatrixXd SolverCustomizedforOMChain::jacobian(Manipulator *manipulator, Name tool_name)
 {
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Identity(6, manipulator->getDOF());
 
@@ -763,19 +763,19 @@ Eigen::MatrixXd SolverCustomizedforOpenManipulatorChain::jacobian(Manipulator *m
   return jacobian;
 }
 
-void SolverCustomizedforOpenManipulatorChain::solveForwardKinematics(Manipulator *manipulator)
+void SolverCustomizedforOMChain::solveForwardKinematics(Manipulator *manipulator)
 {
   forwardSolverUsingChainRule(manipulator, manipulator->getWorldChildName());
 }
 
-bool SolverCustomizedforOpenManipulatorChain::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverCustomizedforOMChain::solveInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   return chainCustomInverseKinematics(manipulator, tool_name, target_pose, goal_joint_value);
 }
 
 
 //private
-void SolverCustomizedforOpenManipulatorChain::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
+void SolverCustomizedforOMChain::forwardSolverUsingChainRule(Manipulator *manipulator, Name component_name)
 {
   Name my_name = component_name;
   Name parent_name = manipulator->getComponentParentName(my_name);
@@ -816,7 +816,7 @@ void SolverCustomizedforOpenManipulatorChain::forwardSolverUsingChainRule(Manipu
     forwardSolverUsingChainRule(manipulator, child_name);
   }
 }
-bool SolverCustomizedforOpenManipulatorChain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
+bool SolverCustomizedforOMChain::chainCustomInverseKinematics(Manipulator *manipulator, Name tool_name, Pose target_pose, std::vector<JointValue> *goal_joint_value)
 {
   //manipulator
   Manipulator _manipulator = *manipulator;
@@ -897,15 +897,15 @@ bool SolverCustomizedforOpenManipulatorChain::chainCustomInverseKinematics(Manip
   for(int t=0; t<3; t++)
     debug_present_pose(t+3) = present_orientation_rpy(t);
 
-  RM_LOG::PRINTLN("------------------------------------");
-  RM_LOG::WARN("iter : first");
-  RM_LOG::WARN("Ek : ", pre_Ek*1000000000000);
-  RM_LOG::PRINTLN("tar_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
-  RM_LOG::PRINTLN("pre_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
-  RM_LOG::PRINTLN("delta_pose");
-  RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
+  log::println("------------------------------------");
+  log::warn("iter : first");
+  log::warn("Ek : ", pre_Ek*1000000000000);
+  log::println("tar_pose");
+  log::println_VECTOR(debug_target_pose,16);
+  log::println("pre_pose");
+  log::println_VECTOR(debug_present_pose,16);
+  log::println("delta_pose");
+  log::println_VECTOR(debug_target_pose-debug_present_pose,16);
   #endif
   ////////////////////////////debug//////////////////////////////////
 
@@ -944,14 +944,14 @@ bool SolverCustomizedforOpenManipulatorChain::chainCustomInverseKinematics(Manip
       debug_present_pose(t) = present_position(t);
     for(int t=0; t<3; t++)
       debug_present_pose(t+3) = present_orientation_rpy(t);
-    RM_LOG::WARN("iter : ", count,0);
-    RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-    RM_LOG::PRINTLN("tar_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_target_pose,16);
-    RM_LOG::PRINTLN("pre_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_present_pose,16);
-    RM_LOG::PRINTLN("delta_pose");
-    RM_LOG::PRINTLN_VECTOR(debug_target_pose-debug_present_pose,16);
+    log::warn("iter : ", count,0);
+    log::warn("Ek : ", new_Ek*1000000000000);
+    log::println("tar_pose");
+    log::println_VECTOR(debug_target_pose,16);
+    log::println("pre_pose");
+    log::println_VECTOR(debug_present_pose,16);
+    log::println("delta_pose");
+    log::println_VECTOR(debug_target_pose-debug_present_pose,16);
     #endif
     ////////////////////////////debug//////////////////////////////////
 
@@ -959,10 +959,10 @@ bool SolverCustomizedforOpenManipulatorChain::chainCustomInverseKinematics(Manip
     {
       /////////////////////////////debug/////////////////////////////////
       #if defined(KINEMATICS_DEBUG)
-      RM_LOG::WARN("iter : ", count,0);
-      RM_LOG::WARN("Ek : ", new_Ek*1000000000000);
-      RM_LOG::ERROR("Success");
-      RM_LOG::PRINTLN("------------------------------------");
+      log::warn("iter : ", count,0);
+      log::warn("Ek : ", new_Ek*1000000000000);
+      log::error("Success");
+      log::println("------------------------------------");
       #endif
       //////////////////////////debug//////////////////////////////////
       *goal_joint_value = _manipulator.getAllActiveJointValue();
