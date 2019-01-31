@@ -40,13 +40,13 @@ OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::
 
   open_manipulator_.initOpenManipulator(using_platform_, usb_port, baud_rate, control_period_);
 
-  if (using_platform_ == true)        robotis_manipulator_log::info("Succeeded to init " + priv_node_handle_.getNamespace());
-  else if (using_platform_ == false)  robotis_manipulator_log::info("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");
+  if (using_platform_ == true)        log::info("Succeeded to init " + priv_node_handle_.getNamespace());
+  else if (using_platform_ == false)  log::info("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");
 
   if (using_moveit_ == true)
   {
     move_group_ = new moveit::planning_interface::MoveGroupInterface(planning_group_name);
-    robotis_manipulator_log::info("Ready to control " + planning_group_name + " group");
+    log::info("Ready to control " + planning_group_name + " group");
   }
 }
 
@@ -54,7 +54,7 @@ OpenManipulatorController::~OpenManipulatorController()
 {
   timer_thread_flag_ = false;
   pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
-  robotis_manipulator_log::info("Shutdown the OpenManipulator");
+  log::info("Shutdown the OpenManipulator");
   open_manipulator_.disableAllActuator();
   ros::shutdown();
 }
@@ -70,18 +70,18 @@ void OpenManipulatorController::startTimerThread()
   //  pthread_attr_init(&attr_);
 
   //  error = pthread_attr_setschedpolicy(&attr_, SCHED_RR);
-  //  if (error != 0)   robotis_manipulator_log::error("pthread_attr_setschedpolicy error = ", (double)error);
+  //  if (error != 0)   log::error("pthread_attr_setschedpolicy error = ", (double)error);
   //  error = pthread_attr_setinheritsched(&attr_, PTHREAD_EXPLICIT_SCHED);
-  //  if (error != 0)   robotis_manipulator_log::error("pthread_attr_setinheritsched error = ", (double)error);
+  //  if (error != 0)   log::error("pthread_attr_setinheritsched error = ", (double)error);
 
   //  memset(&param, 0, sizeof(param));
   //  param.sched_priority = 31;    // RT
   //  error = pthread_attr_setschedparam(&attr_, &param);
-  //  if (error != 0)   robotis_manipulator_log::error("pthread_attr_setschedparam error = ", (double)error);
+  //  if (error != 0)   log::error("pthread_attr_setschedparam error = ", (double)error);
 
   //  if ((error = pthread_create(&this->timer_thread_, &attr_, this->timerThread, this)) != 0)
   //  {
-  //    robotis_manipulator_log::error("Creating timer thread failed!!", (double)error);
+  //    log::error("Creating timer thread failed!!", (double)error);
   //    exit(-1);
   //  }
   ////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ void OpenManipulatorController::startTimerThread()
   int error;
   if ((error = pthread_create(&this->timer_thread_, NULL, this->timerThread, this)) != 0)
   {
-    robotis_manipulator_log::error("Creating timer thread failed!!", (double)error);
+    log::error("Creating timer thread failed!!", (double)error);
     exit(-1);
   }
   timer_thread_flag_ = true;
@@ -114,10 +114,10 @@ void *OpenManipulatorController::timerThread(void *param)
     clock_gettime(CLOCK_MONOTONIC, &curr_time);
     /////
     double delta_nsec = controller->getControlPeriod() - ((next_time.tv_sec - curr_time.tv_sec) + ((double)(next_time.tv_nsec - curr_time.tv_nsec)*0.000000001));
-    //robotis_manipulator_log::info("control time : ", controller->getControlPeriod() - delta_nsec);
+    //log::info("control time : ", controller->getControlPeriod() - delta_nsec);
     if(delta_nsec > controller->getControlPeriod())
     {
-      //robotis_manipulator_log::warn("Over the control time : ", delta_nsec);
+      //log::warn("Over the control time : ", delta_nsec);
       next_time = curr_time;
     }
     else
@@ -220,22 +220,22 @@ void OpenManipulatorController::displayPlannedPathCallback(const moveit_msgs::Di
 
   if(moveit_plan_only_ == false)
   {
-    robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
+    log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
     moveit_plan_flag_ = true;
   }
   else
-    robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Get Moveit planned path", "GREEN");
+    log::println("[INFO] [OpenManipulator Controller] Get Moveit planned path", "GREEN");
 }
 
 void OpenManipulatorController::moveGroupGoalCallback(const moveit_msgs::MoveGroupActionGoal::ConstPtr &msg)
 {
-  robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Get Moveit plnning option", "GREEN");
+  log::println("[INFO] [OpenManipulator Controller] Get Moveit plnning option", "GREEN");
   moveit_plan_only_ = msg->goal.planning_options.plan_only; // click "plan & execute" or "plan" button
 
 }
 void OpenManipulatorController::executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectoryActionGoal::ConstPtr &msg)
 {
-  robotis_manipulator_log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
+  log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
   moveit_plan_flag_ = true;
 }
 
@@ -266,7 +266,7 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback(open_
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose, req.path_time);
   
@@ -298,7 +298,7 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallbac
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.orientation, req.path_time);
 
@@ -319,7 +319,7 @@ bool OpenManipulatorController::goalTaskSpacePathCallback(open_manipulator_msgs:
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
   open_manipulator_.makeTaskTrajectory(req.end_effector_name, target_pose, req.path_time);
 
   res.is_planned = true;
@@ -348,7 +348,7 @@ bool OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback(open_ma
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  Eigen::Matrix3d orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
+  Eigen::Matrix3d orientation = math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectory(req.end_effector_name, orientation, req.path_time);
 
@@ -383,7 +383,7 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentCallback(open_manipu
                        req.kinematics_pose.pose.orientation.y,
                        req.kinematics_pose.pose.orientation.z);
 
-  target_pose.orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
+  target_pose.orientation = math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, target_pose, req.path_time);
 
@@ -413,7 +413,7 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallb
                         req.kinematics_pose.pose.orientation.y,
                         req.kinematics_pose.pose.orientation.z);
 
-  Eigen::Matrix3d orientation = robotis_manipulator_math::convertQuaternion2RotationMatrix(q);
+  Eigen::Matrix3d orientation = math::convertQuaternion2RotationMatrix(q);
 
   open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, orientation, req.path_time);
 
@@ -436,7 +436,7 @@ bool OpenManipulatorController::setActuatorStateCallback(open_manipulator_msgs::
 {
   if(req.set_actuator_state == true) // torque on
   {
-    robotis_manipulator_log::println("Wait a second for actuator enable", "GREEN");
+    log::println("Wait a second for actuator enable", "GREEN");
     timer_thread_flag_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
     open_manipulator_.enableAllActuator();
@@ -444,7 +444,7 @@ bool OpenManipulatorController::setActuatorStateCallback(open_manipulator_msgs::
   }
   else // torque off
   {
-    robotis_manipulator_log::println("Wait a second for actuator disable", "GREEN");
+    log::println("Wait a second for actuator disable", "GREEN");
     timer_thread_flag_ = false;
     pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
     open_manipulator_.disableAllActuator();
@@ -505,7 +505,7 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
   }
   catch ( ros::Exception &e )
   {
-    robotis_manipulator_log::error("Creation the custom trajectory is failed!");
+    log::error("Creation the custom trajectory is failed!");
   }
   return true;
 }
@@ -589,13 +589,13 @@ bool OpenManipulatorController::calcPlannedPath(const std::string planning_group
     }
     else
     {
-      robotis_manipulator_log::warn("Failed to Plan (task space goal)");
+      log::warn("Failed to Plan (task space goal)");
       is_planned = false;
     }
   }
   else
   {
-    robotis_manipulator_log::warn("Robot is Moving");
+    log::warn("Robot is Moving");
     is_planned = false;
   }
 
@@ -639,13 +639,13 @@ bool OpenManipulatorController::calcPlannedPath(const std::string planning_group
     }
     else
     {
-      robotis_manipulator_log::warn("Failed to Plan (joint space goal)");
+      log::warn("Failed to Plan (joint space goal)");
       is_planned = false;
     }
   }
   else
   {
-    robotis_manipulator_log::warn("Robot is moving");
+    log::warn("Robot is moving");
     is_planned = false;
   }
 
@@ -681,7 +681,7 @@ void OpenManipulatorController::publishKinematicsPose()
     msg.pose.position.x = pose.position[0];
     msg.pose.position.y = pose.position[1];
     msg.pose.position.z = pose.position[2];
-    Eigen::Quaterniond orientation = robotis_manipulator_math::convertRotationMatrix2Quaternion(pose.orientation);
+    Eigen::Quaterniond orientation = math::convertRotationMatrix2Quaternion(pose.orientation);
     msg.pose.orientation.w = orientation.w();
     msg.pose.orientation.x = orientation.x();
     msg.pose.orientation.y = orientation.y();
@@ -786,7 +786,7 @@ void OpenManipulatorController::moveitTimer(double present_time)
         moveit_plan_flag_ = false;
         if (moveit_update_start_state_.getNumSubscribers() == 0)
         {
-          robotis_manipulator_log::warn("Could not update the start state! Enable External Communications at the Moveit Plugin");
+          log::warn("Could not update the start state! Enable External Communications at the Moveit Plugin");
         }
         std_msgs::Empty msg;
         moveit_update_start_state_.publish(msg);
@@ -815,7 +815,7 @@ int main(int argc, char **argv)
 
   if (argc < 3)
   {
-    robotis_manipulator_log::error("Please set '-port_name' and  '-baud_rate' arguments for connected Dynamixels");
+    log::error("Please set '-port_name' and  '-baud_rate' arguments for connected Dynamixels");
     return 0;
   }
   else
