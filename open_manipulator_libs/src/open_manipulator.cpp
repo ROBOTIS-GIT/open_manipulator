@@ -97,7 +97,7 @@ void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING 
   if(using_actual_robot_state)
   {
     /*****************************************************************************
-    ** Initialize ㅓoint Actuator
+    ** Initialize Joint Actuator
     *****************************************************************************/
     // actuator_ = new dynamixel::JointDynamixel();
     actuator_ = new dynamixel::JointDynamixelProfileControl(control_loop_time);
