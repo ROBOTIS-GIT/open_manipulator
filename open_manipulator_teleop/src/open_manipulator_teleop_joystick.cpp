@@ -37,7 +37,6 @@ OpenManipulatorTeleop::~OpenManipulatorTeleop()
     ros::shutdown(); // explicitly needed since we use ros::start();
     ros::waitForShutdown();
   }
-  wait();
 }
 
 void OpenManipulatorTeleop::initClient()
