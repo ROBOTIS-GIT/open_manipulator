@@ -83,6 +83,7 @@ install(DIRECTORY launch
 install(FILES 99-open-manipulator-cdc.rules
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
 ################################################################################
 # Test
 ################################################################################

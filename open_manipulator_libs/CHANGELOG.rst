@@ -1,29 +1,18 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package open_manipulator_description
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package open_manipulator_libs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 2.0.0 (2019-02-08)
 ------------------
-* deleted model.launch
-* modified gripper origin
-* modified end_effector origin
-* modified link2 and joint2 position
-* updated inertia
-* changed calculated inertia param
-* changed gripper link name
-* changed axis for grip_joint
+* changed open_manipulator_dynamixel_ctrl to open_manipulator_libs
+* updated the CHANGELOG and version to release binary packages
 * Contributors: Darby Lim, Hye-Jong KIM, Yong-Ho Na, Ryan Shim, Guilherme de Campos Affonso, Pyo
 
 1.0.0 (2018-06-01)
 ------------------
 * package reconfiguration for OpenManipulator
-* added new stl files
-* added urdf, rviz param, gazebo params, group
-* modified color, xacro server, mu1, mu2, collision range, joint limit
-* modified joint_state_publisher, joint_states_publisher
-* modified params of inertial, xacro, gazebo, collision, friction 
-* modified urdf file names and collision geometry
-* deleted unnecessary packages
+* added function to support protocol 1.0
+* modified motor id, msg names
 * merged pull request `#34 <https://github.com/ROBOTIS-GIT/open_manipulator/issues/34>`_ `#33 <https://github.com/ROBOTIS-GIT/open_manipulator/issues/33>`_ `#31 <https://github.com/ROBOTIS-GIT/open_manipulator/issues/31>`_ `#27 <https://github.com/ROBOTIS-GIT/open_manipulator/issues/27>`_ `#26 <https://github.com/ROBOTIS-GIT/open_manipulator/issues/26>`_ `#25 <https://github.com/ROBOTIS-GIT/open_manipulator/issues/25>`_
 * Contributors: Darby Lim, Pyo
 
@@ -33,13 +22,13 @@ Changelog for package open_manipulator_description
 
 0.1.0 (2018-03-14)
 ------------------
-* modified joint control
-* modified gripper topic
-* modified gazebo set
-* modified URDF
-* modified description
+* added new dynamixel-workbench and velocity message
+* added sync read failed debug code
+* modified dxl-wb path
+* modified dynamixel controller
 * modified messages
 * modified moveit
+* modified description
 * modified cmake, package files for release
 * refactoring for release
 * Contributors: Darby Lim, Pyo

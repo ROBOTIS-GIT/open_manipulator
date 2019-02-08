@@ -1,6 +1,29 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package open_manipulator_dynamixel_ctrl
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package open_manipulator_controller
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+2.0.0 (2019-02-08)
+------------------
+* added jointspace path serv, moveit params
+* added moveit config and controller
+* added kinematic pose pub
+* added mimic param and end effector point
+* added execute permission
+* added usb rules
+* added cdc rules
+* removed warn message
+* renamed open_manipulator lib files
+* changed math function name, namespace
+* changed openManipulatorProcess() to processOpenManipulator()
+* updated start_state after execution on MoveIt
+* updated thread time, dynamixel profiling control method
+* updated drawing line
+* updated flexible node
+* updated tool control
+* updated chain to open_manipulator
+* updated new kinematics
+* used robot_name on joint_state_publisher's source_list
+* Contributors: Darby Lim, Hye-Jong KIM, Yong-Ho Na, Guilherme de Campos Affonso, Pyo
 
 1.0.0 (2018-06-01)
 ------------------
