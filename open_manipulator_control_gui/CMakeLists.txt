@@ -15,7 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
   open_manipulator_msgs
+  cmake_modules
 )
+find_package(Eigen3 REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
 set(${PROJECT_NAME}_SRCS
@@ -65,6 +67,7 @@ endif()
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS roscpp std_msgs sensor_msgs open_manipulator_msgs
+  DEPENDS EIGEN3
 )
 
 qt5_wrap_cpp(${PROJECT_NAME}_MOCS     ${${PROJECT_NAME}_HDRS})
@@ -86,11 +89,12 @@ include_directories(
   include
   ${open_manipulator_control_gui_INCLUDE_DIRECTORIES}
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 add_executable(open_manipulator_control_gui ${open_manipulator_control_gui_SRCS} ${open_manipulator_control_gui_MOCS} ${open_manipulator_control_gui_UIS_H} ${open_manipulator_control_gui_RCC})
 add_dependencies(open_manipulator_control_gui ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(open_manipulator_control_gui Qt5::Widgets ${catkin_LIBRARIES})
+target_link_libraries(open_manipulator_control_gui Qt5::Widgets ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
 #################################################################################
 ## Install

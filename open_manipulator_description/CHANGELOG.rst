@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.1 (2019-02-18)
+------------------
+* none
+
 2.0.0 (2019-02-08)
 ------------------
 * deleted model.launch
