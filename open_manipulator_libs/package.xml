@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package format="2">
   <name>open_manipulator_libs</name>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
   <description>
     OpenManipulator library (Kinematics lib., Dynamixel lib., Drawing path lib.)
   </description>

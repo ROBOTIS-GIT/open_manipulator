@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_control_gui
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.1 (2019-02-18)
+------------------
+* added dependency option for open_manipulator_control_gui package
+* Contributors: Pyo
+
 2.0.0 (2019-02-08)
 ------------------
 * updated the CHANGELOG and version to release binary packages (first relese)
