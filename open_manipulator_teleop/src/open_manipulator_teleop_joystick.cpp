@@ -146,7 +146,7 @@ bool OpenManipulatorTeleop::setTaskSpacePathFromPresentPositionOnly(std::vector<
 void OpenManipulatorTeleop::setGoal(const char* str)
 {
   std::vector<double> goalPose;  goalPose.resize(3, 0.0);
-  std::vector<double> goalJoint; goalJoint.resize(4, 0.0);
+  std::vector<double> goalJoint; goalJoint.resize(NUM_OF_JOINT, 0.0);
 
   if(str == "x+")
   {

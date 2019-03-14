@@ -190,7 +190,7 @@ void OpenManipulatorTeleop::printText()
 void OpenManipulatorTeleop::setGoal(char ch)
 {
   std::vector<double> goalPose;  goalPose.resize(3, 0.0);
-  std::vector<double> goalJoint; goalJoint.resize(4, 0.0);
+  std::vector<double> goalJoint; goalJoint.resize(NUM_OF_JOINT, 0.0);
 
   if(ch == 'w' || ch == 'W')
   {
