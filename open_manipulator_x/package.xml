@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>open_manipulator_x</name>
+  <version>1.0.0</version>
+  <description>
+    ROS2 packages for OpenManipulator-X.
+  </description>
+  <author email="jhshim@robotis.com">Ryan Shim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <maintainer email="hjkim@robotis.com">Hye-Jong KIM</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://wiki.ros.org/open_manipulator</url>
+  <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>open_manipulator_x_controller</exec_depend>
+  <exec_depend>open_manipulator_x_description</exec_depend>
+  <exec_depend>open_manipulator_x_libs</exec_depend>
+  <exec_depend>open_manipulator_x_teleop</exec_depend>
+  <!-- To be added -->
+  <!-- <exec_depend>open_manipulator_x_control_gui</exec_depend> -->
+  <!-- <exec_depend>open_manipulator_x_moveit</exec_depend> -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

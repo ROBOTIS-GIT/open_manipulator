@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>open_manipulator_x_teleop</name>
+  <version>2.2.0</version>
+  <description>open_manipulator_x_teleop</description>
+  <author email="jhshim@robotis.com">Ryan Shim</author>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
+  <maintainer email="hjkim@robotis.com">Hye-Jong KIM</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://wiki.ros.org/open_manipulator_libs</url>
+  <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>geometry_msgs</depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>open_manipulator_msgs</depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

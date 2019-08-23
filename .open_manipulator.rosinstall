@@ -1,4 +1,0 @@
-- git: {local-name: robotis_manipulator, uri: 'https://github.com/ROBOTIS-GIT/robotis_manipulator.git', version: master}
-- git: {local-name: open_manipulator_msgs, uri: 'https://github.com/ROBOTIS-GIT/open_manipulator_msgs.git', version: master}
-- git: {local-name: dynamixel_workbench, uri: 'https://github.com/ROBOTIS-GIT/dynamixel-workbench.git', version: master}
-- git: {local-name: dynamixel_workbench_msgs, uri: 'https://github.com/ROBOTIS-GIT/dynamixel-workbench-msgs.git', version: master}
