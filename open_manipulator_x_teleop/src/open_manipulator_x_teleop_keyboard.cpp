@@ -18,6 +18,8 @@
 
 #include "open_manipulator_x_teleop/open_manipulator_x_teleop_keyboard.hpp"
 
+using namespace std::chrono_literals;
+
 namespace open_manipulator_x_teleop_keyboard
 {
 OpenManipulatorXTeleopKeyboard::OpenManipulatorXTeleopKeyboard()
@@ -45,24 +47,19 @@ OpenManipulatorXTeleopKeyboard::OpenManipulatorXTeleopKeyboard()
   goal_task_space_path_from_present_position_only_client_ = this->create_client<open_manipulator_msgs::srv::SetKinematicsPose>("open_manipulator_x/goal_task_space_path_from_present_position_only");
   goal_joint_space_path_from_present_client_ = this->create_client<open_manipulator_msgs::srv::SetJointPosition>("open_manipulator_x/goal_joint_space_path_from_present");
 
-  RCLCPP_INFO(this->get_logger(), "OpenManipulator Teleop Keyboard Initialised");
-
   /********************************************************************************
   ** Display in terminal
   ********************************************************************************/
-  printf("OpenManipulator teleoperation using keyboard start");
   this->disable_waiting_for_enter();
+  timer_ = this->create_wall_timer(10ms, std::bind(&OpenManipulatorXTeleopKeyboard::display_callback, this));
 
-  auto period = std::chrono::milliseconds(10); 
-  timer_ = this->create_wall_timer(
-    std::chrono::duration_cast<std::chrono::milliseconds>(period), 
-    std::bind(&OpenManipulatorXTeleopKeyboard::display_callback, this));
+  RCLCPP_INFO(this->get_logger(), "OpenManipulator-X Teleop Keyboard Initialised");
 }
 
 OpenManipulatorXTeleopKeyboard::~OpenManipulatorXTeleopKeyboard() 
 {
   this->restore_terminal_settings();
-  RCLCPP_INFO(this->get_logger(), "OpenManipulator Teleop Keyboard Terminated");
+  RCLCPP_INFO(this->get_logger(), "OpenManipulator-X Teleop Keyboard Terminated");
 }
 
 /********************************************************************************
@@ -72,12 +69,12 @@ void OpenManipulatorXTeleopKeyboard::joint_states_callback(const sensor_msgs::ms
 {
   std::vector<double> temp_angle;
   temp_angle.resize(NUM_OF_JOINT);
-  for(std::vector<int>::size_type i = 0; i < msg->name.size(); i ++)
+  for (std::vector<int>::size_type i = 0; i < msg->name.size(); i ++)
   {
-    if(!msg->name.at(i).compare("joint1"))  temp_angle.at(0) = (msg->position.at(i));
-    else if(!msg->name.at(i).compare("joint2"))  temp_angle.at(1) = (msg->position.at(i));
-    else if(!msg->name.at(i).compare("joint3"))  temp_angle.at(2) = (msg->position.at(i));
-    else if(!msg->name.at(i).compare("joint4"))  temp_angle.at(3) = (msg->position.at(i));
+    if (!msg->name.at(i).compare("joint1")) temp_angle.at(0) = (msg->position.at(i));
+    else if (!msg->name.at(i).compare("joint2")) temp_angle.at(1) = (msg->position.at(i));
+    else if (!msg->name.at(i).compare("joint3")) temp_angle.at(2) = (msg->position.at(i));
+    else if (!msg->name.at(i).compare("joint4")) temp_angle.at(3) = (msg->position.at(i));
   }
   present_joint_angle_ = temp_angle;
 }
@@ -96,130 +93,131 @@ void OpenManipulatorXTeleopKeyboard::kinematics_pose_callback(const open_manipul
 ********************************************************************************/
 void OpenManipulatorXTeleopKeyboard::set_goal(char ch)
 {
-  std::vector<double> goalPose;  goalPose.resize(3, 0.0);
-  std::vector<double> goalJoint; goalJoint.resize(4, 0.0);
+  std::vector<double> goalPose; goalPose.resize(3);
+  std::vector<double> goalJoint; goalJoint.resize(4);
+  const double delta = 0.01;
+  const double joint_delta = 0.05;
+  double path_time = 0.5;
 
-  if(ch == 'w' || ch == 'W')
+  if (ch == 'w' || ch == 'W')
   {
     printf("input : w \tincrease(++) x axis in task space\n");
-    goalPose.at(0) = DELTA;
-    set_task_space_path_from_present_position_only(goalPose, PATH_TIME);
+    goalPose.at(0) = delta;
+    set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if(ch == 's' || ch == 'S')
+  else if (ch == 's' || ch == 'S')
   {
     printf("input : s \tdecrease(--) x axis in task space\n");
-    goalPose.at(0) = -DELTA;
-    set_task_space_path_from_present_position_only(goalPose, PATH_TIME);
+    goalPose.at(0) = -delta;
+    set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if(ch == 'a' || ch == 'A')
+  else if (ch == 'a' || ch == 'A')
   {
     printf("input : a \tincrease(++) y axis in task space\n");
-    goalPose.at(1) = DELTA;
-    set_task_space_path_from_present_position_only(goalPose, PATH_TIME);
+    goalPose.at(1) = delta;
+    set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if(ch == 'd' || ch == 'D')
+  else if (ch == 'd' || ch == 'D')
   {
     printf("input : d \tdecrease(--) y axis in task space\n");
-    goalPose.at(1) = -DELTA;
-    set_task_space_path_from_present_position_only(goalPose, PATH_TIME);
+    goalPose.at(1) = -delta;
+    set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if(ch == 'z' || ch == 'Z')
+  else if (ch == 'z' || ch == 'Z')
   {
     printf("input : z \tincrease(++) z axis in task space\n");
-    goalPose.at(2) = DELTA;
-    set_task_space_path_from_present_position_only(goalPose, PATH_TIME);
+    goalPose.at(2) = delta;
+    set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if(ch == 'x' || ch == 'X')
+  else if (ch == 'x' || ch == 'X')
   {
     printf("input : x \tdecrease(--) z axis in task space\n");
-    goalPose.at(2) = -DELTA;
-    set_task_space_path_from_present_position_only(goalPose, PATH_TIME);
+    goalPose.at(2) = -delta;
+    set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if(ch == 'y' || ch == 'Y')
+  else if (ch == 'y' || ch == 'Y')
   {
     printf("input : y \tincrease(++) joint 1 angle\n");
     std::vector<std::string> joint_name;
-    joint_name.push_back("joint1"); goalJoint.at(0) = JOINT_DELTA;
+    joint_name.push_back("joint1"); goalJoint.at(0) = joint_delta;
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
-  else if(ch == 'h' || ch == 'H')
+  else if (ch == 'h' || ch == 'H')
   {
     printf("input : h \tdecrease(--) joint 1 angle\n");
     std::vector<std::string> joint_name;
-    joint_name.push_back("joint1"); goalJoint.at(0) = -JOINT_DELTA;
+    joint_name.push_back("joint1"); goalJoint.at(0) = -joint_delta;
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
-
-  else if(ch == 'u' || ch == 'U')
+  else if (ch == 'u' || ch == 'U')
   {
     printf("input : u \tincrease(++) joint 2 angle\n");
     std::vector<std::string> joint_name;
     joint_name.push_back("joint1");
-    joint_name.push_back("joint2"); goalJoint.at(1) = JOINT_DELTA;
+    joint_name.push_back("joint2"); goalJoint.at(1) = joint_delta;
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
-  else if(ch == 'j' || ch == 'J')
+  else if (ch == 'j' || ch == 'J')
   {
     printf("input : j \tdecrease(--) joint 2 angle\n");
     std::vector<std::string> joint_name;
     joint_name.push_back("joint1");
-    joint_name.push_back("joint2"); goalJoint.at(1) = -JOINT_DELTA;
+    joint_name.push_back("joint2"); goalJoint.at(1) = -joint_delta;
     joint_name.push_back("joint3");
     joint_name.push_back("joint4");
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
 
-  else if(ch == 'i' || ch == 'I')
+  else if (ch == 'i' || ch == 'I')
   {
     printf("input : i \tincrease(++) joint 3 angle\n");
     std::vector<std::string> joint_name;
     joint_name.push_back("joint1");
     joint_name.push_back("joint2");
-    joint_name.push_back("joint3"); goalJoint.at(2) = JOINT_DELTA;
+    joint_name.push_back("joint3"); goalJoint.at(2) = joint_delta;
     joint_name.push_back("joint4");
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
-  else if(ch == 'k' || ch == 'K')
+  else if (ch == 'k' || ch == 'K')
   {
     printf("input : k \tdecrease(--) joint 3 angle\n");
     std::vector<std::string> joint_name;
     joint_name.push_back("joint1");
     joint_name.push_back("joint2");
-    joint_name.push_back("joint3"); goalJoint.at(2) = -JOINT_DELTA;
+    joint_name.push_back("joint3"); goalJoint.at(2) = -joint_delta;
     joint_name.push_back("joint4");
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
 
-  else if(ch == 'o' || ch == 'O')
+  else if (ch == 'o' || ch == 'O')
   {
     printf("input : o \tincrease(++) joint 4 angle\n");
     std::vector<std::string> joint_name;
     joint_name.push_back("joint1");
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
-    joint_name.push_back("joint4"); goalJoint.at(3) = JOINT_DELTA;
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    joint_name.push_back("joint4"); goalJoint.at(3) = joint_delta;
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
-  else if(ch == 'l' || ch == 'L')
+  else if (ch == 'l' || ch == 'L')
   {
     printf("input : l \tdecrease(--) joint 4 angle\n");
     std::vector<std::string> joint_name;
     joint_name.push_back("joint1");
     joint_name.push_back("joint2");
     joint_name.push_back("joint3");
-    joint_name.push_back("joint4"); goalJoint.at(3) = -JOINT_DELTA;
-    set_joint_space_path_from_present(joint_name, goalJoint, PATH_TIME);
+    joint_name.push_back("joint4"); goalJoint.at(3) = -joint_delta;
+    set_joint_space_path_from_present(joint_name, goalJoint, path_time);
   }
-
-  else if(ch == 'g' || ch == 'G')
+  else if (ch == 'g' || ch == 'G')
   {
     printf("input : g \topen gripper\n");
     std::vector<double> joint_angle;
@@ -227,47 +225,42 @@ void OpenManipulatorXTeleopKeyboard::set_goal(char ch)
     joint_angle.push_back(0.01);
     set_tool_control(joint_angle);
   }
-  else if(ch == 'f' || ch == 'F')
+  else if (ch == 'f' || ch == 'F')
   {
     printf("input : f \tclose gripper\n");
     std::vector<double> joint_angle;
     joint_angle.push_back(-0.01);
     set_tool_control(joint_angle);
   }
-
-  else if(ch == '2')
+  else if (ch == '2')
   {
     printf("input : 2 \thome pose\n");
     std::vector<std::string> joint_name;
     std::vector<double> joint_angle;
-    double path_time = 2.0;
-
+    path_time = 2.0;
     joint_name.push_back("joint1"); joint_angle.push_back(0.0);
-    joint_name.push_back("joint2"); joint_angle.push_back(-1.05);
-    joint_name.push_back("joint3"); joint_angle.push_back(0.35);
-    joint_name.push_back("joint4"); joint_angle.push_back(0.70);
+    joint_name.push_back("joint2"); joint_angle.push_back(-PI/3);
+    joint_name.push_back("joint3"); joint_angle.push_back(PI/9);
+    joint_name.push_back("joint4"); joint_angle.push_back(PI*2/9);
     set_joint_space_path(joint_name, joint_angle, path_time);
   }
-  else if(ch == '1')
+  else if (ch == '1')
   {
     printf("input : 1 \tinit pose\n");
-
     std::vector<std::string> joint_name;
     std::vector<double> joint_angle;
-    double path_time = 2.0;
+    path_time = 2.0;
     joint_name.push_back("joint1"); joint_angle.push_back(0.0);
     joint_name.push_back("joint2"); joint_angle.push_back(0.0);
     joint_name.push_back("joint3"); joint_angle.push_back(0.0);
     joint_name.push_back("joint4"); joint_angle.push_back(0.0);
     set_joint_space_path(joint_name, joint_angle, path_time);
   }
-  else if(ch == 'q')
+  else if (ch == 'q')
   {
     printf("Pressed Quit \n");
     rclcpp::shutdown();
   }
-  // else
-  //   RCLCPP_ERROR(this->get_logger(), "Wrong Input :(");
 }
 
 bool OpenManipulatorXTeleopKeyboard::set_joint_space_path(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time)
@@ -278,9 +271,10 @@ bool OpenManipulatorXTeleopKeyboard::set_joint_space_path(std::vector<std::strin
   request->path_time = path_time;
   
   using ServiceResponseFuture = rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedFuture;
-  auto response_received_callback = [this](ServiceResponseFuture future) {
-      auto result = future.get();
-      return result->is_planned;
+  auto response_received_callback = [this](ServiceResponseFuture future) 
+  {
+    auto result = future.get();
+    return result->is_planned;
   };
   auto future_result = goal_joint_space_path_client_->async_send_request(request, response_received_callback);
 
@@ -294,9 +288,10 @@ bool OpenManipulatorXTeleopKeyboard::set_tool_control(std::vector<double> joint_
   request->joint_position.position = joint_angle;
 
   using ServiceResponseFuture = rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedFuture;
-  auto response_received_callback = [this](ServiceResponseFuture future) {
-      auto result = future.get();
-      return result->is_planned;
+  auto response_received_callback = [this](ServiceResponseFuture future) 
+  {
+    auto result = future.get();
+    return result->is_planned;
   };
   auto future_result = goal_tool_control_client_->async_send_request(request, response_received_callback);
 
@@ -313,9 +308,10 @@ bool OpenManipulatorXTeleopKeyboard::set_task_space_path_from_present_position_o
   request->path_time = path_time;
 
   using ServiceResponseFuture = rclcpp::Client<open_manipulator_msgs::srv::SetKinematicsPose>::SharedFuture;
-  auto response_received_callback = [this](ServiceResponseFuture future) {
-      auto result = future.get();
-      return result->is_planned;
+  auto response_received_callback = [this](ServiceResponseFuture future) 
+  {
+    auto result = future.get();
+    return result->is_planned;
   };
   auto future_result = goal_task_space_path_from_present_position_only_client_->async_send_request(request, response_received_callback);
 
@@ -330,9 +326,10 @@ bool OpenManipulatorXTeleopKeyboard::set_joint_space_path_from_present(std::vect
   request->path_time = path_time;
 
   using ServiceResponseFuture = rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedFuture;
-  auto response_received_callback = [this](ServiceResponseFuture future) {
-      auto result = future.get();
-      return result->is_planned;
+  auto response_received_callback = [this](ServiceResponseFuture future) 
+  {
+    auto result = future.get();
+    return result->is_planned;
   };
   auto future_result = goal_joint_space_path_from_present_client_->async_send_request(request, response_received_callback);
 
@@ -373,14 +370,14 @@ void OpenManipulatorXTeleopKeyboard::print_text()
   printf("q to quit\n");
   printf("---------------------------\n");
   printf("Present Joint Angle J1: %.3lf J2: %.3lf J3: %.3lf J4: %.3lf\n",
-         get_present_joint_angle().at(0),
-         get_present_joint_angle().at(1),
-         get_present_joint_angle().at(2),
-         get_present_joint_angle().at(3));
+    get_present_joint_angle().at(0),
+    get_present_joint_angle().at(1),
+    get_present_joint_angle().at(2),
+    get_present_joint_angle().at(3));
   printf("Present Kinematics Position X: %.3lf Y: %.3lf Z: %.3lf\n",
-         get_present_kinematics_pose().at(0),
-         get_present_kinematics_pose().at(1),
-         get_present_kinematics_pose().at(2));
+    get_present_kinematics_pose().at(0),
+    get_present_kinematics_pose().at(1),
+    get_present_kinematics_pose().at(2));
   printf("---------------------------\n");  
 }
 
@@ -388,6 +385,7 @@ std::vector<double> OpenManipulatorXTeleopKeyboard::get_present_joint_angle()
 {
   return present_joint_angle_;
 }
+
 std::vector<double> OpenManipulatorXTeleopKeyboard::get_present_kinematics_pose()
 {
   return present_kinematic_position_;
@@ -408,7 +406,6 @@ void OpenManipulatorXTeleopKeyboard::disable_waiting_for_enter()
   newt.c_cc[VMIN] = 0;
   newt.c_cc[VTIME] = 0;
   tcsetattr(0, TCSANOW, &newt);     /* Apply settings */
-  
 }
 
 void OpenManipulatorXTeleopKeyboard::display_callback()  
@@ -426,9 +423,7 @@ void OpenManipulatorXTeleopKeyboard::display_callback()
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-
   rclcpp::spin(std::make_shared<open_manipulator_x_teleop_keyboard::OpenManipulatorXTeleopKeyboard>());
-
   rclcpp::shutdown();
 
   return 0;

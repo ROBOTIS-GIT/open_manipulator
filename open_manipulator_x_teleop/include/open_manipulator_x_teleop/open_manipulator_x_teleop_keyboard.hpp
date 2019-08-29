@@ -16,8 +16,8 @@
 
 /* Authors: Ryan Shim */
 
-#ifndef OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP
-#define OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP
+#ifndef OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP_
+#define OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP_
 
 #include <rclcpp/rclcpp.hpp>
 #include <termios.h>
@@ -26,10 +26,8 @@
 #include "open_manipulator_msgs/srv/set_joint_position.hpp"
 #include "open_manipulator_msgs/srv/set_kinematics_pose.hpp"
 
+#define PI 3.14159265359
 #define NUM_OF_JOINT 4
-#define DELTA 0.01
-#define JOINT_DELTA 0.05
-#define PATH_TIME 0.5
 
 namespace open_manipulator_x_teleop_keyboard
 {
@@ -61,7 +59,7 @@ class OpenManipulatorXTeleopKeyboard : public rclcpp::Node
   bool set_joint_space_path_from_present(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
 
   /*****************************************************************************
-  ** ROS  Clients
+  ** ROS Clients
   *****************************************************************************/
   rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedPtr goal_joint_space_path_client_;
   rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedPtr goal_tool_control_client_;
@@ -82,4 +80,4 @@ class OpenManipulatorXTeleopKeyboard : public rclcpp::Node
   void display_callback(); 
 };
 }  // namespace open_manipulator_x_teleop_keyboard
-#endif  // OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP
+#endif  // OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP_
