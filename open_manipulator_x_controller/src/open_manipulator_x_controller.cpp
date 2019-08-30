@@ -18,6 +18,7 @@
 
 #include "open_manipulator_x_controller/open_manipulator_x_controller.hpp"
 
+using namespace std::placeholders;
 using namespace std::chrono_literals;
 
 namespace open_manipulator_x_controller
@@ -90,84 +91,73 @@ void OpenManipulatorXController::init_parameters()
 
 void OpenManipulatorXController::init_publisher()
 {
-  auto tools_name = open_manipulator_x_.getManipulator()->getAllToolComponentName();
-
+  // Publish States
   open_manipulator_x_states_pub_ = this->create_publisher<open_manipulator_msgs::msg::OpenManipulatorState>("open_manipulator_x/states", 10);
 
-  for (auto const& name:tools_name)
-  {
-    auto pb = this->create_publisher<open_manipulator_msgs::msg::KinematicsPose>("open_manipulator_x/kinematics_pose", 10);
-    open_manipulator_x_kinematics_pose_pub_.push_back(pb);
-  }
+  // Publish Joint States
+  auto tools_name = open_manipulator_x_.getManipulator()->getAllToolComponentName();
 
-  if(use_platform_ == true)
+  if (use_platform_ == true) // for actual robot
   {
     open_manipulator_x_joint_states_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("open_manipulator_x/joint_states", 10);
   }
-  else
+  else // for virtual robot on Gazebo
   {
-    auto gazebo_joints_name = open_manipulator_x_.getManipulator()->getAllActiveJointComponentName();
-    gazebo_joints_name.reserve(gazebo_joints_name.size() + tools_name.size());
-    gazebo_joints_name.insert(gazebo_joints_name.end(), tools_name.begin(), tools_name.end());
+    auto joints_name = open_manipulator_x_.getManipulator()->getAllActiveJointComponentName();
+    joints_name.resize(joints_name.size() + tools_name.size());
+    joints_name.insert(joints_name.end(), tools_name.begin(), tools_name.end());
 
-    for (auto const& name:gazebo_joints_name)
+    for (auto const & name:joints_name)
     {
       auto pb = this->create_publisher<std_msgs::msg::Float64>("open_manipulator_x/" + name + "_position/command", 10);
       gazebo_goal_joint_position_pub_.push_back(pb);
     }
+  }
+  
+  // Publish Kinematics Pose
+  for (auto const & name:tools_name)
+  {
+    auto pb = this->create_publisher<open_manipulator_msgs::msg::KinematicsPose>("open_manipulator_x/kinematics_pose", 10);
+    open_manipulator_x_kinematics_pose_pub_.push_back(pb);
   }
 }
 
 void OpenManipulatorXController::init_subscriber()
 {
   open_manipulator_x_option_sub_ = this->create_subscription<std_msgs::msg::String>(
-    "open_manipulator_x/option", 10, std::bind(&OpenManipulatorXController::open_manipulator_x_option_callback, this, std::placeholders::_1));
+    "open_manipulator_x/option", 10, std::bind(&OpenManipulatorXController::open_manipulator_x_option_callback, this, _1));
 }
 
 void OpenManipulatorXController::init_server()
 {
   goal_joint_space_path_server_ = this->create_service<open_manipulator_msgs::srv::SetJointPosition>(
-    "open_manipulator_x/goal_joint_space_path", std::bind(&OpenManipulatorXController::goal_joint_space_path_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_joint_space_path", std::bind(&OpenManipulatorXController::goal_joint_space_path_callback, this, _1, _2));
   goal_joint_space_path_to_kinematics_pose_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_joint_space_path_to_kinematics_pose", std::bind(&OpenManipulatorXController::goal_joint_space_path_to_kinematics_pose_callback, this,
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_joint_space_path_to_kinematics_pose", std::bind(&OpenManipulatorXController::goal_joint_space_path_to_kinematics_pose_callback, this, _1, _2));
   goal_joint_space_path_to_kinematics_position_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_joint_space_path_to_kinematics_position", std::bind(&OpenManipulatorXController::goal_joint_space_path_to_kinematics_position_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_joint_space_path_to_kinematics_position", std::bind(&OpenManipulatorXController::goal_joint_space_path_to_kinematics_position_callback, this, _1, _2));
   goal_joint_space_path_to_kinematics_orientation_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_joint_space_path_to_kinematics_orientation", std::bind(&OpenManipulatorXController::goal_joint_space_path_to_kinematics_orientation_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_joint_space_path_to_kinematics_orientation", std::bind(&OpenManipulatorXController::goal_joint_space_path_to_kinematics_orientation_callback, this, _1, _2));
   goal_task_space_path_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_task_space_path", std::bind(&OpenManipulatorXController::goal_task_space_path_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_task_space_path", std::bind(&OpenManipulatorXController::goal_task_space_path_callback, this, _1, _2));
   goal_task_space_path_position_only_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_task_space_path_position_only", std::bind(&OpenManipulatorXController::goal_task_space_path_position_only_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_task_space_path_position_only", std::bind(&OpenManipulatorXController::goal_task_space_path_position_only_callback, this, _1, _2));
   goal_task_space_path_orientation_only_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_task_space_path_orientation_only", std::bind(&OpenManipulatorXController::goal_task_space_path_orientation_only_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_task_space_path_orientation_only", std::bind(&OpenManipulatorXController::goal_task_space_path_orientation_only_callback, this, _1, _2));
   goal_joint_space_path_from_present_server_ = this->create_service<open_manipulator_msgs::srv::SetJointPosition>(
-    "open_manipulator_x/goal_joint_space_path_from_present", std::bind(&OpenManipulatorXController::goal_joint_space_path_from_present_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_joint_space_path_from_present", std::bind(&OpenManipulatorXController::goal_joint_space_path_from_present_callback, this, _1, _2));
   goal_task_space_path_from_present_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_task_space_path_from_present", std::bind(&OpenManipulatorXController::goal_task_space_path_from_present_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_task_space_path_from_present", std::bind(&OpenManipulatorXController::goal_task_space_path_from_present_callback, this, _1, _2));
   goal_task_space_path_from_present_position_only_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_task_space_path_from_present_position_only", std::bind(&OpenManipulatorXController::goal_task_space_path_from_present_position_only_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_task_space_path_from_present_position_only", std::bind(&OpenManipulatorXController::goal_task_space_path_from_present_position_only_callback, this, _1, _2));
   goal_task_space_path_from_present_orientation_only_server_ = this->create_service<open_manipulator_msgs::srv::SetKinematicsPose>(
-    "open_manipulator_x/goal_task_space_path_from_present_orientation_only", std::bind(&OpenManipulatorXController::goal_task_space_path_from_present_orientation_only_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_task_space_path_from_present_orientation_only", std::bind(&OpenManipulatorXController::goal_task_space_path_from_present_orientation_only_callback, this, _1, _2));
   goal_tool_control_server_ = this->create_service<open_manipulator_msgs::srv::SetJointPosition>(
-    "open_manipulator_x/goal_tool_control", std::bind(&OpenManipulatorXController::goal_tool_control_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_tool_control", std::bind(&OpenManipulatorXController::goal_tool_control_callback, this, _1, _2));
   set_actuator_state_server_ = this->create_service<open_manipulator_msgs::srv::SetActuatorState>(
-    "open_manipulator_x/set_actuator_state", std::bind(&OpenManipulatorXController::set_actuator_state_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/set_actuator_state", std::bind(&OpenManipulatorXController::set_actuator_state_callback, this, _1, _2));
   goal_drawing_trajectory_server_ = this->create_service<open_manipulator_msgs::srv::SetDrawingTrajectory>(
-    "open_manipulator_x/goal_drawing_trajectory", std::bind(&OpenManipulatorXController::goal_drawing_trajectory_callback, this, 
-    std::placeholders::_1, std::placeholders::_2));
+    "open_manipulator_x/goal_drawing_trajectory", std::bind(&OpenManipulatorXController::goal_drawing_trajectory_callback, this, _1, _2));
 }
 
 /*****************************************************************************
@@ -175,7 +165,7 @@ void OpenManipulatorXController::init_server()
 *****************************************************************************/
 void OpenManipulatorXController::open_manipulator_x_option_callback(const std_msgs::msg::String::SharedPtr msg)
 {
-  if(msg->data == "print_open_manipulator_x_setting")
+  if (msg->data == "print_open_manipulator_x_setting")
     open_manipulator_x_.printManipulatorSetting();
 }
 
@@ -188,7 +178,7 @@ void OpenManipulatorXController::goal_joint_space_path_callback(
 {
   std::vector <double> target_angle;
 
-  for(int i = 0; i < req->joint_position.joint_name.size(); i ++)
+  for (uint8_t i = 0; i < req->joint_position.joint_name.size(); i ++)
     target_angle.push_back(req->joint_position.position.at(i));
 
   open_manipulator_x_.makeJointTrajectory(target_angle, req->path_time);
@@ -312,7 +302,7 @@ void OpenManipulatorXController::goal_joint_space_path_from_present_callback(
 {
   std::vector <double> target_angle;
 
-  for(int i = 0; i < req->joint_position.joint_name.size(); i ++)
+  for(uint8_t i = 0; i < req->joint_position.joint_name.size(); i ++)
     target_angle.push_back(req->joint_position.position.at(i));
 
   open_manipulator_x_.makeJointTrajectoryFromPresentPosition(target_angle, req->path_time);
@@ -379,7 +369,7 @@ void OpenManipulatorXController::goal_tool_control_callback(
   const std::shared_ptr<open_manipulator_msgs::srv::SetJointPosition::Request> req,
   const std::shared_ptr<open_manipulator_msgs::srv::SetJointPosition::Response> res)
 {
-  for(int i = 0; i < req->joint_position.joint_name.size(); i ++)
+  for (uint8_t i = 0; i < req->joint_position.joint_name.size(); i ++)
     open_manipulator_x_.makeToolTrajectory(req->joint_position.joint_name.at(i), req->joint_position.position.at(i));
 
   res->is_planned = true;
@@ -390,7 +380,7 @@ void OpenManipulatorXController::set_actuator_state_callback(
   const std::shared_ptr<open_manipulator_msgs::srv::SetActuatorState::Request> req,
   const std::shared_ptr<open_manipulator_msgs::srv::SetActuatorState::Response> res)
 {
-  if(req->set_actuator_state == true) // enable actuators
+  if (req->set_actuator_state == true) // enable actuators
   {
     log::println("Wait a second for actuator enable", "GREEN");
     open_manipulator_x_.enableAllActuator();
@@ -411,7 +401,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 {
   try
   {
-    if(req->drawing_trajectory_name == "circle")
+    if (req->drawing_trajectory_name == "circle")
     {
       double draw_circle_arg[3];
       draw_circle_arg[0] = req->param[0];  // radius (m)
@@ -421,7 +411,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 
       open_manipulator_x_.makeCustomTrajectory(CUSTOM_TRAJECTORY_CIRCLE, req->end_effector_name, p_draw_circle_arg, req->path_time);
     }
-    else if(req->drawing_trajectory_name == "line")
+    else if (req->drawing_trajectory_name == "line")
     {
       TaskWaypoint draw_line_arg;
       draw_line_arg.kinematic.position(0) = req->param[0]; // x axis (m)
@@ -431,7 +421,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 
       open_manipulator_x_.makeCustomTrajectory(CUSTOM_TRAJECTORY_LINE, req->end_effector_name, p_draw_line_arg, req->path_time);
     }
-    else if(req->drawing_trajectory_name == "rhombus")
+    else if (req->drawing_trajectory_name == "rhombus")
     {
       double draw_rhombus_arg[3];
       draw_rhombus_arg[0] = req->param[0];  // radius (m)
@@ -441,7 +431,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 
       open_manipulator_x_.makeCustomTrajectory(CUSTOM_TRAJECTORY_RHOMBUS, req->end_effector_name, p_draw_rhombus_arg, req->path_time);
     }
-    else if(req->drawing_trajectory_name == "heart")
+    else if (req->drawing_trajectory_name == "heart")
     {
       double draw_heart_arg[3];
       draw_heart_arg[0] = req->param[0];  // radius (m)
@@ -513,7 +503,7 @@ void OpenManipulatorXController::publish_kinematics_pose()
   auto tools_name = open_manipulator_x_.getManipulator()->getAllToolComponentName();
 
   uint8_t index = 0;
-  for (auto const& tools:tools_name)
+  for (auto const & tools:tools_name)
   {
     KinematicPose pose = open_manipulator_x_.getKinematicPose(tools);
     msg.pose.position.x = pose.position[0];
