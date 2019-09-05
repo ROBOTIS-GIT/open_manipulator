@@ -107,57 +107,57 @@ void OpenManipulatorXTeleopJoystick::set_goal(const char * str)
   const double delta = 0.01;
   double path_time = 0.5;
 
-  if (strcmp(str, "x+") == 0)
+  if (!strcmp(str, "x+"))
   {
     printf("increase(++) x axis in cartesian space\n");
     goalPose.at(0) = delta;
     set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if (strcmp(str, "x-") == 0)
+  else if (!strcmp(str, "x-"))
   {
     printf("decrease(--) x axis in cartesian space\n");
     goalPose.at(0) = -delta;
     set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if (strcmp(str, "y+") == 0)
+  else if (!strcmp(str, "y+"))
   {
     printf("increase(++) y axis in cartesian space\n");
     goalPose.at(1) = delta;
     set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if (strcmp(str, "y-") == 0)
+  else if (!strcmp(str, "y-"))
   {
     printf("decrease(--) y axis in cartesian space\n");
     goalPose.at(1) = -delta;
     set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if (strcmp(str, "z+") == 0)
+  else if (!strcmp(str, "z+"))
   {
     printf("increase(++) z axis in cartesian space\n");
     goalPose.at(2) = delta;
     set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if (strcmp(str, "z-") == 0)
+  else if (!strcmp(str, "z-"))
   {
     printf("decrease(--) z axis in cartesian space\n");
     goalPose.at(2) = -delta;
     set_task_space_path_from_present_position_only(goalPose, path_time);
   }
-  else if (strcmp(str, "gripper open") == 0)
+  else if (!strcmp(str, "gripper open"))
   {
     printf("open gripper\n");
     std::vector<double> joint_angle;
     joint_angle.push_back(0.01);
     set_tool_control(joint_angle);
   }
-  else if (strcmp(str, "gripper close") == 0)
+  else if (!strcmp(str, "gripper close"))
   {
     printf("close gripper\n");
     std::vector<double> joint_angle;
     joint_angle.push_back(-0.01);
     set_tool_control(joint_angle);
   }
-  else if (strcmp(str, "home") == 0)
+  else if (!strcmp(str, "home"))
   {
     printf("home pose\n");
     std::vector<std::string> joint_name;
@@ -169,7 +169,7 @@ void OpenManipulatorXTeleopJoystick::set_goal(const char * str)
     joint_name.push_back("joint4"); joint_angle.push_back(PI*2/9);
     set_joint_space_path(joint_name, joint_angle, path_time);
   }
-  else if (strcmp(str, "init") == 0)
+  else if (!strcmp(str, "init"))
   {
     printf("init pose\n");
     std::vector<std::string> joint_name;

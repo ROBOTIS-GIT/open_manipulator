@@ -401,7 +401,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 {
   try
   {
-    if (req->drawing_trajectory_name == "circle")
+    if (!req->drawing_trajectory_name.compare("circle"))
     {
       double draw_circle_arg[3];
       draw_circle_arg[0] = req->param[0];  // radius (m)
@@ -411,7 +411,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 
       open_manipulator_x_.makeCustomTrajectory(CUSTOM_TRAJECTORY_CIRCLE, req->end_effector_name, p_draw_circle_arg, req->path_time);
     }
-    else if (req->drawing_trajectory_name == "line")
+    else if (!req->drawing_trajectory_name.compare("line"))
     {
       TaskWaypoint draw_line_arg;
       draw_line_arg.kinematic.position(0) = req->param[0]; // x axis (m)
@@ -421,7 +421,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 
       open_manipulator_x_.makeCustomTrajectory(CUSTOM_TRAJECTORY_LINE, req->end_effector_name, p_draw_line_arg, req->path_time);
     }
-    else if (req->drawing_trajectory_name == "rhombus")
+    else if (!req->drawing_trajectory_name.compare("rhombus"))
     {
       double draw_rhombus_arg[3];
       draw_rhombus_arg[0] = req->param[0];  // radius (m)
@@ -431,7 +431,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 
       open_manipulator_x_.makeCustomTrajectory(CUSTOM_TRAJECTORY_RHOMBUS, req->end_effector_name, p_draw_rhombus_arg, req->path_time);
     }
-    else if (req->drawing_trajectory_name == "heart")
+    else if (!req->drawing_trajectory_name.compare("heart"))
     {
       double draw_heart_arg[3];
       draw_heart_arg[0] = req->param[0];  // radius (m)
