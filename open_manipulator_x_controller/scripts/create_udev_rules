@@ -6,7 +6,7 @@ echo "up the OpenManipulator usb connection."
 echo ""
 
 # sudo cp `rospack find open_manipulator_controller`/99-open-manipulator-cdc.rules /etc/udev/rules.d/
-sudo cp /home/robotis/robotis_ws/src/open_manipulator_x/open_manipulator_x_controller/99-open-manipulator-cdc.rules /etc/udev/rules.d/
+sudo cp /home/robotis/robotis_ws/src/open_manipulator/open_manipulator_x_controller/99-open-manipulator-cdc.rules /etc/udev/rules.d/
 
 echo ""
 echo "Reload rules"
