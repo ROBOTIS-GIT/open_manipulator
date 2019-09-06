@@ -72,16 +72,13 @@ void OpenManipulatorXController::init_parameters()
   // Declare parameters that may be set on this node
   this->declare_parameter(
     "use_platform",
-    rclcpp::ParameterValue(false),
-    rcl_interfaces::msg::ParameterDescriptor());
+    rclcpp::ParameterValue(false));
   this->declare_parameter(
     "control_period",
-    rclcpp::ParameterValue(0.010),
-    rcl_interfaces::msg::ParameterDescriptor());
+    rclcpp::ParameterValue(0.010));
   this->declare_parameter(
     "use_moveit",
-    rclcpp::ParameterValue(false),
-    rcl_interfaces::msg::ParameterDescriptor());
+    rclcpp::ParameterValue(false));
 
   // Get parameter from yaml
   this->get_parameter("use_platform", use_platform_);
