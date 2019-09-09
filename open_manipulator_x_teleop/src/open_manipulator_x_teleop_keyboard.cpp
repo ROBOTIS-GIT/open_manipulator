@@ -35,10 +35,12 @@ OpenManipulatorXTeleopKeyboard::OpenManipulatorXTeleopKeyboard()
   /********************************************************************************
   ** Initialise Subscribers
   ********************************************************************************/
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+
   joint_states_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
-    "open_manipulator_x/joint_states", 10, std::bind(&OpenManipulatorXTeleopKeyboard::joint_states_callback, this, _1));
+    "open_manipulator_x/joint_states", qos, std::bind(&OpenManipulatorXTeleopKeyboard::joint_states_callback, this, _1));
   kinematics_pose_sub_ = this->create_subscription<open_manipulator_msgs::msg::KinematicsPose>(
-    "open_manipulator_x/kinematics_pose", 10, std::bind(&OpenManipulatorXTeleopKeyboard::kinematics_pose_callback, this, _1));
+    "open_manipulator_x/kinematics_pose", qos, std::bind(&OpenManipulatorXTeleopKeyboard::kinematics_pose_callback, this, _1));
 
   /********************************************************************************
   ** Initialise Clients

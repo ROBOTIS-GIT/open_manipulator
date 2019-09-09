@@ -82,15 +82,17 @@ void OpenManipulatorXController::init_parameters()
 
 void OpenManipulatorXController::init_publisher()
 {
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+
   // Publish States
-  open_manipulator_x_states_pub_ = this->create_publisher<open_manipulator_msgs::msg::OpenManipulatorState>("open_manipulator_x/states", 10);
+  open_manipulator_x_states_pub_ = this->create_publisher<open_manipulator_msgs::msg::OpenManipulatorState>("open_manipulator_x/states", qos);
 
   // Publish Joint States
   auto tools_name = open_manipulator_x_.getManipulator()->getAllToolComponentName();
 
   if (use_platform_ == true) // for actual robot
   {
-    open_manipulator_x_joint_states_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("open_manipulator_x/joint_states", 10);
+    open_manipulator_x_joint_states_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("open_manipulator_x/joint_states", qos);
   }
   else // for virtual robot on Gazebo
   {
@@ -100,7 +102,7 @@ void OpenManipulatorXController::init_publisher()
 
     for (auto const & name:joints_name)
     {
-      auto pb = this->create_publisher<std_msgs::msg::Float64>("open_manipulator_x/" + name + "_position/command", 10);
+      auto pb = this->create_publisher<std_msgs::msg::Float64>("open_manipulator_x/" + name + "_position/command", qos);
       gazebo_goal_joint_position_pub_.push_back(pb);
     }
   }
@@ -108,15 +110,17 @@ void OpenManipulatorXController::init_publisher()
   // Publish Kinematics Pose
   for (auto const & name:tools_name)
   {
-    auto pb = this->create_publisher<open_manipulator_msgs::msg::KinematicsPose>("open_manipulator_x/kinematics_pose", 10);
+    auto pb = this->create_publisher<open_manipulator_msgs::msg::KinematicsPose>("open_manipulator_x/kinematics_pose", qos);
     open_manipulator_x_kinematics_pose_pub_.push_back(pb);
   }
 }
 
 void OpenManipulatorXController::init_subscriber()
 {
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+
   open_manipulator_x_option_sub_ = this->create_subscription<std_msgs::msg::String>(
-    "open_manipulator_x/option", 10, std::bind(&OpenManipulatorXController::open_manipulator_x_option_callback, this, _1));
+    "open_manipulator_x/option", qos, std::bind(&OpenManipulatorXController::open_manipulator_x_option_callback, this, _1));
 }
 
 void OpenManipulatorXController::init_server()
