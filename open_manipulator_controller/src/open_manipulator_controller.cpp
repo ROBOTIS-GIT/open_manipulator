@@ -248,9 +248,10 @@ bool OpenManipulatorController::goalJointSpacePathCallback(open_manipulator_msgs
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  open_manipulator_.makeJointTrajectory(target_angle, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeJointTrajectory(target_angle, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -269,9 +270,10 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback(open_
 
   target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
 
-  open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose, req.path_time);
-  
-  res.is_planned = true;
+  if(!open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -283,9 +285,10 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback(o
   target_pose.position[1] = req.kinematics_pose.pose.position.y;
   target_pose.position[2] = req.kinematics_pose.pose.position.z;
 
-  open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.position, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.position, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -301,9 +304,10 @@ bool OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallbac
 
   target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
 
-  open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.orientation, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeJointTrajectory(req.end_effector_name, target_pose.orientation, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -321,9 +325,10 @@ bool OpenManipulatorController::goalTaskSpacePathCallback(open_manipulator_msgs:
                        req.kinematics_pose.pose.orientation.z);
 
   target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
-  open_manipulator_.makeTaskTrajectory(req.end_effector_name, target_pose, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeTaskTrajectory(req.end_effector_name, target_pose, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -335,9 +340,10 @@ bool OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback(open_manip
   position[1] = req.kinematics_pose.pose.position.y;
   position[2] = req.kinematics_pose.pose.position.z;
 
-  open_manipulator_.makeTaskTrajectory(req.end_effector_name, position, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeTaskTrajectory(req.end_effector_name, position, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -351,9 +357,10 @@ bool OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback(open_ma
 
   Eigen::Matrix3d orientation = math::convertQuaternionToRotationMatrix(q);
 
-  open_manipulator_.makeTaskTrajectory(req.end_effector_name, orientation, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeTaskTrajectory(req.end_effector_name, orientation, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -365,9 +372,10 @@ bool OpenManipulatorController::goalJointSpacePathFromPresentCallback(open_manip
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
     target_angle.push_back(req.joint_position.position.at(i));
 
-  open_manipulator_.makeJointTrajectoryFromPresentPosition(target_angle, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeJointTrajectoryFromPresentPosition(target_angle, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -386,9 +394,10 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentCallback(open_manipu
 
   target_pose.orientation = math::convertQuaternionToRotationMatrix(q);
 
-  open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, target_pose, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, target_pose, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -400,9 +409,10 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback
   position[1] = req.kinematics_pose.pose.position.y;
   position[2] = req.kinematics_pose.pose.position.z;
 
-  open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, position, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, position, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -416,9 +426,10 @@ bool OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallb
 
   Eigen::Matrix3d orientation = math::convertQuaternionToRotationMatrix(q);
 
-  open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, orientation, req.path_time);
-
-  res.is_planned = true;
+  if(!open_manipulator_.makeTaskTrajectoryFromPresentPose(req.planning_group, orientation, req.path_time))
+    res.is_planned = false;
+  else
+    res.is_planned = true;
   return true;
 }
 
@@ -426,9 +437,12 @@ bool OpenManipulatorController::goalToolControlCallback(open_manipulator_msgs::S
                                                         open_manipulator_msgs::SetJointPosition::Response &res)
 {
   for(int i = 0; i < req.joint_position.joint_name.size(); i ++)
-    open_manipulator_.makeToolTrajectory(req.joint_position.joint_name.at(i), req.joint_position.position.at(i));
-
-  res.is_planned = true;
+  {
+    if(!open_manipulator_.makeToolTrajectory(req.joint_position.joint_name.at(i), req.joint_position.position.at(i)))
+      res.is_planned = false;
+    else
+      res.is_planned = true;
+  }
   return true;
 }
 
@@ -469,7 +483,10 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
       draw_circle_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_circle_arg = &draw_circle_arg;
 
-      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time);
+      if(!open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_CIRCLE, req.end_effector_name, p_draw_circle_arg, req.path_time))
+        res.is_planned = false;
+      else
+        res.is_planned = true;
     }
     else if(req.drawing_trajectory_name == "line")
     {
@@ -479,7 +496,10 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
       draw_line_arg.kinematic.position(2) = req.param[2]; // z axis (m)
       void *p_draw_line_arg = &draw_line_arg;
       
-      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_LINE, req.end_effector_name, p_draw_line_arg, req.path_time);
+      if(!open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_LINE, req.end_effector_name, p_draw_line_arg, req.path_time))
+        res.is_planned = false;
+      else
+        res.is_planned = true;
     }
     else if(req.drawing_trajectory_name == "rhombus")
     {
@@ -489,7 +509,10 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
       draw_rhombus_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_rhombus_arg = &draw_rhombus_arg;
 
-      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_RHOMBUS, req.end_effector_name, p_draw_rhombus_arg, req.path_time);
+      if(!open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_RHOMBUS, req.end_effector_name, p_draw_rhombus_arg, req.path_time))
+        res.is_planned = false;
+      else
+        res.is_planned = true;
     }
     else if(req.drawing_trajectory_name == "heart")
     {
@@ -499,9 +522,11 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
       draw_heart_arg[2] = req.param[2];  // start angle position (rad)
       void* p_draw_heart_arg = &draw_heart_arg;
 
-      open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_HEART, req.end_effector_name, p_draw_heart_arg, req.path_time);
+      if(!open_manipulator_.makeCustomTrajectory(CUSTOM_TRAJECTORY_HEART, req.end_effector_name, p_draw_heart_arg, req.path_time))
+        res.is_planned = false;
+      else
+        res.is_planned = true;
     }
-    res.is_planned = true;
     return true;
   }
   catch ( ros::Exception &e )

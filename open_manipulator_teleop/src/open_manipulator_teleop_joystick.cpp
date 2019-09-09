@@ -20,11 +20,10 @@
 
 OpenManipulatorTeleop::OpenManipulatorTeleop()
     :node_handle_(""),
-     priv_node_handle_("~")
+     priv_node_handle_("~"),
+     present_joint_angle_(NUM_OF_JOINT, 0),
+     present_kinematic_position_(3, 0)
 {
-  present_joint_angle_.resize(NUM_OF_JOINT);
-  present_kinematic_position_.resize(3);
-
   initClient();
   initSubscriber();
 
@@ -70,12 +69,9 @@ void OpenManipulatorTeleop::jointStatesCallback(const sensor_msgs::JointState::C
 
 void OpenManipulatorTeleop::kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
 {
-  std::vector<double> temp_position;
-  temp_position.push_back(msg->pose.position.x);
-  temp_position.push_back(msg->pose.position.y);
-  temp_position.push_back(msg->pose.position.z);
-  present_kinematic_position_ = temp_position;
+  present_kinematic_position_ = {msg->pose.position.x, msg->pose.position.y, msg->pose.position.z};
 }
+
 void OpenManipulatorTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr &msg)
 {
   if(msg->axes.at(1) >= 0.9) setGoal("x+");
