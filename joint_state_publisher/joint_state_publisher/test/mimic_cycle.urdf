@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<urdf>
+  <robot name="mimic_cycle_robot">
+    <link name="link1"/>
+    <link name="link2"/>
+    <link name="link3"/>
+    <link name="link4"/>
+
+    <joint name="j12" type="revolute">
+      <parent link="link1"/>
+      <child link="link2"/>
+      <mimic joint="j34"/>
+      <limit effort="10" velocity="10" lower="-1" upper="1"/>
+    </joint>
+    <joint name="j23" type="revolute">
+      <parent link="link2"/>
+      <child link="link3"/>
+      <mimic joint="j12"/>
+      <limit effort="10" velocity="10" lower="-1" upper="1"/>
+    </joint>
+    <joint name="j34" type="revolute">
+      <parent link="link3"/>
+      <child link="link4"/>
+      <mimic joint="j23"/>
+      <limit effort="10" velocity="10" lower="-1" upper="1"/>
+    </joint>
+  </robot>
+</urdf>

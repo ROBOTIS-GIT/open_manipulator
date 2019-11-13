@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<urdf>
+  <robot name="multi_joint_robot">
+    <link name="link1"/>
+    <link name="link2"/>
+    <link name="link3"/>
+
+    <joint name="j12" type="revolute">
+      <parent link="link1"/>
+      <child link="link2"/>
+      <limit effort="10" velocity="10" lower="-1" upper="1"/>
+    </joint>
+    <joint name="j23" type="revolute">
+      <parent link="link2"/>
+      <child link="link3"/>
+      <limit effort="10" velocity="10" lower="-1" upper="1"/>
+    </joint>
+  </robot>
+</urdf>

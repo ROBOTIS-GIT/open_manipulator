@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+<urdf>
+  <robot name="64_joint_robot">
+    <link name="link_0"/>
+    <link name="link_1"/>
+    <link name="link_2"/>
+    <link name="link_3"/>
+    <link name="link_4"/>
+    <link name="link_5"/>
+    <link name="link_6"/>
+    <link name="link_7"/>
+    <link name="link_8"/>
+    <link name="link_9"/>
+    <link name="link_10"/>
+    <link name="link_11"/>
+    <link name="link_12"/>
+    <link name="link_13"/>
+    <link name="link_14"/>
+    <link name="link_15"/>
+    <link name="link_16"/>
+    <link name="link_17"/>
+    <link name="link_18"/>
+    <link name="link_19"/>
+    <link name="link_20"/>
+    <link name="link_21"/>
+    <link name="link_22"/>
+    <link name="link_23"/>
+    <link name="link_24"/>
+    <link name="link_25"/>
+    <link name="link_26"/>
+    <link name="link_27"/>
+    <link name="link_28"/>
+    <link name="link_29"/>
+    <link name="link_30"/>
+    <link name="link_31"/>
+    <link name="link_32"/>
+    <link name="link_33"/>
+    <link name="link_34"/>
+    <link name="link_35"/>
+    <link name="link_36"/>
+    <link name="link_37"/>
+    <link name="link_38"/>
+    <link name="link_39"/>
+    <link name="link_40"/>
+    <link name="link_41"/>
+    <link name="link_42"/>
+    <link name="link_43"/>
+    <link name="link_44"/>
+    <link name="link_45"/>
+    <link name="link_46"/>
+    <link name="link_47"/>
+    <link name="link_48"/>
+    <link name="link_49"/>
+    <link name="link_50"/>
+    <link name="link_51"/>
+    <link name="link_52"/>
+    <link name="link_53"/>
+    <link name="link_54"/>
+    <link name="link_55"/>
+    <link name="link_56"/>
+    <link name="link_57"/>
+    <link name="link_58"/>
+    <link name="link_59"/>
+    <link name="link_60"/>
+    <link name="link_61"/>
+    <link name="link_62"/>
+    <link name="link_63"/>
+    <link name="link_64"/>
+
+    <joint name="j_0_1" type="continuous">
+      <parent link="link_0"/>
+      <child link="link_1"/>
+    </joint>
+    <joint name="j_1_2" type="continuous">
+      <parent link="link_1"/>
+      <child link="link_2"/>
+    </joint>
+    <joint name="j_2_3" type="continuous">
+      <parent link="link_2"/>
+      <child link="link_3"/>
+    </joint>
+    <joint name="j_3_4" type="continuous">
+      <parent link="link_3"/>
+      <child link="link_4"/>
+    </joint>
+    <joint name="j_4_5" type="continuous">
+      <parent link="link_4"/>
+      <child link="link_5"/>
+    </joint>
+    <joint name="j_5_6" type="continuous">
+      <parent link="link_5"/>
+      <child link="link_6"/>
+    </joint>
+    <joint name="j_6_7" type="continuous">
+      <parent link="link_6"/>
+      <child link="link_7"/>
+    </joint>
+    <joint name="j_7_8" type="continuous">
+      <parent link="link_7"/>
+      <child link="link_8"/>
+    </joint>
+    <joint name="j_8_9" type="continuous">
+      <parent link="link_8"/>
+      <child link="link_9"/>
+    </joint>
+    <joint name="j_9_10" type="continuous">
+      <parent link="link_9"/>
+      <child link="link_10"/>
+    </joint>
+    <joint name="j_10_11" type="continuous">
+      <parent link="link_10"/>
+      <child link="link_11"/>
+    </joint>
+    <joint name="j_11_12" type="continuous">
+      <parent link="link_11"/>
+      <child link="link_12"/>
+    </joint>
+    <joint name="j_12_13" type="continuous">
+      <parent link="link_12"/>
+      <child link="link_13"/>
+    </joint>
+    <joint name="j_13_14" type="continuous">
+      <parent link="link_13"/>
+      <child link="link_14"/>
+    </joint>
+    <joint name="j_14_15" type="continuous">
+      <parent link="link_14"/>
+      <child link="link_15"/>
+    </joint>
+    <joint name="j_15_16" type="continuous">
+      <parent link="link_15"/>
+      <child link="link_16"/>
+    </joint>
+    <joint name="j_16_17" type="continuous">
+      <parent link="link_16"/>
+      <child link="link_17"/>
+    </joint>
+    <joint name="j_17_18" type="continuous">
+      <parent link="link_17"/>
+      <child link="link_18"/>
+    </joint>
+    <joint name="j_18_19" type="continuous">
+      <parent link="link_18"/>
+      <child link="link_19"/>
+    </joint>
+    <joint name="j_19_20" type="continuous">
+      <parent link="link_19"/>
+      <child link="link_20"/>
+    </joint>
+    <joint name="j_20_21" type="continuous">
+      <parent link="link_20"/>
+      <child link="link_21"/>
+    </joint>
+    <joint name="j_21_22" type="continuous">
+      <parent link="link_21"/>
+      <child link="link_22"/>
+    </joint>
+    <joint name="j_22_23" type="continuous">
+      <parent link="link_22"/>
+      <child link="link_23"/>
+    </joint>
+    <joint name="j_23_24" type="continuous">
+      <parent link="link_23"/>
+      <child link="link_24"/>
+    </joint>
+    <joint name="j_24_25" type="continuous">
+      <parent link="link_24"/>
+      <child link="link_25"/>
+    </joint>
+    <joint name="j_25_26" type="continuous">
+      <parent link="link_25"/>
+      <child link="link_26"/>
+    </joint>
+    <joint name="j_26_27" type="continuous">
+      <parent link="link_26"/>
+      <child link="link_27"/>
+    </joint>
+    <joint name="j_27_28" type="continuous">
+      <parent link="link_27"/>
+      <child link="link_28"/>
+    </joint>
+    <joint name="j_28_29" type="continuous">
+      <parent link="link_28"/>
+      <child link="link_29"/>
+    </joint>
+    <joint name="j_29_30" type="continuous">
+      <parent link="link_29"/>
+      <child link="link_30"/>
+    </joint>
+    <joint name="j_30_31" type="continuous">
+      <parent link="link_30"/>
+      <child link="link_31"/>
+    </joint>
+    <joint name="j_31_32" type="continuous">
+      <parent link="link_31"/>
+      <child link="link_32"/>
+    </joint>
+    <joint name="j_32_33" type="continuous">
+      <parent link="link_32"/>
+      <child link="link_33"/>
+    </joint>
+    <joint name="j_33_34" type="continuous">
+      <parent link="link_33"/>
+      <child link="link_34"/>
+    </joint>
+    <joint name="j_34_35" type="continuous">
+      <parent link="link_34"/>
+      <child link="link_35"/>
+    </joint>
+    <joint name="j_35_36" type="continuous">
+      <parent link="link_35"/>
+      <child link="link_36"/>
+    </joint>
+    <joint name="j_36_37" type="continuous">
+      <parent link="link_36"/>
+      <child link="link_37"/>
+    </joint>
+    <joint name="j_37_38" type="continuous">
+      <parent link="link_37"/>
+      <child link="link_38"/>
+    </joint>
+    <joint name="j_38_39" type="continuous">
+      <parent link="link_38"/>
+      <child link="link_39"/>
+    </joint>
+    <joint name="j_39_40" type="continuous">
+      <parent link="link_39"/>
+      <child link="link_40"/>
+    </joint>
+    <joint name="j_40_41" type="continuous">
+      <parent link="link_40"/>
+      <child link="link_41"/>
+    </joint>
+    <joint name="j_41_42" type="continuous">
+      <parent link="link_41"/>
+      <child link="link_42"/>
+    </joint>
+    <joint name="j_42_43" type="continuous">
+      <parent link="link_42"/>
+      <child link="link_43"/>
+    </joint>
+    <joint name="j_43_44" type="continuous">
+      <parent link="link_43"/>
+      <child link="link_44"/>
+    </joint>
+    <joint name="j_44_45" type="continuous">
+      <parent link="link_44"/>
+      <child link="link_45"/>
+    </joint>
+    <joint name="j_45_46" type="continuous">
+      <parent link="link_45"/>
+      <child link="link_46"/>
+    </joint>
+    <joint name="j_46_47" type="continuous">
+      <parent link="link_46"/>
+      <child link="link_47"/>
+    </joint>
+    <joint name="j_47_48" type="continuous">
+      <parent link="link_47"/>
+      <child link="link_48"/>
+    </joint>
+    <joint name="j_48_49" type="continuous">
+      <parent link="link_48"/>
+      <child link="link_49"/>
+    </joint>
+    <joint name="j_49_50" type="continuous">
+      <parent link="link_49"/>
+      <child link="link_50"/>
+    </joint>
+    <joint name="j_50_51" type="continuous">
+      <parent link="link_50"/>
+      <child link="link_51"/>
+    </joint>
+    <joint name="j_51_52" type="continuous">
+      <parent link="link_51"/>
+      <child link="link_52"/>
+    </joint>
+    <joint name="j_52_53" type="continuous">
+      <parent link="link_52"/>
+      <child link="link_53"/>
+    </joint>
+    <joint name="j_53_54" type="continuous">
+      <parent link="link_53"/>
+      <child link="link_54"/>
+    </joint>
+    <joint name="j_54_55" type="continuous">
+      <parent link="link_54"/>
+      <child link="link_55"/>
+    </joint>
+    <joint name="j_55_56" type="continuous">
+      <parent link="link_55"/>
+      <child link="link_56"/>
+    </joint>
+    <joint name="j_56_57" type="continuous">
+      <parent link="link_56"/>
+      <child link="link_57"/>
+    </joint>
+    <joint name="j_57_58" type="continuous">
+      <parent link="link_57"/>
+      <child link="link_58"/>
+    </joint>
+    <joint name="j_58_59" type="continuous">
+      <parent link="link_58"/>
+      <child link="link_59"/>
+    </joint>
+    <joint name="j_59_60" type="continuous">
+      <parent link="link_59"/>
+      <child link="link_60"/>
+    </joint>
+    <joint name="j_60_61" type="continuous">
+      <parent link="link_60"/>
+      <child link="link_61"/>
+    </joint>
+    <joint name="j_61_62" type="continuous">
+      <parent link="link_61"/>
+      <child link="link_62"/>
+    </joint>
+    <joint name="j_62_63" type="continuous">
+      <parent link="link_62"/>
+      <child link="link_63"/>
+    </joint>
+    <joint name="j_63_64" type="continuous">
+      <parent link="link_63"/>
+      <child link="link_64"/>
+    </joint>
+  </robot>
+</urdf>
+

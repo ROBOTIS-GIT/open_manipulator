@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<urdf>
+  <robot name="some_robot">
+    <link name="link1"/>
+    <link name="link2"/>
+    <link name="link3"/>
+  </robot>
+</urdf>

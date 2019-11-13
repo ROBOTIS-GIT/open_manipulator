@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="robot_description" textfile="$(find joint_state_publisher)/test/multi_joint_robot.dae"/>
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="multi_joint_state_publisher">
+    <param name="rate" value="10"/>
+  </node>
+  <test pkg="rostest" type="hztest" name="hztest" test-name="hztest_multi_joints_collada">
+    <param name="topic" value="joint_states"/>
+    <param name="hz" value="10"/>
+    <param name="hzerror" value="0.1"/>
+    <param name="test_duration" value="10"/>
+    <param name="wait_time" value="10"/>
+  </test>
+
+</launch>
