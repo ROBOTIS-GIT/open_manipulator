@@ -1,4 +1,6 @@
-# Copyright 2019 Open Source Robotics Foundation, Inc.
+#!/usr/bin/env python3
+#
+# Copyright 2019 ROBOTIS CO., LTD.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,15 +13,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#
 # Author: Ryan Shim
-
 
 import os
 
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+
 
 def generate_launch_description():
     return LaunchDescription([
@@ -32,6 +34,6 @@ def generate_launch_description():
         Node(
             package='open_manipulator_x_teleop',
             node_executable='open_manipulator_x_teleop_joystick',
-            # node_name='teleop_joystick',
+            node_name='open_manipulator_x_teleop_joystick',
             output='screen')
     ])

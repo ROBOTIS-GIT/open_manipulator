@@ -2,28 +2,30 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_x_controller</name>
-  <version>2.0.1</version>
+  <version>2.2.0</version>
   <description>
-    OpenManipulator-X controller package
+    ROS 2 package for open_manipulator_x_controller.
   </description>
+  <author email="thlim@robotis.com">Darby Lim</author>
+  <author email="hjkim@robotis.com">Hye-Jong KIM</author>
   <author email="jhshim@robotis.com">Ryan Shim</author>
+  <author email="yhna@robotis.com">Yong-Ho Na</author>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
-  <maintainer email="hjkim@robotis.com">Hye-Jong KIM</maintainer>
   <license>Apache 2.0</license>
   <url type="website">http://wiki.ros.org/open_manipulator_controller</url>
   <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
-  <depend>ament_cmake</depend>
-  <depend>rclcpp</depend>
-  <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>geometry_msgs</depend>
-  <depend>trajectory_msgs</depend>
-  <depend>open_manipulator_msgs</depend>
-  <depend>robotis_manipulator</depend>
-  <depend>open_manipulator_x_libs</depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>cmake_modules</depend>
+  <depend>geometry_msgs</depend>
+  <depend>open_manipulator_msgs</depend>
+  <depend>open_manipulator_x_libs</depend>
+  <depend>rclcpp</depend>
+  <depend>robotis_manipulator</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>trajectory_msgs</depend>
   <!-- <depend>moveit_msgs</depend>
   <depend>moveit_core</depend>
   <depend>moveit_ros_planning</depend>

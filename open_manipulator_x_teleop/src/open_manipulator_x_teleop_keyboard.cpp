@@ -14,12 +14,13 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Ryan Shim */
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
 #include "open_manipulator_x_teleop/open_manipulator_x_teleop_keyboard.hpp"
 
 using namespace std::placeholders;
 using namespace std::chrono_literals;
+
 
 namespace open_manipulator_x_teleop_keyboard
 {
@@ -27,7 +28,7 @@ OpenManipulatorXTeleopKeyboard::OpenManipulatorXTeleopKeyboard()
 : Node("open_manipulator_x_teleop_keyboard")
 {
   /********************************************************************************
-  ** Initialise joint angle and kinematic position size 
+  ** Initialise variables
   ********************************************************************************/
   present_joint_angle_.resize(NUM_OF_JOINT);
   present_kinematic_position_.resize(3);
@@ -45,16 +46,20 @@ OpenManipulatorXTeleopKeyboard::OpenManipulatorXTeleopKeyboard()
   /********************************************************************************
   ** Initialise Clients
   ********************************************************************************/
-  goal_joint_space_path_client_ = this->create_client<open_manipulator_msgs::srv::SetJointPosition>("open_manipulator_x/goal_joint_space_path");
-  goal_tool_control_client_ = this->create_client<open_manipulator_msgs::srv::SetJointPosition>("open_manipulator_x/goal_tool_control");
-  goal_task_space_path_from_present_position_only_client_ = this->create_client<open_manipulator_msgs::srv::SetKinematicsPose>("open_manipulator_x/goal_task_space_path_from_present_position_only");
-  goal_joint_space_path_from_present_client_ = this->create_client<open_manipulator_msgs::srv::SetJointPosition>("open_manipulator_x/goal_joint_space_path_from_present");
+  goal_joint_space_path_client_ = this->create_client<open_manipulator_msgs::srv::SetJointPosition>(
+    "open_manipulator_x/goal_joint_space_path");
+  goal_tool_control_client_ = this->create_client<open_manipulator_msgs::srv::SetJointPosition>(
+    "open_manipulator_x/goal_tool_control");
+  goal_task_space_path_from_present_position_only_client_ = this->create_client<open_manipulator_msgs::srv::SetKinematicsPose>(
+    "open_manipulator_x/goal_task_space_path_from_present_position_only");
+  goal_joint_space_path_from_present_client_ = this->create_client<open_manipulator_msgs::srv::SetJointPosition>(
+    "open_manipulator_x/goal_joint_space_path_from_present");
 
   /********************************************************************************
   ** Display in terminal
   ********************************************************************************/
   this->disable_waiting_for_enter();
-  timer_ = this->create_wall_timer(10ms, std::bind(&OpenManipulatorXTeleopKeyboard::display_callback, this));
+  update_timer_ = this->create_wall_timer(10ms, std::bind(&OpenManipulatorXTeleopKeyboard::update_callback, this));
 
   RCLCPP_INFO(this->get_logger(), "OpenManipulator-X Teleop Keyboard Initialised");
 }
@@ -344,10 +349,11 @@ bool OpenManipulatorXTeleopKeyboard::set_joint_space_path_from_present(std::vect
 ********************************************************************************/
 void OpenManipulatorXTeleopKeyboard::print_text()
 {
+  system("clear");
   printf("\n");
-  printf("---------------------------\n");
+  printf("-----------------------------\n");
   printf("Control Your OpenManipulator!\n");
-  printf("---------------------------\n");
+  printf("-----------------------------\n");
   printf("w : increase x axis in task space\n");
   printf("s : decrease x axis in task space\n");
   printf("a : increase y axis in task space\n");
@@ -411,7 +417,7 @@ void OpenManipulatorXTeleopKeyboard::disable_waiting_for_enter()
   tcsetattr(0, TCSANOW, &newt);     /* Apply settings */
 }
 
-void OpenManipulatorXTeleopKeyboard::display_callback()  
+void OpenManipulatorXTeleopKeyboard::update_callback()  
 {
   this->print_text();  
   

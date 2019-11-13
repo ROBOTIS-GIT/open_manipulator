@@ -14,12 +14,13 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Ryan Shim */
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
 #include "open_manipulator_x_controller/open_manipulator_x_controller.hpp"
 
 using namespace std::placeholders;
 using namespace std::chrono_literals;
+
 
 namespace open_manipulator_x_controller
 {
@@ -27,20 +28,23 @@ OpenManipulatorXController::OpenManipulatorXController(std::string usb_port, std
 : Node("open_manipulator_x_controller")
 {
   /************************************************************
-  ** Initialise ROS Parameters
+  ** Initialise ROS parameters
   ************************************************************/
   init_parameters();
 
   // Only if You Have MoveIt! Dependencies
   // open_manipulator_x_controller_moveit_.init_parameters();
 
+  /************************************************************
+  ** Initialise variables
+  ************************************************************/
   open_manipulator_x_.init_open_manipulator_x(use_platform_, usb_port, baud_rate, control_period_);
 
   if (use_platform_ == true) RCLCPP_INFO(this->get_logger(), "Succeeded to Initialise OpenManipulator-X Controller");
   else if (use_platform_ == false) RCLCPP_INFO(this->get_logger(), "Ready to Simulate OpenManipulator-X on Gazebo");
 
   /************************************************************
-  ** Initialise ROS Publishers, Subscribers and Servers
+  ** Initialise ROS publishers, subscribers and servers
   ************************************************************/
   init_publisher();
   init_subscriber();
@@ -52,7 +56,7 @@ OpenManipulatorXController::OpenManipulatorXController(std::string usb_port, std
   // open_manipulator_x_controller_moveit_.init_server();
 
   /************************************************************
-  ** Start Process and Publish Threads
+  ** Initialise ROS timers
   ************************************************************/
   process_timer_ = this->create_wall_timer(10ms, std::bind(&OpenManipulatorXController::process_callback, this));
   publish_timer_ = this->create_wall_timer(10ms, std::bind(&OpenManipulatorXController::publish_callback, this));  
@@ -447,7 +451,7 @@ void OpenManipulatorXController::goal_drawing_trajectory_callback(
 }
 
 /********************************************************************************
-** Functions related to processCallback 
+** Callback function for process timer
 ********************************************************************************/
 void OpenManipulatorXController::process_callback()   
 {
@@ -465,7 +469,7 @@ void OpenManipulatorXController::process(double time)
 }
 
 /********************************************************************************
-** Functions related to publishCallback 
+** Callback function for publish timer
 ********************************************************************************/
 void OpenManipulatorXController::publish_callback()   
 {
@@ -574,7 +578,6 @@ int main(int argc, char **argv)
 
   std::string usb_port = "/dev/ttyUSB0";
   std::string baud_rate = "1000000";
-  
   if (argc == 3)
   {
     usb_port = argv[1];

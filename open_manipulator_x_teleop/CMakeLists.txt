@@ -21,10 +21,6 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 ################################################################################
-# Declare ROS messages, services and actions
-################################################################################
-
-################################################################################
 # Build
 ################################################################################
 include_directories(
@@ -56,16 +52,6 @@ install(TARGETS ${JOYSTICK_EXEC_NAME} ${KEYBOARD_EXEC_NAME}
 install(DIRECTORY launch 
   DESTINATION share/${PROJECT_NAME}
 )
-
-################################################################################
-# Test
-################################################################################
-if(BUILD_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-  find_package(ament_cmake_pytest REQUIRED)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
 
 ################################################################################
 # Macro for ament package

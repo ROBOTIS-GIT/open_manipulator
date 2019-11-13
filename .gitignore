@@ -1,6 +1,3 @@
-# Prerequisites
-*.d
-
 # Compiled Object files
 *.slo
 *.lo
@@ -18,7 +15,6 @@
 
 # Fortran module files
 *.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -30,3 +26,35 @@
 *.exe
 *.out
 *.app
+
+# user setting
+*.*~
+*.bak
+.svn
+.tags
+.tags_sorted_by_file
+*.cfgc
+*.txt.user*
+*-build/
+cpp/
+bin/
+build/
+msg_gen/
+srv_gen/
+docs/
+lib/
+cmake_install.cmake
+Makefile
+CMakeFiles/
+assets/
+gen/
+build.xml
+lint.xml
+local.properties
+proguard-project.txt
+build-*/
+*.autosave
+*.pyc
+*.dat
+*.txt.user
+*.gch

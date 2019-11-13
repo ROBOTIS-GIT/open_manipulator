@@ -14,11 +14,12 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Ryan Shim */
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
 #include "open_manipulator_x_teleop/open_manipulator_x_teleop_joystick.hpp"
 
 using namespace std::placeholders;
+
 
 namespace open_manipulator_x_teleop_joystick
 {
@@ -26,7 +27,7 @@ OpenManipulatorXTeleopJoystick::OpenManipulatorXTeleopJoystick()
 : Node("open_manipulator_x_teleop_joystick")
 {
   /*****************************************************************************
-  ** Initialise joint angle and kinematic position size 
+  ** Initialise variables
   *****************************************************************************/
   present_joint_angle_.resize(NUM_OF_JOINT);
   present_kinematic_position_.resize(3);
@@ -195,8 +196,8 @@ bool OpenManipulatorXTeleopJoystick::set_joint_space_path(std::vector<std::strin
   using ServiceResponseFuture = rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedFuture;
   auto response_received_callback = [this](ServiceResponseFuture future) 
   {
-      auto result = future.get();
-      return result->is_planned;
+    auto result = future.get();
+    return result->is_planned;
   };
   auto future_result = goal_joint_space_path_client_->async_send_request(request, response_received_callback);
 

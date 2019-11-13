@@ -14,20 +14,23 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Ryan Shim */
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
 #ifndef OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP_
 #define OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP_
 
-#include <rclcpp/rclcpp.hpp>
 #include <termios.h>
-#include <sensor_msgs/msg/joy.hpp>
+
+#include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
+#include <sensor_msgs/msg/joy.hpp>
+
 #include "open_manipulator_msgs/srv/set_joint_position.hpp"
 #include "open_manipulator_msgs/srv/set_kinematics_pose.hpp"
 
 #define PI 3.14159265359
 #define NUM_OF_JOINT 4
+
 
 namespace open_manipulator_x_teleop_keyboard
 {
@@ -39,10 +42,16 @@ class OpenManipulatorXTeleopKeyboard : public rclcpp::Node
 
  private:
   /*****************************************************************************
-  ** Position in Joint Space and Task Space
+  ** Variables
   *****************************************************************************/
   std::vector<double> present_joint_angle_;
   std::vector<double> present_kinematic_position_;
+
+  /*****************************************************************************
+  ** ROS Timer and callback functions
+  *****************************************************************************/
+  rclcpp::TimerBase::SharedPtr update_timer_;
+  void update_callback(); 
 
   /*****************************************************************************
   ** ROS Subscribers, Callback Functions and Relevant Functions
@@ -76,8 +85,6 @@ class OpenManipulatorXTeleopKeyboard : public rclcpp::Node
   struct termios oldt_;
   void restore_terminal_settings();
   void disable_waiting_for_enter();
-  rclcpp::TimerBase::SharedPtr timer_;
-  void display_callback(); 
 };
 }  // namespace open_manipulator_x_teleop_keyboard
 #endif  // OPEN_MANIPULATOR_X_TELEOP_KEYBOARD_HPP_

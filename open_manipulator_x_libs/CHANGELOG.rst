@@ -2,7 +2,7 @@
 Changelog for package open_manipulator_libs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.0.0 (2019-08-31)
+2.1.0 (2019-08-31)
 ------------------
 * Added support for ROS2
 * Contributors: Ryan Shim

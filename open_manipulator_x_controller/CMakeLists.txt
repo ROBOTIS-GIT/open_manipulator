@@ -22,11 +22,11 @@ find_package(open_manipulator_msgs REQUIRED)
 find_package(open_manipulator_x_libs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(robotis_manipulator REQUIRED)
-find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 
-# If you want to use MoveIt!, change OFF to ON.
+# If you want to use MoveIt!, switch OFF to ON.
 set(USE_MOVEIT OFF)
 
 if (USE_MOVEIT)
@@ -35,10 +35,6 @@ if (USE_MOVEIT)
   #find_package(moveit_ros_planning REQUIRED) 
   #find_package(moveit_ros_planning_interface REQUIRED)
 endif ()
-
-################################################################################
-# Declare ROS messages, services and actions
-################################################################################
 
 ################################################################################
 # Build
@@ -102,16 +98,6 @@ install(PROGRAMS scripts/create_udev_rules
 )
 
 ################################################################################
-# Test
-################################################################################
-if(BUILD_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-  find_package(ament_cmake_pytest REQUIRED)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
-################################################################################
 # Macro for ament package
 ################################################################################
 ament_export_include_directories(include)
@@ -121,8 +107,8 @@ ament_export_dependencies(open_manipulator_msgs)
 ament_export_dependencies(open_manipulator_x_libs)
 ament_export_dependencies(rclcpp)
 ament_export_dependencies(robotis_manipulator)
-ament_export_dependencies(std_msgs)
 ament_export_dependencies(sensor_msgs)
+ament_export_dependencies(std_msgs)
 ament_export_dependencies(trajectory_msgs)
 if (USE_MOVEIT)
   #ament_export_dependencies(moveit_core)

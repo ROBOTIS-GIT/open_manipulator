@@ -14,7 +14,7 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Ryan Shim */
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
 #ifndef OPEN_MANIPULATOR_X_TELEOP_JOYSTICK_HPP_
 #define OPEN_MANIPULATOR_X_TELEOP_JOYSTICK_HPP_
@@ -22,11 +22,13 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <sensor_msgs/msg/joy.hpp>
+
 #include "open_manipulator_msgs/srv/set_joint_position.hpp"
 #include "open_manipulator_msgs/srv/set_kinematics_pose.hpp"
 
 #define PI 3.14159265359
 #define NUM_OF_JOINT 4
+
 
 namespace open_manipulator_x_teleop_joystick
 {
@@ -38,7 +40,7 @@ class OpenManipulatorXTeleopJoystick : public rclcpp::Node
 
  private:
   /*****************************************************************************
-  ** Position in Joint Space and Task Space
+  ** Variables
   *****************************************************************************/
   std::vector<double> present_joint_angle_;
   std::vector<double> present_kinematic_position_;
