@@ -15,6 +15,10 @@ repositories:
     type: git
     url: https://github.com/ROBOTIS-GIT/open_manipulator_msgs.git
     version: ros2
+  open_manipulator_dependencies:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
+    version: ros2
   robotis_manipulator:
     type: git
     url: https://github.com/ROBOTIS-GIT/robotis_manipulator.git
