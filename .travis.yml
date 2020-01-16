@@ -1,26 +1,25 @@
-# services:
-#   - docker
+services:
+  - docker
 
-# language:
-#   - none
+language:
+  - none
 
-# notifications:
-#   email:
-#     on_success: change
-#     on_failure: always
-#     recipients:
-#       - pyo@robotis.com
-#       - thlim@robotis.com
-#       - jhshim@robotis.com
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+    recipients:
+      - jhshim@robotis.com
 
-# branches:
-#   only:
-#     - ros2
-#     - ros2-devel
+branches:
+  only:
+    - ros2
+    - ros2-devel
 
-# install:
-#   - git clone --quiet --depth 1 https://github.com/ROBOTIS-GIT/ros2ci.git .ros2ci
+install:
+  - git clone --quiet --depth 1 https://github.com/ROBOTIS-GIT/ros2ci.git .ros2ci
+  - cp open_manipulator_x.repos .ros2ci/additional_repos.repos
 
-# matrix:
-#   include:
-#     - script: .ros2ci/travis.bash dashing
+matrix:
+  include:
+    - script: .ros2ci/travis.bash dashing
