@@ -127,7 +127,6 @@ class OpenManipulatorController
 
   void initPublisher();
   void initSubscriber();
-
   void initServer();
 
   void openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg);
@@ -204,7 +203,6 @@ class OpenManipulatorController
 
   bool calcPlannedPath(const std::string planning_group, open_manipulator_msgs::JointPosition msg);
   bool calcPlannedPath(const std::string planning_group, open_manipulator_msgs::KinematicsPose msg);
-
 };
 }
 

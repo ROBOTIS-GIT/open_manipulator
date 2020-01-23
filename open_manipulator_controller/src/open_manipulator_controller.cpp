@@ -21,23 +21,29 @@
 using namespace open_manipulator_controller;
 
 OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::string baud_rate)
-    :node_handle_(""),
-     priv_node_handle_("~"),
-     tool_ctrl_state_(false),
-     timer_thread_state_(false),
-     moveit_plan_state_(false),
-     using_platform_(false),
-     using_moveit_(false),
-     moveit_plan_only_(true),
-     control_period_(0.010f),
-     moveit_sampling_time_(0.050f)
+: node_handle_(""),
+  priv_node_handle_("~"),
+  tool_ctrl_state_(false),
+  timer_thread_state_(false),
+  moveit_plan_state_(false),
+  using_platform_(false),
+  using_moveit_(false),
+  moveit_plan_only_(true),
+  control_period_(0.010f),
+  moveit_sampling_time_(0.050f)
 {
+  /************************************************************
+  ** Initialize ROS parameters
+  ************************************************************/
   control_period_       = priv_node_handle_.param<double>("control_period", 0.010f);
   moveit_sampling_time_ = priv_node_handle_.param<double>("moveit_sample_duration", 0.050f);
   using_platform_       = priv_node_handle_.param<bool>("using_platform", false);
   using_moveit_         = priv_node_handle_.param<bool>("using_moveit", false);
   std::string planning_group_name = priv_node_handle_.param<std::string>("planning_group_name", "arm");
 
+  /************************************************************
+  ** Initialize variables
+  ************************************************************/
   open_manipulator_.initOpenManipulator(using_platform_, usb_port, baud_rate, control_period_);
 
   if (using_platform_ == true)        log::info("Succeeded to init " + priv_node_handle_.getNamespace());
@@ -48,6 +54,13 @@ OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::
     move_group_ = new moveit::planning_interface::MoveGroupInterface(planning_group_name);
     log::info("Ready to control " + planning_group_name + " group");
   }
+
+  /************************************************************
+  ** Initialize ROS publishers, subscribers and servers
+  ************************************************************/
+  initPublisher();
+  initSubscriber();
+  initServer();
 }
 
 OpenManipulatorController::~OpenManipulatorController()
@@ -128,6 +141,9 @@ void *OpenManipulatorController::timerThread(void *param)
   return 0;
 }
 
+/********************************************************************************
+** Init Functions
+********************************************************************************/
 void OpenManipulatorController::initPublisher()
 {
   // ros message publisher
@@ -208,6 +224,9 @@ void OpenManipulatorController::initServer()
   }
 }
 
+/*****************************************************************************
+** Callback Functions for ROS Subscribers
+*****************************************************************************/
 void OpenManipulatorController::openManipulatorOptionCallback(const std_msgs::String::ConstPtr &msg)
 {
   if(msg->data == "print_open_manipulator_setting")
@@ -240,6 +259,9 @@ void OpenManipulatorController::executeTrajGoalCallback(const moveit_msgs::Execu
   moveit_plan_state_ = true;
 }
 
+/*****************************************************************************
+** Callback Functions for ROS Servers
+*****************************************************************************/
 bool OpenManipulatorController::goalJointSpacePathCallback(open_manipulator_msgs::SetJointPosition::Request  &req,
                                                            open_manipulator_msgs::SetJointPosition::Response &res)
 {
@@ -679,6 +701,18 @@ bool OpenManipulatorController::calcPlannedPath(const std::string planning_group
   return is_planned;
 }
 
+/********************************************************************************
+** Callback function for publish timer
+********************************************************************************/
+void OpenManipulatorController::publishCallback(const ros::TimerEvent&)
+{
+  if (using_platform_ == true)  publishJointStates();
+  else  publishGazeboCommand();
+
+  publishOpenManipulatorStates();
+  publishKinematicsPose();
+}
+
 void OpenManipulatorController::publishOpenManipulatorStates()
 {
   open_manipulator_msgs::OpenManipulatorState msg;
@@ -771,13 +805,13 @@ void OpenManipulatorController::publishGazeboCommand()
   }
 }
 
-void OpenManipulatorController::publishCallback(const ros::TimerEvent&)
+/********************************************************************************
+** Callback function for process timer
+********************************************************************************/
+void OpenManipulatorController::process(double time)
 {
-  if (using_platform_ == true)  publishJointStates();
-  else  publishGazeboCommand();
-
-  publishOpenManipulatorStates();
-  publishKinematicsPose();
+  moveitTimer(time);
+  open_manipulator_.processOpenManipulator(time);
 }
 
 void OpenManipulatorController::moveitTimer(double present_time)
@@ -825,14 +859,12 @@ void OpenManipulatorController::moveitTimer(double present_time)
   }
 }
 
-void OpenManipulatorController::process(double time)
-{
-  moveitTimer(time);
-  open_manipulator_.processOpenManipulator(time);
-}
-
+/*****************************************************************************
+** Main
+*****************************************************************************/
 int main(int argc, char **argv)
 {
+  // init
   ros::init(argc, argv, "open_manipulator_controller");
   ros::NodeHandle node_handle("");
 
@@ -852,16 +884,12 @@ int main(int argc, char **argv)
 
   OpenManipulatorController om_controller(usb_port, baud_rate);
 
-  om_controller.initPublisher();
-  om_controller.initSubscriber();
-  om_controller.initServer();
-
+  // update
   om_controller.startTimerThread();
 
   ros::Timer publish_timer = node_handle.createTimer(ros::Duration(om_controller.getControlPeriod()), &OpenManipulatorController::publishCallback, &om_controller);
 
   ros::Rate loop_rate(100);
-
   while (ros::ok())
   {
     ros::spinOnce();
