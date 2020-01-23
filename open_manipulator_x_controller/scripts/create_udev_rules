@@ -13,5 +13,3 @@ echo "Reload rules"
 echo ""
 sudo udevadm control --reload-rules
 sudo udevadm trigger
-
-# sudo chmod a+rw /dev/ttyUSB0
