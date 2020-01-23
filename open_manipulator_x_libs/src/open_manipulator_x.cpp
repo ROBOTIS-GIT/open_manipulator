@@ -201,12 +201,16 @@ void OpenManipulatorX::init_open_manipulator_x(bool using_actual_robot_state, ST
 
 void OpenManipulatorX::process_open_manipulator_x(double present_time)
 {
+  // Planning (ik)
   JointWaypoint goal_joint_value = getJointGoalValueFromTrajectory(present_time);
   JointWaypoint goal_tool_value  = getToolGoalValue();
 
+  // Control (motor)
   receiveAllJointActuatorValue();
   receiveAllToolActuatorValue();
   if(goal_joint_value.size() != 0) sendAllJointActuatorValue(goal_joint_value);
   if(goal_tool_value.size() != 0) sendAllToolActuatorValue(goal_tool_value);
+
+  // Perception (fk)
   solveForwardKinematics();
 }
