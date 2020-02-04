@@ -7,6 +7,9 @@
   <!-- Import Rviz colors -->
   <!-- <xacro:include filename="$(find open_manipulator_x_description)/urdf/materials.xacro" /> -->
 
+  <!-- Import Transmission -->
+  <xacro:include filename="$(find open_manipulator_x_description)/urdf/transmission.xacro" />
+
   <!-- Init colour -->  
   <material name="black">
       <color rgba="0.0 0.0 0.0 1.0"/>
@@ -48,21 +51,6 @@
     <color rgba="1.0 1.0 1.0 1.0"/>
   </material>
   
-  
-  <!-- Transmission macro -->
-  <xacro:macro name="SimpleTransmission" params="joint n">
-    <transmission name="tran${n}">
-      <type>transmission_interface/SimpleTransmission</type>
-      <joint name="${joint}">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      </joint>
-      <actuator name="motor${n}">
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
-      </actuator>
-    </transmission>
-  </xacro:macro>
-
   <!-- World -->
   <link name="world">
   </link>
@@ -117,9 +105,6 @@
     <limit velocity="4.8" effort="1" lower="-2.82743338823" upper="2.82743338823" />
   </joint>
 
-  <!-- Transmission 1 -->
-  <xacro:SimpleTransmission n="1" joint="joint1" />
-
   <!--  Link 2 -->
   <link name="link2">
     <visual>
@@ -162,9 +147,6 @@
     <axis xyz="0 1 0"/>
     <limit velocity="4.8" effort="1" lower="-1.79070781255" upper="1.57079632679" />
   </joint>
-
-  <!-- Transmission 2 -->
-  <xacro:SimpleTransmission n="2" joint="joint2" />
 
   <!--  Link 3 -->
   <link name="link3">
@@ -209,9 +191,6 @@
     <limit velocity="4.8" effort="1" lower="-0.94247779607" upper="1.38230076758" />
   </joint>
 
-  <!-- Transmission 3 -->
-  <xacro:SimpleTransmission n="3" joint="joint3" />
-
   <!--  Link 4 -->
   <link name="link4">
     <visual>
@@ -254,9 +233,6 @@
     <axis xyz="0 1 0"/>
     <limit velocity="4.8" effort="1" lower="-1.79070781255" upper="2.04203522483" />
   </joint>
-
-  <!-- Transmission 4 -->
-  <xacro:SimpleTransmission n="4" joint="joint4" />
 
   <!--  Link 5 -->
   <link name="link5">
@@ -335,9 +311,6 @@
     <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
   </joint>
 
-  <!-- Transmission 5 -->
-  <xacro:SimpleTransmission n="5" joint="gripper" />
-
   <!--  Gripper link sub -->
   <link name="gripper_link_sub">
     <visual>
@@ -381,9 +354,6 @@
     <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
     <mimic joint="gripper" multiplier="1"/>
   </joint>
-
-  <!-- Transmission 6 -->
-  <xacro:SimpleTransmission n="6" joint="gripper_sub" />
 
   <!-- end effector joint -->
   <joint name="end_effector_joint" type="fixed">
