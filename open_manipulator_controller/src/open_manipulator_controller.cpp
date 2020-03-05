@@ -136,14 +136,14 @@ void OpenManipulatorController::initPublisher()
   for (auto const& name:opm_tools_name)
   {
     ros::Publisher pb;
-    pb = priv_node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(name + "/kinematics_pose", 10);
+    pb = node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(name + "/kinematics_pose", 10);
     open_manipulator_kinematics_pose_pub_.push_back(pb);
   }
-  open_manipulator_states_pub_ = priv_node_handle_.advertise<open_manipulator_msgs::OpenManipulatorState>("states", 10);
+  open_manipulator_states_pub_ = node_handle_.advertise<open_manipulator_msgs::OpenManipulatorState>("states", 10);
 
   if(using_platform_ == true)
   {
-    open_manipulator_joint_states_pub_ = priv_node_handle_.advertise<sensor_msgs::JointState>("joint_states", 10);
+    open_manipulator_joint_states_pub_ = node_handle_.advertise<sensor_msgs::JointState>("joint_states", 10);
   }
   else
   {
@@ -154,7 +154,7 @@ void OpenManipulatorController::initPublisher()
     for (auto const& name:gazebo_joints_name)
     {
       ros::Publisher pb;
-      pb = priv_node_handle_.advertise<std_msgs::Float64>(name + "_position/command", 10);
+      pb = node_handle_.advertise<std_msgs::Float64>(name + "_position/command", 10);
       gazebo_goal_joint_position_pub_.push_back(pb);
     }
   }
@@ -162,29 +162,29 @@ void OpenManipulatorController::initPublisher()
 void OpenManipulatorController::initSubscriber()
 {
   // ros message subscriber
-  open_manipulator_option_sub_ = priv_node_handle_.subscribe("option", 10, &OpenManipulatorController::openManipulatorOptionCallback, this);
+  open_manipulator_option_sub_ = node_handle_.subscribe("option", 10, &OpenManipulatorController::openManipulatorOptionCallback, this);
 }
 
 void OpenManipulatorController::initServer()
 {
-  goal_joint_space_path_server_                     = priv_node_handle_.advertiseService("goal_joint_space_path", &OpenManipulatorController::goalJointSpacePathCallback, this);
-  goal_joint_space_path_to_kinematics_pose_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_pose", &OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback, this);
-  goal_joint_space_path_to_kinematics_position_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_position", &OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback, this);
-  goal_joint_space_path_to_kinematics_orientation_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_orientation", &OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallback, this);
+  goal_joint_space_path_server_                     = node_handle_.advertiseService("goal_joint_space_path", &OpenManipulatorController::goalJointSpacePathCallback, this);
+  goal_joint_space_path_to_kinematics_pose_server_  = node_handle_.advertiseService("goal_joint_space_path_to_kinematics_pose", &OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback, this);
+  goal_joint_space_path_to_kinematics_position_server_  = node_handle_.advertiseService("goal_joint_space_path_to_kinematics_position", &OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback, this);
+  goal_joint_space_path_to_kinematics_orientation_server_  = node_handle_.advertiseService("goal_joint_space_path_to_kinematics_orientation", &OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallback, this);
 
-  goal_task_space_path_server_                  = priv_node_handle_.advertiseService("goal_task_space_path", &OpenManipulatorController::goalTaskSpacePathCallback, this);
-  goal_task_space_path_position_only_server_    = priv_node_handle_.advertiseService("goal_task_space_path_position_only", &OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback, this);
-  goal_task_space_path_orientation_only_server_ = priv_node_handle_.advertiseService("goal_task_space_path_orientation_only", &OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback, this);
+  goal_task_space_path_server_                  = node_handle_.advertiseService("goal_task_space_path", &OpenManipulatorController::goalTaskSpacePathCallback, this);
+  goal_task_space_path_position_only_server_    = node_handle_.advertiseService("goal_task_space_path_position_only", &OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback, this);
+  goal_task_space_path_orientation_only_server_ = node_handle_.advertiseService("goal_task_space_path_orientation_only", &OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback, this);
 
-  goal_joint_space_path_from_present_server_      = priv_node_handle_.advertiseService("goal_joint_space_path_from_present", &OpenManipulatorController::goalJointSpacePathFromPresentCallback, this);
+  goal_joint_space_path_from_present_server_      = node_handle_.advertiseService("goal_joint_space_path_from_present", &OpenManipulatorController::goalJointSpacePathFromPresentCallback, this);
 
-  goal_task_space_path_from_present_server_                   = priv_node_handle_.advertiseService("goal_task_space_path_from_present", &OpenManipulatorController::goalTaskSpacePathFromPresentCallback, this);
-  goal_task_space_path_from_present_position_only_server_     = priv_node_handle_.advertiseService("goal_task_space_path_from_present_position_only", &OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback, this);
-  goal_task_space_path_from_present_orientation_only_server_  = priv_node_handle_.advertiseService("goal_task_space_path_from_present_orientation_only", &OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallback, this);
+  goal_task_space_path_from_present_server_                   = node_handle_.advertiseService("goal_task_space_path_from_present", &OpenManipulatorController::goalTaskSpacePathFromPresentCallback, this);
+  goal_task_space_path_from_present_position_only_server_     = node_handle_.advertiseService("goal_task_space_path_from_present_position_only", &OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback, this);
+  goal_task_space_path_from_present_orientation_only_server_  = node_handle_.advertiseService("goal_task_space_path_from_present_orientation_only", &OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallback, this);
 
-  goal_tool_control_server_         = priv_node_handle_.advertiseService("goal_tool_control", &OpenManipulatorController::goalToolControlCallback, this);
-  set_actuator_state_server_        = priv_node_handle_.advertiseService("set_actuator_state", &OpenManipulatorController::setActuatorStateCallback, this);
-  goal_drawing_trajectory_server_   = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OpenManipulatorController::goalDrawingTrajectoryCallback, this);
+  goal_tool_control_server_         = node_handle_.advertiseService("goal_tool_control", &OpenManipulatorController::goalToolControlCallback, this);
+  set_actuator_state_server_        = node_handle_.advertiseService("set_actuator_state", &OpenManipulatorController::setActuatorStateCallback, this);
+  goal_drawing_trajectory_server_   = node_handle_.advertiseService("goal_drawing_trajectory", &OpenManipulatorController::goalDrawingTrajectoryCallback, this);
 }
 
 /*****************************************************************************
