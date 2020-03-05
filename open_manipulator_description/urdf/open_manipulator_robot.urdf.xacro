@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- Open_Manipulator Chain -->
+<robot name="open_manipulator" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/materials.xacro" />
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator.gazebo.xacro" />
+
+  <!-- Import Transmission -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator.transmission.xacro" />
+
+  <!-- Import URDF -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator.urdf.xacro" />
+
+  <!-- World -->
+  <link name="world"/>
+
+  <!-- World fixed joint-->
+  <joint name="world_fixed" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="link1"/>
+  </joint>
+
+</robot>
