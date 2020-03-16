@@ -23,23 +23,13 @@ using namespace open_manipulator_controller;
 OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::string baud_rate)
 : node_handle_(""),
   priv_node_handle_("~"),
-  tool_ctrl_state_(false),
-  timer_thread_state_(false),
-  moveit_plan_state_(false),
-  using_platform_(false),
-  using_moveit_(false),
-  moveit_plan_only_(true),
-  control_period_(0.010f),
-  moveit_sampling_time_(0.050f)
+  timer_thread_state_(false)
 {
   /************************************************************
   ** Initialize ROS parameters
   ************************************************************/
   control_period_       = priv_node_handle_.param<double>("control_period", 0.010f);
-  moveit_sampling_time_ = priv_node_handle_.param<double>("moveit_sample_duration", 0.050f);
   using_platform_       = priv_node_handle_.param<bool>("using_platform", false);
-  using_moveit_         = priv_node_handle_.param<bool>("using_moveit", false);
-  std::string planning_group_name = priv_node_handle_.param<std::string>("planning_group_name", "arm");
 
   /************************************************************
   ** Initialize variables
@@ -48,12 +38,6 @@ OpenManipulatorController::OpenManipulatorController(std::string usb_port, std::
 
   if (using_platform_ == true)        log::info("Succeeded to init " + priv_node_handle_.getNamespace());
   else if (using_platform_ == false)  log::info("Ready to simulate " +  priv_node_handle_.getNamespace() + " on Gazebo");
-
-  if (using_moveit_ == true)
-  {
-    move_group_ = new moveit::planning_interface::MoveGroupInterface(planning_group_name);
-    log::info("Ready to control " + planning_group_name + " group");
-  }
 
   /************************************************************
   ** Initialize ROS publishers, subscribers and servers
@@ -152,14 +136,14 @@ void OpenManipulatorController::initPublisher()
   for (auto const& name:opm_tools_name)
   {
     ros::Publisher pb;
-    pb = priv_node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(name + "/kinematics_pose", 10);
+    pb = node_handle_.advertise<open_manipulator_msgs::KinematicsPose>(name + "/kinematics_pose", 10);
     open_manipulator_kinematics_pose_pub_.push_back(pb);
   }
-  open_manipulator_states_pub_ = priv_node_handle_.advertise<open_manipulator_msgs::OpenManipulatorState>("states", 10);
+  open_manipulator_states_pub_ = node_handle_.advertise<open_manipulator_msgs::OpenManipulatorState>("states", 10);
 
   if(using_platform_ == true)
   {
-    open_manipulator_joint_states_pub_ = priv_node_handle_.advertise<sensor_msgs::JointState>("joint_states", 10);
+    open_manipulator_joint_states_pub_ = node_handle_.advertise<sensor_msgs::JointState>("joint_states", 10);
   }
   else
   {
@@ -170,58 +154,37 @@ void OpenManipulatorController::initPublisher()
     for (auto const& name:gazebo_joints_name)
     {
       ros::Publisher pb;
-      pb = priv_node_handle_.advertise<std_msgs::Float64>(name + "_position/command", 10);
+      pb = node_handle_.advertise<std_msgs::Float64>(name + "_position/command", 10);
       gazebo_goal_joint_position_pub_.push_back(pb);
     }
-  }
-  if (using_moveit_ == true)
-  {
-    moveit_update_start_state_pub_ = node_handle_.advertise<std_msgs::Empty>("rviz/moveit/update_start_state", 10);
   }
 }
 void OpenManipulatorController::initSubscriber()
 {
   // ros message subscriber
-  open_manipulator_option_sub_ = priv_node_handle_.subscribe("option", 10, &OpenManipulatorController::openManipulatorOptionCallback, this);
-  if (using_moveit_ == true)
-  {
-    display_planned_path_sub_ = node_handle_.subscribe("/move_group/display_planned_path", 100,
-                                                       &OpenManipulatorController::displayPlannedPathCallback, this);
-    move_group_goal_sub_ = node_handle_.subscribe("/move_group/goal", 100,
-                                                       &OpenManipulatorController::moveGroupGoalCallback, this);
-    execute_traj_goal_sub_ = node_handle_.subscribe("/execute_trajectory/goal", 100,
-                                                       &OpenManipulatorController::executeTrajGoalCallback, this);
-  }
+  open_manipulator_option_sub_ = node_handle_.subscribe("option", 10, &OpenManipulatorController::openManipulatorOptionCallback, this);
 }
 
 void OpenManipulatorController::initServer()
 {
-  goal_joint_space_path_server_                     = priv_node_handle_.advertiseService("goal_joint_space_path", &OpenManipulatorController::goalJointSpacePathCallback, this);
-  goal_joint_space_path_to_kinematics_pose_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_pose", &OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback, this);
-  goal_joint_space_path_to_kinematics_position_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_position", &OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback, this);
-  goal_joint_space_path_to_kinematics_orientation_server_  = priv_node_handle_.advertiseService("goal_joint_space_path_to_kinematics_orientation", &OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallback, this);
+  goal_joint_space_path_server_                     = node_handle_.advertiseService("goal_joint_space_path", &OpenManipulatorController::goalJointSpacePathCallback, this);
+  goal_joint_space_path_to_kinematics_pose_server_  = node_handle_.advertiseService("goal_joint_space_path_to_kinematics_pose", &OpenManipulatorController::goalJointSpacePathToKinematicsPoseCallback, this);
+  goal_joint_space_path_to_kinematics_position_server_  = node_handle_.advertiseService("goal_joint_space_path_to_kinematics_position", &OpenManipulatorController::goalJointSpacePathToKinematicsPositionCallback, this);
+  goal_joint_space_path_to_kinematics_orientation_server_  = node_handle_.advertiseService("goal_joint_space_path_to_kinematics_orientation", &OpenManipulatorController::goalJointSpacePathToKinematicsOrientationCallback, this);
 
-  goal_task_space_path_server_                  = priv_node_handle_.advertiseService("goal_task_space_path", &OpenManipulatorController::goalTaskSpacePathCallback, this);
-  goal_task_space_path_position_only_server_    = priv_node_handle_.advertiseService("goal_task_space_path_position_only", &OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback, this);
-  goal_task_space_path_orientation_only_server_ = priv_node_handle_.advertiseService("goal_task_space_path_orientation_only", &OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback, this);
+  goal_task_space_path_server_                  = node_handle_.advertiseService("goal_task_space_path", &OpenManipulatorController::goalTaskSpacePathCallback, this);
+  goal_task_space_path_position_only_server_    = node_handle_.advertiseService("goal_task_space_path_position_only", &OpenManipulatorController::goalTaskSpacePathPositionOnlyCallback, this);
+  goal_task_space_path_orientation_only_server_ = node_handle_.advertiseService("goal_task_space_path_orientation_only", &OpenManipulatorController::goalTaskSpacePathOrientationOnlyCallback, this);
 
-  goal_joint_space_path_from_present_server_      = priv_node_handle_.advertiseService("goal_joint_space_path_from_present", &OpenManipulatorController::goalJointSpacePathFromPresentCallback, this);
+  goal_joint_space_path_from_present_server_      = node_handle_.advertiseService("goal_joint_space_path_from_present", &OpenManipulatorController::goalJointSpacePathFromPresentCallback, this);
 
-  goal_task_space_path_from_present_server_                   = priv_node_handle_.advertiseService("goal_task_space_path_from_present", &OpenManipulatorController::goalTaskSpacePathFromPresentCallback, this);
-  goal_task_space_path_from_present_position_only_server_     = priv_node_handle_.advertiseService("goal_task_space_path_from_present_position_only", &OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback, this);
-  goal_task_space_path_from_present_orientation_only_server_  = priv_node_handle_.advertiseService("goal_task_space_path_from_present_orientation_only", &OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallback, this);
+  goal_task_space_path_from_present_server_                   = node_handle_.advertiseService("goal_task_space_path_from_present", &OpenManipulatorController::goalTaskSpacePathFromPresentCallback, this);
+  goal_task_space_path_from_present_position_only_server_     = node_handle_.advertiseService("goal_task_space_path_from_present_position_only", &OpenManipulatorController::goalTaskSpacePathFromPresentPositionOnlyCallback, this);
+  goal_task_space_path_from_present_orientation_only_server_  = node_handle_.advertiseService("goal_task_space_path_from_present_orientation_only", &OpenManipulatorController::goalTaskSpacePathFromPresentOrientationOnlyCallback, this);
 
-  goal_tool_control_server_         = priv_node_handle_.advertiseService("goal_tool_control", &OpenManipulatorController::goalToolControlCallback, this);
-  set_actuator_state_server_        = priv_node_handle_.advertiseService("set_actuator_state", &OpenManipulatorController::setActuatorStateCallback, this);
-  goal_drawing_trajectory_server_   = priv_node_handle_.advertiseService("goal_drawing_trajectory", &OpenManipulatorController::goalDrawingTrajectoryCallback, this);
-
-  if (using_moveit_ == true)
-  {
-    get_joint_position_server_  = priv_node_handle_.advertiseService("moveit/get_joint_position", &OpenManipulatorController::getJointPositionMsgCallback, this);
-    get_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/get_kinematics_pose", &OpenManipulatorController::getKinematicsPoseMsgCallback, this);
-    set_joint_position_server_  = priv_node_handle_.advertiseService("moveit/set_joint_position", &OpenManipulatorController::setJointPositionMsgCallback, this);
-    set_kinematics_pose_server_ = priv_node_handle_.advertiseService("moveit/set_kinematics_pose", &OpenManipulatorController::setKinematicsPoseMsgCallback, this);
-  }
+  goal_tool_control_server_         = node_handle_.advertiseService("goal_tool_control", &OpenManipulatorController::goalToolControlCallback, this);
+  set_actuator_state_server_        = node_handle_.advertiseService("set_actuator_state", &OpenManipulatorController::setActuatorStateCallback, this);
+  goal_drawing_trajectory_server_   = node_handle_.advertiseService("goal_drawing_trajectory", &OpenManipulatorController::goalDrawingTrajectoryCallback, this);
 }
 
 /*****************************************************************************
@@ -231,32 +194,6 @@ void OpenManipulatorController::openManipulatorOptionCallback(const std_msgs::St
 {
   if(msg->data == "print_open_manipulator_setting")
     open_manipulator_.printManipulatorSetting();
-}
-
-void OpenManipulatorController::displayPlannedPathCallback(const moveit_msgs::DisplayTrajectory::ConstPtr &msg)
-{
-  trajectory_msgs::JointTrajectory joint_trajectory_planned = msg->trajectory[0].joint_trajectory;
-  joint_trajectory_ = joint_trajectory_planned;
-
-  if(moveit_plan_only_ == false)
-  {
-    log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
-    moveit_plan_state_ = true;
-  }
-  else
-    log::println("[INFO] [OpenManipulator Controller] Get Moveit planned path", "GREEN");
-}
-
-void OpenManipulatorController::moveGroupGoalCallback(const moveit_msgs::MoveGroupActionGoal::ConstPtr &msg)
-{
-  log::println("[INFO] [OpenManipulator Controller] Get Moveit plnning option", "GREEN");
-  moveit_plan_only_ = msg->goal.planning_options.plan_only; // click "plan & execute" or "plan" button
-
-}
-void OpenManipulatorController::executeTrajGoalCallback(const moveit_msgs::ExecuteTrajectoryActionGoal::ConstPtr &msg)
-{
-  log::println("[INFO] [OpenManipulator Controller] Execute Moveit planned path", "GREEN");
-  moveit_plan_state_ = true;
 }
 
 /*****************************************************************************
@@ -558,147 +495,12 @@ bool OpenManipulatorController::goalDrawingTrajectoryCallback(open_manipulator_m
   return true;
 }
 
-bool OpenManipulatorController::getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
-                                                            open_manipulator_msgs::GetJointPosition::Response &res)
+/********************************************************************************
+** Callback function for process timer
+********************************************************************************/
+void OpenManipulatorController::process(double time)
 {
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  const std::vector<std::string> &joint_names = move_group_->getJointNames();
-  std::vector<double> joint_values = move_group_->getCurrentJointValues();
-
-  for (std::size_t i = 0; i < joint_names.size(); i++)
-  {
-    res.joint_position.joint_name.push_back(joint_names[i]);
-    res.joint_position.position.push_back(joint_values[i]);
-  }
-
-  spinner.stop();
-  return true;
-}
-
-bool OpenManipulatorController::getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
-                                                             open_manipulator_msgs::GetKinematicsPose::Response &res)
-{
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  geometry_msgs::PoseStamped current_pose = move_group_->getCurrentPose();
-
-  res.header                     = current_pose.header;
-  res.kinematics_pose.pose       = current_pose.pose;
-
-  spinner.stop();
-  return true;
-}
-
-bool OpenManipulatorController::setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
-                                                            open_manipulator_msgs::SetJointPosition::Response &res)
-{
-  open_manipulator_msgs::JointPosition msg = req.joint_position;
-  res.is_planned = calcPlannedPath(req.planning_group, msg);
-
-  return true;
-}
-
-bool OpenManipulatorController::setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
-                                                             open_manipulator_msgs::SetKinematicsPose::Response &res)
-{
-  open_manipulator_msgs::KinematicsPose msg = req.kinematics_pose;
-  res.is_planned = calcPlannedPath(req.planning_group, msg);
-
-  return true;
-}
-
-bool OpenManipulatorController::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::KinematicsPose msg)
-{
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  bool is_planned = false;
-  geometry_msgs::Pose target_pose = msg.pose;
-
-  move_group_->setPoseTarget(target_pose);
-
-  move_group_->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
-  move_group_->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
-
-  move_group_->setGoalTolerance(msg.tolerance);
-
-  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-
-  if (open_manipulator_.getMovingState() == false)
-  {
-    bool success = (move_group_->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
-    if (success)
-    {
-      is_planned = true;
-    }
-    else
-    {
-      log::warn("Failed to Plan (task space goal)");
-      is_planned = false;
-    }
-  }
-  else
-  {
-    log::warn("Robot is Moving");
-    is_planned = false;
-  }
-
-  spinner.stop();
-  return is_planned;
-}
-
-bool OpenManipulatorController::calcPlannedPath(const std::string planning_group, open_manipulator_msgs::JointPosition msg)
-{
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  bool is_planned = false;
-
-  const robot_state::JointModelGroup *joint_model_group = move_group_->getCurrentState()->getJointModelGroup(planning_group);
-
-  moveit::core::RobotStatePtr current_state = move_group_->getCurrentState();
-
-  std::vector<double> joint_group_positions;
-  current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
-
-  for (uint8_t index = 0; index < msg.position.size(); index++)
-  {
-    joint_group_positions[index] = msg.position[index];
-  }
-
-  move_group_->setJointValueTarget(joint_group_positions);
-
-  move_group_->setMaxVelocityScalingFactor(msg.max_velocity_scaling_factor);
-  move_group_->setMaxAccelerationScalingFactor(msg.max_accelerations_scaling_factor);
-
-  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-
-  if (open_manipulator_.getMovingState() == false)
-  {
-    bool success = (move_group_->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-
-    if (success)
-    {
-      is_planned = true;
-    }
-    else
-    {
-      log::warn("Failed to Plan (joint space goal)");
-      is_planned = false;
-    }
-  }
-  else
-  {
-    log::warn("Robot is moving");
-    is_planned = false;
-  }
-
-  spinner.stop();
-  return is_planned;
+  open_manipulator_.processOpenManipulator(time);
 }
 
 /********************************************************************************
@@ -805,60 +607,6 @@ void OpenManipulatorController::publishGazeboCommand()
   }
 }
 
-/********************************************************************************
-** Callback function for process timer
-********************************************************************************/
-void OpenManipulatorController::process(double time)
-{
-  moveitTimer(time);
-  open_manipulator_.processOpenManipulator(time);
-}
-
-void OpenManipulatorController::moveitTimer(double present_time)
-{
-  static double priv_time = 0.0f;
-  static uint32_t step_cnt = 0;
-
-  if (moveit_plan_state_ == true)
-  {
-    double path_time = present_time - priv_time;
-    if (path_time > moveit_sampling_time_)
-    {
-      JointWaypoint target;
-      uint32_t all_time_steps = joint_trajectory_.points.size();
-
-      for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
-      {
-        JointValue temp;
-        temp.position = joint_trajectory_.points[step_cnt].positions.at(i);
-        temp.velocity = joint_trajectory_.points[step_cnt].velocities.at(i);
-        temp.acceleration = joint_trajectory_.points[step_cnt].accelerations.at(i);
-        target.push_back(temp);
-      }
-      open_manipulator_.makeJointTrajectory(target, path_time);
-
-      step_cnt++;
-      priv_time = present_time;
-
-      if (step_cnt >= all_time_steps)
-      {
-        step_cnt = 0;
-        moveit_plan_state_ = false;
-        if (moveit_update_start_state_pub_.getNumSubscribers() == 0)
-        {
-          log::warn("Could not update the start state! Enable External Communications at the Moveit Plugin");
-        }
-        std_msgs::Empty msg;
-        moveit_update_start_state_pub_.publish(msg);
-      }
-    }
-  }
-  else
-  {
-    priv_time = present_time;
-  }
-}
-
 /*****************************************************************************
 ** Main
 *****************************************************************************/
@@ -871,24 +619,23 @@ int main(int argc, char **argv)
   std::string usb_port = "/dev/ttyUSB0";
   std::string baud_rate = "1000000";
 
-  if (argc < 3)
-  {
-    log::error("Please set '-port_name' and  '-baud_rate' arguments for connected Dynamixels");
-    return 0;
-  }
-  else
+  if (argc = 3)
   {
     usb_port = argv[1];
     baud_rate = argv[2];
+    printf("port_name and baud_rate are set to %s, %s \n", usb_port.c_str(), baud_rate.c_str());
+  }
+  else
+  {
+    log::error("Please set '-port_name' and  '-baud_rate' arguments for connected Dynamixels");
+    return 0;
   }
 
   OpenManipulatorController om_controller(usb_port, baud_rate);
 
   // update
   om_controller.startTimerThread();
-
   ros::Timer publish_timer = node_handle.createTimer(ros::Duration(om_controller.getControlPeriod()), &OpenManipulatorController::publishCallback, &om_controller);
-
   ros::Rate loop_rate(100);
   while (ros::ok())
   {
