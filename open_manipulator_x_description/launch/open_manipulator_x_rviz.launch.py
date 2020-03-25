@@ -32,7 +32,7 @@ def generate_launch_description():
 
     # File Paths
     rviz_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'rviz', 'open_manipulator_x.rviz')
-    urdf_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'urdf', 'open_manipulator_x.urdf.xacro')
+    urdf_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'urdf', 'open_manipulator_x_robot.urdf.xacro')
     
     return LaunchDescription([
         Node(
