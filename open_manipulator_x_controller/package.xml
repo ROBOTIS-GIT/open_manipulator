@@ -17,7 +17,6 @@
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <depend>cmake_modules</depend>
   <depend>geometry_msgs</depend>
   <depend>open_manipulator_msgs</depend>
   <depend>open_manipulator_x_libs</depend>
