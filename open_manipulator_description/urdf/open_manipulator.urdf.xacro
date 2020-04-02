@@ -168,6 +168,15 @@
     </inertial>
   </link>
 
+  <!--  Gripper joint -->
+  <joint name="gripper" type="prismatic">
+    <parent link="link5"/>
+    <child link="gripper_link"/>
+    <origin xyz="0.0817 0.021 0.0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
+  </joint>
+
   <!--  Gripper link -->
   <link name="gripper_link">
     <visual>
@@ -194,13 +203,14 @@
     </inertial>
   </link>
 
-  <!--  Gripper joint -->
-  <joint name="gripper" type="prismatic">
+  <!--  Gripper joint sub -->
+  <joint name="gripper_sub" type="prismatic">
     <parent link="link5"/>
-    <child link="gripper_link"/>
-    <origin xyz="0.0817 0.021 0.0" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
+    <child link="gripper_link_sub"/>
+    <origin xyz="0.0817 -0.021 0" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
     <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
+    <mimic joint="gripper" multiplier="1"/>
   </joint>
 
   <!--  Gripper link sub -->
@@ -229,16 +239,6 @@
     </inertial>
   </link>
 
-  <!--  Gripper joint sub -->
-  <joint name="gripper_sub" type="prismatic">
-    <parent link="link5"/>
-    <child link="gripper_link_sub"/>
-    <origin xyz="0.0817 -0.021 0" rpy="0 0 0"/>
-    <axis xyz="0 -1 0"/>
-    <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
-    <mimic joint="gripper" multiplier="1"/>
-  </joint>
-
   <!-- end effector joint -->
   <joint name="end_effector_joint" type="fixed">
     <origin xyz="0.126 0.0 0.0" rpy="0 0 0"/>
@@ -265,4 +265,14 @@
     </inertial>
   </link>
 
+  <!-- Realsense Camera Joint Position -->
+  <joint name="camera_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.070 0.040 0.052" rpy="0 0 0"/> 
+    <parent link="link5"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <link name="camera_link"/>
+  
 </robot>
