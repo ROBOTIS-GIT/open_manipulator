@@ -89,7 +89,6 @@ class OpenManipulatorController
   /*****************************************************************************
   ** ROS Publishers, Callback Functions and Relevant Functions
   *****************************************************************************/
-  // ROS Publisher
   ros::Publisher open_manipulator_states_pub_;
   std::vector<ros::Publisher> open_manipulator_kinematics_pose_pub_;
   ros::Publisher open_manipulator_joint_states_pub_;

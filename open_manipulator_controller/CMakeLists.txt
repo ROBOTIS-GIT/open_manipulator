@@ -9,7 +9,8 @@ add_compile_options(-std=c++11)
 ################################################################################
 # Find catkin packages and libraries for catkin and system dependencies
 ################################################################################
-find_package(catkin REQUIRED COMPONENTS
+find_package(catkin REQUIRED
+  COMPONENTS
     roscpp
     std_msgs
     sensor_msgs
@@ -39,7 +40,16 @@ find_package(Boost REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs trajectory_msgs open_manipulator_msgs robotis_manipulator open_manipulator_libs cmake_modules
+  CATKIN_DEPENDS
+    roscpp
+    std_msgs
+    sensor_msgs
+    geometry_msgs
+    trajectory_msgs
+    open_manipulator_msgs
+    robotis_manipulator
+    open_manipulator_libs
+    cmake_modules
   DEPENDS Boost
 )
 
