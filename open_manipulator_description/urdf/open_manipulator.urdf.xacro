@@ -268,7 +268,7 @@
   <!-- Realsense Camera Joint Position -->
   <joint name="camera_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin xyz="0.070 0.040 0.052" rpy="0 0 0"/> 
+    <origin xyz="0.070 0.032 0.052" rpy="0 0 0"/> 
     <parent link="link5"/>
     <child link="camera_link"/>
   </joint>
