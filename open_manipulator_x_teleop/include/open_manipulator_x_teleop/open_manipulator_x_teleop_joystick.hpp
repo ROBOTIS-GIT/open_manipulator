@@ -29,7 +29,6 @@
 #define PI 3.14159265359
 #define NUM_OF_JOINT 4
 
-
 namespace open_manipulator_x_teleop_joystick
 {
 class OpenManipulatorXTeleopJoystick : public rclcpp::Node

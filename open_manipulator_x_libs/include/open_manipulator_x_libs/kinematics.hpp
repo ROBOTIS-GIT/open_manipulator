@@ -30,7 +30,6 @@
 using namespace Eigen;
 using namespace robotis_manipulator;
 
-
 namespace kinematics
 {
 /*****************************************************************************

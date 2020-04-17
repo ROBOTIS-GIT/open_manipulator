@@ -18,7 +18,6 @@
 
 #include "../include/open_manipulator_x_libs/open_manipulator_x.hpp"
 
-
 OpenManipulatorX::OpenManipulatorX() {}
 
 OpenManipulatorX::~OpenManipulatorX()

@@ -41,9 +41,6 @@
 #include "open_manipulator_msgs/srv/get_kinematics_pose.hpp"
 #include "open_manipulator_msgs/msg/open_manipulator_state.hpp"
 #include "open_manipulator_x_libs/open_manipulator_x.hpp"
-// Only if You Have MoveIt! Dependencies
-// #include "open_manipulator_x_controller/open_manipulator_x_controller_moveit.hpp"
-
 
 namespace open_manipulator_x_controller
 {
@@ -53,34 +50,18 @@ class OpenManipulatorXController : public rclcpp::Node
   OpenManipulatorXController(std::string usb_port, std::string baud_rate);
   virtual ~OpenManipulatorXController();
 
-  void process_callback(); 
-  void publish_callback();  
-  double get_control_period() { return control_period_; }
-
-  void process(double time);
-
-  bool calc_planned_path(const std::string planning_group, open_manipulator_msgs::msg::KinematicsPose msg);
-  bool calc_planned_path(const std::string planning_group, open_manipulator_msgs::msg::JointPosition msg);
-
-  rclcpp::TimerBase::SharedPtr process_timer_;
-  rclcpp::TimerBase::SharedPtr publish_timer_;
-
- private:
+ private:  
   /*****************************************************************************
   ** Parameters
   *****************************************************************************/
   bool use_platform_;
   double control_period_;
-  bool use_moveit_;
 
   /*****************************************************************************
   ** Variables
   *****************************************************************************/
   // Robotis_manipulator related 
   OpenManipulatorX open_manipulator_x_;
-
-  // Only if You Have MoveIt! Dependencies
-  // OpenManipulatorXControllerMoveit open_manipulator_x_controller_moveit_;
 
   /*****************************************************************************
   ** Init Functions
@@ -89,6 +70,16 @@ class OpenManipulatorXController : public rclcpp::Node
   void init_publisher();
   void init_subscriber();
   void init_server();
+
+  /*****************************************************************************
+  ** ROS timers
+  *****************************************************************************/
+  void process_callback(); 
+  void publish_callback();  
+  void process(double time);
+
+  rclcpp::TimerBase::SharedPtr process_timer_;
+  rclcpp::TimerBase::SharedPtr publish_timer_;
 
   /*****************************************************************************
   ** ROS Publishers, Callback Functions and Relevant Functions

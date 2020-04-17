@@ -21,7 +21,6 @@
 using namespace std::placeholders;
 using namespace std::chrono_literals;
 
-
 namespace open_manipulator_x_controller
 {
 OpenManipulatorXController::OpenManipulatorXController(std::string usb_port, std::string baud_rate)
@@ -31,9 +30,6 @@ OpenManipulatorXController::OpenManipulatorXController(std::string usb_port, std
   ** Initialise ROS parameters
   ************************************************************/
   init_parameters();
-
-  // Only if You Have MoveIt! Dependencies
-  // open_manipulator_x_controller_moveit_.init_parameters();
 
   /************************************************************
   ** Initialise variables
@@ -49,11 +45,6 @@ OpenManipulatorXController::OpenManipulatorXController(std::string usb_port, std
   init_publisher();
   init_subscriber();
   init_server();
-
-  // Only if You Have MoveIt! Dependencies
-  // open_manipulator_x_controller_moveit_.init_publisher();
-  // open_manipulator_x_controller_moveit_.init_subscriber();
-  // open_manipulator_x_controller_moveit_.init_server();
 
   /************************************************************
   ** Initialise ROS timers
@@ -76,12 +67,10 @@ void OpenManipulatorXController::init_parameters()
   // Declare parameters that may be set on this node
   this->declare_parameter("use_platform");
   this->declare_parameter("control_period");
-  this->declare_parameter("use_moveit");
 
   // Get parameter from yaml
   this->get_parameter_or<bool>("use_platform", use_platform_, false);
   this->get_parameter_or<double>("control_period", control_period_, 0.010);
-  this->get_parameter_or<bool>("use_moveit", use_moveit_, false);
 }
 
 void OpenManipulatorXController::init_publisher()
@@ -463,9 +452,6 @@ void OpenManipulatorXController::process_callback()
 void OpenManipulatorXController::process(double time)
 {
   open_manipulator_x_.process_open_manipulator_x(time);
-
-  // Only if You Have MoveIt! Dependencies
-  // open_manipulator_x_controller_moveit_.moveitTimer(time);
 }
 
 /********************************************************************************

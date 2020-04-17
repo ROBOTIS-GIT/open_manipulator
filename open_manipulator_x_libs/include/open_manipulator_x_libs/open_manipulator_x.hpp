@@ -36,7 +36,6 @@
 #define Y_AXIS robotis_manipulator::math::vector3(0.0, 1.0, 0.0)
 #define Z_AXIS robotis_manipulator::math::vector3(0.0, 0.0, 1.0)
 
-
 class OpenManipulatorX : public robotis_manipulator::RobotisManipulator
 {
  public:

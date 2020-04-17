@@ -16,7 +16,6 @@
 #
 # Author: Ryan Shim
 
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -24,16 +23,15 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
-def generate_launch_description():
 
+def generate_launch_description():
     # Parameters
-    robot_name = LaunchConfiguration('robot_name', default='open_manipulator_x')  
     use_gui    = LaunchConfiguration('use_gui',    default='False')  
 
     # File Paths
     rviz_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'rviz', 'open_manipulator_x.rviz')
     urdf_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'urdf', 'open_manipulator_x_robot.urdf.xacro')
-    
+
     return LaunchDescription([
         Node(
             package='rviz2',

@@ -25,16 +25,6 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
 
-# If you want to use MoveIt!, switch OFF to ON.
-set(USE_MOVEIT OFF)
-
-if (USE_MOVEIT)
-  #find_package(moveit_core REQUIRED)
-  #find_package(moveit_msgs REQUIRED)
-  #find_package(moveit_ros_planning REQUIRED) 
-  #find_package(moveit_ros_planning_interface REQUIRED)
-endif ()
-
 ################################################################################
 # Build
 ################################################################################
@@ -42,33 +32,16 @@ include_directories(
   include
 )
 
-if(USE_MOVEIT)
-  set(dependencies
-    "geometry_msgs" 
-    "open_manipulator_msgs"
-    "open_manipulator_x_libs" 
-    "rclcpp" 
-    "robotis_manipulator" 
-    "sensor_msgs" 
-    "std_msgs" 
-    "trajectory_msgs" 
-    "moveit_core"
-    "moveit_msgs"
-    "moveit_ros_planning"
-    "moveit_ros_planning_interface"
-  )
-else()
-  set(dependencies
-    "geometry_msgs" 
-    "open_manipulator_msgs"
-    "open_manipulator_x_libs" 
-    "rclcpp" 
-    "robotis_manipulator" 
-    "sensor_msgs" 
-    "std_msgs" 
-    "trajectory_msgs" 
-  )
-endif ()
+set(dependencies
+  "geometry_msgs" 
+  "open_manipulator_msgs"
+  "open_manipulator_x_libs" 
+  "rclcpp" 
+  "robotis_manipulator" 
+  "sensor_msgs" 
+  "std_msgs" 
+  "trajectory_msgs"
+)
 
 set(EXEC_NAME "open_manipulator_x_controller")
 
@@ -106,10 +79,4 @@ ament_export_dependencies(robotis_manipulator)
 ament_export_dependencies(sensor_msgs)
 ament_export_dependencies(std_msgs)
 ament_export_dependencies(trajectory_msgs)
-if (USE_MOVEIT)
-  #ament_export_dependencies(moveit_core)
-  #ament_export_dependencies(moveit_msgs)
-  #ament_export_dependencies(moveit_ros_planning)
-  #ament_export_dependencies(moveit_ros_planning_interface)
-endif ()
 ament_package()

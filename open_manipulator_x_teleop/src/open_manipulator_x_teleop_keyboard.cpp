@@ -21,7 +21,6 @@
 using namespace std::placeholders;
 using namespace std::chrono_literals;
 
-
 namespace open_manipulator_x_teleop_keyboard
 {
 OpenManipulatorXTeleopKeyboard::OpenManipulatorXTeleopKeyboard()

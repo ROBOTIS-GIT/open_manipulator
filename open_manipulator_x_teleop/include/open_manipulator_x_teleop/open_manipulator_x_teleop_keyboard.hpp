@@ -31,7 +31,6 @@
 #define PI 3.14159265359
 #define NUM_OF_JOINT 4
 
-
 namespace open_manipulator_x_teleop_keyboard
 {
 class OpenManipulatorXTeleopKeyboard : public rclcpp::Node

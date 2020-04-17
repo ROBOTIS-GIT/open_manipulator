@@ -22,8 +22,7 @@
   <exec_depend>open_manipulator_x_libs</exec_depend>
   <exec_depend>open_manipulator_x_teleop</exec_depend>
   <!-- To be added -->
-  <!-- <exec_depend>open_manipulator_x_control_gui</exec_depend> -->
-  <!-- <exec_depend>open_manipulator_x_moveit</exec_depend> -->
+  <!-- <exec_depend>open_manipulator_x_gui</exec_depend> -->
   <export>
     <build_type>ament_cmake</build_type>
   </export>

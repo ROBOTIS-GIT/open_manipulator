@@ -2,6 +2,3 @@
   ros__parameters:
     use_platform: true
     control_period: 0.010
-    use_moveit: false
-    # planning_group_name: "arm"
-    # moveit_sample_duration: 0.050

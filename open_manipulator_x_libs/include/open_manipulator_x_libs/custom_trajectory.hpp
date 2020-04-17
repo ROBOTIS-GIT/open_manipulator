@@ -28,7 +28,6 @@
 using namespace robotis_manipulator;
 using namespace Eigen;
 
-
 namespace custom_trajectory
 {
 enum AXIS{

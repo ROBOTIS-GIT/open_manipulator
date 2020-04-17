@@ -27,7 +27,6 @@
   #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
 #endif
 
-
 namespace dynamixel
 {
 #define SYNC_WRITE_HANDLER 0
