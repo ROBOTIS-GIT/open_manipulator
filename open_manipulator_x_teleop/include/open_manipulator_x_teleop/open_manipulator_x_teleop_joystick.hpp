@@ -55,17 +55,17 @@ class OpenManipulatorXTeleopJoystick : public rclcpp::Node
   void kinematics_pose_callback(const open_manipulator_msgs::msg::KinematicsPose::SharedPtr msg);
   void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg);
 
-  void set_goal(const char *str);
-  bool set_joint_space_path(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
-  bool set_task_space_path_from_present_position_only(std::vector<double> kinematics_pose, double path_time);
-  bool set_tool_control(std::vector<double> joint_angle);
-
   /*****************************************************************************
-  ** ROS Clients
+  ** ROS Clients and Relevant Functions
   *****************************************************************************/
   rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedPtr goal_joint_space_path_client_;
   rclcpp::Client<open_manipulator_msgs::srv::SetJointPosition>::SharedPtr goal_tool_control_client_;
   rclcpp::Client<open_manipulator_msgs::srv::SetKinematicsPose>::SharedPtr goal_task_space_path_from_present_position_only_client_;
+
+  void set_goal(const char *str);
+  bool set_joint_space_path(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time);
+  bool set_task_space_path_from_present_position_only(std::vector<double> kinematics_pose, double path_time);
+  bool set_tool_control(std::vector<double> joint_angle);
 };
 }  // namespace open_manipulator_x_teleop_joystick
 #endif  // OPEN_MANIPULATOR_X_TELEOP_JOYSTICK_HPP_
