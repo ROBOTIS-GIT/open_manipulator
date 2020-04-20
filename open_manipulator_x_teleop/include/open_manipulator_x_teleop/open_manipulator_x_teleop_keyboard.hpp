@@ -50,6 +50,7 @@ class OpenManipulatorXTeleopKeyboard : public rclcpp::Node
   ** ROS Timer and callback functions
   *****************************************************************************/
   rclcpp::TimerBase::SharedPtr update_timer_;
+  
   void update_callback(); 
 
   /*****************************************************************************

@@ -23,10 +23,9 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
-
 def generate_launch_description():
-    # Parameters
-    use_gui    = LaunchConfiguration('use_gui',    default='False')  
+    # Arguments
+    use_gui = LaunchConfiguration('use_gui', default='False')  
 
     # File Paths
     rviz_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'rviz', 'open_manipulator_x.rviz')
@@ -34,19 +33,12 @@ def generate_launch_description():
 
     return LaunchDescription([
         Node(
-            package='rviz2',
-            node_executable='rviz2',
-            node_name='rviz2',
-            arguments=['-d', rviz_file],
-            output='screen'),
-
-        Node(
             package='joint_state_publisher',
             node_executable='joint_state_publisher',
             node_name='joint_state_publisher',
             arguments=[urdf_file],
             parameters=[{'use_gui': use_gui},
-                        {'source_list': ['open_manipulator_x/joint_states']}],
+                        {'source_list': ['joint_states']}],
             output='screen'),
 
         Node(
@@ -54,5 +46,12 @@ def generate_launch_description():
             node_executable='robot_state_publisher',
             node_name='robot_state_publisher',
             arguments=[urdf_file],
+            output='screen'),
+
+        Node(
+            package='rviz2',
+            node_executable='rviz2',
+            node_name='rviz2',
+            arguments=['-d', rviz_file],
             output='screen')
     ])

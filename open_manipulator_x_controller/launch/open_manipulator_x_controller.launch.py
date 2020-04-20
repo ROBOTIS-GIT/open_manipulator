@@ -27,6 +27,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    # Parameters
     usb_port = LaunchConfiguration('usb_port', default='/dev/ttyUSB0')
     baud_rate = LaunchConfiguration('baud_rate', default=1000000)
     param_dir = LaunchConfiguration(
@@ -47,8 +48,8 @@ def generate_launch_description():
         Node(
             package='open_manipulator_x_controller',
             node_executable='open_manipulator_x_controller',
-            # node_name='om_x_controller',
-            parameters=[param_dir],
+            node_name='open_manipulator_x_controller',
             arguments=['-d', usb_port, baud_rate],
+            parameters=[param_dir],
             output='screen'),
     ])
