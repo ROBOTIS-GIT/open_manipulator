@@ -95,7 +95,7 @@ void OpenManipulatorXController::init_publisher()
 
     for (auto const & name:joints_name)
     {
-      auto pb = this->create_publisher<std_msgs::msg::Float64>("" + name + "_position/command", qos);
+      auto pb = this->create_publisher<std_msgs::msg::Float64>(name + "_position/command", qos);
       gazebo_goal_joint_position_pub_.push_back(pb);
     }
   }
