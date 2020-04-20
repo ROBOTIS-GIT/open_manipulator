@@ -74,12 +74,12 @@ class OpenManipulatorXController : public rclcpp::Node
   /*****************************************************************************
   ** ROS timers
   *****************************************************************************/
+  rclcpp::TimerBase::SharedPtr process_timer_;
+  rclcpp::TimerBase::SharedPtr publish_timer_;
+
   void process_callback(); 
   void publish_callback();  
   void process(double time);
-
-  rclcpp::TimerBase::SharedPtr process_timer_;
-  rclcpp::TimerBase::SharedPtr publish_timer_;
 
   /*****************************************************************************
   ** ROS Publishers, Callback Functions and Relevant Functions
