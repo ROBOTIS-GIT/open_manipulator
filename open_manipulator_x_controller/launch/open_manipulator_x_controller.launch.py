@@ -38,8 +38,6 @@ def generate_launch_description():
             'open_manipulator_x_controller_params.yaml'))
 
     return LaunchDescription([
-        LogInfo(msg=['Execute OpenManipulator-X Controller!!']),
-
         DeclareLaunchArgument(
             'param_dir',
             default_value=param_dir,

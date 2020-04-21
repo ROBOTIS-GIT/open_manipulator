@@ -34,10 +34,10 @@ OpenManipulatorXController::OpenManipulatorXController(std::string usb_port, std
   /************************************************************
   ** Initialise variables
   ************************************************************/
-  open_manipulator_x_.init_open_manipulator_x(use_platform_, usb_port, baud_rate, control_period_);
+  open_manipulator_x_.init_open_manipulator_x(sim_, usb_port, baud_rate, control_period_);
 
-  if (use_platform_ == true) RCLCPP_INFO(this->get_logger(), "Succeeded to Initialise OpenManipulator-X Controller");
-  else if (use_platform_ == false) RCLCPP_INFO(this->get_logger(), "Ready to Simulate OpenManipulator-X on Gazebo");
+  if (sim_ == false) RCLCPP_INFO(this->get_logger(), "Succeeded to Initialise OpenManipulator-X Controller");
+  else RCLCPP_INFO(this->get_logger(), "Ready to Simulate OpenManipulator-X on Gazebo");
 
   /************************************************************
   ** Initialise ROS publishers, subscribers and servers
@@ -65,11 +65,11 @@ OpenManipulatorXController::~OpenManipulatorXController()
 void OpenManipulatorXController::init_parameters()
 {
   // Declare parameters that may be set on this node
-  this->declare_parameter("use_platform");
+  this->declare_parameter("sim");
   this->declare_parameter("control_period");
 
   // Get parameter from yaml
-  this->get_parameter_or<bool>("use_platform", use_platform_, false);
+  this->get_parameter_or<bool>("sim", sim_, false);
   this->get_parameter_or<double>("control_period", control_period_, 0.010);
 }
 
@@ -83,7 +83,7 @@ void OpenManipulatorXController::init_publisher()
   // Publish Joint States
   auto tools_name = open_manipulator_x_.getManipulator()->getAllToolComponentName();
 
-  if (use_platform_ == true) // for actual robot
+  if (sim_ == false) // for actual robot
   {
     open_manipulator_x_joint_states_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", qos);
   }
@@ -459,7 +459,7 @@ void OpenManipulatorXController::process(double time)
 ********************************************************************************/
 void OpenManipulatorXController::publish_callback()   
 {
-  if (use_platform_ == true) publish_joint_states();
+  if (sim_ == false) publish_joint_states();
   else publish_gazebo_command();
 
   publish_open_manipulator_x_states();

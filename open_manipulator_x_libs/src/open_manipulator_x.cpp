@@ -29,7 +29,7 @@ OpenManipulatorX::~OpenManipulatorX()
     delete custom_trajectory_[index];
 }
 
-void OpenManipulatorX::init_open_manipulator_x(bool using_actual_robot_state, STRING usb_port, STRING baud_rate, float control_loop_time, std::vector<uint8_t> dxl_id)
+void OpenManipulatorX::init_open_manipulator_x(bool sim, STRING usb_port, STRING baud_rate, float control_loop_time, std::vector<uint8_t> dxl_id)
 {
   /*****************************************************************************
     ** Initialize Manipulator Parameter
@@ -127,7 +127,7 @@ void OpenManipulatorX::init_open_manipulator_x(bool using_actual_robot_state, ST
 //  kinematics_ = new kinematics::SolverUsingCRAndSRPositionOnlyJacobian();
   addKinematics(kinematics_);
 
-  if(using_actual_robot_state)
+  if(!sim)
   {
     /*****************************************************************************
     ** Initialize Joint Actuator

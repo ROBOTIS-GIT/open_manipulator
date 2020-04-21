@@ -43,7 +43,7 @@ class OpenManipulatorX : public robotis_manipulator::RobotisManipulator
   virtual ~OpenManipulatorX();
 
   void init_open_manipulator_x(
-    bool using_actual_robot_state, 
+    bool sim, 
     STRING usb_port = "/dev/ttyUSB0", 
     STRING baud_rate = "1000000", 
     float control_loop_time = 0.010,

@@ -1,4 +1,4 @@
 ﻿open_manipulator_x_controller:
   ros__parameters:
-    use_platform: true
+    sim: false
     control_period: 0.010
