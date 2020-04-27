@@ -45,11 +45,11 @@ OpenManipulatorTeleop::~OpenManipulatorTeleop()
 
 void OpenManipulatorTeleop::initClient()
 {
-  goal_task_space_path_from_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_from_present_position_only");
   goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
+  goal_task_space_path_from_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_from_present_position_only");
   goal_tool_control_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_tool_control");
-
 }
+
 void OpenManipulatorTeleop::initSubscriber()
 {
   joint_states_sub_ = node_handle_.subscribe("joint_states", 10, &OpenManipulatorTeleop::jointStatesCallback, this);
@@ -175,7 +175,6 @@ void OpenManipulatorTeleop::setGoal(const char* str)
     goalPose.at(2) = -DELTA;
     setTaskSpacePathFromPresentPositionOnly(goalPose, PATH_TIME);
   }
-
   else if(str == "gripper open")
   {
     printf("open gripper\n");
@@ -191,7 +190,6 @@ void OpenManipulatorTeleop::setGoal(const char* str)
     joint_angle.push_back(-0.01);
     setToolControl(joint_angle);
   }
-
   else if(str == "home")
   {
     printf("home pose\n");

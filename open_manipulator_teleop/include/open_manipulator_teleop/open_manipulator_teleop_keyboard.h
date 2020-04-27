@@ -70,8 +70,6 @@ class OpenManipulatorTeleop
   void jointStatesCallback(const sensor_msgs::JointState::ConstPtr &msg);
   void kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg);
 
-
-
   /*****************************************************************************
   ** ROS Clients and Callback Functions
   *****************************************************************************/
