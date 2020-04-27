@@ -378,6 +378,7 @@ int main(int argc, char **argv)
   OpenManipulatorTeleop openManipulatorTeleop;
 
   char ch;
+  openManipulatorTeleop.printText();
   while (ros::ok() && (ch = std::getchar()) != 'q')
   {
     ros::spinOnce();
