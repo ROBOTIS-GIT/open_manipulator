@@ -51,7 +51,7 @@ OpenManipulatorController::~OpenManipulatorController()
 {
   timer_thread_state_ = false;
   pthread_join(timer_thread_, NULL); // Wait for the thread associated with thread_p to complete
-  log::info("Shutdown the OpenManipulator");
+  log::info("Shutdown OpenManipulator Controller");
   open_manipulator_.disableAllActuator();
   ros::shutdown();
 }
