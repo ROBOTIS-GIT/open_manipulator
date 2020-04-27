@@ -20,10 +20,14 @@
 
 OpenManipulatorTeleop::OpenManipulatorTeleop()
 : node_handle_(""),
-  priv_node_handle_("~"),
-  present_joint_angle_(NUM_OF_JOINT, 0),
-  present_kinematic_position_(3, 0)
+  priv_node_handle_("~")
 {
+  /************************************************************
+  ** Initialize variables
+  ************************************************************/
+  present_joint_angle_.resize(NUM_OF_JOINT);
+  present_kinematic_position_.resize(3);
+
   /************************************************************
   ** Initialize ROS Subscribers and Clients
   ************************************************************/
