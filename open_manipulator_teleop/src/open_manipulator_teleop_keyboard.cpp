@@ -19,32 +19,33 @@
 #include "open_manipulator_teleop/open_manipulator_teleop_keyboard.h"
 
 OpenManipulatorTeleop::OpenManipulatorTeleop()
-    :node_handle_(""),
-     priv_node_handle_("~")
+: node_handle_(""),
+  priv_node_handle_("~"),
+  present_joint_angle_(NUM_OF_JOINT, 0),
+  present_kinematic_position_(3, 0)
 {
-  present_joint_angle_.resize(NUM_OF_JOINT);
-  present_kinematic_position_.resize(3);
-
-  initClient();
+  /************************************************************
+  ** Initialize ROS Subscribers and Clients
+  ************************************************************/
   initSubscriber();
+  initClient();
 
-  ROS_INFO("OpenManipulator initialization");
+  disableWaitingForEnter();
+  ROS_INFO("OpenManipulator teleoperation using keyboard start");
 }
 
 OpenManipulatorTeleop::~OpenManipulatorTeleop()
 {
-  if(ros::isStarted()) {
-    ros::shutdown(); // explicitly needed since we use ros::start();
-    ros::waitForShutdown();
-  }
+  restoreTerminalSettings();
+  ROS_INFO("Terminate OpenManipulator Joystick");
+  ros::shutdown();
 }
 
 void OpenManipulatorTeleop::initClient()
 {
+  goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
   goal_joint_space_path_from_present_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path_from_present");
   goal_task_space_path_from_present_position_only_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetKinematicsPose>("goal_task_space_path_from_present_position_only");
-
-  goal_joint_space_path_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_joint_space_path");
   goal_tool_control_client_ = node_handle_.serviceClient<open_manipulator_msgs::SetJointPosition>("goal_tool_control");
 }
 void OpenManipulatorTeleop::initSubscriber()
@@ -65,7 +66,6 @@ void OpenManipulatorTeleop::jointStatesCallback(const sensor_msgs::JointState::C
     else if(!msg->name.at(i).compare("joint4"))  temp_angle.at(3) = (msg->position.at(i));
   }
   present_joint_angle_ = temp_angle;
-
 }
 
 void OpenManipulatorTeleop::kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
@@ -358,7 +358,7 @@ void OpenManipulatorTeleop::setGoal(char ch)
 
 void OpenManipulatorTeleop::restoreTerminalSettings(void)
 {
-    tcsetattr(0, TCSANOW, &oldt_);  /* Apply saved settings */
+  tcsetattr(0, TCSANOW, &oldt_);  /* Apply saved settings */
 }
 
 void OpenManipulatorTeleop::disableWaitingForEnter(void)
@@ -374,15 +374,8 @@ void OpenManipulatorTeleop::disableWaitingForEnter(void)
 int main(int argc, char **argv)
 {
   // Init ROS node
-  ros::init(argc, argv, "open_manipulator_teleop");
-
+  ros::init(argc, argv, "open_manipulator_teleop_keyboard");
   OpenManipulatorTeleop openManipulatorTeleop;
-
-  ROS_INFO("OpenManipulator teleoperation using keyboard start");
-  openManipulatorTeleop.disableWaitingForEnter();
-
-  ros::spinOnce();
-  openManipulatorTeleop.printText();
 
   char ch;
   while (ros::ok() && (ch = std::getchar()) != 'q')
@@ -392,9 +385,6 @@ int main(int argc, char **argv)
     ros::spinOnce();
     openManipulatorTeleop.setGoal(ch);
   }
-
-  printf("input : q \tTeleop. is finished\n");
-  openManipulatorTeleop.restoreTerminalSettings();
 
   return 0;
 }

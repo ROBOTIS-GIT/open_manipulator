@@ -19,23 +19,24 @@
 #include "open_manipulator_teleop/open_manipulator_teleop_joystick.h"
 
 OpenManipulatorTeleop::OpenManipulatorTeleop()
-    :node_handle_(""),
-     priv_node_handle_("~"),
-     present_joint_angle_(NUM_OF_JOINT, 0),
-     present_kinematic_position_(3, 0)
+: node_handle_(""),
+  priv_node_handle_("~"),
+  present_joint_angle_(NUM_OF_JOINT, 0),
+  present_kinematic_position_(3, 0)
 {
-  initClient();
+  /************************************************************
+  ** Initialize ROS Subscribers and Clients
+  ************************************************************/
   initSubscriber();
+  initClient();
 
-  ROS_INFO("OpenManipulator initialization");
+  ROS_INFO("OpenManipulator teleoperation using joystick start");
 }
 
 OpenManipulatorTeleop::~OpenManipulatorTeleop()
 {
-  if(ros::isStarted()) {
-    ros::shutdown(); // explicitly needed since we use ros::start();
-    ros::waitForShutdown();
-  }
+  ROS_INFO("Terminate OpenManipulator Joystick");
+  ros::shutdown();
 }
 
 void OpenManipulatorTeleop::initClient()
@@ -64,7 +65,6 @@ void OpenManipulatorTeleop::jointStatesCallback(const sensor_msgs::JointState::C
     else if(!msg->name.at(i).compare("joint4"))  temp_angle.at(3) = (msg->position.at(i));
   }
   present_joint_angle_ = temp_angle;
-
 }
 
 void OpenManipulatorTeleop::kinematicsPoseCallback(const open_manipulator_msgs::KinematicsPose::ConstPtr &msg)
@@ -85,15 +85,6 @@ void OpenManipulatorTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr &msg)
 
   if(msg->buttons.at(2) == 1) setGoal("gripper close");
   else if(msg->buttons.at(1) == 1) setGoal("gripper open");
-}
-
-std::vector<double> OpenManipulatorTeleop::getPresentJointAngle()
-{
-  return present_joint_angle_;
-}
-std::vector<double> OpenManipulatorTeleop::getPresentKinematicsPose()
-{
-  return present_kinematic_position_;
 }
 
 bool OpenManipulatorTeleop::setJointSpacePath(std::vector<std::string> joint_name, std::vector<double> joint_angle, double path_time)
@@ -230,11 +221,6 @@ int main(int argc, char **argv)
   // Init ROS node
   ros::init(argc, argv, "open_manipulator_TELEOP");
   OpenManipulatorTeleop openManipulatorTeleop;
-
-  ROS_INFO("OpenManipulator teleoperation using joystick start");
-
   ros::spin();
-
-  printf("Teleop. is finished\n");
   return 0;
 }
