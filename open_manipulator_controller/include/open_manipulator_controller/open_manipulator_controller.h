@@ -169,18 +169,6 @@ class OpenManipulatorController
 
   bool goalDrawingTrajectoryCallback(open_manipulator_msgs::SetDrawingTrajectory::Request  &req,
                                      open_manipulator_msgs::SetDrawingTrajectory::Response &res);
-
-  bool setJointPositionMsgCallback(open_manipulator_msgs::SetJointPosition::Request &req,
-                                   open_manipulator_msgs::SetJointPosition::Response &res);
-
-  bool setKinematicsPoseMsgCallback(open_manipulator_msgs::SetKinematicsPose::Request &req,
-                                    open_manipulator_msgs::SetKinematicsPose::Response &res);
-
-  bool getJointPositionMsgCallback(open_manipulator_msgs::GetJointPosition::Request &req,
-                                   open_manipulator_msgs::GetJointPosition::Response &res);
-
-  bool getKinematicsPoseMsgCallback(open_manipulator_msgs::GetKinematicsPose::Request &req,
-                                    open_manipulator_msgs::GetKinematicsPose::Response &res);
 };
 }
 #endif //OPEN_MANIPULATOR_CONTROLLER_H_

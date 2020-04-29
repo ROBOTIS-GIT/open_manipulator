@@ -642,7 +642,7 @@ int main(int argc, char **argv)
   else
   {
     log::error("Please set '-port_name' and  '-baud_rate' arguments for connected Dynamixels");
-    return 0;
+    return 1;
   }
 
   OpenManipulatorController om_controller(usb_port, baud_rate);
