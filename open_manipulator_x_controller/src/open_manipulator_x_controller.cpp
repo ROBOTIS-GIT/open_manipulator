@@ -564,7 +564,7 @@ int main(int argc, char **argv)
 
   std::string usb_port = "/dev/ttyUSB0";
   std::string baud_rate = "1000000";
-  if (argc == 3)
+  if (argc >= 3)
   {
     usb_port = argv[1];
     baud_rate = argv[2];
