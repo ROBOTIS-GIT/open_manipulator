@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
 * Copyright 2018 ROBOTIS CO., LTD.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -230,7 +230,7 @@ void OpenManipulatorController::displayPlannedPathCallback(const moveit_msgs::Di
 
 void OpenManipulatorController::moveGroupGoalCallback(const moveit_msgs::MoveGroupActionGoal::ConstPtr &msg)
 {
-  log::println("[INFO] [OpenManipulator Controller] Get Moveit plnning option", "GREEN");
+  log::println("[INFO] [OpenManipulator Controller] Get Moveit planning option", "GREEN");
   moveit_plan_only_ = msg->goal.planning_options.plan_only; // click "plan & execute" or "plan" button
 
 }
