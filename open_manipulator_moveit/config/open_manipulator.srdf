@@ -29,9 +29,15 @@
     </group_state>
     <group_state name="home" group="arm">
         <joint name="joint1" value="0" />
-        <joint name="joint2" value="-1" />
-        <joint name="joint3" value="0.3" />
+        <joint name="joint2" value="-1.05" />
+        <joint name="joint3" value="0.35" />
         <joint name="joint4" value="0.7" />
+    </group_state>
+    <group_state name="off" group="arm">
+        <joint name="joint1" value="0" />
+        <joint name="joint2" value="1.05" />
+        <joint name="joint3" value="-0.25" />
+        <joint name="joint4" value="-1.05" />
     </group_state>
     <group_state name="gripper_closed" group="gripper">
         <joint name="gripper" value="-0.01" />
