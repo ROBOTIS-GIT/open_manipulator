@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 * Copyright 2018 ROBOTIS CO., LTD.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -765,19 +765,25 @@ void OpenManipulatorController::moveitTimer(double present_time)
     double path_time = present_time - priv_time;
     if (path_time > moveit_sampling_time_)
     {
-      JointWaypoint target;
       uint32_t all_time_steps = joint_trajectory_.points.size();
-
-      for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
-      {
-        JointValue temp;
-        temp.position = joint_trajectory_.points[step_cnt].positions.at(i);
-        temp.velocity = joint_trajectory_.points[step_cnt].velocities.at(i);
-        temp.acceleration = joint_trajectory_.points[step_cnt].accelerations.at(i);
-        target.push_back(temp);
+      // Check if gripper command was sent by moveit
+      if (joint_trajectory_.joint_names[0] == "gripper") {
+        open_manipulator_.makeToolTrajectory("gripper", joint_trajectory_.points[step_cnt].positions.at(0));
       }
-      open_manipulator_.makeJointTrajectory(target, path_time);
+      // Else it's an arm command
+      else {
+        JointWaypoint target;
 
+        for(uint8_t i = 0; i < joint_trajectory_.points[step_cnt].positions.size(); i++)
+        {
+          JointValue temp;
+          temp.position = joint_trajectory_.points[step_cnt].positions.at(i);
+          temp.velocity = joint_trajectory_.points[step_cnt].velocities.at(i);
+          temp.acceleration = joint_trajectory_.points[step_cnt].accelerations.at(i);
+          target.push_back(temp);
+        }
+        open_manipulator_.makeJointTrajectory(target, path_time);
+      }
       step_cnt++;
       priv_time = present_time;
 
