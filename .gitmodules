@@ -1,0 +1,3 @@
+[submodule "open_manipulator_ikfast_plugin"]
+	path = open_manipulator_ikfast_plugin
+	url = https://github.com/dudasdavid/open_manipulator_ikfast_plugin
