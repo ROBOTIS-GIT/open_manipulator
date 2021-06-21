@@ -1,11 +1,8 @@
 <launch>
-  <arg name="use_gui"        default="false" />
-
   <include file="$(find open_manipulator_description)/launch/open_manipulator_upload.launch"/>
 
   <!-- Send joint values -->
   <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
-    <param name="/use_gui" value="$(arg use_gui)"/>
     <rosparam param="source_list" subst_value="true">["joint_states"]</rosparam>
   </node>
 
