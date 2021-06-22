@@ -17,9 +17,10 @@
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>roscpp</depend>
-  <depend>robotis_manipulator</depend>
-  <depend>dynamixel_workbench_toolbox</depend>
+  <buildtool_depend>robotis_manipulator</buildtool_depend>
   <depend>cmake_modules</depend>
+  <depend>dynamixel_workbench_toolbox</depend>
   <depend>eigen</depend>
+  <depend>robotis_manipulator</depend>
+  <depend>roscpp</depend>
 </package>
