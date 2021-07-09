@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>open_manipulator_control_gui</name>
-  <version>2.0.1</version>
+  <version>2.0.2</version>
   <description>
     OpenManipulator GUI control package based on QT
   </description>
@@ -10,8 +10,7 @@
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
   <author email="jhshim@robotis.com">Ryan Shim</author>
   <author email="yhna@robotis.com">Yong-Ho Na</author>
-  <maintainer email="pyo@robotis.com">Pyo</maintainer>
-  <maintainer email="hjkim@robotis.com">Hye-Jong KIM</maintainer>
+  <maintainer email="willson@robotis.com">Will Son</maintainer>
   <url type="website">http://wiki.ros.org/open_manipulator_control_gui</url>
   <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>

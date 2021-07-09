@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_control_gui
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.2 (2021-06-21)
+------------------
+* Noetic support
+* Contributors: Will Son
+
 2.0.1 (2019-02-18)
 ------------------
 * added dependency option for open_manipulator_control_gui package
