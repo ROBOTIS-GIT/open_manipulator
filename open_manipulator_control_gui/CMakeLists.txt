@@ -1,7 +1,7 @@
 ﻿################################################################################
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
-cmake_minimum_required(VERSION 2.8.0)
+cmake_minimum_required(VERSION 3.0.2)
 project(open_manipulator_control_gui)
 
 ## Compile as C++11, supported in ROS Kinetic and newer

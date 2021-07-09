@@ -49,4 +49,4 @@ jobs:
         with:
           package-name: open_manipulator
           target-ros1-distro: ${{ matrix.ros_distribution }}
-          vcs-repo-file-url: ""
+          vcs-repo-file-url: "https://raw.githubusercontent.com/ROBOTIS-GIT/open_manipulator/develop/openmanipulator.repos"
