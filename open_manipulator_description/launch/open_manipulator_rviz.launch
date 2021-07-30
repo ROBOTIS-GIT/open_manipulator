@@ -1,10 +1,19 @@
 <launch>
+  <arg name="use_gui"         default="false"/>
+
   <include file="$(find open_manipulator_description)/launch/open_manipulator_upload.launch"/>
 
   <!-- Send joint values -->
-  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
-    <rosparam param="source_list" subst_value="true">["joint_states"]</rosparam>
-  </node>
+  <group if="$(arg use_gui)">
+    <node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher">
+      <rosparam param="source_list" subst_value="true">["joint_states"]</rosparam>
+    </node>
+  </group>
+  <group unless="$(arg use_gui)">
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
+      <rosparam param="source_list" subst_value="true">["joint_states"]</rosparam>
+    </node>
+  </group> 
 
   <!-- Combine joint values to TF-->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
