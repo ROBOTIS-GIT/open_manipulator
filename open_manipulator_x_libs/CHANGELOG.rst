@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_libs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.3.0 (2021-10-06)
+------------------
+* ROS2 Foxy Fitzroy supported
+* Contributors: Will Son
+
 2.1.0 (2019-08-31)
 ------------------
 * Added support for ROS2

@@ -3,16 +3,18 @@
 <robot name="open_manipulator_x" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- Import Rviz colors -->
-  <xacro:include filename="$(find open_manipulator_x_description)/urdf/materials.xacro" />
+  <xacro:include filename="package://open_manipulator_x_description/urdf/materials.xacro" />
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
-  <xacro:include filename="$(find open_manipulator_x_description)/urdf/open_manipulator_x.gazebo.xacro" />
+  <xacro:if value="$(arg gazebo)">
+    <xacro:include filename="package://open_manipulator_x_description/urdf/open_manipulator_x.gazebo.xacro" />
+  </xacro:if>
 
   <!-- Import Transmission -->
-  <xacro:include filename="$(find open_manipulator_x_description)/urdf/open_manipulator_x.transmission.xacro" />
+  <xacro:include filename="package://open_manipulator_x_description/urdf/open_manipulator_x.transmission.xacro" />
 
   <!-- Import URDF -->
-  <xacro:include filename="$(find open_manipulator_x_description)/urdf/open_manipulator_x.urdf.xacro" />
+  <xacro:include filename="package://open_manipulator_x_description/urdf/open_manipulator_x.urdf.xacro" />
 
   <!-- World -->
   <link name="world"/>

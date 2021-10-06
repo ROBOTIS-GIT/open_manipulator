@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="open_manipulator_x" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
 
   <!-- Link 1 -->
   <link name="link1">
@@ -26,7 +34,6 @@
                izz="1.9267361e-05" />
     </inertial>
   </link>
-
   <!-- Joint 1 -->
   <joint name="joint1" type="revolute">
     <parent link="link1"/>
@@ -61,7 +68,6 @@
                izz="1.8850320e-05" />
     </inertial>
   </link>
-
   <!--  Joint 2 -->
   <joint name="joint2" type="revolute">
     <parent link="link2"/>
@@ -96,7 +102,6 @@
                izz="6.0346498e-05" />
     </inertial>
   </link>
-
   <!--  Joint 3 -->
   <joint name="joint3" type="revolute">
     <parent link="link3"/>
@@ -131,7 +136,6 @@
                izz="2.5155057e-04" />
     </inertial>
   </link>
-
   <!--  Joint 4 -->
   <joint name="joint4" type="revolute">
     <parent link="link4"/>

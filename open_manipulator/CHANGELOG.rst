@@ -2,6 +2,12 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.3.0 (2021-10-06)
+------------------
+* ROS2 Foxy Fitzroy supported
+* OpenMANIPULATOR Teleop developed in python
+* Contributors: Will Son
+
 2.2.0 (2019-11-13)
 ------------------
 * Applied robotis coding style guide 

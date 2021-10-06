@@ -25,33 +25,47 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     # Arguments
-    use_gui = LaunchConfiguration('use_gui', default='False')  
+    use_gui = LaunchConfiguration('use_gui', default='False')
 
-    # File Paths
-    rviz_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'rviz', 'open_manipulator_x.rviz')
-    urdf_file = os.path.join(get_package_share_directory('open_manipulator_x_description'), 'urdf', 'open_manipulator_x_robot.urdf.xacro')
+    robot_name = "open_manipulator_x"
+    package_name = robot_name + "_description"
+    
+    rviz_config = os.path.join(
+        get_package_share_directory(package_name),
+        "rviz",
+        robot_name + ".rviz")
+
+    urdf_file = os.path.join(
+        get_package_share_directory(package_name),
+        'urdf',
+        robot_name + ".urdf.xacro")
+
+    print('urdf_file_name : {}'.format(urdf_file))
+
+    with open(urdf_file, 'r') as infp:
+        robot_desc = infp.read()
 
     return LaunchDescription([
         Node(
             package='joint_state_publisher',
-            node_executable='joint_state_publisher',
-            node_name='joint_state_publisher',
+            executable='joint_state_publisher',
+            name='joint_state_publisher',
             arguments=[urdf_file],
-            parameters=[{'use_gui': use_gui},
-                        {'source_list': ['joint_states']}],
+            parameters=[{'source_list': ['joint_states']}],
             output='screen'),
 
         Node(
             package='robot_state_publisher',
-            node_executable='robot_state_publisher',
-            node_name='robot_state_publisher',
-            arguments=[urdf_file],
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            parameters=[
+                {"robot_description": robot_desc}],
             output='screen'),
 
         Node(
             package='rviz2',
-            node_executable='rviz2',
-            node_name='rviz2',
-            arguments=['-d', rviz_file],
+            executable='rviz2',
+            name='rviz2',
+            arguments=['-d', rviz_config],
             output='screen')
     ])

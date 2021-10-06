@@ -1,23 +1,22 @@
-﻿/*******************************************************************************
-* Copyright 2019 ROBOTIS CO., LTD.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*******************************************************************************/
+﻿// Copyright 2019 ROBOTIS CO., LTD.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na
 
-/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na */
 
-#ifndef OPEN_MANIPULATOR_X_CONTROLLER_HPP
-#define OPEN_MANIPULATOR_X_CONTROLLER_HPP
+#ifndef OPEN_MANIPULATOR_X_CONTROLLER__OPEN_MANIPULATOR_X_CONTROLLER_HPP_
+#define OPEN_MANIPULATOR_X_CONTROLLER__OPEN_MANIPULATOR_X_CONTROLLER_HPP_
 
 #include <chrono>
 #include <cstdio>
@@ -163,4 +162,4 @@ class OpenManipulatorXController : public rclcpp::Node
     const std::shared_ptr<open_manipulator_msgs::srv::SetDrawingTrajectory::Response> res);
 };
 }  // namespace open_manipulator_x_controller
-#endif //OPEN_MANIPULATOR_X_CONTROLLER_HPP
+#endif  // OPEN_MANIPULATOR_X_CONTROLLER__OPEN_MANIPULATOR_X_CONTROLLER_HPP_

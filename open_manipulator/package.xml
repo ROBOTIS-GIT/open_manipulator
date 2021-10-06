@@ -1,28 +1,26 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>open_manipulator_x</name>
-  <version>2.2.0</version>
+  <name>open_manipulator</name>
+  <version>2.3.0</version>
   <description>
-    ROS 2 packages for open_manipulator_x.
+    OpenMANIPULATOR-X meta ROS 2 package.
   </description>
+  <maintainer email="willson@robotis.com">Will Son</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">http://wiki.ros.org/open_manipulator</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <author email="thlim@robotis.com">Darby Lim</author>
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
   <author email="jhshim@robotis.com">Ryan Shim</author>
   <author email="yhna@robotis.com">Yong-Ho Na</author>
-  <maintainer email="pyo@robotis.com">Pyo</maintainer>
-  <license>Apache 2.0</license>
-  <url type="website">http://wiki.ros.org/open_manipulator</url>
-  <url type="emanual">http://emanual.robotis.com/docs/en/platform/openmanipulator</url>
-  <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
-  <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
+  <author email="willson@robotis.com">Will Son</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>open_manipulator_x_controller</exec_depend>
   <exec_depend>open_manipulator_x_description</exec_depend>
   <exec_depend>open_manipulator_x_libs</exec_depend>
   <exec_depend>open_manipulator_x_teleop</exec_depend>
-  <!-- To be added -->
-  <!-- <exec_depend>open_manipulator_x_gui</exec_depend> -->
   <export>
     <build_type>ament_cmake</build_type>
   </export>

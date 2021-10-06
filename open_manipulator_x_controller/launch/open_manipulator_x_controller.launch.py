@@ -55,8 +55,8 @@ def generate_launch_description():
 
         Node(
             package='open_manipulator_x_controller',
-            node_executable='open_manipulator_x_controller',
-            node_name='open_manipulator_x_controller',
+            executable='open_manipulator_x_controller',
+            name='open_manipulator_x_controller',
             arguments=[usb_port, baud_rate],
             parameters=[param_dir],
             output='screen'),
