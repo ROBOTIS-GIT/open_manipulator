@@ -59,6 +59,7 @@
       <mimicJoint>gripper_sub</mimicJoint>
       <multiplier>1.0</multiplier>
       <offset>0.0</offset>
+      <hasPID>/gazebo_ros_control/pid_gains/gripper_sub</hasPID>
     </plugin>
   </gazebo>
 
