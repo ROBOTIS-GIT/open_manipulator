@@ -29,7 +29,7 @@ OpenManipulator::~OpenManipulator()
     delete custom_trajectory_[index];
 }
 
-void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING usb_port, STRING baud_rate, float control_loop_time)
+void OpenManipulator::initOpenManipulator(bool using_actual_robot_state, STRING usb_port, STRING baud_rate, float control_loop_time, std::vector<uint8_t> dxl_id)
 {
   /*****************************************************************************
   ** Initialize Manipulator Parameter

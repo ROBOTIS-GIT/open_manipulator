@@ -49,6 +49,7 @@ public:
   OpenManipulator();
   virtual ~OpenManipulator();
 
+  std::vector<uint8_t> dxl_id = {11, 12, 13, 14, 15});
   void initOpenManipulator(bool using_actual_robot_state, STRING usb_port = "/dev/ttyUSB0", STRING baud_rate = "1000000", float control_loop_time = 0.010);
   void processOpenManipulator(double present_time);
 };
