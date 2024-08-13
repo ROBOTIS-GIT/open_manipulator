@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <!-- Arg to alternate between effort/position interface -->
+  <xacro:arg name="interface_type" default="position"/>
+  <xacro:property name="interface_type" value="$(arg interface_type)"/>
+
   <!-- Transmission macro -->
   <xacro:macro name="SimpleTransmissionPosition" params="joint n">
     <transmission name="tran${n}">
@@ -27,17 +31,35 @@
     </transmission>
   </xacro:macro>
 
-  <!-- Transmission 1 -->
-  <xacro:SimpleTransmissionPosition n="1" joint="joint1" />
+  <!-- Transmissions for Effort Interface -->
+  <xacro:if value="${interface_type == 'effort'}">
+    <!-- Transmission 1 -->
+    <xacro:SimpleTransmissionEffort n="1" joint="joint1" />
 
-  <!-- Transmission 2 -->
-  <xacro:SimpleTransmissionPosition n="2" joint="joint2" />
+    <!-- Transmission 2 -->
+    <xacro:SimpleTransmissionEffort n="2" joint="joint2" />
+  
+    <!-- Transmission 3 -->
+    <xacro:SimpleTransmissionEffort n="3" joint="joint3" />
+  
+    <!-- Transmission 4 -->
+    <xacro:SimpleTransmissionEffort n="4" joint="joint4" />
+  </xacro:if>
 
-  <!-- Transmission 3 -->
-  <xacro:SimpleTransmissionPosition n="3" joint="joint3" />
+  <!-- Transmissions for Position Interface -->
+  <xacro:if value="${interface_type == 'position'}">
+    <!-- Transmission 1 -->
+    <xacro:SimpleTransmissionPosition n="1" joint="joint1" />
 
-  <!-- Transmission 4 -->
-  <xacro:SimpleTransmissionPosition n="4" joint="joint4" />
+    <!-- Transmission 2 -->
+    <xacro:SimpleTransmissionPosition n="2" joint="joint2" />
+  
+    <!-- Transmission 3 -->
+    <xacro:SimpleTransmissionPosition n="3" joint="joint3" />
+  
+    <!-- Transmission 4 -->
+    <xacro:SimpleTransmissionPosition n="4" joint="joint4" />
+  </xacro:if>
 
   <!-- Transmission 5 -->
   <xacro:SimpleTransmissionEffort n="5" joint="gripper" />

@@ -1,4 +1,6 @@
 <launch>
+  <arg name="interface_type" default="position"/>
+
   <param name="robot_description"
-         command="$(find xacro)/xacro --inorder '$(find open_manipulator_description)/urdf/open_manipulator_robot.urdf.xacro'"/>
+         command="$(find xacro)/xacro --inorder '$(find open_manipulator_description)/urdf/open_manipulator_robot.urdf.xacro' interface_type:=$(arg interface_type)"/>
 </launch>
