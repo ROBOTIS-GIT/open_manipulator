@@ -18,25 +18,25 @@
   <gazebo reference="world"/>
 
   <!-- Link1 -->
-  <RefLink ref="link1"/>
+  <xacro:RefLink ref="link1"/>
 
   <!-- Link2 -->
-  <RefLink ref="link2"/>
+  <xacro:RefLink ref="link2"/>
 
   <!-- Link3 -->
-  <RefLink ref="link3"/>
+  <xacro:RefLink ref="link3"/>
 
   <!-- Link4 -->
-  <RefLink ref="link4"/>
+  <xacro:RefLink ref="link4"/>
 
   <!-- Link5 -->
-  <RefLink ref="link5"/>
+  <xacro:RefLink ref="link5"/>
 
   <!-- gripper_link -->
-  <RefLink ref="gripper_link"/>
+  <xacro:RefLink ref="gripper_link"/>
 
   <!-- gripper_link_sub -->
-  <RefLink ref="gripper_link_sub"/>
+  <xacro:RefLink ref="gripper_link_sub"/>
 
   <!-- end effector link -->
   <gazebo reference="end_effector_link">
