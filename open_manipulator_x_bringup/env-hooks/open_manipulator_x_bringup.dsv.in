@@ -1,0 +1,1 @@
+prepend-non-duplicate;GAZEBO_MODEL_PATH;share/open_manipulator_x_bringup/worlds

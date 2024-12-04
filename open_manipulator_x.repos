@@ -1,0 +1,25 @@
+repositories:
+  DynamixelSDK:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+    version: ros2-devel
+  dynamixel-workbench:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/dynamixel-workbench.git
+    version: ros2-devel
+  open_manipulator:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/open_manipulator.git
+    version: ros2-devel
+  open_manipulator_msgs:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/open_manipulator_msgs.git
+    version: ros2-devel
+  open_manipulator_dependencies:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/open_manipulator_dependencies.git
+    version: ros2-devel
+  robotis_manipulator:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/robotis_manipulator.git
+    version: ros2-devel

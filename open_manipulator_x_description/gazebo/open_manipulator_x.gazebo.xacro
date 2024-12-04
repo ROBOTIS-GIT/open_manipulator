@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+Copied and modified from turtlebot3 example:
+https://github.com/ROBOTIS-GIT/turtlebot3/blob/kinetic-devel/turtlebot3_description/urdf/turtlebot3_waffle_pi_for_open_manipulator.gazebo.xacro
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="open_manipulator_x_gazebo" params="prefix">
+
+  <xacro:macro name="SimpleTransmission" params="trans joint actuator">
+    <transmission name="${trans}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${joint}">
+        <hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${actuator}">
+        <mechanicalReduction>1</mechanicalReduction>
+        <hardwareInterface>PositionJointInterface</hardwareInterface>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <xacro:macro name="Link" params="reference">
+    <gazebo reference="${reference}">
+      <kp>1000000.0</kp>
+      <kd>100.0</kd>
+      <mu1>30.0</mu1>
+      <mu2>30.0</mu2>
+      <maxVel>1.0</maxVel>
+      <minDepth>0.001</minDepth>
+      <material>Gazebo/DarkGrey</material>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:Link reference="${prefix}link1"/>
+  <xacro:Link reference="${prefix}link2"/>
+  <xacro:Link reference="${prefix}link3"/>
+  <xacro:Link reference="${prefix}link4"/>
+  <xacro:Link reference="${prefix}link5"/>
+
+  <xacro:Link reference="${prefix}gripper_left_link"/>
+  <xacro:Link reference="${prefix}gripper_right_link"/>
+
+  <gazebo reference="${prefix}end_effector_link">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <xacro:SimpleTransmission trans="${prefix}trans1" joint="${prefix}joint1" actuator="${prefix}actuator1" />
+  <xacro:SimpleTransmission trans="${prefix}trans2" joint="${prefix}joint2" actuator="${prefix}actuator2" />
+  <xacro:SimpleTransmission trans="${prefix}trans3" joint="${prefix}joint3" actuator="${prefix}actuator3" />
+  <xacro:SimpleTransmission trans="${prefix}trans4" joint="${prefix}joint4" actuator="${prefix}actuator4" />
+  <xacro:SimpleTransmission trans="${prefix}trans5" joint="${prefix}gripper_left_joint" actuator="${prefix}actuator5" />
+  <xacro:SimpleTransmission trans="${prefix}trans6" joint="${prefix}gripper_right_joint" actuator="${prefix}actuator6" />
+
+  </xacro:macro>
+
+</robot>

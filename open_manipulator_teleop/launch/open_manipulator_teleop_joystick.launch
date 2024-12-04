@@ -1,9 +1,0 @@
-<launch>
-  <arg name="robot_name"   default="open_manipulator"/>
-  <arg name="end_effector" default="gripper"/>
-
-  <node name="teleop_joystick" pkg="open_manipulator_teleop" type="open_manipulator_teleop_joystick" output="screen">
-    <remap from="kinematics_pose" to="$(arg end_effector)/kinematics_pose"/>
-    <param name="end_effector_name" value="$(arg end_effector)"/>
-  </node>
-</launch>

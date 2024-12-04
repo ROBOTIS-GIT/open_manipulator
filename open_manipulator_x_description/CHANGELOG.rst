@@ -1,11 +1,10 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package open_manipulator
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package open_manipulator_x_description
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 2.3.0 (2021-10-06)
 ------------------
 * ROS2 Foxy Fitzroy supported
-* OpenMANIPULATOR Teleop developed in python
 * Contributors: Will Son
 
 2.2.0 (2019-11-13)
