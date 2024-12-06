@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_x_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.0 (2024-12-06)
+* Refactored OM-X for compatibility with MoveIt 2
+* Contributors: Wonho Yoon, Sungho Woo
+
 2.3.0 (2021-10-06)
 ------------------
 * ROS2 Foxy Fitzroy supported
@@ -9,7 +13,7 @@ Changelog for package open_manipulator_x_description
 
 2.2.0 (2019-11-13)
 ------------------
-* Applied robotis coding style guide 
+* Applied robotis coding style guide
 * Contributors: Ryan Shim
 
 2.1.0 (2019-08-31)
@@ -76,7 +80,7 @@ Changelog for package open_manipulator_x_description
 * added function to support protocol 1.0
 * modified color, xacro server, mu1, mu2, collision range, joint limit
 * modified joint_state_publisher, joint_states_publisher
-* modified params of inertial, xacro, gazebo, collision, friction 
+* modified params of inertial, xacro, gazebo, collision, friction
 * modified urdf file names and collision geometry
 * modified motor id, msg names
 * modified description and package tree

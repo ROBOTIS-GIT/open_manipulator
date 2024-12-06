@@ -42,7 +42,7 @@ namespace open_manipulator_x_gui
     QObject::connect(ui.actionAbout_Qt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
     connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSelected()));
     QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
-    connect(ui.checkBox_2, &QCheckBox::toggled, this, &MainWindow::on_check_CheckBox_Toggled);
+    // connect(ui.checkBox_2, &QCheckBox::toggled, this, &MainWindow::on_check_CheckBox_Toggled);
 
     ui.btn_init_pose->setEnabled(false);
     ui.btn_home_pose->setEnabled(false);
@@ -74,8 +74,6 @@ namespace open_manipulator_x_gui
     ui.txt_j2->setText(QString::number(joint_angle.at(1), 'f', 3));
     ui.txt_j3->setText(QString::number(joint_angle.at(2), 'f', 3));
     ui.txt_j4->setText(QString::number(joint_angle.at(3), 'f', 3));
-    // ui.txt_j5->setText(QString::number(joint_angle.at(4), 'f', 3));
-    // ui.txt_j6->setText(QString::number(joint_angle.at(5), 'f', 3));
     ui.txt_grip->setText(QString::number(joint_angle.at(4), 'f', 3));
 
     std::vector<double> position = qnode.getPresentKinematicsPosition();
@@ -561,11 +559,11 @@ namespace open_manipulator_x_gui
     writeLog("Reset completed.");
   }
 
-  void MainWindow::on_check_CheckBox_Toggled(bool checked)
-  {
-      writeLog(checked ? "Torque ON" : "Torque OFF");
-      if (!qnode.sendTorqueSrv(checked))
-        writeLog("[ERR!!] Failed to send torque service.");
-  }
+  // void MainWindow::on_check_CheckBox_Toggled(bool checked)
+  // {
+  //     writeLog(checked ? "Torque ON" : "Torque OFF");
+  //     if (!qnode.sendTorqueSrv(checked))
+  //       writeLog("[ERR!!] Failed to send torque service.");
+  // }
 
 } // namespace open_manipulator_x_gui

@@ -10,7 +10,6 @@ find_package(ament_cmake REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 
-
 add_executable(hello_moveit src/hello_moveit.cpp)
 target_include_directories(hello_moveit PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -24,7 +23,6 @@ ament_target_dependencies(
 
 install(TARGETS hello_moveit
   DESTINATION lib/${PROJECT_NAME})
-
 
 # uncomment the following section in order to fill in
 # further dependencies manually.

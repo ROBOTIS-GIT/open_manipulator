@@ -8,7 +8,6 @@
       name="meshes_file_direction"
       value="package://open_manipulator_x_description/meshes"/>
 
-
     <link name="${prefix}link1">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>

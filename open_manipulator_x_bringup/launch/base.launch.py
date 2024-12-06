@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Darby Lim, Sungho Woo
+# Author: Wonho Yoon, Sungho Woo
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument

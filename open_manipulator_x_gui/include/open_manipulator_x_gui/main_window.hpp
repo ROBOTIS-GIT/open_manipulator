@@ -59,7 +59,7 @@ public Q_SLOTS:
   void on_btn_stop_clicked(void);
   void on_btn_read_task_clicked(void);
   void tabSelected();
-  void on_check_CheckBox_Toggled(bool checked);
+  // void on_check_CheckBox_Toggled(bool checked);
 
 private:
 	Ui::MainWindowDesign ui;

@@ -42,6 +42,4 @@
     <child link="$(arg prefix)link1"/>
   </joint>
 
-
-
 </robot>

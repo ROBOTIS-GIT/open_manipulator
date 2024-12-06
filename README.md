@@ -1,13 +1,9 @@
-[![kinetic-devel Status](https://github.com/ROBOTIS-GIT/open_manipulator/workflows/kinetic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/open_manipulator/tree/kinetic-devel)
-[![melodic-devel Status](https://github.com/ROBOTIS-GIT/open_manipulator/workflows/melodic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/open_manipulator/tree/melodic-devel)
-[![noetic-devel Status](https://github.com/ROBOTIS-GIT/open_manipulator/workflows/noetic-devel/badge.svg)](https://github.com/ROBOTIS-GIT/open_manipulator/tree/noetic-devel)
-[![dashing-devel Status](https://github.com/ROBOTIS-GIT/open_manipulator/workflows/dashing-devel/badge.svg)](https://github.com/ROBOTIS-GIT/open_manipulator/tree/dashing-devel)
-[![foxy-devel Status](https://github.com/ROBOTIS-GIT/open_manipulator/workflows/foxy-devel/badge.svg)](https://github.com/ROBOTIS-GIT/open_manipulator/tree/foxy-devel)
-
 # OpenMANIPULATOR-X
 <img src="https://github.com/ROBOTIS-GIT/emanual/blob/master/assets/images/platform/openmanipulator_x/OpenManipulator.png">
 <img src="https://github.com/ROBOTIS-GIT/emanual/blob/master/assets/images/platform/openmanipulator_x/OpenManipulator_Chain_Capture.png" width="500">
 
+- Active Branches: noetic, humble, main
+- Legacy Branches: *-devel
 
 # ROBOTIS e-Manual for OpenMANIPULATOR-X
 - [http://emanual.robotis.com/docs/en/platform/openmanipulator/](http://emanual.robotis.com/docs/en/platform/openmanipulator/)

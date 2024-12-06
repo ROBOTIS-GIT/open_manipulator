@@ -21,7 +21,6 @@ arm_controller:
       - joint3
       - joint4
 
-
     interface_name: position
 
     command_interfaces:

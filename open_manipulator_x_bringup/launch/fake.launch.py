@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Darby Lim, Sungho Woo
+# Author: Wonho Yoon, Sungho Woo
 
 import os
 
@@ -33,7 +33,6 @@ def is_valid_to_launch():
         return False
     else:
         return True
-
 
 def generate_launch_description():
     if not is_valid_to_launch():
