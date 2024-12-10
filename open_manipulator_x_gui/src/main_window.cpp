@@ -400,6 +400,7 @@ namespace open_manipulator_x_gui
 
     std::thread([this, repeatCount]()
     {
+      ui.btn_reset_task->setEnabled(false);
       for (int repeat = 0; repeat < repeatCount; ++repeat)
       {
         if (qnode.isStopRequested())
@@ -520,7 +521,9 @@ namespace open_manipulator_x_gui
             tableWidget->item(row, col)->setBackground(Qt::white);
           }
           tableWidget->item(row, 5)->setText("Done");
-        } }, Qt::QueuedConnection); })
+        }
+        ui.btn_reset_task->setEnabled(true);
+      }, Qt::QueuedConnection); })
     .detach();
   }
 

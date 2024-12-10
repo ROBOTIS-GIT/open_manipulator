@@ -19,9 +19,11 @@
   <author email="wsh@robotis.com">Sungho Woo</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <exec_depend>open_manipulator_x_controller</exec_depend>
+  <exec_depend>open_manipulator_x_bringup</exec_depend>
   <exec_depend>open_manipulator_x_description</exec_depend>
-  <exec_depend>open_manipulator_x_libs</exec_depend>
+  <exec_depend>open_manipulator_x_gui</exec_depend>
+  <exec_depend>open_manipulator_x_moveit_config</exec_depend>
+  <exec_depend>open_manipulator_x_playground</exec_depend>
   <exec_depend>open_manipulator_x_teleop</exec_depend>
   <export>
     <build_type>ament_cmake</build_type>
