@@ -71,7 +71,7 @@ def generate_launch_description():
         [
             FindPackageShare('open_manipulator_x_description'),
             'rviz',
-            'model.rviz'
+            'open_manipulator_x.rviz'
         ]
     )
 

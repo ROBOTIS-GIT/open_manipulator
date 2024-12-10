@@ -24,21 +24,22 @@
             <param name="baud_rate">1000000</param>
             <param name="error_timeout_sec">0.2</param>
             <param name="dynamixel_model_folder">/param/dxl_model</param>
-            <param name="number_of_joints">5</param>
+            <param name="number_of_joints">6</param>
             <param name="number_of_transmissions">5</param>
             <param name="transmission_to_joint_matrix">
               1, 0, 0, 0, 0,
               0, 1, 0, 0, 0,
               0, 0, 1, 0, 0,
               0, 0, 0, 1, 0,
-              0, 0, 0, 0, 1
+              0, 0, 0, 0, 1,
+              0, 0, 0, 0, 0
             </param>
             <param name="joint_to_transmission_matrix">
-              1, 0, 0, 0, 0,
-              0, 1, 0, 0, 0,
-              0, 0, 1, 0, 0,
-              0, 0, 0, 1, 0,
-              0, 0, 0, 0, 1
+              1, 0, 0, 0, 0, 0,
+              0, 1, 0, 0, 0, 0,
+              0, 0, 1, 0, 0, 0,
+              0, 0, 0, 1, 0, 0,
+              0, 0, 0, 0, 1, 0
             </param>
             <param name="ros_update_freq">200</param>
             <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
@@ -61,50 +62,44 @@
       </xacro:unless>
 
       <joint name="${prefix}joint1">
-        <command_interface name="position">
-          <param name="min">${-pi*0.1}</param>
-          <param name="max">${pi*0.1}</param>
-        </command_interface>
+        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
 
       <joint name="${prefix}joint2">
-        <command_interface name="position">
-          <param name="min">${-pi*0.57}</param>
-          <param name="max">${pi*0.5}</param>
-        </command_interface>
+        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
 
       </joint>
       <joint name="${prefix}joint3">
-        <command_interface name="position">
-          <param name="min">${-pi*0.3}</param>
-          <param name="max">${pi*0.44}</param>
-        </command_interface>
+        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
 
       <joint name="${prefix}joint4">
-        <command_interface name="position">
-          <param name="min">${-pi*0.57}</param>
-          <param name="max">${pi*0.65}</param>
-        </command_interface>
+        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
 
       <joint name="${prefix}gripper_left_joint">
-        <command_interface name="position">
-          <param name="min">-0.01</param>
-          <param name="max">0.019</param>
-        </command_interface>
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <joint name="${prefix}gripper_right_joint">
+        <param name="mimic">${prefix}gripper_left_joint</param>
+        <param name="multiplier">1</param>
+        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
