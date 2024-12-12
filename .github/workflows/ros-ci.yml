@@ -16,10 +16,14 @@ jobs:
       matrix:
         ros_distribution:
           - noetic
+          - humble
         include:
           - docker_image: ubuntu:focal
-           ros_distribution: noetic
-           ros_version: 1
+            ros_distribution: noetic
+            ros_version: 1
+          - docker_image: ubuntu:jammy
+            ros_distribution: humble
+            ros_version: 2
     container:
       image: ${{ matrix.docker_image }}
     steps:
