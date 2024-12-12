@@ -28,7 +28,7 @@ jobs:
         with:
           path: ros_ws/src
       - name: Build and Test
-        uses: ros-tooling/action-ros-ci@0.3
+        uses: ros-tooling/action-ros-ci@v0.3
         with:
           package-name: open_manipulator
           target-ros2-distro: ${{ matrix.ros_distribution }}
