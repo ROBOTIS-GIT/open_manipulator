@@ -3,9 +3,9 @@ name: ros-ci
 # Controls when the action will run. Triggers the workflow on push or pull request
 on:
   push:
-    branches: [ main, humble ]
+    branches: [ master, main, humble ]
   pull_request:
-    branches: [ main, humble ]
+    branches: [ master, main, humble ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
