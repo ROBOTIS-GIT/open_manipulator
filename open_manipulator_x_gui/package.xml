@@ -3,17 +3,15 @@
 <package format="3">
   <name>open_manipulator_x_gui</name>
   <version>3.0.0</version>
-  <description> OpenMANIPULATOR-X gui ROS 2 package.</description>
+  <description>
+    The OpenMANIPULATOR-X GUI ROS 2 package enables users to explore Joint Space,
+    Task Space, and even work with the Task Constructor functionality.  </description>
   <maintainer email="pyo@robotis.com">pyo</maintainer>
   <license>Apache 2.0</license>
   <url type="website">http://wiki.ros.org/open_manipulator</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
-  <author email="thlim@robotis.com">Darby Lim</author>
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
-  <author email="jhshim@robotis.com">Ryan Shim</author>
-  <author email="yhna@robotis.com">Yong-Ho Na</author>
-  <author email="willson@robotis.com">Will Son</author>
   <author email="wsh@robotis.com">Sungho Woo</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

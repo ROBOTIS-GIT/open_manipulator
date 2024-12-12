@@ -6,16 +6,12 @@
   <description>
      An automatically generated package with all the configuration and launch files for using the open_manipulator_x with the MoveIt Motion Planning Framework
   </description>
-  <maintainer email="pyo@robotis.com">pyo</maintainer>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
   <url type="website">http://wiki.ros.org/open_manipulator</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
-  <author email="thlim@robotis.com">Darby Lim</author>
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
-  <author email="jhshim@robotis.com">Ryan Shim</author>
-  <author email="yhna@robotis.com">Yong-Ho Na</author>
-  <author email="willson@robotis.com">Will Son</author>
   <author email="wsh@robotis.com">Sungho Woo</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -42,7 +38,6 @@
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>warehouse_ros_mongo</exec_depend>
   <exec_depend>xacro</exec_depend>
-
 
   <export>
       <build_type>ament_cmake</build_type>
