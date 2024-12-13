@@ -1,0 +1,8 @@
+# Default initial positions for open_manipulator_x's ros2_control fake system
+
+initial_positions:
+  gripper_left_joint: 0
+  joint1: 0
+  joint2: 0
+  joint3: 0
+  joint4: 0

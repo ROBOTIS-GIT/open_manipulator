@@ -1,8 +1,0 @@
-<launch>
-  <arg name="robot_name"   default="open_manipulator"/>
-  <arg name="end_effector" default="gripper"/>
-
-  <node name="control_gui" pkg="open_manipulator_control_gui" type="open_manipulator_control_gui" output="screen">
-    <remap from="kinematics_pose" to="$(arg end_effector)/kinematics_pose"/>
-  </node>
-</launch>

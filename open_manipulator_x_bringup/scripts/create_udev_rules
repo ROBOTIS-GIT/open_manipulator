@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo ""
+echo "This script copies the udev rule to /etc/udev/rules.d/"
+echo "to configure the U2D2 device for the OpenMANIPULATOR."
+echo ""
+
+sudo cp `ros2 pkg prefix open_manipulator_x_bringup`/share/open_manipulator_x_bringup/99-open-manipulator-cdc.rules /etc/udev/rules.d/
+
+echo ""
+echo "Reload rules"
+echo ""
+sudo udevadm control --reload-rules
+sudo udevadm trigger
