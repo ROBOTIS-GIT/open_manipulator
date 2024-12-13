@@ -1,5 +1,5 @@
 ﻿/*******************************************************************************
-* Copyright 2024 ROBOTIS CO., LTD.
+* Copyright 2018 ROBOTIS CO., LTD.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 * limitations under the License.
 *******************************************************************************/
 
-/* Authors: Ryan Shim, Sungho Woo */
+/* Authors: Darby Lim, Hye-Jong KIM, Ryan Shim, Yong-Ho Na, Sungho Woo */
 
 #ifndef OPEN_MANIPULATOR_X_GUI_MAIN_WINDOW_HPP
 #define OPEN_MANIPULATOR_X_GUI_MAIN_WINDOW_HPP
