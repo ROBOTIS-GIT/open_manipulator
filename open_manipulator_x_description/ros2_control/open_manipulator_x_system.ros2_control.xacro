@@ -117,6 +117,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
+        <param name="Profile Velocity">200</param>
+        <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
 
@@ -132,6 +134,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
+        <param name="Profile Velocity">200</param>
+        <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
 
@@ -147,6 +151,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
+        <param name="Profile Velocity">200</param>
+        <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
 
@@ -162,6 +168,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
+        <param name="Profile Velocity">200</param>
+        <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
 
