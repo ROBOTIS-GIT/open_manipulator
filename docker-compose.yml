@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: open_manipulator_x
     tty: true
     restart: always
     cap_add:
