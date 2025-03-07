@@ -4,7 +4,7 @@
   <name>open_manipulator</name>
   <version>3.0.0</version>
   <description>
-    OpenMANIPULATOR-X meta ROS 2 package.
+    OpenMANIPULATOR meta ROS 2 package.
   </description>
   <maintainer email="pyo@robotis.com">pyo</maintainer>
   <license>Apache 2.0</license>

@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2025-03-29)
+------------------
+* Added support for ROS2 Jazzy Jellyfish
+* Contributors: Sungho Woo
+
 3.0.0 (2024-12-06)
 ------------------
 * Refactored OM-X for compatibility with MoveIt 2

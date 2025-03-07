@@ -8,6 +8,7 @@ project(open_manipulator_bringup)
 # Find and load build settings from external packages
 ################################################################################
 find_package(ament_cmake REQUIRED)
+find_package(Python3 REQUIRED)
 
 ################################################################################
 # Install
@@ -22,6 +23,7 @@ install(FILES scripts/open-manipulator-x-cdc.rules
 )
 
 install(PROGRAMS scripts/x_create_udev_rules
+  scripts/init_position.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
