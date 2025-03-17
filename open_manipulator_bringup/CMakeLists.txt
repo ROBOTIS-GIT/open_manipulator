@@ -18,16 +18,15 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(FILES scripts/open-manipulator-x-cdc.rules
+install(FILES open-manipulator-x-cdc.rules
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(FILES scripts/open-manipulator-y-cdc.rules
+install(FILES open-manipulator-y-cdc.rules
   DESTINATION share/${PROJECT_NAME}
 )
 
 install(PROGRAMS scripts/x_create_udev_rules
-
   scripts/y_create_udev_rules
   scripts/init_position_for_x.py
   scripts/init_position_for_follower.py

@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: open_manipulator_x
+    container_name: open_manipulator_ai_2
     tty: true
     restart: always
     cap_add:
@@ -16,10 +16,14 @@ services:
     environment:
      - DISPLAY=${DISPLAY}
      - QT_X11_NO_MITSHM=1
+     - ROS_LOCALHOST_ONLY=0
     volumes:
       - /dev:/dev
-      - ./workspace:/workspace
+      # - ./workspace:/workspace
+      - ./workspace/start.sh:/workspace/start.sh
+      - ./workspace/colcon_ws/src:/workspace/colcon_ws/src
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
     privileged: true
-    command: bash
+    command: bash -c 'chmod +x /workspace/start.sh && . /workspace/start.sh'
+    #command: bash
