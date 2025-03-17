@@ -1,0 +1,234 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="open_manipulator_y_leader">
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-5.0852922e-02 3.1266125e-03 2.1117379e-02" />
+      <mass value="6.7158315e-01" />
+      <inertia ixx="1.8745635e-03" ixy="1.9765644e-04" ixz="-3.0326439e-04"
+                  iyy="3.9896720e-03" iyz="-5.5328870e-05"
+                  izz="5.0786442e-03" />
+    </inertial>
+  </link>
+
+  <joint name="joint1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0.094" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit velocity="4.8" effort="1" lower="-3.14159265359" upper="3.14159265359" />
+  </joint>
+
+  <link name="link1">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-1.5079401e-02 2.2540578e-03 -6.0818768e-04" />
+      <mass value="1.8961866e-01" />
+      <inertia ixx="5.7274085e-05" ixy="1.7976842e-07" ixz="3.2963088e-07"
+                  iyy="8.8962454e-05" iyz="-2.5994088e-07"
+                  izz="7.7763549e-05" />
+    </inertial>
+  </link>
+
+  <joint name="joint2" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 0.0525 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="4.8" effort="1" lower="-3.14159265359" upper="3.14159265359" />
+  </joint>
+
+  <link name="link2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link2.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="4.3737718e-04 -2.5032273e-03 1.3092375e-01" />
+      <mass value="4.7732112e-01" />
+      <inertia ixx="6.3990330e-03" ixy="3.4638630e-07" ixz="2.6435706e-05"
+                iyy="6.3452759e-03" iyz="-1.9755751e-06"
+                izz="1.4398728e-04" />
+    </inertial>
+  </link>
+
+  <joint name="joint3" type="revolute">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="0 0 0.2658" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="4.8" effort="1" lower="-3.14159265359" upper="3.14159265359" />
+  </joint>
+
+  <link name="link3">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="9.0479192e-06 -4.9566023e-02 1.2701489e-01" />
+      <mass value="7.9355496e-02" />
+      <inertia ixx="5.6711543e-04" ixy="7.9155432e-10" ixz="-5.7793678e-08"
+                iyy="5.6389566e-04" iyz="1.1701672e-05"
+                izz="1.0859080e-05" />
+    </inertial>
+  </link>
+
+  <joint name="joint4" type="revolute">
+    <parent link="link3"/>
+    <child link="link4"/>
+    <origin xyz="0 -0.051 0.222" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="4.8" effort="1" lower="-3.14159265359" upper="3.14159265359" />
+  </joint>
+
+  <link name="link4">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link4.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link4.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-2.7173597e-05 3.4928271e-02 3.1621837e-04" />
+      <mass value="2.6439377e-02" />
+      <inertia ixx="4.8834963e-06" ixy="-3.6189588e-09" ixz="2.1018617e-11"
+                  iyy="2.2074125e-06" iyz="-1.5645991e-08"
+                  izz="4.3223515e-06" />
+    </inertial>
+  </link>
+
+  <joint name="joint5" type="revolute">
+    <parent link="link4"/>
+    <child link="link5"/>
+    <origin xyz="0 0.0445 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit velocity="4.8" effort="1" lower="-3.14159265359" upper="3.14159265359" />
+  </joint>
+
+  <link name="link5">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link5.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link5.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="2.7173597e-05 3.1621837e-04 3.4928271e-02" />
+      <mass value="2.6439377e-02" />
+      <inertia ixx="4.8834963e-06" ixy="-2.1018617e-11" ixz="3.6189588e-09"
+                  iyy="4.3223515e-06" iyz="-1.5645991e-08"
+                  izz="2.2074125e-06" />
+    </inertial>
+  </link>
+
+  <joint name="joint6" type="revolute">
+    <parent link="link5"/>
+    <child link="link6"/>
+    <origin xyz="0 0 0.0445" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit velocity="4.8" effort="1" lower="-3.14159265359" upper="3.14159265359" />
+  </joint>
+
+  <link name="link6">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link6.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link6.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+        <origin xyz="-3.8936695e-03 7.7911732e-02 -3.2776900e-02" />
+        <mass value="1.0725348e-01" />
+        <inertia ixx="2.3821523e-04" ixy="1.9681989e-05" ixz="6.2813361e-06"
+                    iyy="1.2329256e-04" iyz="7.3868232e-07"
+                    izz="1.4128218e-04" />
+    </inertial>
+  </link>
+
+  <joint name="rh_r1_joint" type="revolute">
+    <parent link="link6"/>
+    <child link="link7"/>
+    <origin xyz="-0.017 0.125 -0.0255" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit velocity="4.8" effort="1" lower="-3.14159265359" upper="3.14159265359" />
+  </joint>
+
+  <link name="link7">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link7.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://open_manipulator_description/meshes/om_y_leader/link7.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+        <origin xyz="-2.1898672e-06 3.1531768e-03 -1.3464358e-02" />
+        <mass value="2.6479984e-03" />
+        <inertia ixx="5.2250682e-07" ixy="-3.0144300e-11" ixz="2.5366799e-11"
+                    iyy="3.4189415e-07" iyz="6.0361282e-08"
+                    izz="1.9075158e-07" />
+    </inertial>
+  </link>
+</robot>

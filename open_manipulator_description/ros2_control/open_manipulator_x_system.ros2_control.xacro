@@ -4,11 +4,11 @@
 
   <xacro:macro name="open_manipulator_x_system" params="name prefix port_name:=/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
 
-    <ros2_control name="${name}" type="system">
+    <ros2_control name="omx" type="system">
 
       <xacro:if value="$(arg use_sim)">
         <hardware>
-          <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
       </xacro:if>
       <xacro:unless value="$(arg use_sim)">
@@ -24,22 +24,21 @@
             <param name="baud_rate">1000000</param>
             <param name="error_timeout_sec">0.2</param>
             <param name="dynamixel_model_folder">/param/dxl_model</param>
-            <param name="number_of_joints">6</param>
+            <param name="number_of_joints">5</param>
             <param name="number_of_transmissions">5</param>
             <param name="transmission_to_joint_matrix">
               1, 0, 0, 0, 0,
               0, 1, 0, 0, 0,
               0, 0, 1, 0, 0,
               0, 0, 0, 1, 0,
-              0, 0, 0, 0, 1,
-              0, 0, 0, 0, 0
+              0, 0, 0, 0, 1
             </param>
             <param name="joint_to_transmission_matrix">
-              1, 0, 0, 0, 0, 0,
-              0, 1, 0, 0, 0, 0,
-              0, 0, 1, 0, 0, 0,
-              0, 0, 0, 1, 0, 0,
-              0, 0, 0, 0, 1, 0
+              1, 0, 0, 0, 0,
+              0, 1, 0, 0, 0,
+              0, 0, 1, 0, 0,
+              0, 0, 0, 1, 0,
+              0, 0, 0, 0, 1
             </param>
             <param name="ros_update_freq">200</param>
             <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
@@ -73,8 +72,8 @@
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
-
       </joint>
+
       <joint name="${prefix}joint3">
         <command_interface name="position"/>
         <state_interface name="position"/>
@@ -96,14 +95,15 @@
         <state_interface name="effort"/>
       </joint>
 
-      <joint name="${prefix}gripper_right_joint">
-        <param name="mimic">${prefix}gripper_left_joint</param>
-        <param name="multiplier">1</param>
-        <command_interface name="position"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
+      <xacro:if value="$(arg use_sim)">
+        <joint name="${prefix}gripper_right_joint">
+          <param name="mimic">${prefix}gripper_left_joint</param>
+          <param name="multiplier">1</param>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+          <state_interface name="effort"/>
+        </joint>
+      </xacro:if>
 
       <gpio name="dxl1">
         <param name="type">dxl</param>

@@ -25,7 +25,6 @@
       <mu2>30.0</mu2>
       <maxVel>1.0</maxVel>
       <minDepth>0.001</minDepth>
-      <material>Gazebo/DarkGrey</material>
     </gazebo>
   </xacro:macro>
 
@@ -39,7 +38,6 @@
   <xacro:Link reference="${prefix}gripper_right_link"/>
 
   <gazebo reference="${prefix}end_effector_link">
-    <material>Gazebo/Red</material>
   </gazebo>
 
   <xacro:SimpleTransmission trans="${prefix}trans1" joint="${prefix}joint1" actuator="${prefix}actuator1" />

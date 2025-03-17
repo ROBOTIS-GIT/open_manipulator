@@ -1,0 +1,7 @@
+<library path="gravity_compensation_controller">
+  <class name="gravity_compensation_controller/GravityCompensationController" type="gravity_compensation_controller::GravityCompensationController" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The gravity compensation controller compensates for gravity on a set of joints
+  </description>
+  </class>
+</library>

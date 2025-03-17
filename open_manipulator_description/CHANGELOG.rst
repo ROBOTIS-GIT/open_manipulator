@@ -1,6 +1,11 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package open_manipulator_x_description
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package open_manipulator_description
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+3.1.0 (2025-03-17)
+------------------
+* Integrate OM-X, OM-Y, and OM-Teleoperation with Jazzy support and Gazebo Harmonic compatibility
+* Contributors: Sungho Woo
 
 3.0.0 (2024-12-06)
 ------------------

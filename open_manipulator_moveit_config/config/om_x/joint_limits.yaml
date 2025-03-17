@@ -14,7 +14,6 @@ joint_limits:
     has_acceleration_limits: true
     max_acceleration: 18.7253757
     has_position_limits: true
-
   gripper_right_joint:
     has_velocity_limits: true
     max_velocity: 4.796164779

@@ -2,9 +2,9 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.0.0 (2025-03-29)
+3.1.0 (2025-03-17)
 ------------------
-* Added support for ROS2 Jazzy Jellyfish
+* Integrate OM-X, OM-Y, and OM-Teleoperation with Jazzy support and Gazebo Harmonic compatibility
 * Contributors: Sungho Woo
 
 3.0.0 (2024-12-06)

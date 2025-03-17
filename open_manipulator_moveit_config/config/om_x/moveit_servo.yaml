@@ -13,7 +13,7 @@ scale:
   joint: 0.5
 
 ## Properties of outgoing commands
-publish_period: 0.034  # 1/Nominal publish rate [seconds]
+publish_period: 0.05  # 1/Nominal publish rate [seconds]
 low_latency_mode: false  # Set this to true to publish as soon as an incoming Twist command is received (publish_period is ignored)
 
 # What type of topic does your robot driver expect?
@@ -23,10 +23,10 @@ command_out_type: trajectory_msgs/JointTrajectory
 # What to publish? Can save some bandwidth as most robots only require positions or velocities
 publish_joint_positions: true
 publish_joint_velocities: true
-publish_joint_accelerations: false
+publish_joint_accelerations: true
 
 ## Incoming Joint State properties
-low_pass_filter_coeff: 2.0  # Larger --> trust the filtered data more, trust the measurements less.
+low_pass_filter_coeff: 0  # Larger --> trust the filtered data more, trust the measurements less.
 
 ## MoveIt properties
 move_group_name: arm  # Often 'manipulator' or 'arm'
@@ -37,10 +37,10 @@ ee_frame_name: end_effector_link  # The name of the end effector link, used to r
 robot_link_command_frame: world  # commands must be given in the frame of a robot link. Usually either the base or end effector
 
 ## Stopping behaviour
-incoming_command_timeout:  0.1  # Stop servoing if X seconds elapse without a new command
+incoming_command_timeout:  1.0  # Stop servoing if X seconds elapse without a new command
 # If 0, republish commands forever even if the robot is stationary. Otherwise, specify num. to publish.
 # Important because ROS may drop some messages and we need the robot to halt reliably.
-num_outgoing_halt_msgs_to_publish: 4
+num_outgoing_halt_msgs_to_publish: 1
 
 ## Configure handling of singularities and joint limits
 lower_singularity_threshold:  17.0  # Start decelerating when the condition number hits this (close to singularity)

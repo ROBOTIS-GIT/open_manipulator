@@ -14,7 +14,7 @@ find_package(Python3 REQUIRED)
 # Install
 ################################################################################
 install(
-  DIRECTORY launch config rviz worlds
+  DIRECTORY launch config worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -22,8 +22,15 @@ install(FILES scripts/open-manipulator-x-cdc.rules
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(FILES scripts/open-manipulator-y-cdc.rules
+  DESTINATION share/${PROJECT_NAME}
+)
+
 install(PROGRAMS scripts/x_create_udev_rules
-  scripts/init_position.py
+
+  scripts/y_create_udev_rules
+  scripts/init_position_for_x.py
+  scripts/init_position_for_follower.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

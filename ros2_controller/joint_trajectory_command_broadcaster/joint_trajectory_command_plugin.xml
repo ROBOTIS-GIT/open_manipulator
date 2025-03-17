@@ -1,0 +1,7 @@
+<library path="joint_trajectory_command_broadcaster">
+  <class name="joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster" type="joint_trajectory_command_broadcaster::JointTrajectoryCommandBroadcaster" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The joint trajectory command broadcaster publishes the current states from ros2_control system.
+  </description>
+  </class>
+</library>

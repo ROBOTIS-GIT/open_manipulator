@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_teleop</name>
-  <version>3.0.0</version>
+  <version>3.1.0</version>
   <description>
-    OpenMANIPULATOR-X teleop ROS 2 package.
+    OpenMANIPULATOR teleop ROS 2 package.
   </description>
   <maintainer email="pyo@robotis.com">pyo</maintainer>
   <license>Apache 2.0</license>
@@ -16,13 +16,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
-  <depend>open_manipulator_bringup</depend>
-  <depend>open_manipulator_moveit_config</depend>
-  <depend>open_manipulator_description</depend>
-  <depend>geometry_msgs</depend>
-  <depend>nav_msgs</depend>
-  <depend>control_msgs</depend>
-  <depend>sensor_msgs</depend>
+  <depend>rclpy</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

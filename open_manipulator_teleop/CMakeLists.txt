@@ -8,37 +8,15 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(open_manipulator_bringup REQUIRED)
-find_package(open_manipulator_moveit_config REQUIRED)
-find_package(open_manipulator_description REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(nav_msgs REQUIRED)
-find_package(control_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(std_srvs REQUIRED)
-find_package(rclcpp_action REQUIRED)
+find_package(rclpy REQUIRED)
 
-
-add_executable(open_manipulator_teleop src/open_manipulator_x_teleop.cpp)
-target_include_directories(open_manipulator_teleop PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(
-  open_manipulator_teleop
-  "rclcpp"
-  "open_manipulator_bringup"
-  "open_manipulator_moveit_config"
-  "open_manipulator_description"
-  "geometry_msgs"
-  "nav_msgs"
-  "control_msgs"
-  "sensor_msgs"
-  "std_srvs"
-  "rclcpp_action"
+# Install Python scripts
+install(PROGRAMS
+  scripts/keyboard_control_x.py
+  scripts/keyboard_control_y.py
+  scripts/keyboard_control_y_follower.py
+  DESTINATION lib/${PROJECT_NAME}
 )
-
-install(TARGETS open_manipulator_teleop
-  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
