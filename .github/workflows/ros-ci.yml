@@ -2,9 +2,9 @@ name: ros-ci
 
 on:
   push:
-    branches: [ master, main, humble ]
+    branches: [  main, jazzy  ]
   pull_request:
-    branches: [ master, main, humble ]
+    branches: [  main, jazzy  ]
 
 jobs:
   ros2-ci:
@@ -13,10 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         ros_distribution:
-          - humble
+          - jazzy
         include:
-          - docker_image: rostooling/setup-ros-docker:ubuntu-jammy-ros-humble-ros-base-latest
-            ros_distribution: humble
+          - docker_image: rostooling/setup-ros-docker:ubuntu-jammy-ros-jazzy-ros-base-latest
+            ros_distribution: jazzy
             ros_version: 2
     container:
       image: ${{ matrix.docker_image }}
