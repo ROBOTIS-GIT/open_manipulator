@@ -61,13 +61,11 @@ controller_interface::return_type GravityCompensationController::update(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   auto assign_point_from_interface =
-    [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface)
-  {
-    for (size_t index = 0; index < dof_; ++index)
-    {
-      trajectory_point_interface[index] = joint_interface[index].get().get_value();
-    }
-  };
+    [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface) {
+      for (size_t index = 0; index < dof_; ++index) {
+        trajectory_point_interface[index] = joint_interface[index].get().get_value();
+      }
+    };
 
   assign_point_from_interface(joint_positions_, joint_state_interface_[0]);
   assign_point_from_interface(joint_velocities_, joint_state_interface_[1]);
@@ -79,24 +77,21 @@ controller_interface::return_type GravityCompensationController::update(
   KDL::JntArray torques(tree_.getNrOfJoints());
 
   // Populate joint positions and velocities from state interfaces
-  for (size_t i = 0; i < joint_names_.size(); ++i)
-  {
-      q(i) = joint_positions_[i];
-      q_dot(i) = joint_velocities_[i];
+  for (size_t i = 0; i < joint_names_.size(); ++i) {
+    q(i) = joint_positions_[i];
+    q_dot(i) = joint_velocities_[i];
   }
 
   // Compute torques
   idsolver.CartToJnt(q, q_dot, q_ddot_, f_ext_, torques);
 
   // Add a spring effect to joint 2
-  if (q(2) < 0.5)
-  {
-      torques(2) += std::abs(q(2) - 0.5) * 2.5;
+  if (q(2) < 0.5) {
+    torques(2) += std::abs(q(2) - 0.5) * 2.5;
   }
 
   // Apply friction compensation
-  for (size_t i = 0; i < tree_.getNrOfJoints(); ++i)
-  {
+  for (size_t i = 0; i < tree_.getNrOfJoints(); ++i) {
     if (i >= joint_names_.size()) {
       continue;
     }
@@ -104,64 +99,52 @@ controller_interface::return_type GravityCompensationController::update(
     double kinetic_friction_scalar = params_.kinetic_friction_scalars[i] *
       (1.0 + std::abs(torques(i) * params_.kinetic_friction_torque_scalars[i]));
 
-      // Kinetic friction compensation
-      double kinetic_friction_rate = 1.0 - (std::abs(q_dot(i)) * 10.0 - params_.friction_compensation_velocity_thresholds[i]);
-      if (kinetic_friction_rate < 0.0)
-      {
-          kinetic_friction_rate = 0.0;
+    // Kinetic friction compensation
+    double kinetic_friction_rate = 1.0 -
+      (std::abs(q_dot(i)) * 10.0 - params_.friction_compensation_velocity_thresholds[i]);
+    if (kinetic_friction_rate < 0.0) {
+      kinetic_friction_rate = 0.0;
+    }
+    kinetic_friction_scalar *= kinetic_friction_rate;
+
+    if (q_dot(i) > 0.0) {
+      torques(i) += kinetic_friction_scalar * std::abs(q_dot(i));
+
+      if (std::abs(torques(i)) < params_.unloaded_effort_thresholds[i]) {
+        torques(i) += params_.unloaded_effort_offsets[i];
       }
-      kinetic_friction_scalar *= kinetic_friction_rate;
+    } else if (q_dot(i) < 0.0) {
+      torques(i) -= kinetic_friction_scalar * std::abs(q_dot(i));
 
-      if (q_dot(i) > 0.0)
-      {
-          torques(i) += kinetic_friction_scalar * std::abs(q_dot(i));
-
-          if (std::abs(torques(i)) < params_.unloaded_effort_thresholds[i])
-          {
-              torques(i) += params_.unloaded_effort_offsets[i];
-          }
+      if (std::abs(torques(i)) < params_.unloaded_effort_thresholds[i]) {
+        torques(i) -= params_.unloaded_effort_offsets[i];
       }
-      else if (q_dot(i) < 0.0)
-      {
-          torques(i) -= kinetic_friction_scalar * std::abs(q_dot(i));
+    }
 
-          if (std::abs(torques(i)) < params_.unloaded_effort_thresholds[i])
-          {
-              torques(i) -= params_.unloaded_effort_offsets[i];
-          }
+    // Static friction compensation (dithering)
+    if (std::abs(q_dot(i)) < params_.static_friction_velocity_thresholds[i]) {
+      if (dither_switch_) {
+        torques(i) += params_.static_friction_scalars[i] * std::abs(torques(i));
+      } else {
+        torques(i) -= params_.static_friction_scalars[i] * std::abs(torques(i));
       }
+    }
 
-      // Static friction compensation (dithering)
-      if (std::abs(q_dot(i)) < params_.static_friction_velocity_thresholds[i])
-      {
-          if (dither_switch_)
-          {
-              torques(i) += params_.static_friction_scalars[i] * std::abs(torques(i));
-          }
-          else
-          {
-              torques(i) -= params_.static_friction_scalars[i] * std::abs(torques(i));
-          }
-      }
-
-      joint_command_interface_[0][i].get().set_value(torques(i) * params_.torque_scaling_factors[i]);
+    joint_command_interface_[0][i].get().set_value(torques(i) * params_.torque_scaling_factors[i]);
   }
 
-  dither_switch_ = !dither_switch_; // Flip the dither switch
+  dither_switch_ = !dither_switch_;  // Flip the dither switch
 
   return controller_interface::return_type::OK;
 }
 
 controller_interface::CallbackReturn GravityCompensationController::on_init()
 {
-  try
-  {
+  try {
     // Create the parameter listener and get the parameters
     param_listener_ = std::make_shared<ParamListener>(get_node());
     params_ = param_listener_->get_params();
-  }
-  catch (const std::exception & e)
-  {
+  } catch (const std::exception & e) {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
     return CallbackReturn::ERROR;
   }
@@ -174,8 +157,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
 {
   auto logger = get_node()->get_logger();
 
-  if (!param_listener_)
-  {
+  if (!param_listener_) {
     RCLCPP_ERROR(logger, "Error encountered during init");
     return controller_interface::CallbackReturn::ERROR;
   }
@@ -192,8 +174,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_positions_.resize(dof_);
   joint_velocities_.resize(dof_);
 
-  if (params_.joints.empty())
-  {
+  if (params_.joints.empty()) {
     // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?
     RCLCPP_WARN(logger, "'joints' parameter is empty.");
   }
@@ -203,8 +184,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
 
   command_joint_names_ = params_.command_joints;
 
-  if (command_joint_names_.empty())
-  {
+  if (command_joint_names_.empty()) {
     command_joint_names_ = params_.joints;
     RCLCPP_INFO(
       logger, "No specific joint names are used for command interfaces. Using 'joints' parameter.");
@@ -214,8 +194,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_state_interface_.resize(state_interface_types_.size());
 
   const std::string & urdf = get_robot_description();
-  if (!urdf.empty())
-  {
+  if (!urdf.empty()) {
     if (!kdl_parser::treeFromString(urdf, tree_)) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to parse robot description!");
       return CallbackReturn::ERROR;
@@ -229,9 +208,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
     RCLCPP_INFO(get_node()->get_logger(), "Successfully parsed the robot description.");
 
     q_ddot_.resize(tree_.getNrOfJoints());
-  }
-  else
-  {
+  } else {
     // empty URDF is used for some tests
     RCLCPP_DEBUG(get_node()->get_logger(), "No URDF file given");
   }
@@ -251,13 +228,12 @@ controller_interface::CallbackReturn GravityCompensationController::on_activate(
   // get parameters from the listener in case they were updated
   params_ = param_listener_->get_params();
   // order all joints in the storage
-  for (const auto & interface : params_.command_interfaces)
-  {
+  for (const auto & interface : params_.command_interfaces) {
     auto it =
       std::find(command_interface_types_.begin(), command_interface_types_.end(), interface);
     auto index = static_cast<size_t>(std::distance(command_interface_types_.begin(), it));
     if (!controller_interface::get_ordered_interfaces(
-          command_interfaces_, command_joint_names_, interface, joint_command_interface_[index]))
+        command_interfaces_, command_joint_names_, interface, joint_command_interface_[index]))
     {
       RCLCPP_ERROR(
         logger, "Expected %zu '%s' command interfaces, got %zu.", dof_, interface.c_str(),
@@ -265,13 +241,12 @@ controller_interface::CallbackReturn GravityCompensationController::on_activate(
       return CallbackReturn::ERROR;
     }
   }
-  for (const auto & interface : params_.state_interfaces)
-  {
+  for (const auto & interface : params_.state_interfaces) {
     auto it =
       std::find(state_interface_types_.begin(), state_interface_types_.end(), interface);
     auto index = static_cast<size_t>(std::distance(state_interface_types_.begin(), it));
     if (!controller_interface::get_ordered_interfaces(
-          state_interfaces_, params_.joints, interface, joint_state_interface_[index]))
+        state_interfaces_, params_.joints, interface, joint_state_interface_[index]))
     {
       RCLCPP_ERROR(
         logger, "Expected %zu '%s' state interfaces, got %zu.", dof_, interface.c_str(),

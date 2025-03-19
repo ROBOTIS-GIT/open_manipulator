@@ -42,13 +42,10 @@ JointTrajectoryCommandBroadcaster::JointTrajectoryCommandBroadcaster() {}
 
 controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_init()
 {
-  try
-  {
+  try {
     param_listener_ = std::make_shared<ParamListener>(get_node());
     params_ = param_listener_->get_params();
-  }
-  catch (const std::exception & e)
-  {
+  } catch (const std::exception & e) {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
     return CallbackReturn::ERROR;
   }
@@ -63,22 +60,18 @@ JointTrajectoryCommandBroadcaster::command_interface_configuration() const
     controller_interface::interface_configuration_type::NONE};
 }
 
-controller_interface::InterfaceConfiguration JointTrajectoryCommandBroadcaster::state_interface_configuration()
-  const
+controller_interface::InterfaceConfiguration JointTrajectoryCommandBroadcaster::
+state_interface_configuration()
+const
 {
   controller_interface::InterfaceConfiguration state_interfaces_config;
 
-  if (use_all_available_interfaces())
-  {
+  if (use_all_available_interfaces()) {
     state_interfaces_config.type = controller_interface::interface_configuration_type::ALL;
-  }
-  else
-  {
+  } else {
     state_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-    for (const auto & joint : params_.joints)
-    {
-      for (const auto & interface : params_.interfaces)
-      {
+    for (const auto & joint : params_.joints) {
+      for (const auto & interface : params_.interfaces) {
         state_interfaces_config.names.push_back(joint + "/" + interface);
       }
     }
@@ -90,24 +83,20 @@ controller_interface::InterfaceConfiguration JointTrajectoryCommandBroadcaster::
 controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  if (!param_listener_)
-  {
+  if (!param_listener_) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error encountered during init");
     return controller_interface::CallbackReturn::ERROR;
   }
   params_ = param_listener_->get_params();
 
-  if (use_all_available_interfaces())
-  {
+  if (use_all_available_interfaces()) {
     RCLCPP_INFO(
       get_node()->get_logger(),
       "'joints' or 'interfaces' parameter is empty. "
       "All available state interfaces will be considered.");
     params_.joints.clear();
     params_.interfaces.clear();
-  }
-  else
-  {
+  } else {
     RCLCPP_INFO(
       get_node()->get_logger(),
       "Publishing trajectory states for the defined 'joints' and 'interfaces' parameters.");
@@ -117,19 +106,17 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_confi
   map_interface_to_joint_state_.clear();
   map_interface_to_joint_state_[HW_IF_POSITION] = params_.map_interface_to_joint_state.position;
 
-  try
-  {
+  try {
     const std::string topic_name_prefix = params_.use_local_topics ? "~/" : "";
     // Create publisher for JointTrajectory
-    joint_trajectory_publisher_ = get_node()->create_publisher<trajectory_msgs::msg::JointTrajectory>(
+    joint_trajectory_publisher_ =
+      get_node()->create_publisher<trajectory_msgs::msg::JointTrajectory>(
       topic_name_prefix + "joint_trajectory", rclcpp::SystemDefaultsQoS());
 
     realtime_joint_trajectory_publisher_ =
       std::make_shared<realtime_tools::RealtimePublisher<trajectory_msgs::msg::JointTrajectory>>(
-        joint_trajectory_publisher_);
-  }
-  catch (const std::exception & e)
-  {
+      joint_trajectory_publisher_);
+  } catch (const std::exception & e) {
     // get_node() may throw, logging raw here
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
     return CallbackReturn::ERROR;
@@ -137,8 +124,7 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_confi
 
   const std::string & urdf = get_robot_description();
   is_model_loaded_ = !urdf.empty() && model_.initString(urdf);
-  if (!is_model_loaded_)
-  {
+  if (!is_model_loaded_) {
     RCLCPP_ERROR(
       get_node()->get_logger(),
       "Failed to parse robot description. Will proceed without URDF-based filtering.");
@@ -150,8 +136,7 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_confi
 controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  if (!init_joint_data())
-  {
+  if (!init_joint_data()) {
     RCLCPP_ERROR(
       get_node()->get_logger(), "None of requested interfaces exist. Controller will not run.");
     return CallbackReturn::ERROR;
@@ -159,21 +144,16 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_activ
 
   // Check offsets
   const size_t num_joints = joint_names_.size();
-  if (params_.offsets.empty())
-  {
+  if (params_.offsets.empty()) {
     // If no offsets provided, use zeros
     joint_offsets_.assign(num_joints, 0.0);
-  }
-  else if (params_.offsets.size() != num_joints)
-  {
+  } else if (params_.offsets.size() != num_joints) {
     RCLCPP_ERROR(
       get_node()->get_logger(),
       "The number of provided offsets (%zu) does not match the number of joints (%zu).",
       params_.offsets.size(), num_joints);
     return CallbackReturn::ERROR;
-  }
-  else
-  {
+  } else {
     // Use provided offsets
     joint_offsets_ = params_.offsets;
   }
@@ -204,15 +184,13 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_deact
   return CallbackReturn::SUCCESS;
 }
 
-template <typename T>
+template<typename T>
 bool has_any_key(
   const std::unordered_map<std::string, T> & map, const std::vector<std::string> & keys)
 {
-  for (const auto & key_item : map)
-  {
+  for (const auto & key_item : map) {
     const auto & key = key_item.first;
-    if (std::find(keys.cbegin(), keys.cend(), key) != keys.cend())
-    {
+    if (std::find(keys.cbegin(), keys.cend(), key) != keys.cend()) {
       return true;
     }
   }
@@ -222,32 +200,26 @@ bool has_any_key(
 bool JointTrajectoryCommandBroadcaster::init_joint_data()
 {
   joint_names_.clear();
-  if (state_interfaces_.empty())
-  {
+  if (state_interfaces_.empty()) {
     return false;
   }
 
   // Initialize mapping
-  for (auto si = state_interfaces_.crbegin(); si != state_interfaces_.crend(); si++)
-  {
-    if (name_if_value_mapping_.count(si->get_prefix_name()) == 0)
-    {
+  for (auto si = state_interfaces_.crbegin(); si != state_interfaces_.crend(); si++) {
+    if (name_if_value_mapping_.count(si->get_prefix_name()) == 0) {
       name_if_value_mapping_[si->get_prefix_name()] = {};
     }
     std::string interface_name = si->get_interface_name();
-    if (map_interface_to_joint_state_.count(interface_name) > 0)
-    {
+    if (map_interface_to_joint_state_.count(interface_name) > 0) {
       interface_name = map_interface_to_joint_state_[interface_name];
     }
     name_if_value_mapping_[si->get_prefix_name()][interface_name] = kUninitializedValue;
   }
 
   // Filter out joints without position interface (since we want positions)
-  for (const auto & name_ifv : name_if_value_mapping_)
-  {
+  for (const auto & name_ifv : name_if_value_mapping_) {
     const auto & interfaces_and_values = name_ifv.second;
-    if (has_any_key(interfaces_and_values, {HW_IF_POSITION}))
-    {
+    if (has_any_key(interfaces_and_values, {HW_IF_POSITION})) {
       if (
         !params_.use_urdf_to_filter || !params_.joints.empty() || !is_model_loaded_ ||
         model_.getJoint(name_ifv.first))
@@ -259,13 +231,10 @@ bool JointTrajectoryCommandBroadcaster::init_joint_data()
 
   // Add extra joints if needed
   rclcpp::Parameter extra_joints;
-  if (get_node()->get_parameter("extra_joints", extra_joints))
-  {
+  if (get_node()->get_parameter("extra_joints", extra_joints)) {
     const std::vector<std::string> & extra_joints_names = extra_joints.as_string_array();
-    for (const auto & extra_joint_name : extra_joints_names)
-    {
-      if (name_if_value_mapping_.count(extra_joint_name) == 0)
-      {
+    for (const auto & extra_joint_name : extra_joints_names) {
+      if (name_if_value_mapping_.count(extra_joint_name) == 0) {
         name_if_value_mapping_[extra_joint_name] = {
           {HW_IF_POSITION, 0.0}};
         joint_names_.push_back(extra_joint_name);
@@ -287,12 +256,9 @@ double get_value(
 {
   const auto & interfaces_and_values = map.at(name);
   const auto interface_and_value = interfaces_and_values.find(interface_name);
-  if (interface_and_value != interfaces_and_values.cend())
-  {
+  if (interface_and_value != interfaces_and_values.cend()) {
     return interface_and_value->second;
-  }
-  else
-  {
+  } else {
     return kUninitializedValue;
   }
 }
@@ -301,11 +267,9 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
   const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
 {
   // Update stored values
-  for (const auto & state_interface : state_interfaces_)
-  {
+  for (const auto & state_interface : state_interfaces_) {
     std::string interface_name = state_interface.get_interface_name();
-    if (map_interface_to_joint_state_.count(interface_name) > 0)
-    {
+    if (map_interface_to_joint_state_.count(interface_name) > 0) {
       interface_name = map_interface_to_joint_state_[interface_name];
     }
     name_if_value_mapping_[state_interface.get_prefix_name()][interface_name] =
@@ -313,8 +277,7 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
   }
 
   // Publish JointTrajectory message with current positions
-  if (realtime_joint_trajectory_publisher_ && realtime_joint_trajectory_publisher_->trylock())
-  {
+  if (realtime_joint_trajectory_publisher_ && realtime_joint_trajectory_publisher_->trylock()) {
     auto & traj_msg = realtime_joint_trajectory_publisher_->msg_;
     traj_msg.header.stamp = rclcpp::Time(0, 0);
     traj_msg.joint_names = joint_names_;
@@ -324,8 +287,7 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
     traj_msg.points.resize(1);
     traj_msg.points[0].positions.resize(num_joints, kUninitializedValue);
 
-    for (size_t i = 0; i < num_joints; ++i)
-    {
+    for (size_t i = 0; i < num_joints; ++i) {
       double pos_value =
         get_value(name_if_value_mapping_, joint_names_[i], HW_IF_POSITION);
 
@@ -346,7 +308,7 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
     }
 
     // Optionally set velocities/accelerations/time_from_start if needed
-    traj_msg.points[0].time_from_start = rclcpp::Duration(0, 0); // immediate
+    traj_msg.points[0].time_from_start = rclcpp::Duration(0, 0);  // immediate
 
     realtime_joint_trajectory_publisher_->unlockAndPublish();
   }
@@ -359,4 +321,5 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  joint_trajectory_command_broadcaster::JointTrajectoryCommandBroadcaster, controller_interface::ControllerInterface)
+  joint_trajectory_command_broadcaster::JointTrajectoryCommandBroadcaster,
+  controller_interface::ControllerInterface)

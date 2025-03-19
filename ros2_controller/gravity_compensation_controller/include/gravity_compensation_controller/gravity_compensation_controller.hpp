@@ -119,7 +119,7 @@ protected:
   // The interfaces are defined as the types in 'allowed_interface_types_' member.
   // For convenience, for each type the interfaces are ordered so that i-th position
   // matches i-th index in joint_names_
-  template <typename T>
+  template<typename T>
   using InterfaceReferences = std::vector<std::vector<std::reference_wrapper<T>>>;
 
   InterfaceReferences<hardware_interface::LoanedCommandInterface> joint_command_interface_;

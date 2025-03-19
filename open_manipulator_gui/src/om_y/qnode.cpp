@@ -1,37 +1,37 @@
-﻿/*******************************************************************************
-* Copyright 2024 ROBOTIS CO., LTD.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*******************************************************************************/
-
-/* Authors: Ryan Shim, Sungho Woo */
+﻿// Copyright 2024 ROBOTIS CO., LTD.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: Ryan Shim, Sungho Woo
 
 #include "open_manipulator_y_gui/qnode.hpp"
 
-namespace open_manipulator_y_gui {
 
-QNode::QNode(int argc, char** argv)
-  : QThread(),
-    init_argc(argc),
-    init_argv(argv)
+namespace open_manipulator_y_gui
+{
+
+QNode::QNode(int argc, char ** argv)
+: QThread(),
+  init_argc(argc),
+  init_argv(argv)
 {
 }
 
 QNode::~QNode()
 {
   if (spinner_thread_.joinable()) {
-      rclcpp::shutdown();
-      spinner_thread_.join();
+    rclcpp::shutdown();
+    spinner_thread_.join();
   }
 }
 
@@ -43,7 +43,7 @@ bool QNode::init()
   node_ = std::make_shared<rclcpp::Node>(node_name);
 
   if (!rclcpp::ok()) {
-      return false;
+    return false;
   }
 
   node_->declare_parameter<std::string>("csv_path", "robot_joint_log.csv");
@@ -51,10 +51,12 @@ bool QNode::init()
   RCLCPP_INFO(node_->get_logger(), "CSV Path set to: %s", csv_file_path_.c_str());
 
   std::string planning_group_name = "arm";
-  move_group_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, planning_group_name);
+  move_group_ =
+    std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, planning_group_name);
 
   std::string planning_group_name2 = "gripper";
-  move_group2_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, planning_group_name2);
+  move_group2_ =
+    std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, planning_group_name2);
 
   if (!move_group_ || !move_group2_) {
     RCLCPP_ERROR(node_->get_logger(), "Failed to initialize move groups");
@@ -63,7 +65,7 @@ bool QNode::init()
   executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   executor_->add_node(node_);
 
-  spinner_thread_ = std::thread([this]() { executor_->spin(); });
+  spinner_thread_ = std::thread([this]() {executor_->spin();});
 
   return true;
 }
@@ -119,7 +121,8 @@ void QNode::updateRobotState()
   present_kinematics_position_ = temp_position;
 }
 
-std::string QNode::getCSVPath() const {
+std::string QNode::getCSVPath() const
+{
   return csv_file_path_;
 }
 
@@ -135,7 +138,8 @@ std::vector<double> QNode::getPresentKinematicsPosition()
 
 bool QNode::setJointSpacePath(std::vector<double> joint_angle)
 {
-  const moveit::core::JointModelGroup* joint_model_group = move_group_->getCurrentState()->getJointModelGroup("arm");
+  const moveit::core::JointModelGroup * joint_model_group =
+    move_group_->getCurrentState()->getJointModelGroup("arm");
 
   moveit::core::RobotStatePtr current_state = move_group_->getCurrentState();
 
@@ -152,11 +156,12 @@ bool QNode::setJointSpacePath(std::vector<double> joint_angle)
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
   bool success = (move_group_->plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
-  if (!success)
+  if (!success) {
     return false;
+  }
 
   move_group_->move();
-  while (!isMotionComplete()){
+  while (!isMotionComplete()) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
   return true;
@@ -171,7 +176,8 @@ bool QNode::isMotionComplete()
 
   moveit::core::RobotStatePtr current_state = move_group_->getCurrentState();
 
-  const moveit::core::JointModelGroup* joint_model_group = move_group_->getCurrentState()->getJointModelGroup("arm");
+  const moveit::core::JointModelGroup * joint_model_group =
+    move_group_->getCurrentState()->getJointModelGroup("arm");
   std::vector<double> current_joint_positions;
   current_state->copyJointGroupPositions(joint_model_group, current_joint_positions);
 
@@ -179,10 +185,8 @@ bool QNode::isMotionComplete()
   move_group_->getJointValueTarget(target_joint_positions);
 
   const double tolerance = 0.009;
-  for (size_t i = 0; i < current_joint_positions.size(); ++i)
-  {
-    if (std::abs(current_joint_positions[i] - target_joint_positions[i]) > tolerance)
-    {
+  for (size_t i = 0; i < current_joint_positions.size(); ++i) {
+    if (std::abs(current_joint_positions[i] - target_joint_positions[i]) > tolerance) {
       return false;
     }
   }
@@ -218,8 +222,9 @@ bool QNode::setTaskSpacePath(
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
   bool success = (move_group_->plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
-  if (!success)
+  if (!success) {
     return false;
+  }
 
   move_group_->move();
 
@@ -228,37 +233,39 @@ bool QNode::setTaskSpacePath(
 
 bool QNode::setToolControl(std::vector<double> joint_angle)
 {
-    const moveit::core::JointModelGroup* joint_model_group = move_group2_->getCurrentState()->getJointModelGroup("gripper");
+  const moveit::core::JointModelGroup * joint_model_group =
+    move_group2_->getCurrentState()->getJointModelGroup("gripper");
 
-    moveit::core::RobotStatePtr current_state = move_group2_->getCurrentState();
+  moveit::core::RobotStatePtr current_state = move_group2_->getCurrentState();
 
-    std::vector<double> joint_group_positions;
-    current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+  std::vector<double> joint_group_positions;
+  current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
 
-    joint_group_positions[0] = joint_angle.at(0);  // radians
-    move_group2_->setJointValueTarget(joint_group_positions);
+  joint_group_positions[0] = joint_angle.at(0);  // radians
+  move_group2_->setJointValueTarget(joint_group_positions);
 
-    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    bool success = (move_group2_->plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
-    if (!success)
-      return false;
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+  bool success = (move_group2_->plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
+  if (!success) {
+    return false;
+  }
 
-    std::atomic<bool> move_completed(false);
+  std::atomic<bool> move_completed(false);
 
-    std::thread move_thread([&]() {
+  std::thread move_thread([&]() {
       move_group2_->move();
       move_completed.store(true);
     });
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+  std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    if (!move_completed.load()) {
-      move_group2_->stop();
-      move_thread.join();
-      return true;
-    }
+  if (!move_completed.load()) {
+    move_group2_->stop();
     move_thread.join();
     return true;
+  }
+  move_thread.join();
+  return true;
 }
 
 void QNode::stopMotion()

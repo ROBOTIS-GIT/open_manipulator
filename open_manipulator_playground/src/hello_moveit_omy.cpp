@@ -14,11 +14,12 @@
 //
 // Author: Sungho Woo
 
-#include <memory>
-#include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
+#include <memory>
 #include <chrono>
 #include <thread>
+#include <rclcpp/rclcpp.hpp>
+
 
 int main(int argc, char * argv[])
 {
@@ -39,17 +40,17 @@ int main(int argc, char * argv[])
   auto move_group_interface = MoveGroupInterface(node, "arm");
 
   // Define the target pose for the robot arm
-  auto const target_pose = []{
-    geometry_msgs::msg::Pose msg;
-    msg.orientation.x = 0.0;  // Orientation (quaternion x)
-    msg.orientation.y = 0.0;  // Orientation (quaternion y)
-    msg.orientation.z = 0.0;  // Orientation (quaternion z)
-    msg.orientation.w = 1.0;  // Orientation (quaternion w)
-    msg.position.x = 0.059;   // Position in x
-    msg.position.y = -0.315;  // Position in y
-    msg.position.z = 0.662;   // Position in z
-    return msg;
-  }();
+  auto const target_pose = [] {
+      geometry_msgs::msg::Pose msg;
+      msg.orientation.x = 0.0;  // Orientation (quaternion x)
+      msg.orientation.y = 0.0;  // Orientation (quaternion y)
+      msg.orientation.z = 0.0;  // Orientation (quaternion z)
+      msg.orientation.w = 1.0;  // Orientation (quaternion w)
+      msg.position.x = 0.059;   // Position in x
+      msg.position.y = -0.315;  // Position in y
+      msg.position.z = 0.662;   // Position in z
+      return msg;
+    }();
 
   // Set the target pose for the arm
   move_group_interface.setPoseTarget(target_pose);
@@ -59,18 +60,18 @@ int main(int argc, char * argv[])
   move_group_interface.setGoalOrientationTolerance(0.001);
 
   // Plan the motion for the arm to reach the target pose
-  auto const [success, plan] = [&move_group_interface]{
-    moveit::planning_interface::MoveGroupInterface::Plan msg;
-    auto const ok = static_cast<bool>(move_group_interface.plan(msg));
-    return std::make_pair(ok, msg);
-  }();
+  auto const [success, plan] = [&move_group_interface] {
+      moveit::planning_interface::MoveGroupInterface::Plan msg;
+      auto const ok = static_cast<bool>(move_group_interface.plan(msg));
+      return std::make_pair(ok, msg);
+    }();
 
   // If planning succeeds, execute the planned motion
-  if(success) {
+  if (success) {
     move_group_interface.execute(plan);
-    std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds after execution
+    std::this_thread::sleep_for(std::chrono::seconds(2));
   } else {
-    RCLCPP_ERROR(logger, "Planning failed for the arm!");  // Log an error if planning fails
+    RCLCPP_ERROR(logger, "Planning failed for the arm!");
   }
 
   // Create the MoveIt MoveGroup Interface for the "gripper" planning group
@@ -82,7 +83,7 @@ int main(int argc, char * argv[])
     RCLCPP_INFO(logger, "Gripper closed successfully");  // Log success
     std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds
   } else {
-    RCLCPP_ERROR(logger, "Failed to close the gripper");  // Log an error if it fails
+    RCLCPP_ERROR(logger, "Failed to close the gripper");
   }
 
   // Move the arm back to the "home" position
@@ -96,11 +97,11 @@ int main(int argc, char * argv[])
     if (gripper_interface.move()) {
       RCLCPP_INFO(logger, "Gripper opened successfully");  // Log success
     } else {
-      RCLCPP_ERROR(logger, "Failed to open the gripper");  // Log an error if it fails
+      RCLCPP_ERROR(logger, "Failed to open the gripper");
     }
 
   } else {
-    RCLCPP_ERROR(logger, "Failed to move the arm back to home position");  // Log an error if it fails
+    RCLCPP_ERROR(logger, "Failed to move the arm back to home position");
   }
 
   // Shut down the ROS2 node

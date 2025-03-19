@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-tf-transformations \
     ros-${ROS_DISTRO}-gz* \
     ros-${ROS_DISTRO}-pal-statistics \
+    vim \
     && apt-get install -y ros-${ROS_DISTRO}-moveit-* --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
@@ -31,12 +32,6 @@ RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     cd ${COLCON_WS} && \
     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release"
 
-# Set up workspace
-WORKDIR /workspace
-
-# Copy project files
-COPY workspace /workspace
-
 # Build the project
 RUN bash -c "cd /workspace/colcon_ws && \
     source /opt/ros/${ROS_DISTRO}/setup.bash && \
@@ -45,7 +40,7 @@ RUN bash -c "cd /workspace/colcon_ws && \
 
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
     echo "source ${COLCON_WS}/install/setup.bash" >> ~/.bashrc && \
-    echo "source /workspace/colcon_ws/install/setup.bash" >> ~/.bashrc && \
     echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc
+    echo "export ROBOT_MODEL=om_y_follower" >> ~/.bashrc
 
 CMD ["bash"]

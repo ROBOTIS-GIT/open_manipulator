@@ -38,10 +38,8 @@ SpringActuatorController::command_interface_configuration() const
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  for (const auto & joint_name : joint_names_)
-  {
-    for (const auto & interface_type : command_interface_types_)
-    {
+  for (const auto & joint_name : joint_names_) {
+    for (const auto & interface_type : command_interface_types_) {
       config.names.push_back(joint_name + "/" + interface_type);
     }
   }
@@ -55,10 +53,8 @@ SpringActuatorController::state_interface_configuration() const
   controller_interface::InterfaceConfiguration config;
   config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  for (const auto & joint_name : joint_names_)
-  {
-    for (const auto & interface_type : state_interface_types_)
-    {
+  for (const auto & joint_name : joint_names_) {
+    for (const auto & interface_type : state_interface_types_) {
       config.names.push_back(joint_name + "/" + interface_type);
     }
   }
@@ -73,13 +69,11 @@ controller_interface::return_type SpringActuatorController::update(
   // 1) Read joint states from hardware interfaces
   // ----------------------------------------------------------------------------
   auto assign_point_from_interface =
-    [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface)
-  {
-    for (size_t index = 0; index < dof_; ++index)
-    {
-      trajectory_point_interface[index] = joint_interface[index].get().get_value();
-    }
-  };
+    [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface) {
+      for (size_t index = 0; index < dof_; ++index) {
+        trajectory_point_interface[index] = joint_interface[index].get().get_value();
+      }
+    };
 
   // Fill in current joint positions and velocities
   assign_point_from_interface(joint_positions_, joint_state_interface_[0]);  // position
@@ -88,11 +82,10 @@ controller_interface::return_type SpringActuatorController::update(
   // We will set torques for each joint
   std::vector<double> torques(dof_, 0.0);
 
-  for (size_t trigger_joint_idx = 0; trigger_joint_idx < dof_; ++trigger_joint_idx)
-  {
+  for (size_t trigger_joint_idx = 0; trigger_joint_idx < dof_; ++trigger_joint_idx) {
     double q_trigger = joint_positions_[trigger_joint_idx];
-    double spring_stiffness = params_.trigger_spring_stiffness[trigger_joint_idx];  // e.g. from your parameters
-    double neutral_position  = params_.trigger_neutral_position[trigger_joint_idx];  // e.g. from your parameters
+    double spring_stiffness = params_.trigger_spring_stiffness[trigger_joint_idx];
+    double neutral_position = params_.trigger_neutral_position[trigger_joint_idx];
 
     double spring_torque = -spring_stiffness * (q_trigger - neutral_position);
 
@@ -103,8 +96,7 @@ controller_interface::return_type SpringActuatorController::update(
     spring_torque -= damping_coefficient * q_dot_trigger;
 
     // If you still want dithering to overcome static friction:
-    if (std::abs(q_dot_trigger) < params_.static_friction_velocity_thresholds[trigger_joint_idx])
-    {
+    if (std::abs(q_dot_trigger) < params_.static_friction_velocity_thresholds[trigger_joint_idx]) {
       double dither = params_.static_friction_scalars[trigger_joint_idx] * std::abs(spring_torque);
       spring_torque += (dither_switch_ ? dither : -dither);
     }
@@ -118,8 +110,7 @@ controller_interface::return_type SpringActuatorController::update(
   // ----------------------------------------------------------------------------
   // 3) Output the final torques to hardware command interfaces
   // ----------------------------------------------------------------------------
-  for (size_t i = 0; i < dof_; ++i)
-  {
+  for (size_t i = 0; i < dof_; ++i) {
     // Multiply by any user-defined torque scaling if desired
     double scaled_torque = torques[i] * params_.torque_scaling_factors[i];
     joint_command_interface_[0][i].get().set_value(scaled_torque);
@@ -130,14 +121,11 @@ controller_interface::return_type SpringActuatorController::update(
 
 controller_interface::CallbackReturn SpringActuatorController::on_init()
 {
-  try
-  {
+  try {
     // Create the parameter listener and get the parameters
     param_listener_ = std::make_shared<ParamListener>(get_node());
     params_ = param_listener_->get_params();
-  }
-  catch (const std::exception & e)
-  {
+  } catch (const std::exception & e) {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
     return CallbackReturn::ERROR;
   }
@@ -150,8 +138,7 @@ controller_interface::CallbackReturn SpringActuatorController::on_configure(
 {
   auto logger = get_node()->get_logger();
 
-  if (!param_listener_)
-  {
+  if (!param_listener_) {
     RCLCPP_ERROR(logger, "Error encountered during init");
     return controller_interface::CallbackReturn::ERROR;
   }
@@ -168,8 +155,7 @@ controller_interface::CallbackReturn SpringActuatorController::on_configure(
   joint_positions_.resize(dof_);
   joint_velocities_.resize(dof_);
 
-  if (params_.joints.empty())
-  {
+  if (params_.joints.empty()) {
     RCLCPP_WARN(logger, "'joints' parameter is empty.");
   }
 
@@ -177,14 +163,11 @@ controller_interface::CallbackReturn SpringActuatorController::on_configure(
   n_joints_ = joint_names_.size();
 
   command_joint_names_ = params_.command_joints;
-  if (command_joint_names_.empty())
-  {
+  if (command_joint_names_.empty()) {
     command_joint_names_ = params_.joints;
     RCLCPP_INFO(
       logger, "No specific joint names provided for command interfaces. Using 'joints'.");
-  }
-  else if (command_joint_names_.size() != params_.joints.size())
-  {
+  } else if (command_joint_names_.size() != params_.joints.size()) {
     RCLCPP_ERROR(
       logger, "'command_joints' parameter must match size of 'joints' parameter.");
     return CallbackReturn::FAILURE;
@@ -194,17 +177,13 @@ controller_interface::CallbackReturn SpringActuatorController::on_configure(
   joint_state_interface_.resize(state_interface_types_.size());
 
   const std::string & urdf = get_robot_description();
-  if (!urdf.empty())
-  {
-    if (!kdl_parser::treeFromString(urdf, tree_))
-    {
+  if (!urdf.empty()) {
+    if (!kdl_parser::treeFromString(urdf, tree_)) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to parse robot description!");
       return CallbackReturn::ERROR;
     }
     RCLCPP_INFO(get_node()->get_logger(), "Successfully parsed the robot description.");
-  }
-  else
-  {
+  } else {
     RCLCPP_DEBUG(get_node()->get_logger(), "No URDF file given, continuing...");
   }
 
@@ -224,13 +203,12 @@ controller_interface::CallbackReturn SpringActuatorController::on_activate(
   params_ = param_listener_->get_params();
 
   // Order all joints in the storage
-  for (const auto & interface : params_.command_interfaces)
-  {
+  for (const auto & interface : params_.command_interfaces) {
     auto it =
       std::find(command_interface_types_.begin(), command_interface_types_.end(), interface);
     auto index = static_cast<size_t>(std::distance(command_interface_types_.begin(), it));
     if (!controller_interface::get_ordered_interfaces(
-          command_interfaces_, command_joint_names_, interface, joint_command_interface_[index]))
+        command_interfaces_, command_joint_names_, interface, joint_command_interface_[index]))
     {
       RCLCPP_ERROR(
         logger, "Expected %zu '%s' command interfaces, got %zu.",
@@ -239,13 +217,12 @@ controller_interface::CallbackReturn SpringActuatorController::on_activate(
     }
   }
 
-  for (const auto & interface : params_.state_interfaces)
-  {
+  for (const auto & interface : params_.state_interfaces) {
     auto it =
       std::find(state_interface_types_.begin(), state_interface_types_.end(), interface);
     auto index = static_cast<size_t>(std::distance(state_interface_types_.begin(), it));
     if (!controller_interface::get_ordered_interfaces(
-          state_interfaces_, params_.joints, interface, joint_state_interface_[index]))
+        state_interfaces_, params_.joints, interface, joint_state_interface_[index]))
     {
       RCLCPP_ERROR(
         logger, "Expected %zu '%s' state interfaces, got %zu.",
@@ -261,10 +238,8 @@ controller_interface::CallbackReturn SpringActuatorController::on_activate(
 controller_interface::CallbackReturn SpringActuatorController::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  for (size_t i = 0; i < n_joints_; ++i)
-  {
-    for (size_t j = 0; j < command_interface_types_.size(); ++j)
-    {
+  for (size_t i = 0; i < n_joints_; ++i) {
+    for (size_t j = 0; j < command_interface_types_.size(); ++j) {
       command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
     }
   }
@@ -300,11 +275,9 @@ controller_interface::CallbackReturn SpringActuatorController::on_shutdown(
 std::string SpringActuatorController::formatVector(const std::vector<double> & vec)
 {
   std::ostringstream oss;
-  for (size_t i = 0; i < vec.size(); ++i)
-  {
+  for (size_t i = 0; i < vec.size(); ++i) {
     oss << vec[i];
-    if (i != vec.size() - 1)
-    {
+    if (i != vec.size() - 1) {
       oss << ", ";
     }
   }

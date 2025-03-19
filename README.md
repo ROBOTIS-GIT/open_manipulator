@@ -87,7 +87,7 @@ Navigate to your ROS 2 workspace and clone the repository:
 ```bash
 cd ~/${WORKSPACE}/src
 
-git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
+git clone -b feature-om-y-top-support https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
 git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
 git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
 git clone -b jazzy https://github.com/ros-controls/gz_ros2_control
@@ -111,7 +111,8 @@ source ~/${WORKSPACE}/install/setup.bash
 Create and apply `udev` rules:
 
 ```bash
-ros2 run open_manipulator_bringup y_create_udev_rules
+ros2 run open_manipulator_bringup y_create_udev_rules # for om_y
+ros2 run open_manipulator_bringup x_create_udev_rules # for om_x
 ```
 
 ------
@@ -125,7 +126,7 @@ ros2 run open_manipulator_bringup y_create_udev_rules
 For **leader-follower functionality**, use:
 
 ```bash
-ros2 launch open_manipulator_bringup ai_teleoperation.launch.py
+ros2 launch open_manipulator_bringup ai_teleoperation.launch.py 
 ```
 
 Ensure proper connection and detection of leader and follower devices.
@@ -135,10 +136,22 @@ Ensure proper connection and detection of leader and follower devices.
 For **standalone follower mode**, launch:
 
 ```bash
-ros2 launch open_manipulator_bringup hardware_y.launch.py
+ros2 launch open_manipulator_bringup hardware_y.launch.py #for om_y
+ros2 launch open_manipulator_bringup hardware_x.launch.py #for om_x
 ```
 
 Confirm that hardware is properly connected before execution.
+
+#### **3️⃣ Gazebo Simulation Mode**
+
+For **Gazebo simulation mode**, launch:
+
+```bash
+bash
+ros2 launch open_manipulator_bringup gazebo.launch.py #for om_x and om_y
+```
+
+Ensure that Gazebo Harmonic is properly installed and configured before running the simulation.
 
 ------
 
@@ -149,7 +162,8 @@ Confirm that hardware is properly connected before execution.
 Control the manipulator (simulation or hardware) using your keyboard:
 
 ```bash
-ros2 run open_manipulator_teleop keyboard_control_y.py
+ros2 run open_manipulator_teleop keyboard_control_y.py # for om_y
+ros2 run open_manipulator_teleop keyboard_control_x.py # for om_x
 ```
 
 ##### **Joint Control**
@@ -187,7 +201,8 @@ ros2 launch open_manipulator_moveit_config move_group.launch.py
 Launch the Open Manipulator GUI:
 
 ```bash
-ros2 launch open_manipulator_gui open_manipulator_gui.launch.py
+ros2 launch open_manipulator_gui open_manipulator_y_gui.launch.py # for om_y
+ros2 launch open_manipulator_gui open_manipulator_x_gui.launch.py # for om_x
 ```
 
 ------
