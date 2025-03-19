@@ -32,15 +32,9 @@ RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     cd ${COLCON_WS} && \
     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release"
 
-# Build the project
-RUN bash -c "cd /workspace/colcon_ws && \
-    source /opt/ros/${ROS_DISTRO}/setup.bash && \
-    source ${COLCON_WS}/install/setup.bash && \
-    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release"
-
-RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
-    echo "source ${COLCON_WS}/install/setup.bash" >> ~/.bashrc && \
-    echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc  && \
+    echo "source ${COLCON_WS}/install/setup.bash" >> ~/.bashrc  && \
+    echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc  && \
     echo "export ROBOT_MODEL=om_y_follower" >> ~/.bashrc
 
 CMD ["bash"]
