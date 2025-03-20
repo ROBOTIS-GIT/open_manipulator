@@ -14,10 +14,10 @@ With this integration, all Robotis manipulators are managed under a unified pack
 
 This package supports **ROS 2 Jazzy** and **Gazebo Harmonic** on Ubuntu 24.04, offering the following functionalities:
 
-- **Graphical User Interface (GUI) Support**
+- **Integration of MoveIt 2 for Enhanced Motion Planning**
+- **Graphical User Interface (GUI) Implementation and Support**
 - **Teleoperation (Teleop) Capabilities**
-- **MoveIt Integration for Motion Planning**
-- **Leader-Follower Control Mechanism (with Gravity Compensation)**
+- **Leader-Follower Control Mechanism with Gravity Compensation for Imitation Learning**
 
 # **OpenMANIPULATOR User Guide**
 
