@@ -63,3 +63,6 @@ jobs:
             open_manipulator_moveit_config
             open_manipulator_playground
             open_manipulator_teleop
+            om_gravity_compensation_controller
+            om_joint_trajectory_command_broadcaster
+            om_spring_actuator_controller
