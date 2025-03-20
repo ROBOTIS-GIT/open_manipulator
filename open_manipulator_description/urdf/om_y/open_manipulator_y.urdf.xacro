@@ -47,8 +47,8 @@
   </joint>
 
   <joint name="$(arg prefix)gripper_fixed" type="fixed">
-    <origin xyz="0 -0.05 0" rpy="1.57 1.57 0"/>
-    <parent link="$(arg prefix)link6"/>
+    <origin xyz="0 -0.006 0" rpy="1.57 1.57 0"/>
+    <parent link="$(arg prefix)end_effector_flange_link"/>
     <axis xyz="0 0 0"/>
     <child link="$(arg prefix)rh_p12_rn_base"/>
   </joint>
