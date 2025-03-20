@@ -2,32 +2,28 @@
 
 ## Overview
 
-This repository provides an integrated management package for **Robotis** robotic arms, including:
+This repository provides an integrated management package for **ROBOTIS** robotic arms, including:
 
-- **OpenManipulator-Y**
-- **OpenManipulator-X**
+- **OpenMANIPULATOR-Y**
+- **OpenMANIPULATOR-X**
 - **Leader-Follower Manipulator System**
 
 With this integration, all Robotis manipulators are managed under a unified package to ensure better compatibility and functionality.
 
 ## Key Features
 
-This package supports **Ubuntu 24.04 Jazzy** and **Gazebo Harmonic**, offering the following functionalities:
+This package supports **ROS 2 Jazzy** and **Gazebo Harmonic** on Ubuntu 24.04, offering the following functionalities:
 
 - **Graphical User Interface (GUI) Support**
 - **Teleoperation (Teleop) Capabilities**
-- **MoveIt! Integration for Motion Planning**
+- **MoveIt Integration for Motion Planning**
 - **Leader-Follower Control Mechanism (with Gravity Compensation)**
 
-------
-
-# **Open Manipulator User Guide**
+# **OpenMANIPULATOR User Guide**
 
 ## **1. Introduction**
 
-The **Open Manipulator-Y** is a 6-DOF robotic arm designed for advanced robotic manipulation tasks. This ROS 2 package provides seamless integration, enhanced control, and versatile functionality for simulation and hardware applications.
-
-------
+The **OpenMANIPULATOR-Y** is a 6-DOF robotic arm designed for advanced robotic manipulation tasks. This ROS 2 package provides seamless integration, enhanced control, and versatile functionality for simulation and hardware applications.
 
 ## **2. Prerequisites**
 
@@ -43,8 +39,8 @@ Install the following dependencies:
 
 ```bash
 sudo apt-get update && sudo apt-get install -y \
-    ros-jazzy-hardware-interface \
     libboost-all-dev \
+    ros-jazzy-hardware-interface \
     ros-jazzy-controller-manager \
     ros-jazzy-ros2-controllers \
     ros-jazzy-tf-transformations \
@@ -67,9 +63,9 @@ sudo usermod -aG dialout $USER
 
 Set the robot model based on your system:
 
-- **`om_y_follower`** – OpenManipulator-Y with leader-follower functionality.
-- **`om_y`** – OpenManipulator-Y as a standalone follower model.
-- **`om_x`** – OpenManipulator-X.
+- **`om_y_follower`** – OpenMANIPULATOR-Y with leader-follower functionality.
+- **`om_y`** – OpenMANIPULATOR-Y as a standalone model.
+- **`om_x`** – OpenMANIPULATOR-X.
 
 Add the configuration to `~/.bashrc`:
 
@@ -77,8 +73,6 @@ Add the configuration to `~/.bashrc`:
 echo 'export ROBOT_MODEL=om_y_follower' >> ~/.bashrc
 source ~/.bashrc
 ```
-
-------
 
 ## **3. Installation**
 
@@ -91,9 +85,9 @@ cd ~/${WORKSPACE}/src
 ```
 
 ```bash
-git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
-git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
 git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
+git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
+git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git
 ```
 
 ### **2. Build the Package**
@@ -118,7 +112,6 @@ ros2 run open_manipulator_bringup y_create_udev_rules # for om_y
 ros2 run open_manipulator_bringup x_create_udev_rules # for om_x
 ```
 
-------
 
 ## **4. Execution Commands**
 
@@ -134,9 +127,9 @@ ros2 launch open_manipulator_bringup ai_teleoperation.launch.py
 
 Ensure proper connection and detection of leader and follower devices.
 
-#### **2️⃣ Standalone Follower Mode**
+#### **2️⃣ Standalone Mode**
 
-For **standalone follower mode**, launch:
+For **standalone mode**, launch:
 
 ```bash
 ros2 launch open_manipulator_bringup hardware_y.launch.py #for om_y
@@ -155,7 +148,6 @@ ros2 launch open_manipulator_bringup gazebo.launch.py #for om_x and om_y
 
 Ensure that Gazebo Harmonic is properly installed and configured before running the simulation.
 
-------
 
 ### **Step 2: Extend Functionality**
 
@@ -200,14 +192,13 @@ Launch MoveIt GUI:
 ros2 launch open_manipulator_moveit_config move_group.launch.py
 ```
 
-Launch the Open Manipulator GUI:
+Launch the OpenMANIPULATOR GUI:
 
 ```bash
 ros2 launch open_manipulator_gui open_manipulator_y_gui.launch.py # for om_y
 ros2 launch open_manipulator_gui open_manipulator_x_gui.launch.py # for om_x
 ```
 
-------
 
 ### **Step 3: Explore GUI Features**
 
@@ -234,10 +225,9 @@ ros2 launch open_manipulator_gui open_manipulator_x_gui.launch.py # for om_x
   - **Stop**: Halt operations.
   - **Reset Task**: Clear saved tasks.
 
-------
 
 ## (Legacy) ROBOTIS e-Manual for OpenMANIPULATOR-X
 
-- [ROBOTIS e-Manual](http://emanual.robotis.com/docs/en/platform/openmanipulator/)
+- [ROBOTIS e-Manual](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/)
 
-The **OpenManipulator-X operation method** is similar to **OpenManipulator-Y**, and the e-Manual is currently being updated.
+The **OpenMANIPULATOR-X operation method** is similar to **OpenMANIPULATOR-Y**, and the e-Manual is currently being updated.
