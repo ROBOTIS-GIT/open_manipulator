@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        linter: [flake8, pep257, xmllint, copyright]
+        linter: [cppcheck, cpplint, uncrustify, flake8, pep257, lint_cmake, xmllint, copyright]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
