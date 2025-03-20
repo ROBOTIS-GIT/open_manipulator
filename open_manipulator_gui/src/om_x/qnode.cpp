@@ -16,6 +16,7 @@
 
 #include "open_manipulator_x_gui/qnode.hpp"
 
+
 namespace open_manipulator_x_gui
 {
 

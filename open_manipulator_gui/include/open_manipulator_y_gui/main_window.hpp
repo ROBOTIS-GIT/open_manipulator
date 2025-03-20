@@ -17,17 +17,23 @@
 #ifndef OPEN_MANIPULATOR_Y_GUI_MAIN_WINDOW_HPP
 #define OPEN_MANIPULATOR_Y_GUI_MAIN_WINDOW_HPP
 
-#include <QMainWindow>
-#include "ui_y_main_window.h"
-#include "qnode.hpp"
-#include <QTimer>
-#include <eigen3/Eigen/Eigen>
+#include "open_manipulator_y_gui/main_window.hpp"
+
+#include <cstdio>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+
+#include <QMainWindow>
+#include <QTimer>
 #include <QTableWidget>
 #include <QHeaderView>
+#include <eigen3/Eigen/Eigen>
+
+#include "ui_y_main_window.h"
+#include "qnode.hpp"
 
 
 namespace open_manipulator_y_gui

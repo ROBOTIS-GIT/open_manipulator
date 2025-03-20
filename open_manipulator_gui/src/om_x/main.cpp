@@ -19,6 +19,7 @@
 #include "../include/open_manipulator_x_gui/main_window.hpp"
 #include "open_manipulator_x_gui/qnode.hpp"
 
+
 int main(int argc, char ** argv)
 {
   QApplication app(argc, argv);

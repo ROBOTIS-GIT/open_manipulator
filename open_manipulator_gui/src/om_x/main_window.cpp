@@ -19,6 +19,7 @@
 #include <iostream>
 #include "../include/open_manipulator_x_gui/main_window.hpp"
 
+
 namespace open_manipulator_x_gui
 {
 
