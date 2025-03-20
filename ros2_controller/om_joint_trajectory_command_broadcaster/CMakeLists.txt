@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(joint_trajectory_command_broadcaster LANGUAGES CXX)
+project(om_joint_trajectory_command_broadcaster LANGUAGES CXX)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror=conversion -Werror=unused-but-set-variable

@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>spring_actuator_controller</name>
+  <name>om_gravity_compensation_controller</name>
   <version>3.1.0</version>
   <description>
-    Spring Actuator Controller ROS 2 package.
+    Controller for compensating for gravity on a group of joints
   </description>
   <maintainer email="pyo@robotis.com">pyo</maintainer>
-  <license>Apache 2.0</license>
+  <license>Apache License 2.0</license>
+  <url type="website">https://control.ros.org</url>
+  <url type="bugtracker">https://github.com/ros-controls/ros2_controllers/issues</url>
+  <url type="repository">https://github.com/ros-controls/ros2_controllers/</url>
   <author email="wwj@robotis.com">Woojin Wie</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

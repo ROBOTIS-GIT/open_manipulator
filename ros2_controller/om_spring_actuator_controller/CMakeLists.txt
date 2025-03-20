@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(gravity_compensation_controller LANGUAGES CXX)
+project(om_spring_actuator_controller LANGUAGES CXX)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror=unused-but-set-variable
@@ -31,41 +31,41 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-generate_parameter_library(gravity_compensation_controller_parameters
-  src/gravity_compensation_controller_parameters.yaml
+generate_parameter_library(spring_actuator_controller_parameters
+  src/spring_actuator_controller_parameters.yaml
 )
 
-add_library(gravity_compensation_controller SHARED
-  src/gravity_compensation_controller.cpp
+add_library(spring_actuator_controller SHARED
+  src/spring_actuator_controller.cpp
 )
-target_compile_features(gravity_compensation_controller PUBLIC cxx_std_17)
-target_include_directories(gravity_compensation_controller PUBLIC
+target_compile_features(spring_actuator_controller PUBLIC cxx_std_17)
+target_include_directories(spring_actuator_controller PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/gravity_compensation_controller>
+  $<INSTALL_INTERFACE:include/spring_actuator_controller>
 )
-target_link_libraries(gravity_compensation_controller PUBLIC
-  gravity_compensation_controller_parameters
+target_link_libraries(spring_actuator_controller PUBLIC
+  spring_actuator_controller_parameters
 )
-ament_target_dependencies(gravity_compensation_controller PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_target_dependencies(spring_actuator_controller PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
-target_compile_definitions(gravity_compensation_controller PRIVATE "gravity_compensation_controller_BUILDING_DLL" "_USE_MATH_DEFINES")
-pluginlib_export_plugin_description_file(controller_interface gravity_compensation_plugin.xml)
+target_compile_definitions(spring_actuator_controller PRIVATE "spring_actuator_controller_BUILDING_DLL" "_USE_MATH_DEFINES")
+pluginlib_export_plugin_description_file(controller_interface spring_actuator_plugin.xml)
 
 install(
   DIRECTORY include/
-  DESTINATION include/gravity_compensation_controller
+  DESTINATION include/spring_actuator_controller
 )
 install(TARGETS
-    gravity_compensation_controller
-    gravity_compensation_controller_parameters
-  EXPORT export_gravity_compensation_controller
+    spring_actuator_controller
+    spring_actuator_controller_parameters
+  EXPORT export_spring_actuator_controller
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
 
-ament_export_targets(export_gravity_compensation_controller HAS_LIBRARY_TARGET)
+ament_export_targets(export_spring_actuator_controller HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()

@@ -25,6 +25,10 @@
   <exec_depend>open_manipulator_moveit_config</exec_depend>
   <exec_depend>open_manipulator_playground</exec_depend>
   <exec_depend>open_manipulator_teleop</exec_depend>
+  <exec_depend>om_joint_trajectory_command_broadcaster</exec_depend>
+  <exec_depend>om_gravity_compensation_controller</exec_depend>
+  <exec_depend>om_spring_actuator_controller</exec_depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>
