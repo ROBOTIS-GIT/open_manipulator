@@ -6,12 +6,10 @@
   <description>
     Joint Trajectory Command Broadcaster ROS 2 package.
   </description>
-  <maintainer email="pyo@robotis.com">pyo</maintainer>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
   <author email="wwj@robotis.com">Woojin Wie</author>
-
   <buildtool_depend>ament_cmake</buildtool_depend>
-
   <depend>backward_ros</depend>
   <depend>builtin_interfaces</depend>
   <depend>control_msgs</depend>
@@ -30,7 +28,6 @@
   <test_depend>hardware_interface</test_depend>
   <test_depend>rclcpp</test_depend>
   <test_depend>ros2_control_test_assets</test_depend>
-
   <export>
     <build_type>ament_cmake</build_type>
   </export>

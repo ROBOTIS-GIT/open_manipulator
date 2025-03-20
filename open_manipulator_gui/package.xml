@@ -6,16 +6,14 @@
   <description>
     The OpenMANIPULATOR-X GUI ROS 2 package enables users to explore Joint Space,
     Task Space, and even work with the Task Constructor functionality.  </description>
-  <maintainer email="pyo@robotis.com">pyo</maintainer>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
   <url type="website">http://wiki.ros.org/open_manipulator</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
   <author email="wsh@robotis.com">Sungho Woo</author>
-
   <buildtool_depend>ament_cmake</buildtool_depend>
-
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
@@ -29,7 +27,6 @@
   <depend>moveit_ros_planning</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>geometry_msgs</depend>
-
   <export>
     <build_type>ament_cmake</build_type>
   </export>
