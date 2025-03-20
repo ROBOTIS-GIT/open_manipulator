@@ -91,7 +91,7 @@ cd ~/${WORKSPACE}/src
 ```
 
 ```bash
-git clone https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
+git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
 git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
 git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
 ```
@@ -129,7 +129,7 @@ ros2 run open_manipulator_bringup x_create_udev_rules # for om_x
 For **leader-follower functionality**, use:
 
 ```bash
-ros2 launch open_manipulator_bringup ai_teleoperation.launch.py 
+ros2 launch open_manipulator_bringup ai_teleoperation.launch.py
 ```
 
 Ensure proper connection and detection of leader and follower devices.

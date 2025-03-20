@@ -2,14 +2,14 @@
 #
 # Copyright 2024 ROBOTIS CO., LTD.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
@@ -32,21 +32,21 @@ from control_msgs.action import GripperCommand  # Import GripperCommand action
 
 class KeyboardController(Node):
     def __init__(self):
-        super().__init__("keyboard_controller")
+        super().__init__('keyboard_controller')
 
         # Publisher for arm joint control
         self.arm_publisher = self.create_publisher(
-            JointTrajectory, "/arm_controller/joint_trajectory", 10
+            JointTrajectory, '/arm_controller/joint_trajectory', 10
         )
 
         # Action client for GripperCommand
         self.gripper_client = ActionClient(
-            self, GripperCommand, "/gripper_controller/gripper_cmd"
+            self, GripperCommand, '/gripper_controller/gripper_cmd'
         )
 
         # Subscriber for joint states
         self.subscription = self.create_subscription(
-            JointState, "/joint_states", self.joint_state_callback, 10
+            JointState, '/joint_states', self.joint_state_callback, 10
         )
 
         # Initialize joint positions for arm (6 joints) and gripper
@@ -59,12 +59,12 @@ class KeyboardController(Node):
             0.0,
         ]  # Now supporting 6 joints
         self.arm_joint_names = [
-            "joint1",
-            "joint2",
-            "joint3",
-            "joint4",
-            "joint5",
-            "joint6",
+            'joint1',
+            'joint2',
+            'joint3',
+            'joint4',
+            'joint5',
+            'joint6',
         ]
 
         self.gripper_position = 0.0
@@ -81,7 +81,7 @@ class KeyboardController(Node):
         self.last_command_time = time.time()  # Last command execution time
         self.command_interval = 0.02  # Minimum time interval between commands (seconds)
 
-        self.get_logger().info("Waiting for /joint_states...")
+        self.get_logger().info('Waiting for /joint_states...')
         self.rate = self.create_rate(10)  # 10Hz update rate
 
     def joint_state_callback(self, msg):
@@ -91,14 +91,14 @@ class KeyboardController(Node):
                 index = msg.name.index(joint)
                 self.arm_joint_positions[i] = msg.position[index]
 
-        if "rh_r1_joint" in msg.name:
-            index = msg.name.index("rh_r1_joint")
+        if 'rh_r1_joint' in msg.name:
+            index = msg.name.index('rh_r1_joint')
             self.gripper_position = msg.position[index]
 
         self.joint_received = True
         self.get_logger().info(
-            f"Received joint states: {self.arm_joint_positions}, "
-            f"Gripper: {self.gripper_position}"
+            f'Received joint states: {self.arm_joint_positions}, '
+            f'Gripper: {self.gripper_position}'
         )
 
     def get_key(self):
@@ -120,7 +120,7 @@ class KeyboardController(Node):
         arm_msg.points.append(arm_point)
         self.arm_publisher.publish(arm_msg)
 
-        self.get_logger().info(f"Arm command sent: {self.arm_joint_positions}")
+        self.get_logger().info(f'Arm command sent: {self.arm_joint_positions}')
 
     def send_gripper_command(self):
 
@@ -128,7 +128,7 @@ class KeyboardController(Node):
         goal_msg.command.position = self.gripper_position
         goal_msg.command.max_effort = 10.0  # Maximum gripping force
 
-        self.get_logger().info(f"Sending gripper command: {goal_msg.command.position}")
+        self.get_logger().info(f'Sending gripper command: {goal_msg.command.position}')
 
         # Send action goal to gripper controller
         self.gripper_client.wait_for_server()
@@ -138,15 +138,15 @@ class KeyboardController(Node):
     def run(self):
 
         while not self.joint_received and rclpy.ok():
-            self.get_logger().info("Waiting for initial joint states...")
+            self.get_logger().info('Waiting for initial joint states...')
             rclpy.spin_once(
                 self, timeout_sec=1.0
             )  # Wait for joint_states topic to be received
 
-        self.get_logger().info("Ready to receive keyboard input!")
+        self.get_logger().info('Ready to receive keyboard input!')
         self.get_logger().info(
-            "Use '1/q', '2/w', '3/e', '4/r', '5/t', '6/y' for joints 1-6, "
-            "'o/p' for gripper. Press 'ESC' to exit."
+            'Use 1/q, 2/w, 3/e, 4/r, 5/t, 6/y for joints 1-6, '
+            'o/p for gripper. Press ESC to exit.'
         )
 
         try:
@@ -156,62 +156,62 @@ class KeyboardController(Node):
 
                 # Ensure commands are only executed at a fixed interval
                 if current_time - self.last_command_time >= self.command_interval:
-                    if key == "\x1b":  # Exit when ESC is pressed
+                    if key == '\x1b':  # Exit when ESC is pressed
                         break
-                    elif key == "1":  # Increase joint1
+                    elif key == '1':  # Increase joint1
                         self.arm_joint_positions[0] = min(
                             self.arm_joint_positions[0] + self.max_delta, 3.14
                         )
-                    elif key == "q":  # Decrease joint1
+                    elif key == 'q':  # Decrease joint1
                         self.arm_joint_positions[0] = max(
                             self.arm_joint_positions[0] - self.max_delta, -3.14
                         )
-                    elif key == "2":  # Increase joint2
+                    elif key == '2':  # Increase joint2
                         self.arm_joint_positions[1] = min(
                             self.arm_joint_positions[1] + self.max_delta, 3.14
                         )
-                    elif key == "w":  # Decrease joint2
+                    elif key == 'w':  # Decrease joint2
                         self.arm_joint_positions[1] = max(
                             self.arm_joint_positions[1] - self.max_delta, -3.14
                         )
-                    elif key == "3":  # Increase joint3
+                    elif key == '3':  # Increase joint3
                         self.arm_joint_positions[2] = min(
                             self.arm_joint_positions[2] + self.max_delta, 3.14
                         )
-                    elif key == "e":  # Decrease joint3
+                    elif key == 'e':  # Decrease joint3
                         self.arm_joint_positions[2] = max(
                             self.arm_joint_positions[2] - self.max_delta, -3.14
                         )
-                    elif key == "4":  # Increase joint4
+                    elif key == '4':  # Increase joint4
                         self.arm_joint_positions[3] = min(
                             self.arm_joint_positions[3] + self.max_delta, 3.14
                         )
-                    elif key == "r":  # Decrease joint4
+                    elif key == 'r':  # Decrease joint4
                         self.arm_joint_positions[3] = max(
                             self.arm_joint_positions[3] - self.max_delta, -3.14
                         )
-                    elif key == "5":  # Increase joint5
+                    elif key == '5':  # Increase joint5
                         self.arm_joint_positions[4] = min(
                             self.arm_joint_positions[4] + self.max_delta, 3.14
                         )
-                    elif key == "t":  # Decrease joint5
+                    elif key == 't':  # Decrease joint5
                         self.arm_joint_positions[4] = max(
                             self.arm_joint_positions[4] - self.max_delta, -3.14
                         )
-                    elif key == "6":  # Increase joint6
+                    elif key == '6':  # Increase joint6
                         self.arm_joint_positions[5] = min(
                             self.arm_joint_positions[5] + self.max_delta, 3.14
                         )
-                    elif key == "y":  # Decrease joint6
+                    elif key == 'y':  # Decrease joint6
                         self.arm_joint_positions[5] = max(
                             self.arm_joint_positions[5] - self.max_delta, -3.14
                         )
-                    elif key == "o":  # Open gripper
+                    elif key == 'o':  # Open gripper
                         self.gripper_position = max(
                             self.gripper_position - self.gripper_delta, self.gripper_min
                         )
                         self.send_gripper_command()
-                    elif key == "p":  # Close gripper
+                    elif key == 'p':  # Close gripper
                         self.gripper_position = min(
                             self.gripper_position + self.gripper_delta, self.gripper_max
                         )
@@ -232,5 +232,5 @@ def main():
     rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
