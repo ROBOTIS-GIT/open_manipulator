@@ -14,7 +14,7 @@
 //
 // Author: Wonho Yoon, Sungho Woo
 
-#include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/move_group_interface/move_group_interface.hpp>
 #include <memory>
 #include <chrono>
 #include <thread>
