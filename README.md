@@ -21,7 +21,7 @@ This package supports **Ubuntu 24.04 Jazzy** and **Gazebo Harmonic**, offering t
 
 ------
 
-# **Open Manipulator-Y User Guide**
+# **Open Manipulator User Guide**
 
 ## **1. Introduction**
 
@@ -61,6 +61,8 @@ To enable communication with the hardware, add your user to the `dialout` group:
 sudo usermod -aG dialout $USER
 ```
 
+**A login and logout are required.**
+
 ### **Environment Configuration**
 
 Set the robot model based on your system:
@@ -86,11 +88,12 @@ Navigate to your ROS 2 workspace and clone the repository:
 
 ```bash
 cd ~/${WORKSPACE}/src
+```
 
-git clone -b feature-om-y-top-support https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
+```bash
+git clone https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
 git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
 git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
-git clone -b jazzy https://github.com/ros-controls/gz_ros2_control
 ```
 
 ### **2. Build the Package**
@@ -147,7 +150,6 @@ Confirm that hardware is properly connected before execution.
 For **Gazebo simulation mode**, launch:
 
 ```bash
-bash
 ros2 launch open_manipulator_bringup gazebo.launch.py #for om_x and om_y
 ```
 
@@ -224,8 +226,6 @@ ros2 launch open_manipulator_gui open_manipulator_x_gui.launch.py # for om_x
 - **Task Space Tab**: Control the end-effector position.
 
 - Task Constructor Tab
-
-  :
 
   - **Read Task**: View saved poses.
   - **Save Pose**: Save current state.

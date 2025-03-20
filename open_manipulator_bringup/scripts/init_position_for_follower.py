@@ -48,7 +48,6 @@ class MoveToHome(Node):
         self.timer = self.create_timer(1.0, self.move_to_home)
 
     def move_to_home(self):
-        """ Publishes a trajectory command to move the robot to the home position """
         traj = JointTrajectory()
         traj.joint_names = self.joint_names
 
@@ -61,7 +60,6 @@ class MoveToHome(Node):
         self.get_logger().info('Moving to Home Position')
 
     def joint_state_callback(self, msg):
-        """ Callback function to check if the robot has reached the target position """
         if set(self.joint_names).issubset(set(msg.name)):
             current_positions = [msg.position[msg.name.index(j)] for j in self.joint_names]
 
@@ -73,13 +71,11 @@ class MoveToHome(Node):
                     self.shutdown_node()
 
     def shutdown_node(self):
-        """ Shuts down the ROS2 node and exits the program """
         self.destroy_node()
         rclpy.shutdown()
         sys.exit(0)
 
     def angle_to_radian(self, angle):
-        """ Converts an angle from degrees to radians """
         return angle * math.pi / 180
 
 def main(args=None):
