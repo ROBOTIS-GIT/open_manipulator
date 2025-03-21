@@ -13,4 +13,3 @@
     <xacro:open_manipulator_y_leader_ros2_control name="open_manipulator_y_leader" initial_positions_file="$(arg initial_positions_file)"/>
 
 </robot>
-

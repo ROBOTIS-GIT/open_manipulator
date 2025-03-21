@@ -23,7 +23,7 @@ WORKDIR ${COLCON_WS}
 
 RUN mkdir -p ${COLCON_WS}/src && \
     cd ${COLCON_WS}/src && \
-    git clone -b feature-om-y-top-support https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
+    git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
     git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
     git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
     git clone -b jazzy https://github.com/ros-controls/gz_ros2_control

@@ -41,7 +41,6 @@ def generate_launch_description():
         urdf_folder = "om_y"
 
 
-    # RViz config 파일 설정
     rviz_config = os.path.join(
         get_package_share_directory("open_manipulator_moveit_config"),
         "config",
@@ -134,7 +133,6 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    # RViz 실행
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
