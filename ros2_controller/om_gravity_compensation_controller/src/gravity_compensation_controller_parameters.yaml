@@ -1,0 +1,71 @@
+gravity_compensation_controller:
+  joints: {
+    type: string_array,
+    default_value: [],
+    description: "Joint names to control and listen to",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }
+  command_interfaces: {
+    type: string_array,
+    default_value: [],
+    description: "Command interfaces provided by the hardware interface for all joints",
+    read_only: true,
+  }
+  state_interfaces: {
+    type: string_array,
+    default_value: [],
+    description: "State interfaces provided by the hardware for all joints.",
+    read_only: true,
+  }
+  command_joints: {
+    type: string_array,
+    default_value: [],
+    description: "Joint names to control. This parameters is used if JTC is used in a controller chain where command and state interfaces don't have same names.",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }
+  unloaded_effort_offsets: {
+    type: double_array,
+    default_value: [0.03, 0.1, 0.1, 0.02, 0.015, 0.015],
+    description: "Effort offsets added to actuator control commands when below threshold"
+  }
+  unloaded_effort_thresholds: {
+    type: double_array,
+    default_value: [0.05, 0.1, 0.1, 0.02, 0.012, 0.012],
+    description: "Threshold values below which unloaded_effort_offsets are added to control commands"
+  }
+  kinetic_friction_scalars: {
+    type: double_array,
+    default_value: [0.4, 0.8, 0.8, 0.1, 0.1, 0.1],
+    description: "Scaling factors for kinetic friction"
+  }
+  static_friction_scalars: {
+    type: double_array,
+    default_value: [0.05, 0.1, 0.1, 0.1, 0.1, 0.1],
+    description: "Scaling factors for static friction compensation (dithering)"
+  }
+  static_friction_velocity_thresholds: {
+    type: double_array,
+    default_value: [0.015, 0.015, 0.015, 0.3, 0.3, 0.3],
+    description: "Velocity thresholds for static friction compensation"
+  }
+  torque_scaling_factors: {
+    type: double_array,
+    default_value: [1.0, 1.1, 1.0, 0.7, 0.8, 1.05],
+    description: "Scaling factors for calculated torques"
+  }
+  kinetic_friction_torque_scalars: {
+    type: double_array,
+    default_value: [2.0, 3.0, 2.0, 2.0, 2.0, 2.0],
+    description: "Scaling factors for kinetic friction based on torque magnitude"
+  }
+  friction_compensation_velocity_thresholds: {
+    type: double_array,
+    default_value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    description: "Velocity thresholds for kinetic friction compensation"
+  }

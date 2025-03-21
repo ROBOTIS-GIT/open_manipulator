@@ -1,35 +1,68 @@
-name: ros-ci
+# The name of the workflow
+name: CI
 
+# Specifies the events that trigger the workflow
 on:
   push:
-    branches: [ master, main, humble ]
+    branches: [ main, jazzy ]
   pull_request:
-    branches: [ master, main, humble ]
+    branches: [ main, jazzy ]
 
+# Defines a set of jobs to be run as part of the workflow
 jobs:
-  ros2-ci:
-    runs-on: ubuntu-latest
+  # The name of the job
+  ROS_CI:
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         ros_distribution:
-          - humble
+          # - humble
+          - jazzy
+          - rolling
         include:
-          - docker_image: rostooling/setup-ros-docker:ubuntu-jammy-ros-humble-ros-base-latest
-            ros_distribution: humble
+          # ROS 2 Humble Hawksbill
+          # - docker_image: ubuntu:jammy
+          #   ros_distribution: humble
+          #   ros_version: 2
+          # ROS 2 Jazzy Jalisco
+          - docker_image: ubuntu:noble
+            ros_distribution: jazzy
+            ros_version: 2
+          # ROS 2 Rolling Ridley
+          - docker_image: ubuntu:noble
+            ros_distribution: rolling
             ros_version: 2
     container:
       image: ${{ matrix.docker_image }}
     steps:
-      - name: Setup directories
+      - name: Setup workspace
         run: mkdir -p ros_ws/src
-      - name: checkout
+
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           path: ros_ws/src
+
+      - name: Setup ROS environment
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: ${{ matrix.ros_distribution }}
+
       - name: Build and Test
         uses: ros-tooling/action-ros-ci@v0.3
+
         with:
-          package-name: open_manipulator
           target-ros2-distro: ${{ matrix.ros_distribution }}
           vcs-repo-file-url: ""
+          package-name: |
+            open_manipulator
+            open_manipulator_bringup
+            open_manipulator_description
+            open_manipulator_gui
+            open_manipulator_moveit_config
+            open_manipulator_playground
+            open_manipulator_teleop
+            om_gravity_compensation_controller
+            om_joint_trajectory_command_broadcaster
+            om_spring_actuator_controller

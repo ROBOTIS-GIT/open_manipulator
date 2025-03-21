@@ -1,0 +1,64 @@
+spring_actuator_controller:
+  # -----------------------------------------------------------
+  # Basic interface & joint parameters
+  # -----------------------------------------------------------
+  joints:
+    type: string_array
+    default_value: []
+    description: "Joint names to control and listen to (e.g., [joint1, joint2, ...])"
+    read_only: true
+    validation:
+      unique<>: null
+
+  command_interfaces:
+    type: string_array
+    default_value: []
+    description: "Command interfaces provided by the hardware interface for all joints"
+    read_only: true
+
+  state_interfaces:
+    type: string_array
+    default_value: []
+    description: "State interfaces provided by the hardware for all joints"
+    read_only: true
+
+  command_joints:
+    type: string_array
+    default_value: []
+    description: "Joint names to control if the command and state interfaces differ"
+    read_only: true
+    validation:
+      unique<>: null
+
+  # -----------------------------------------------------------
+  # Spring-specific parameters for the "trigger" joint
+  # -----------------------------------------------------------
+  static_friction_scalars:
+    type: double_array
+    default_value: [0.1]
+    description: "Scaling factors for static friction compensation (dithering)"
+
+  static_friction_velocity_thresholds:
+    type: double_array
+    default_value: [0.3]
+    description: "Velocity thresholds for static friction compensation"
+
+  torque_scaling_factors:
+    type: double_array
+    default_value: [1.0]
+    description: "Scaling factors for calculated torques"
+
+  trigger_spring_stiffness:
+    type: double_array
+    default_value: [0.06]
+    description: "Spring stiffness constant (K) for the trigger joint"
+
+  trigger_neutral_position:
+    type: double_array
+    default_value: [0.0]
+    description: "Rest/neutral angle (in radians) for the trigger joint"
+
+  trigger_damping:
+    type: double_array
+    default_value: [0.1]
+    description: "Damping coefficient for the trigger joint"

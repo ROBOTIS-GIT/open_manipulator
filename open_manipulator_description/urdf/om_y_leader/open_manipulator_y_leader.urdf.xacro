@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="open_manipulator_y_leader">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <xacro:property name="om_y_model" value="$(env OM_Y_MODEL)" />
+
+    <!-- Import open_manipulator_y_leader urdf file -->
+    <xacro:include filename="$(find open_manipulator_description)/urdf/om_y_leader/open_manipulator_y_leader_arm.urdf" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_leader_system.ros2_control.xacro" />
+
+    <xacro:open_manipulator_y_leader_ros2_control name="open_manipulator_y_leader" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

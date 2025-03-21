@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.1.0 (2025-03-17)
+------------------
+* Integrate OM-X, OM-Y, and OM-Teleoperation with Jazzy support and Gazebo Harmonic compatibility
+* Contributors: Sungho Woo
+
 3.0.0 (2024-12-06)
 ------------------
 * Refactored OM-X for compatibility with MoveIt 2

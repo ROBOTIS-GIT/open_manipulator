@@ -1,0 +1,7 @@
+<library path="spring_actuator_controller">
+  <class name="spring_actuator_controller/SpringActuatorController" type="spring_actuator_controller::SpringActuatorController" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The spring actuator controller compensates for gravity on a set of joints
+  </description>
+  </class>
+</library>
