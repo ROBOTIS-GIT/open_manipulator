@@ -65,7 +65,7 @@ class KeyboardController(Node):
         self.last_command_time = time.time()
         self.command_interval = 0.02
 
-        self.running = True  # 스레드 루프 제어용
+        self.running = True  # for thread loop control
 
         self.get_logger().info('Waiting for /joint_states...')
         self.rate = self.create_rate(10)
