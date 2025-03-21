@@ -17,6 +17,7 @@
   <author email="yhna@robotis.com">Yong-Ho Na</author>
   <author email="willson@robotis.com">Will Son</author>
   <author email="wsh@robotis.com">Sungho Woo</author>
+  <author email="ywh@robotis.com">Wonho Yun</author>
   <author email="wwj@robotis.com">Woojin Wie</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>open_manipulator_bringup</exec_depend>

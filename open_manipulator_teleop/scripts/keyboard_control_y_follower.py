@@ -103,14 +103,17 @@ class KeyboardController(Node):
             f'Gripper: {self.gripper_position}'
         )
 
-    def get_key(self):
-
-        settings = termios.tcgetattr(sys.stdin)
-        tty.setraw(sys.stdin.fileno())
-        select.select([sys.stdin], [], [], 0)
-        key = sys.stdin.read(1)
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-        return key
+    def get_key(self, timeout=0.01):
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setcbreak(fd)
+            rlist, _, _ = select.select([sys.stdin], [], [], timeout)
+            if rlist:
+                return sys.stdin.read(1)
+            return None
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
     def send_arm_command(self):
 

@@ -31,7 +31,7 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def get_robot_model():
-    robot_model = os.getenv("ROBOT_MODEL", "om_x")
+    robot_model = os.getenv("ROBOT_MODEL", "om_y")
     if robot_model not in ["om_x", "om_y", "om_y_follower"]:
         raise ValueError(f"Invalid ROBOT_MODEL: {robot_model}")
     return robot_model

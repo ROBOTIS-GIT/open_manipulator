@@ -67,10 +67,12 @@ Set the robot model based on your system:
 - **`om_y`** – OpenMANIPULATOR-Y as a standalone model.
 - **`om_x`** – OpenMANIPULATOR-X.
 
-Add the configuration to `~/.bashrc`:
+[***Caution***] <u>Make sure to configure it properly before using the desired mode.</u>
+
+ex) Add the configuration to `~/.bashrc`:
 
 ```bash
-echo 'export ROBOT_MODEL=om_y_follower' >> ~/.bashrc
+echo 'export ROBOT_MODEL=om_y' >> ~/.bashrc
 source ~/.bashrc
 ```
 

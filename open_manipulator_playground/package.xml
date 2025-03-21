@@ -13,6 +13,7 @@
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <author email="wsh@robotis.com">Sungho Woo</author>
+  <author email="ywh@robotis.com">Wonho Yun</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>rclcpp</depend>
