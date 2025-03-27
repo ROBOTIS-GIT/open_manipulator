@@ -35,7 +35,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "description_file",
-            default_value="open_manipulator_y_leader.urdf.xacro",
+            default_value="open_manipulator_x_leader.urdf.xacro",
             description="URDF/XACRO description file with the robot.",
         ),
     ]
@@ -49,7 +49,7 @@ def generate_launch_description():
         [
             FindPackageShare("open_manipulator_bringup"),
             "config",
-            "om_y_leader",
+            "om_x_leader",
             "ros2_controllers_leader.yaml",
         ]
     )
@@ -68,7 +68,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("open_manipulator_description"), "urdf", "om_y_leader", description_file]
+                [FindPackageShare("open_manipulator_description"), "urdf", "om_x_leader", description_file]
             ),
             " ",
             "prefix:=",
@@ -83,7 +83,7 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "gravity_compensation_controller",
-            "spring_actuator_controller",
+            # "spring_actuator_controller",
             "joint_state_broadcaster",
             "joint_trajectory_command_broadcaster",
         ],
