@@ -29,7 +29,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def get_robot_model():
     robot_model = os.getenv("ROBOT_MODEL", "om_x")
-    if robot_model not in ["om_x", "om_y", "om_y_follower"]:
+    if robot_model not in ["om_x", "om_y", "om_y_follower", "om_y_leader"]:
         raise ValueError(f"Invalid ROBOT_MODEL: {robot_model}")
     return robot_model
 
@@ -39,9 +39,17 @@ def generate_launch_description():
     if robot_model == "om_x":
         urdf_file = "open_manipulator_x"
         urdf_folder = "om_x"
-    else:  # "om_y_follower"
+    elif robot_model == "om_y":
         urdf_file = "open_manipulator_y"
         urdf_folder = "om_y"
+    elif robot_model == "om_y_follower":
+        urdf_file = "open_manipulator_y_follower"
+        urdf_folder = "om_y_follower"
+    elif robot_model == "om_y_leader":
+        urdf_file = "open_manipulator_y_leader"
+        urdf_folder = "om_y_leader"
+    else:
+        raise ValueError(f"Invalid ROBOT_MODEL: {robot_model}")
 
     # Robot description
     robot_description_config = xacro.process_file(
