@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!-- OpenManipulator-Y -->
+<robot name="open_manipulator_y" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_fake_hardware" default="false" />
+  <xacro:arg name="fake_sensor_commands" default="false" />
+
+  <xacro:property name="robot_model" value="$(env ROBOT_MODEL)" />
+
+  <!-- Include OpenManipulator-Y urdf macro -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/om_y_follower/open_manipulator_y_follower_arm.urdf.xacro" />
+
+  <!-- Include OpenManipulator-Y gazebo macro -->
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/open_manipulator_y_arm.gazebo.xacro" />
+
+  <!-- Include Gripper urdf macro -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/rh_p12_rn_a.urdf.xacro" />
+
+  <!-- Include Gripper gazebo macro -->
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/rh_p12_rn_a.gazebo.xacro" />
+
+  <!-- Include OpenManipulator-Y ros2 control macro -->
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_follower_system.ros2_control.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_end_unit.ros2_control.xacro" />
+
+  <!-- World -->
+  <link name="world"/>
+
+  <!-- Used for fixing OpenManipulator-Y -->
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="$(arg prefix)link0"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="$(arg prefix)gripper_fixed" type="fixed">
+    <origin xyz="0 -0.006 0" rpy="1.57 1.57 0"/>
+    <parent link="$(arg prefix)end_effector_flange_link"/>
+    <axis xyz="0 0 0"/>
+    <child link="$(arg prefix)rh_p12_rn_base"/>
+  </joint>
+
+  <xacro:open_manipulator_y prefix="$(arg prefix)" />
+  <xacro:open_manipulator_y_gazebo prefix="$(arg prefix)" />
+  <xacro:rh_p12_rn_a prefix="$(arg prefix)" />
+  <xacro:rh_p12_rn_a_gazebo prefix="$(arg prefix)" />
+
+  <xacro:open_manipulator_y_system
+    name="OpenManipulatorYSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"/>
+
+  <xacro:open_manipulator_y_end_unit
+    name="OpenManipulatorYEndUnit" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/om_y/gazebo_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
