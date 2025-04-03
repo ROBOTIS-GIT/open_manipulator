@@ -9,13 +9,7 @@
   <xacro:property name="robot_model" value="$(env ROBOT_MODEL)" />
 
   <!-- Include OpenManipulator-Y urdf macro -->
-  <xacro:if value="${robot_model == 'om_y'}">
-      <xacro:include filename="$(find open_manipulator_description)/urdf/om_y/open_manipulator_y_arm.urdf.xacro" />
-  </xacro:if>
-
-  <xacro:if value="${robot_model == 'om_y_follower'}">
-      <xacro:include filename="$(find open_manipulator_description)/urdf/om_y/open_manipulator_y_follower.urdf.xacro" />
-  </xacro:if>
+  <xacro:include filename="$(find open_manipulator_description)/urdf/om_y/open_manipulator_y_arm.urdf.xacro" />
 
   <!-- Include OpenManipulator-Y gazebo macro -->
   <xacro:include filename="$(find open_manipulator_description)/gazebo/open_manipulator_y_arm.gazebo.xacro" />
@@ -27,14 +21,8 @@
   <xacro:include filename="$(find open_manipulator_description)/gazebo/rh_p12_rn_a.gazebo.xacro" />
 
   <!-- Include Open Manipulator Y ros2 control macro -->
-
-  <xacro:if value="${robot_model == 'om_y'}">
-      <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_system.ros2_control.xacro" />
-  </xacro:if>
-
-  <xacro:if value="${robot_model == 'om_y_follower'}">
-      <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_follower_system.ros2_control.xacro" />
-  </xacro:if>
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_system.ros2_control.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_end_unit.ros2_control.xacro" />
 
   <!-- World -->
   <link name="world"/>
@@ -60,6 +48,11 @@
 
   <xacro:open_manipulator_y_system
     name="OpenManipulatorYSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"/>
+
+  <xacro:open_manipulator_y_end_unit
+    name="OpenManipulatorYEndUnit" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
     use_fake_hardware="$(arg use_fake_hardware)"
     fake_sensor_commands="$(arg fake_sensor_commands)"/>
 
