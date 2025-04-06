@@ -270,6 +270,43 @@
       </visual>
     </link>
 
+    <!-- Gripper camera -->
+    <joint type="fixed" name="${prefix}gripper_camera_joint">
+      <origin xyz="0.08 0.0 0.0" rpy="0 0 0"/>
+      <child link="${prefix}gripper_camera_link"/>
+      <parent link="${prefix}link5"/>
+    </joint>
+
+    <link name='${prefix}gripper_camera_link'>
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass value="1.0e-03"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia
+            ixx="1e-6" ixy="0" ixz="0"
+            iyy="1e-6" iyz="0"
+            izz="1e-6"
+        />
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size=".01 .01 .01"/>
+        </geometry>
+        <material name="red"/>
+      </visual>
+    </link>
+
+    <joint type="fixed" name="${prefix}gripper_camera_optical_joint">
+      <origin xyz="0 0 0" rpy="-1.5707 0 -1.5707"/>
+      <child link="${prefix}gripper_camera_link_optical"/>
+      <parent link="${prefix}gripper_camera_link"/>
+    </joint>
+
+    <link name="${prefix}gripper_camera_link_optical">
+    </link>
+
   </xacro:macro>
 
 </robot>

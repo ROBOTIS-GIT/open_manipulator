@@ -47,6 +47,37 @@
   <xacro:SimpleTransmission trans="${prefix}trans5" joint="${prefix}gripper_left_joint" actuator="${prefix}actuator5" />
   <xacro:SimpleTransmission trans="${prefix}trans6" joint="${prefix}gripper_right_joint" actuator="${prefix}actuator6" />
 
+  <gazebo reference="${prefix}gripper_camera_link">
+    <sensor name="camera" type="camera">
+      <camera>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.01</near>
+          <far>15</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+        <optical_frame_id>${prefix}gripper_camera_link_optical</optical_frame_id>
+        <camera_info_topic>${prefix}gripper_camera/camera_info</camera_info_topic>
+      </camera>
+      <always_on>1</always_on>
+      <update_rate>20</update_rate>
+      <visualize>true</visualize>
+      <topic>${prefix}gripper_camera/image</topic>
+    </sensor>
+  </gazebo>
+
   </xacro:macro>
 
 </robot>
