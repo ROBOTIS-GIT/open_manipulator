@@ -27,7 +27,7 @@ import math
 import numpy as np
 
 class MoveToHome(Node):
-    def __init__(self):
+    def __init__(self, operation_mode='pack'):
         super().__init__('move_to_home')
         # Create action client for FollowJointTrajectory
         self.action_client = ActionClient(
@@ -42,11 +42,11 @@ class MoveToHome(Node):
         
         # Final target positions (in radians)
         self.final_target_positions = [
+            self.angle_to_radian(-90),
             0.0,
-            -math.pi / 2,
-            self.angle_to_radian(152),
-            self.angle_to_radian(-62),
-            math.pi / 2,
+            self.angle_to_radian(150),
+            self.angle_to_radian(30),
+            self.angle_to_radian(180),
             0.0,
             0.0
         ]
@@ -72,26 +72,33 @@ class MoveToHome(Node):
         self.status_interval = 1.0  # Log status every second
         self.current_step = 0  # 0: move joint3 to 0, 1: move all to final positions
         self.target_positions = None  # Will be initialized after receiving joint states
+        
+        # Operation mode: 'pack' or 'unpack'
+        self.operation_mode = operation_mode
+        self.get_logger().info(f'Operation mode: {self.operation_mode}')
+        
         self.get_logger().info('Waiting for action server...')
         self.action_client.wait_for_server()
         self.get_logger().info('Action server available')
 
     def initialize_target_positions(self):
-        """Initialize target positions after receiving joint states"""
-        if self.current_positions is None:
-            return False
-
-        # Create target positions for each step
-        step0_positions = self.current_positions.copy()
+        step0_positions = self.final_target_positions.copy()
         step0_positions[2] = 0.0  # Set joint3 to 0
 
-        self.target_positions = [
-            # Step 0: Move joint3 to 0, keep others at current positions
-            self.init_positions,
-            # step0_positions,
-            # Step 1: Final positions for all joints
-            self.final_target_positions
-        ]
+        if self.operation_mode == 'pack':
+            # Pack operation sequence
+            self.target_positions = [
+                self.init_positions,
+                step0_positions,
+                self.final_target_positions
+            ]
+        else:  # unpack
+            # Unpack operation sequence
+            self.target_positions = [
+                step0_positions,
+                self.init_positions,
+            ]
+        
         return True
 
     def create_smooth_trajectory(self, start_pos, end_pos):
@@ -229,8 +236,17 @@ class MoveToHome(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = MoveToHome()
+    
+    # Parse command line arguments
+    import argparse
+    parser = argparse.ArgumentParser(description='Pack or unpack the robot arm')
+    parser.add_argument('--mode', type=str, default='pack', choices=['pack', 'unpack'],
+                        help='Operation mode: pack or unpack (default: pack)')
+    args = parser.parse_args(args=args)
+    
+    # Create node with the specified operation mode
+    node = MoveToHome(operation_mode=args.mode)
     rclpy.spin(node)
 
 if __name__ == '__main__':
-    main()
+    main() 

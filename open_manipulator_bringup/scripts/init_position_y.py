@@ -50,6 +50,16 @@ class MoveToHome(Node):
             0.0,
             0.0
         ]
+
+        self.init_positions = [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ]
         
         self.current_positions = None
         self.current_velocities = None
@@ -67,17 +77,9 @@ class MoveToHome(Node):
         self.get_logger().info('Action server available')
 
     def initialize_target_positions(self):
-        """Initialize target positions after receiving joint states"""
-        if self.current_positions is None:
-            return False
-
-        # Create target positions for each step
-        step0_positions = self.current_positions.copy()
-        step0_positions[2] = 0.0  # Set joint3 to 0
-
         self.target_positions = [
             # Step 0: Move joint3 to 0, keep others at current positions
-            step0_positions,
+            self.init_positions,
             # Step 1: Final positions for all joints
             self.final_target_positions
         ]

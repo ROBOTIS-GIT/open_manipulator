@@ -28,13 +28,13 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     # Declare launch arguments
     declared_arguments = [
-        DeclareLaunchArgument('start_rviz', default_value='true', description='Whether to execute rviz2'),
+        DeclareLaunchArgument('start_rviz', default_value='false', description='Whether to execute rviz2'),
         DeclareLaunchArgument('prefix', default_value='""', description='Prefix of the joint and link names'),
         DeclareLaunchArgument('use_sim', default_value='false', description='Start robot in Gazebo simulation.'),
         DeclareLaunchArgument('use_fake_hardware', default_value='false', description='Use fake hardware mirroring command.'),
         DeclareLaunchArgument('fake_sensor_commands', default_value='false', description='Enable fake sensor commands.'),
-        DeclareLaunchArgument('port_name', default_value='/dev/ttyACM0', description='Port name for hardware connection.'),
-        DeclareLaunchArgument('run_init_position', default_value='true', description='Run init_position.py after launch')
+        DeclareLaunchArgument('port_name', default_value='/dev/ttyAMA2', description='Port name for hardware connection.'),
+        DeclareLaunchArgument('run_init_position', default_value='false', description='Run init_position.py after launch')
     ]
 
     # Launch configurations
@@ -50,7 +50,7 @@ def generate_launch_description():
     urdf_file = Command([
         PathJoinSubstitution([FindExecutable(name='xacro')]),
         ' ',
-        PathJoinSubstitution([FindPackageShare('open_manipulator_description'), 'urdf', 'om_y', 'open_manipulator_y.urdf.xacro']),
+        PathJoinSubstitution([FindPackageShare('open_manipulator_description'), 'urdf', 'om_y_follower', 'open_manipulator_y_follower.urdf.xacro']),
         ' ',
         'prefix:=', prefix,
         ' ',
