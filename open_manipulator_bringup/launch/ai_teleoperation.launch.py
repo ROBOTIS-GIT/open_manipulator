@@ -29,7 +29,7 @@ def generate_launch_description():
 
     # Step 2: Run the initialization script for the follower
     init_follower = ExecuteProcess(
-        cmd=["ros2", "run", "open_manipulator_bringup", "init_position_y.py"],
+        cmd=["ros2", "run", "open_manipulator_bringup", "init_position_y_follower.py"],
         output="screen",
         shell=True
     )
@@ -50,7 +50,7 @@ def generate_launch_description():
             OnProcessStart(
                 target_action=start_follower,
                 on_start=[
-                    LogInfo(msg="✅ hardware_y_follower.launch.py has fully started. Running init_position_y.py..."),
+                    LogInfo(msg="✅ hardware_y_follower.launch.py has fully started. Running init_position_y_follower.py..."),
                     init_follower
                 ]
             )
@@ -61,7 +61,7 @@ def generate_launch_description():
             OnProcessExit(
                 target_action=init_follower,
                 on_exit=[
-                    LogInfo(msg="✅ init_position_y.py has fully executed and exited. Starting hardware_y_leader.launch.py..."),
+                    LogInfo(msg="✅ init_position_y_follower.py has fully executed and exited. Starting hardware_y_leader.launch.py..."),
                     start_leader
                 ]
             )

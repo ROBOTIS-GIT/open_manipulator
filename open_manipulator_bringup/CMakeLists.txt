@@ -24,7 +24,7 @@ install(FILES open-manipulator-x-cdc.rules
 
 install(PROGRAMS scripts/x_create_udev_rules
   scripts/init_position_x.py
-  scripts/init_position_y.py
+  scripts/init_position_y_follower.py
   scripts/pack_unpack_y.py
   DESTINATION lib/${PROJECT_NAME}
 )
