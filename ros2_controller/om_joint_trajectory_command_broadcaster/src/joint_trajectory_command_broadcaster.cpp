@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster.hpp"
+#include <joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster.hpp>
 
 #include <cstddef>
 #include <limits>

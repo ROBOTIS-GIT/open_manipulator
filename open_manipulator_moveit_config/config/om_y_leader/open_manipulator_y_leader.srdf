@@ -3,7 +3,7 @@
     This is a format for representing semantic information about the robot structure.
     A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
 -->
-<robot name="open_manipulator_y_top_leader">
+<robot name="open_manipulator_y_leader">
     <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
     <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
@@ -29,7 +29,7 @@
         <joint name="rh_r1_joint" value="0"/>
     </group_state>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="base_link" link2="link1" reason="Adjacent"/>
+    <disable_collisions link1="link0" link2="link1" reason="Adjacent"/>
     <disable_collisions link1="link1" link2="link2" reason="Adjacent"/>
     <disable_collisions link1="link1" link2="link5" reason="Never"/>
     <disable_collisions link1="link2" link2="link3" reason="Adjacent"/>

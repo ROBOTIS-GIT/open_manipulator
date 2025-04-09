@@ -34,7 +34,7 @@ def generate_launch_description():
         DeclareLaunchArgument('use_fake_hardware', default_value='false', description='Use fake hardware mirroring command.'),
         DeclareLaunchArgument('fake_sensor_commands', default_value='false', description='Enable fake sensor commands.'),
         DeclareLaunchArgument('port_name', default_value='/dev/ttyUSB0', description='Port name for hardware connection.'),
-        DeclareLaunchArgument('run_init_position', default_value='true', description='Run init_position_for_x.py after launch')
+        DeclareLaunchArgument('run_init_position', default_value='true', description='Run init_position_x.py after launch')
     ]
 
     # Launch configurations
@@ -143,7 +143,7 @@ def generate_launch_description():
         period=3.0,
         actions=[
             ExecuteProcess(
-                cmd=['ros2', 'run', 'open_manipulator_bringup', 'init_position_for_x.py'],
+                cmd=['ros2', 'run', 'open_manipulator_bringup', 'init_position_x.py'],
                 output='screen',
                 condition=IfCondition(run_init_position)
             )

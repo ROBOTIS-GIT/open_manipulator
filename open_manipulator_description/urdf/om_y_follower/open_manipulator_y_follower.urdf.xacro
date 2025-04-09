@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Open Manipulator Y -->
+<!-- OpenManipulator-Y -->
 <robot name="open_manipulator_y" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:arg name="prefix" default="" />
   <xacro:arg name="use_sim" default="false" />
@@ -9,7 +9,7 @@
   <xacro:property name="robot_model" value="$(env ROBOT_MODEL)" />
 
   <!-- Include OpenManipulator-Y urdf macro -->
-  <xacro:include filename="$(find open_manipulator_description)/urdf/om_y/open_manipulator_y_arm.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/om_y_follower/open_manipulator_y_follower_arm.urdf.xacro" />
 
   <!-- Include OpenManipulator-Y gazebo macro -->
   <xacro:include filename="$(find open_manipulator_description)/gazebo/open_manipulator_y_arm.gazebo.xacro" />
@@ -20,8 +20,8 @@
   <!-- Include Gripper gazebo macro -->
   <xacro:include filename="$(find open_manipulator_description)/gazebo/rh_p12_rn_a.gazebo.xacro" />
 
-  <!-- Include Open Manipulator Y ros2 control macro -->
-  <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_system.ros2_control.xacro" />
+  <!-- Include OpenManipulator-Y ros2 control macro -->
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_follower_system.ros2_control.xacro" />
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_end_unit.ros2_control.xacro" />
 
   <!-- World -->

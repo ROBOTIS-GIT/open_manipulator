@@ -32,6 +32,20 @@
       state_interfaces:
         - position
         - velocity
+      kinetic_friction_scalars:
+        - 0.8
+        - 0.8
+        - 0.8
+        - 0.1
+        - 0.1
+        - 0.1
+      torque_scaling_factors:
+        - 1.0
+        - 1.0
+        - 1.0
+        - 0.8
+        - 0.8
+        - 1.0
 
 /**:
   spring_actuator_controller:
