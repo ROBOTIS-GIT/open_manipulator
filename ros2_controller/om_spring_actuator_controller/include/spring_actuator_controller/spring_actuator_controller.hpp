@@ -38,8 +38,8 @@
 #include <kdl/treeidsolver_recursive_newton_euler.hpp>
 
 // Visibility and parameter definitions
-#include "spring_actuator_controller/visibility_control.h"
-#include "spring_actuator_controller_parameters.hpp"
+#include <spring_actuator_controller/visibility_control.h>
+#include <om_spring_actuator_controller/spring_actuator_controller_parameters.hpp>
 
 namespace spring_actuator_controller
 {

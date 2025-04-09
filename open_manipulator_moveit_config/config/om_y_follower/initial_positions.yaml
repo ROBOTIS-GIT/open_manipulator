@@ -1,4 +1,4 @@
-# Default initial positions for open_manipulator_y_leader's ros2_control fake system
+# Default initial positions for open manipulator y's ros2_control fake system
 
 initial_positions:
   joint1: 0

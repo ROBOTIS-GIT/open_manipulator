@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "gravity_compensation_controller/gravity_compensation_controller.hpp"
+#include <gravity_compensation_controller/gravity_compensation_controller.hpp>
 #include <chrono>
 #include <string>
 #include <stdexcept>
-#include "rclcpp/rclcpp.hpp"
-#include "controller_interface/helpers.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <controller_interface/helpers.hpp>
 
 namespace gravity_compensation_controller
 {
@@ -58,11 +58,11 @@ GravityCompensationController::state_interface_configuration() const
 }
 
 controller_interface::return_type GravityCompensationController::update(
-  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+  const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   auto assign_point_from_interface =
     [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface) {
-      for (size_t index = 0; index < dof_; ++index) {
+      for (size_t index = 0; index < n_joints_; ++index) {
         trajectory_point_interface[index] = joint_interface[index].get().get_value();
       }
     };
@@ -70,20 +70,28 @@ controller_interface::return_type GravityCompensationController::update(
   assign_point_from_interface(joint_positions_, joint_state_interface_[0]);
   assign_point_from_interface(joint_velocities_, joint_state_interface_[1]);
 
+  // Calculate acceleration from velocity using finite difference
+  std::vector<double> joint_accelerations(n_joints_);
+  for (size_t i = 0; i < n_joints_; ++i) {
+    joint_accelerations[i] = (joint_velocities_[i] - previous_velocities_[i]) / period.seconds();
+  }
+
   // Create KDL objects for computation
   KDL::TreeIdSolver_RNE idsolver(tree_, KDL::Vector(0, 0, -9.81));
   KDL::JntArray q(tree_.getNrOfJoints());
   KDL::JntArray q_dot(tree_.getNrOfJoints());
+  KDL::JntArray q_ddot(tree_.getNrOfJoints());
   KDL::JntArray torques(tree_.getNrOfJoints());
 
-  // Populate joint positions and velocities from state interfaces
+  // Populate joint positions, velocities and accelerations from state interfaces
   for (size_t i = 0; i < joint_names_.size(); ++i) {
     q(i) = joint_positions_[i];
     q_dot(i) = joint_velocities_[i];
+    q_ddot(i) = joint_accelerations[i];
   }
 
   // Compute torques
-  idsolver.CartToJnt(q, q_dot, q_ddot_, f_ext_, torques);
+  idsolver.CartToJnt(q, q_dot, q_ddot, f_ext_, torques);
 
   // Add a spring effect to joint 2
   if (q(2) < 0.5) {
@@ -133,6 +141,9 @@ controller_interface::return_type GravityCompensationController::update(
     joint_command_interface_[0][i].get().set_value(torques(i) * params_.torque_scaling_factors[i]);
   }
 
+  // Update previous velocities for next iteration
+  previous_velocities_ = joint_velocities_;
+
   dither_switch_ = !dither_switch_;  // Flip the dither switch
 
   return controller_interface::return_type::OK;
@@ -169,10 +180,11 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   params_ = param_listener_->get_params();
 
   // get degrees of freedom
-  dof_ = params_.joints.size();
+  n_joints_ = params_.joints.size();
 
-  joint_positions_.resize(dof_);
-  joint_velocities_.resize(dof_);
+  joint_positions_.resize(n_joints_);
+  joint_velocities_.resize(n_joints_);
+  previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
 
   if (params_.joints.empty()) {
     // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?
@@ -180,7 +192,6 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   }
 
   joint_names_ = params_.joints;
-  n_joints_ = joint_names_.size();
 
   command_joint_names_ = params_.command_joints;
 
@@ -236,7 +247,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_activate(
         command_interfaces_, command_joint_names_, interface, joint_command_interface_[index]))
     {
       RCLCPP_ERROR(
-        logger, "Expected %zu '%s' command interfaces, got %zu.", dof_, interface.c_str(),
+        logger, "Expected %zu '%s' command interfaces, got %zu.", n_joints_, interface.c_str(),
         joint_command_interface_[index].size());
       return CallbackReturn::ERROR;
     }
@@ -249,7 +260,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_activate(
         state_interfaces_, params_.joints, interface, joint_state_interface_[index]))
     {
       RCLCPP_ERROR(
-        logger, "Expected %zu '%s' state interfaces, got %zu.", dof_, interface.c_str(),
+        logger, "Expected %zu '%s' state interfaces, got %zu.", n_joints_, interface.c_str(),
         joint_state_interface_[index].size());
       return CallbackReturn::ERROR;
     }

@@ -14,7 +14,7 @@
 //
 // Author: Woojin Wie
 
-#include "spring_actuator_controller/spring_actuator_controller.hpp"
+#include <spring_actuator_controller/spring_actuator_controller.hpp>
 
 #include <chrono>
 #include <string>

@@ -38,8 +38,8 @@
 #include <kdl/jntarray.hpp>
 #include <kdl/tree.hpp>
 #include <kdl/treeidsolver_recursive_newton_euler.hpp>
-#include "gravity_compensation_controller/visibility_control.h"
-#include "gravity_compensation_controller_parameters.hpp"
+#include <gravity_compensation_controller/visibility_control.h>
+#include <om_gravity_compensation_controller/gravity_compensation_controller_parameters.hpp>
 
 namespace gravity_compensation_controller
 {
@@ -110,9 +110,6 @@ protected:
     hardware_interface::HW_IF_EFFORT
   };
 
-  // Degrees of freedom
-  size_t dof_;
-
   // Storing command joint names for interfaces
   std::vector<std::string> command_joint_names_;
 
@@ -130,6 +127,7 @@ protected:
 
   std::vector<double> joint_positions_;
   std::vector<double> joint_velocities_;
+  std::vector<double> previous_velocities_;  // Store previous velocities for acceleration calculation
 };
 
 }  // namespace gravity_compensation_controller
