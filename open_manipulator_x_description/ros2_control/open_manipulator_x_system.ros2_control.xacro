@@ -118,6 +118,7 @@
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
         <param name="Drive Mode">0</param>
+        <param name="Return Delay Time">0</param>
       </gpio>
 
       <gpio name="dxl2">
@@ -133,6 +134,7 @@
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
         <param name="Drive Mode">0</param>
+        <param name="Return Delay Time">0</param>
       </gpio>
 
       <gpio name="dxl3">
@@ -148,6 +150,7 @@
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
         <param name="Drive Mode">0</param>
+        <param name="Return Delay Time">0</param>
       </gpio>
 
       <gpio name="dxl4">
@@ -163,6 +166,7 @@
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
         <param name="Drive Mode">0</param>
+        <param name="Return Delay Time">0</param>
       </gpio>
 
       <gpio name="dxl5">
@@ -174,6 +178,7 @@
         <state_interface name="Present Current"/>
         <state_interface name="Torque Enable"/>
         <state_interface name="Present Input Voltage"/>
+        <param name="Return Delay Time">0</param>
       </gpio>
 
     </ros2_control>
