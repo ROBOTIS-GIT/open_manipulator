@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.1 (2025-04-11)
+------------------
+* Updated link mesh files in the OM-Y leader mesh directory
+* Contributors: Woojin Wie
+
 3.2.0 (2025-04-09)
 ------------------
 * Updated OM-Y Follower for improved joint initialization and action-based ROS2 control
