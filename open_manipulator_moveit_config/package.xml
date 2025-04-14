@@ -35,7 +35,7 @@
   <exec_depend>rviz_common</exec_depend>
   <exec_depend>rviz_default_plugins</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
-  <exec_depend>warehouse_ros_mongo</exec_depend>
+  <!-- <exec_depend>warehouse_ros_mongo</exec_depend> -->
   <exec_depend>xacro</exec_depend>
   <export>
       <build_type>ament_cmake</build_type>
