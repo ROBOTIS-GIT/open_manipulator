@@ -5,7 +5,8 @@ Changelog for package open_manipulator
 3.0.1 (2025-04-11)
 ------------------
 * Modified Update Rate
-* Contributors: Wonho Yun
+* Docker support
+* Contributors: Wonho Yun, Woojin Wie
 
 3.0.0 (2024-12-06)
 ------------------
