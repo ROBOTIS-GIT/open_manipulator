@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_x_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.1 (2025-04-11)
+------------------
+* Modified Update Rate
+* Contributors: Wonho Yun
+
 3.0.0 (2024-12-06)
 ------------------
 * Refactored OM-X for compatibility with MoveIt 2

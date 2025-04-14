@@ -2,10 +2,16 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.1 (2025-04-11)
+------------------
+* Modified Update Rate
+* Docker support
+* Contributors: Wonho Yun, Woojin Wie
+
 3.0.0 (2024-12-06)
 ------------------
 * Refactored OM-X for compatibility with MoveIt 2
-* Contributors: Wonho Yoon, Sungho Woo
+* Contributors: Wonho Yun, Sungho Woo
 
 2.3.0 (2021-10-06)
 ------------------
