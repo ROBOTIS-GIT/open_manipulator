@@ -6,7 +6,7 @@
   <description>
     OpenMANIPULATOR-X meta ROS 2 package.
   </description>
-  <maintainer email="pyo@robotis.com">pyo</maintainer>
+  <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
   <url type="website">http://wiki.ros.org/open_manipulator</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/open_manipulator</url>
@@ -17,7 +17,7 @@
   <author email="yhna@robotis.com">Yong-Ho Na</author>
   <author email="willson@robotis.com">Will Son</author>
   <author email="wsh@robotis.com">Sungho Woo</author>
-
+  <author email="ywh@robotis.com">Wonho Yun</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>open_manipulator_x_bringup</exec_depend>
   <exec_depend>open_manipulator_x_description</exec_depend>

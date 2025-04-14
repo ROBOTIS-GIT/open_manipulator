@@ -4,7 +4,7 @@
 
 The 4-DOF Open Manipulator-X now supports MoveIt 2, enabling enhanced motion planning and control for advanced robotic applications. This update also brings significant improvements to the teleoperation features, example use cases, and the graphical user interface (GUI), providing a more seamless and user-friendly experience for developers and researchers.
 
-- Active Branches: noetic, humble, main
+- Active Branches: noetic, humble, jazzy, main
 - Legacy Branches: *-devel
 
 # ROBOTIS e-Manual for OpenMANIPULATOR-X
