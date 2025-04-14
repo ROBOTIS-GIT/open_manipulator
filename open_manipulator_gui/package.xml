@@ -20,8 +20,8 @@
   <depend>sensor_msgs</depend>
   <depend>qtbase5-dev</depend>
   <depend>qt5-qmake</depend>
-  <depend>libqt5core5a</depend>
-  <depend>libqt5gui5</depend>
+  <depend>libqt5-core</depend>
+  <depend>libqt5-gui</depend>
   <depend>eigen3_cmake_module</depend>
   <depend>moveit_msgs</depend>
   <depend>moveit_core</depend>
