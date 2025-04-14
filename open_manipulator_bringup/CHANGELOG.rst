@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.1 (2025-04-11)
+------------------
+* None
+
 3.2.0 (2025-04-09)
 ------------------
 * Updated OM-Y Follower for improved joint initialization and action-based ROS2 control
