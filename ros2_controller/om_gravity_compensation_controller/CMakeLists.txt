@@ -1,3 +1,6 @@
+################################################################################
+# Set minimum required version of cmake, project name and compile options
+################################################################################
 cmake_minimum_required(VERSION 3.16)
 project(om_gravity_compensation_controller LANGUAGES CXX)
 
@@ -25,12 +28,18 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   orocos_kdl_vendor
 )
 
+################################################################################
+# Find ament packages and libraries for ament and system dependencies
+################################################################################
 find_package(ament_cmake REQUIRED)
 find_package(backward_ros REQUIRED)
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+################################################################################
+# Build
+################################################################################
 generate_parameter_library(gravity_compensation_controller_parameters
   src/gravity_compensation_controller_parameters.yaml
 )
@@ -53,6 +62,9 @@ ament_target_dependencies(gravity_compensation_controller PUBLIC ${THIS_PACKAGE_
 target_compile_definitions(gravity_compensation_controller PRIVATE "gravity_compensation_controller_BUILDING_DLL" "_USE_MATH_DEFINES")
 pluginlib_export_plugin_description_file(controller_interface gravity_compensation_plugin.xml)
 
+################################################################################
+# Install
+################################################################################
 install(
   DIRECTORY include/
   DESTINATION include/gravity_compensation_controller
@@ -66,6 +78,13 @@ install(TARGETS
   LIBRARY DESTINATION lib
 )
 
+################################################################################
+# Export information
+################################################################################
 ament_export_targets(export_gravity_compensation_controller HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
+
+################################################################################
+# Macro for ament package
+################################################################################
 ament_package()
