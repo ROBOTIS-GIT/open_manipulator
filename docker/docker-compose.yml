@@ -1,5 +1,6 @@
 services:
   ros2:
+    container_name: open_manipulator
     build:
       context: .
       dockerfile: Dockerfile
