@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - WITH_GAZEBO=${WITH_GAZEBO:-true}
     tty: true
     restart: always
     cap_add:
