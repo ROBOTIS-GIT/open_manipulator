@@ -14,9 +14,9 @@ if [ -z "$DISPLAY" ]; then
     exit 1
 fi
 
-# Allow X11 forwarding from Docker container
+# Allow X11 forwarding from Docker container (ignore errors)
 echo "Allowing X11 forwarding from Docker container..."
-xhost +local:docker
+xhost +local:docker || true
 
 # Set environment variables based on argument
 case "$1" in
