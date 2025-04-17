@@ -76,44 +76,82 @@ echo 'export ROBOT_MODEL=om_y' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## **3. Installation**
+## **3. Installation Methods**
 
-### **1. Clone the Repository**
+You can choose between two installation methods:
 
-Navigate to your ROS 2 workspace and clone the repository:
+### **Option 1: Using Docker (Recommended)**
 
-```bash
-cd ~/${WORKSPACE}/src
-```
+This method provides an isolated environment with all dependencies pre-installed.
 
-```bash
-git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
-git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
-git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git
-```
+1. **Install Docker and Docker Compose**
+   Follow the official Docker installation guide: [Install Docker Engine](https://docs.docker.com/engine/install/)
 
-### **2. Build the Package**
+2. **Clone the Repository**
+   ```bash
+   git clone https://github.com/ROBOTIS-GIT/open_manipulator.git
+   cd open_manipulator
+   ```
 
-Compile the package using `colcon`:
+3. **Container Management**
+   The repository includes a container management script with the following commands:
 
-```bash
-cd ~/${WORKSPACE}
-colcon build --symlink-install
-```
+   ```bash
+   # Show help
+   ./docker/container.sh help
 
-### **3. Source the Workspace**
+   # Start container with Gazebo support
+   ./docker/container.sh start with_gz
 
-```bash
-source ~/${WORKSPACE}/install/setup.bash
-```
+   # Start container without Gazebo support
+   ./docker/container.sh start without_gz
 
-Create and apply `udev` rules:
+   # Enter the running container
+   ./docker/container.sh enter
 
-```bash
-ros2 run open_manipulator_bringup y_create_udev_rules # for om_y
-ros2 run open_manipulator_bringup x_create_udev_rules # for om_x
-```
+   # Stop and remove the container
+   ./docker/container.sh stop
+   ```
 
+   [***Note***] <u>When stopping the container, you'll be asked for confirmation as this will remove all unsaved data in the container.</u>
+
+4. **Data Persistence**
+   The container maps the following directories for data persistence:
+   - `./docker/workspace:/workspace` - The workspace directory inside the docker folder is mapped to `/workspace` inside the container
+   
+   [***Important***] <u>Data Persistence Rules:
+   - Data in `/workspace` inside the container is saved to `docker/workspace` on your host
+   - Container restart (using `docker restart`) maintains all data
+   - Container removal (using `container.sh stop`) will remove all data except what's in the mapped `/workspace` directory
+   - Always save your work in the `/workspace` directory to ensure it persists after container removal</u>
+
+### **Option 2: Host Installation**
+
+Follow these steps if you prefer to install directly on your host system:
+
+1. **Clone the Repository**
+   ```bash
+   cd ~/${WORKSPACE}/src
+   git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
+   git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
+   git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git
+   ```
+
+2. **Build the Package**
+   ```bash
+   cd ~/${WORKSPACE}
+   colcon build --symlink-install
+   ```
+
+3. **Source the Workspace**
+   ```bash
+   source ~/${WORKSPACE}/install/setup.bash
+   ```
+
+4. **Create and apply udev rules**
+   ```bash
+   ros2 run open_manipulator_bringup x_create_udev_rules # for om_x
+   ```
 
 ## **4. Execution Commands**
 
