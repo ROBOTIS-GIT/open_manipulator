@@ -38,4 +38,4 @@ case "$1" in
 esac
 
 # Run docker-compose
-docker compose -f docker-compose.yml up 
+docker compose -f docker-compose.yml up
