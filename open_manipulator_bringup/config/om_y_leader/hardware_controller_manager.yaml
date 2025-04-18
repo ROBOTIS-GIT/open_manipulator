@@ -3,7 +3,8 @@
   controller_manager:
     ros__parameters:
       update_rate: 400  # Hz
-      thread_priority: 99
+      thread_priority: 20
+      cpu_affinity: [1, 2, 3]
 
       joint_state_broadcaster:
         type: joint_state_broadcaster/JointStateBroadcaster
@@ -32,6 +33,20 @@
       state_interfaces:
         - position
         - velocity
+      kinetic_friction_scalars:
+        - 0.8
+        - 0.8
+        - 0.8
+        - 0.1
+        - 0.1
+        - 0.1
+      torque_scaling_factors:
+        - 1.0
+        - 1.0
+        - 1.0
+        - 0.8
+        - 0.8
+        - 1.0
 
 /**:
   spring_actuator_controller:

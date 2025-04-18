@@ -47,10 +47,10 @@ def generate_launch_description():
     # Robot controllers config file path
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare("open_manipulator_moveit_config"),
+            FindPackageShare("open_manipulator_bringup"),
             "config",
             "om_y_leader",
-            "ros2_controllers_leader.yaml",
+            "hardware_controller_manager.yaml",
         ]
     )
 

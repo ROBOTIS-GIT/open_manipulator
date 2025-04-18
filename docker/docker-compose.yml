@@ -1,8 +1,11 @@
 services:
   ros2:
+    container_name: open_manipulator
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - WITH_GAZEBO=${WITH_GAZEBO:-true}
     tty: true
     restart: always
     cap_add:
