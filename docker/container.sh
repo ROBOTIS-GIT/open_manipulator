@@ -29,15 +29,13 @@ start_container() {
         exit 1
     fi
 
-    # Check if DISPLAY is set
-    if [ -z "$DISPLAY" ]; then
-        echo "Error: DISPLAY environment variable is not set"
-        exit 1
+    # Set up X11 forwarding only if DISPLAY is set
+    if [ -n "$DISPLAY" ]; then
+        echo "Setting up X11 forwarding..."
+        xhost +local:docker || true
+    else
+        echo "Warning: DISPLAY environment variable is not set. X11 forwarding will not be available."
     fi
-
-    # Allow X11 forwarding from Docker container (ignore errors)
-    echo "Allowing X11 forwarding from Docker container..."
-    xhost +local:docker || true
 
     # Set environment variables based on argument
     case "$1" in
