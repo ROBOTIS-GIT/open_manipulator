@@ -14,21 +14,24 @@
 //
 // Author: Ryan Shim, Sungho Woo
 
-#ifndef OPEN_MANIPULATOR_X_GUI_MAIN_WINDOW_HPP
-#define OPEN_MANIPULATOR_X_GUI_MAIN_WINDOW_HPP
+#ifndef OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
+#define OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
 
 #include <QMainWindow>
-#include "ui_x_main_window.h"
-#include "qnode.hpp"
 #include <QTimer>
-#include <eigen3/Eigen/Eigen>
+#include <QTableWidget>
+#include <QHeaderView>
+#include <QCheckBox>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <QTableWidget>
-#include <QHeaderView>
-#include <QCheckBox>
+
+#include <eigen3/Eigen/Eigen>
+
+#include "open_manipulator_x_gui/qnode.hpp"
+#include "ui_x_main_window.h"
 
 namespace open_manipulator_x_gui
 {
@@ -72,4 +75,4 @@ private:
 
 }  // namespace open_manipulator_x_gui
 
-#endif // OPEN_MANIPULATOR_X_GUI_MAIN_WINDOW_HPP
+#endif  // OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_

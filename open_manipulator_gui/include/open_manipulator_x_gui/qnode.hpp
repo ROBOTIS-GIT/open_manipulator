@@ -14,13 +14,11 @@
 //
 // Author: Ryan Shim, Sungho Woo
 
-#ifndef OPEN_MANIPULATOR_X_GUI_QNODE_HPP_
-#define OPEN_MANIPULATOR_X_GUI_QNODE_HPP_
+#ifndef OPEN_MANIPULATOR_X_GUI__QNODE_HPP_
+#define OPEN_MANIPULATOR_X_GUI__QNODE_HPP_
 
 #include <QThread>
 #include <QStringListModel>
-
-#include <moveit/move_group_interface/move_group_interface.hpp>
 
 #include <memory>
 #include <string>
@@ -31,6 +29,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <std_srvs/srv/set_bool.hpp>
+
+#include <moveit/move_group_interface/move_group_interface.hpp>
 
 namespace open_manipulator_x_gui
 {
@@ -84,4 +84,4 @@ Q_SIGNALS:
 
 }  // namespace open_manipulator_x_gui
 
-#endif // OPEN_MANIPULATOR_X_GUI_QNODE_HPP_
+#endif  // OPEN_MANIPULATOR_X_GUI__QNODE_HPP_

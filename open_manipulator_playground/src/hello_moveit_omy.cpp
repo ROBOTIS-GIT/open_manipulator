@@ -14,12 +14,14 @@
 //
 // Author: Sungho Woo
 
-#include <moveit/move_group_interface/move_group_interface.hpp>
+#include "hello_moveit_omy.h"
+
 #include <memory>
 #include <chrono>
 #include <thread>
-#include <rclcpp/rclcpp.hpp>
 
+#include <rclcpp/rclcpp.hpp>
+#include <moveit/move_group_interface/move_group_interface.hpp>
 
 int main(int argc, char * argv[])
 {

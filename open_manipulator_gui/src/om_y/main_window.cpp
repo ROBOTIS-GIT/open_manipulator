@@ -14,16 +14,19 @@
 //
 // Author: Ryan Shim, Sungho Woo
 
-#include <QtGui>
+#include <QMainWindow>
+#include <QWidget>
+#include <QTableWidget>
+#include <QHeaderView>
+#include <QStringList>
+#include <QString>
+#include <QObject>
 #include <QMessageBox>
 #include <iostream>
 #include "../include/open_manipulator_y_gui/main_window.hpp"
 
-
 namespace open_manipulator_y_gui
 {
-
-using namespace Qt;
 
 MainWindow::MainWindow(int argc, char ** argv, QWidget * parent)
 : QMainWindow(parent), qnode(argc, argv)
