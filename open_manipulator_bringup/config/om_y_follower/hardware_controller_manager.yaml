@@ -2,7 +2,8 @@ controller_manager:
   ros__parameters:
     use_sim_time: False
     update_rate: 400  # Hz
-    thread_priority: 99
+    thread_priority: 40
+    cpu_affinity: [1, 2, 3]
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster

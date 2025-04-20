@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.2 (2025-04-17)
+------------------
+* Optimized ROS2 control configurations for better performance
+* Contributors: Woojin Wie
+
 3.2.1 (2025-04-11)
 ------------------
 * None
