@@ -70,13 +70,8 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_y_gui)
 
 # Generate UI headers
-qt5_wrap_ui(PROJECT_UI_HEADERS_X
-  ${PROJECT_UI_X}
-)
-
-qt5_wrap_ui(PROJECT_UI_HEADERS_Y
-  ${PROJECT_UI_Y}
-)
+qt5_wrap_ui(PROJECT_UI_HEADERS_X ${PROJECT_UI_X})
+qt5_wrap_ui(PROJECT_UI_HEADERS_Y ${PROJECT_UI_Y})
 
 qt5_wrap_cpp(PROJECT_MOCS_X ${PROJECT_HEADERS_X})
 qt5_wrap_cpp(PROJECT_MOCS_Y ${PROJECT_HEADERS_Y})
@@ -97,7 +92,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_CURRENT_BINARY_DIR}/ui_x_main_window.h
     ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_x_main_window.h
-  DEPENDS ${PROJECT_UI_X}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_x_main_window.h
 )
 
 add_custom_command(
@@ -105,7 +100,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_CURRENT_BINARY_DIR}/ui_y_main_window.h
     ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_y_gui/ui_y_main_window.h
-  DEPENDS ${PROJECT_UI_Y}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_y_main_window.h
 )
 
 add_custom_target(copy_ui_headers ALL
@@ -155,17 +150,6 @@ ament_target_dependencies(open_manipulator_y_gui_node
   moveit_ros_planning_interface
   Eigen3
   Qt5Widgets
-)
-
-# Set output directories for UI files
-set_target_properties(open_manipulator_x_gui_node PROPERTIES
-  AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/ui"
-  AUTOUIC_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
-)
-
-set_target_properties(open_manipulator_y_gui_node PROPERTIES
-  AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/ui"
-  AUTOUIC_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 ################################################################################
