@@ -17,8 +17,6 @@
 #ifndef OPEN_MANIPULATOR_Y_GUI__MAIN_WINDOW_HPP_
 #define OPEN_MANIPULATOR_Y_GUI__MAIN_WINDOW_HPP_
 
-#include "open_manipulator_y_gui/main_window.h"
-
 #include <cstdio>
 #include <cstring>
 
