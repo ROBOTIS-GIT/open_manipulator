@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Sungho Woo, Wonho Yoon, Woojin Wie
+// Author: Ryan Shim, Sungho Woo, Wonho Yoon, Woojin Wie
 
 #ifndef OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
 #define OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
