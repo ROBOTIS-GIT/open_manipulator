@@ -1,4 +1,4 @@
-// Copyright 2025 ROBOTIS CO., LTD.
+// Copyright 2024 ROBOTIS CO., LTD.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Sungho Woo, Woojin Wie
+// Author: Sungho Woo, Wonho Yoon, Woojin Wie
 
-#ifndef HELLO_MOVEIT_OMY_H_
-#define HELLO_MOVEIT_OMY_H_
+#ifndef OPEN_MANIPULATOR_PLAYGROUND__HELLO_MOVEIT_OMX_H_
+#define OPEN_MANIPULATOR_PLAYGROUND__HELLO_MOVEIT_OMX_H_
 
 #include <memory>
 #include <chrono>
@@ -24,4 +24,4 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.hpp>
 
-#endif  // HELLO_MOVEIT_OMY_H_ 
+#endif  // OPEN_MANIPULATOR_PLAYGROUND__HELLO_MOVEIT_OMX_H_
