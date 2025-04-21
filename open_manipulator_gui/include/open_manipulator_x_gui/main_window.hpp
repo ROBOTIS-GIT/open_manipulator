@@ -17,14 +17,6 @@
 #ifndef OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
 #define OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
 
-#include <cstdio>
-#include <cstring>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-
 #include <QMainWindow>
 #include <QTimer>
 #include <QTableWidget>
@@ -32,6 +24,14 @@
 #include <QCheckBox>
 
 #include <eigen3/Eigen/Eigen>
+
+#include <cstdio>
+#include <cstring>
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include "open_manipulator_x_gui/qnode.hpp"
 #include "open_manipulator_x_gui/ui_x_main_window.h"
