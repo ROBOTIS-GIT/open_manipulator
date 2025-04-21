@@ -22,9 +22,12 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'keyboard_control_x = open_manipulator_teleop.keyboard_control_x:main',
-            'keyboard_control_y = open_manipulator_teleop.keyboard_control_y:main',
-            'keyboard_control_y_follower = open_manipulator_teleop.keyboard_control_y_follower:main',
+            'keyboard_control_x = '
+            'open_manipulator_teleop.keyboard_control_x:main',
+            'keyboard_control_y = '
+            'open_manipulator_teleop.keyboard_control_y:main',
+            'keyboard_control_y_follower = '
+            'open_manipulator_teleop.keyboard_control_y_follower:main',
         ],
     },
 )
