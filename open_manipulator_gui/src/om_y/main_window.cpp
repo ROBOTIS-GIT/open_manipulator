@@ -576,5 +576,3 @@ void MainWindow::on_btn_reset_task_clicked(void)
 }
 
 }  // namespace open_manipulator_y_gui
-
-

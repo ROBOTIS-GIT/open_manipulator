@@ -24,7 +24,8 @@
 
 #include "control_msgs/msg/dynamic_joint_state.hpp"
 #include "controller_interface/controller_interface.hpp"
-#include <om_joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster_parameters.hpp>
+#include \
+  <om_joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster_parameters.hpp>
 #include "realtime_tools/realtime_publisher.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "urdf/model.h"
