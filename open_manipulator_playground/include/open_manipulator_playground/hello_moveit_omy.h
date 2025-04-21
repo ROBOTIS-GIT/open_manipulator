@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Sungho Woo, Woojin Wie
+// Author: Sungho Woo, Wonho Yoon, Woojin Wie
 
 #ifndef HELLO_MOVEIT_OMY_H_
 #define HELLO_MOVEIT_OMY_H_

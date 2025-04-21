@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Wonho Yoon, Sungho Woo
+// Author: Sungho Woo, Wonho Yoon, Woojin Wie
 
-#include "hello_moveit_omx.h"
+#include "open_manipulator_playground/hello_moveit_omx.h"
 
 #include <memory>
 #include <chrono>
