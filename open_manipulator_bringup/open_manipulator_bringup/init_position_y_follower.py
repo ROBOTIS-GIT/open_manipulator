@@ -30,6 +30,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class MoveToHome(Node):
+
     def __init__(self):
         super().__init__('move_to_home')
         # Create action client for FollowJointTrajectory

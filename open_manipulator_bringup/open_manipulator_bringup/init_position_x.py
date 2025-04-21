@@ -24,6 +24,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class MoveToHome(Node):
+
     def __init__(self):
         super().__init__('move_to_home')
         self.publisher = self.create_publisher(

@@ -33,6 +33,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class KeyboardController(Node):
+
     def __init__(self):
         super().__init__('keyboard_controller')
 
