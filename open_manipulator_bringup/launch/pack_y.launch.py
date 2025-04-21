@@ -17,35 +17,52 @@
 # Author: Sungho Woo, Woojin Wie
 
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, LogInfo, RegisterEventHandler
-from launch.event_handlers import OnProcessStart, OnProcessExit
+from launch.actions import ExecuteProcess
+from launch.actions import LogInfo
+from launch.actions import RegisterEventHandler
+from launch.event_handlers import OnProcessStart
+
 
 def generate_launch_description():
     # Step 1: Start follower launch file
     start_y = ExecuteProcess(
-        cmd=["ros2", "launch", "open_manipulator_bringup", "hardware_y_follower.launch.py"],
-        output="screen"
+        cmd=[
+            'ros2',
+            'launch',
+            'open_manipulator_bringup',
+            'hardware_y_follower.launch.py',
+        ],
+        output='screen',
     )
 
     # Step 2: Run the initialization script for the follower with pack mode
     pack_y = ExecuteProcess(
-        cmd=["ros2", "run", "open_manipulator_bringup", "pack_unpack_y.py", "--mode", "pack"],
-        output="screen",
-        shell=True
+        cmd=[
+            'ros2',
+            'run',
+            'open_manipulator_bringup',
+            'pack_unpack_y.py',
+            '--mode',
+            'pack',
+        ],
+        output='screen',
+        shell=True,
     )
 
     return LaunchDescription([
-        LogInfo(msg="🚀 Starting hardware_y_follower.launch.py..."),
+        LogInfo(msg='🚀 Starting hardware_y_follower.launch.py...'),
         start_y,
-
         # Step 2: Ensure pack_y starts only after start_y is fully launched
         RegisterEventHandler(
             OnProcessStart(
                 target_action=start_y,
                 on_start=[
-                    LogInfo(msg="✅ hardware_y_follower.launch.py has fully started. Running pack_y.launch.py..."),
-                    pack_y
-                ]
+                    LogInfo(
+                        msg='✅ hardware_y_follower.launch.py has fully started.'
+                        'Running pack_y.launch.py...'
+                    ),
+                    pack_y,
+                ],
             )
         ),
     ])

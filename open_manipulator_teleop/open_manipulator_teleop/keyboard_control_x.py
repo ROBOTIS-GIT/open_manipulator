@@ -28,7 +28,8 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class KeyboardController(Node):
@@ -51,9 +52,7 @@ class KeyboardController(Node):
         )
 
         self.arm_joint_positions = [0.0] * 4
-        self.arm_joint_names = [
-            'joint1', 'joint2', 'joint3', 'joint4'
-        ]
+        self.arm_joint_names = ['joint1', 'joint2', 'joint3', 'joint4']
 
         self.gripper_position = 0.0
         self.gripper_max = 1.1
@@ -126,8 +125,7 @@ class KeyboardController(Node):
 
         self.get_logger().info('Ready to receive keyboard input!')
         self.get_logger().info(
-            'Use 1/q, 2/w, 3/e, 4/r for joints 1-4, o/p for gripper. '
-            'Press ESC to exit.'
+            'Use 1/q, 2/w, 3/e, 4/r for joints 1-4, o/p for gripper. Press ESC to exit.'
         )
 
         try:
@@ -153,9 +151,7 @@ class KeyboardController(Node):
                         )
                         self.arm_joint_positions[0] = new_pos
                     elif key == '2':
-                        new_pos = min(
-                            self.arm_joint_positions[1] + self.max_delta, 1.5
-                        )
+                        new_pos = min(self.arm_joint_positions[1] + self.max_delta, 1.5)
                         self.arm_joint_positions[1] = new_pos
                     elif key == 'w':
                         new_pos = max(
@@ -163,9 +159,7 @@ class KeyboardController(Node):
                         )
                         self.arm_joint_positions[1] = new_pos
                     elif key == '3':
-                        new_pos = min(
-                            self.arm_joint_positions[2] + self.max_delta, 1.5
-                        )
+                        new_pos = min(self.arm_joint_positions[2] + self.max_delta, 1.5)
                         self.arm_joint_positions[2] = new_pos
                     elif key == 'e':
                         new_pos = max(
@@ -173,9 +167,7 @@ class KeyboardController(Node):
                         )
                         self.arm_joint_positions[2] = new_pos
                     elif key == '4':
-                        new_pos = min(
-                            self.arm_joint_positions[3] + self.max_delta, 1.5
-                        )
+                        new_pos = min(self.arm_joint_positions[3] + self.max_delta, 1.5)
                         self.arm_joint_positions[3] = new_pos
                     elif key == 'r':
                         new_pos = max(
@@ -184,15 +176,13 @@ class KeyboardController(Node):
                         self.arm_joint_positions[3] = new_pos
                     elif key == 'o':  # Open gripper
                         new_pos = min(
-                            self.gripper_position + self.gripper_delta,
-                            self.gripper_max
+                            self.gripper_position + self.gripper_delta, self.gripper_max
                         )
                         self.gripper_position = new_pos
                         self.send_gripper_command()
                     elif key == 'p':  # Close gripper
                         new_pos = max(
-                            self.gripper_position - self.gripper_delta,
-                            self.gripper_min
+                            self.gripper_position - self.gripper_delta, self.gripper_min
                         )
                         self.gripper_position = new_pos
                         self.send_gripper_command()

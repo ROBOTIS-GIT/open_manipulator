@@ -17,10 +17,15 @@
 # Author: Wonho Yoon, Sungho Woo
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler, TimerAction, ExecuteProcess
-from launch.conditions import IfCondition, UnlessCondition
+from launch.actions import DeclareLaunchArgument
+from launch.actions import RegisterEventHandler
+from launch.conditions import IfCondition
+from launch.conditions import UnlessCondition
 from launch.event_handlers import OnProcessExit
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import Command
+from launch.substitutions import FindExecutable
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -28,12 +33,34 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     # Declare launch arguments
     declared_arguments = [
-        DeclareLaunchArgument('start_rviz', default_value='true', description='Whether to execute rviz2'),
-        DeclareLaunchArgument('prefix', default_value='""', description='Prefix of the joint and link names'),
-        DeclareLaunchArgument('use_sim', default_value='false', description='Start robot in Gazebo simulation.'),
-        DeclareLaunchArgument('use_fake_hardware', default_value='false', description='Use fake hardware mirroring command.'),
-        DeclareLaunchArgument('fake_sensor_commands', default_value='false', description='Enable fake sensor commands.'),
-        DeclareLaunchArgument('port_name', default_value='/dev/ttyACM0', description='Port name for hardware connection.'),
+        DeclareLaunchArgument(
+            'start_rviz', default_value='true', description='Whether to execute rviz2'
+        ),
+        DeclareLaunchArgument(
+            'prefix',
+            default_value='""',
+            description='Prefix of the joint and link names',
+        ),
+        DeclareLaunchArgument(
+            'use_sim',
+            default_value='false',
+            description='Start robot in Gazebo simulation.',
+        ),
+        DeclareLaunchArgument(
+            'use_fake_hardware',
+            default_value='false',
+            description='Use fake hardware mirroring command.',
+        ),
+        DeclareLaunchArgument(
+            'fake_sensor_commands',
+            default_value='false',
+            description='Enable fake sensor commands.',
+        ),
+        DeclareLaunchArgument(
+            'port_name',
+            default_value='/dev/ttyACM0',
+            description='Port name for hardware connection.',
+        ),
     ]
 
     # Launch configurations
@@ -48,25 +75,40 @@ def generate_launch_description():
     urdf_file = Command([
         PathJoinSubstitution([FindExecutable(name='xacro')]),
         ' ',
-        PathJoinSubstitution([FindPackageShare('open_manipulator_description'), 'urdf', 'om_y', 'open_manipulator_y.urdf.xacro']),
+        PathJoinSubstitution([
+            FindPackageShare('open_manipulator_description'),
+            'urdf',
+            'om_y',
+            'open_manipulator_y.urdf.xacro',
+        ]),
         ' ',
-        'prefix:=', prefix,
+        'prefix:=',
+        prefix,
         ' ',
-        'use_sim:=', use_sim,
+        'use_sim:=',
+        use_sim,
         ' ',
-        'use_fake_hardware:=', use_fake_hardware,
+        'use_fake_hardware:=',
+        use_fake_hardware,
         ' ',
-        'fake_sensor_commands:=', fake_sensor_commands,
+        'fake_sensor_commands:=',
+        fake_sensor_commands,
         ' ',
-        'port_name:=', port_name,
+        'port_name:=',
+        port_name,
     ])
 
     # Paths for configuration files
     controller_manager_config = PathJoinSubstitution([
-        FindPackageShare('open_manipulator_bringup'), 'config', 'om_y', 'hardware_controller_manager.yaml'
+        FindPackageShare('open_manipulator_bringup'),
+        'config',
+        'om_y',
+        'hardware_controller_manager.yaml',
     ])
     rviz_config_file = PathJoinSubstitution([
-        FindPackageShare('open_manipulator_description'), 'rviz', 'open_manipulator.rviz'
+        FindPackageShare('open_manipulator_description'),
+        'rviz',
+        'open_manipulator.rviz',
     ])
 
     # Define nodes
@@ -82,7 +124,7 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'robot_description': urdf_file, 'use_sim_time': use_sim}],
-        output='screen'
+        output='screen',
     )
 
     rviz_node = Node(
@@ -90,54 +132,62 @@ def generate_launch_description():
         executable='rviz2',
         arguments=['-d', rviz_config_file],
         output='screen',
-        condition=IfCondition(start_rviz)
+        condition=IfCondition(start_rviz),
     )
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
-        output='screen'
+        arguments=[
+            'joint_state_broadcaster',
+            '--controller-manager',
+            '/controller_manager',
+        ],
+        output='screen',
     )
 
     arm_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['arm_controller'],
-        output='screen'
+        output='screen',
     )
 
     gripper_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['gripper_controller'],
-        output='screen'
+        output='screen',
     )
 
     # Event handlers to ensure order of execution
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[rviz_node]
+            target_action=joint_state_broadcaster_spawner, on_exit=[rviz_node]
         )
     )
 
-    delay_arm_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[arm_controller_spawner]
+    delay_arm_controller_spawner_after_joint_state_broadcaster_spawner = (
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[arm_controller_spawner],
+            )
         )
     )
 
-    delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[gripper_controller_spawner]
+    delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner = (
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[gripper_controller_spawner],
+            )
         )
     )
 
     return LaunchDescription(
-        declared_arguments + [
+        declared_arguments
+        + [
             control_node,
             robot_state_pub_node,
             joint_state_broadcaster_spawner,

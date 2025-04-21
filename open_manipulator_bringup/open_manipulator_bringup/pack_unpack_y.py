@@ -16,29 +16,40 @@
 #
 # Author: Sungho Woo
 
-import sys
-import rclpy
-from rclpy.node import Node
-from rclpy.action import ActionClient
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from sensor_msgs.msg import JointState
-from control_msgs.action import FollowJointTrajectory
 import math
+import sys
+
+from control_msgs.action import FollowJointTrajectory
 import numpy as np
+import rclpy
+from rclpy.action import ActionClient
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
+from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
+
 
 class MoveToHome(Node):
     def __init__(self, operation_mode='pack'):
         super().__init__('move_to_home')
         # Create action client for FollowJointTrajectory
         self.action_client = ActionClient(
-            self,
-            FollowJointTrajectory,
-            '/arm_controller/follow_joint_trajectory'
+            self, FollowJointTrajectory, '/arm_controller/follow_joint_trajectory'
         )
-        self.subscription = self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 10)
+        self.subscription = self.create_subscription(
+            JointState, '/joint_states', self.joint_state_callback, 10
+        )
 
         # Joint names
-        self.joint_names = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6', 'rh_r1_joint']
+        self.joint_names = [
+            'joint1',
+            'joint2',
+            'joint3',
+            'joint4',
+            'joint5',
+            'joint6',
+            'rh_r1_joint',
+        ]
 
         # Final target positions (in radians)
         self.final_target_positions = [
@@ -48,18 +59,10 @@ class MoveToHome(Node):
             self.angle_to_radian(30),
             self.angle_to_radian(180),
             0.0,
-            0.0
+            0.0,
         ]
 
-        self.init_positions = [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ]
+        self.init_positions = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.current_positions = None
         self.current_velocities = None
@@ -90,7 +93,7 @@ class MoveToHome(Node):
             self.target_positions = [
                 self.init_positions,
                 step0_positions,
-                self.final_target_positions
+                self.final_target_positions,
             ]
         else:  # unpack
             # Unpack operation sequence
@@ -125,7 +128,9 @@ class MoveToHome(Node):
             vel_coeff = (30 * t_norm2 - 60 * t_norm3 + 30 * t_norm4) / self.duration
 
             # Acceleration coefficients (derivative of velocity)
-            acc_coeff = (60 * t_norm - 180 * t_norm2 + 120 * t_norm3) / (self.duration * self.duration)
+            acc_coeff = (60 * t_norm - 180 * t_norm2 + 120 * t_norm3) / (
+                self.duration * self.duration
+            )
 
             positions = []
             velocities = []
@@ -155,7 +160,10 @@ class MoveToHome(Node):
 
     def check_step_completion(self):
         target_positions = self.get_step_target_positions()
-        return all(abs(curr - target) < self.epsilon for curr, target in zip(self.current_positions, target_positions))
+        return all(
+            abs(curr - target) < self.epsilon
+            for curr, target in zip(self.current_positions, target_positions)
+        )
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
@@ -172,8 +180,12 @@ class MoveToHome(Node):
 
     def joint_state_callback(self, msg):
         if set(self.joint_names).issubset(set(msg.name)):
-            self.current_positions = [msg.position[msg.name.index(j)] for j in self.joint_names]
-            self.current_velocities = [msg.velocity[msg.name.index(j)] for j in self.joint_names]
+            self.current_positions = [
+                msg.position[msg.name.index(j)] for j in self.joint_names
+            ]
+            self.current_velocities = [
+                msg.velocity[msg.name.index(j)] for j in self.joint_names
+            ]
 
             # Initialize target positions if not already done
             if self.target_positions is None:
@@ -186,10 +198,14 @@ class MoveToHome(Node):
             if self.goal_handle is None:
                 if self.current_step < len(self.target_positions):
                     target_positions = self.get_step_target_positions()
-                    self.get_logger().info(f'Moving to step {self.current_step} target positions')
+                    self.get_logger().info(
+                        f'Moving to step {self.current_step} target positions'
+                    )
 
                     goal_msg = FollowJointTrajectory.Goal()
-                    goal_msg.trajectory = self.create_smooth_trajectory(self.current_positions, target_positions)
+                    goal_msg.trajectory = self.create_smooth_trajectory(
+                        self.current_positions, target_positions
+                    )
 
                     goal_msg.path_tolerance = []
                     goal_msg.goal_tolerance = []
@@ -198,12 +214,13 @@ class MoveToHome(Node):
 
                     self.get_logger().info('Sending goal...')
                     self._send_goal_future = self.action_client.send_goal_async(
-                        goal_msg,
-                        feedback_callback=self.feedback_callback
+                        goal_msg, feedback_callback=self.feedback_callback
                     )
-                    self._send_goal_future.add_done_callback(self.goal_response_callback)
+                    self._send_goal_future.add_done_callback(
+                        self.goal_response_callback
+                    )
                 else:
-                    self.get_logger().info("All steps completed!")
+                    self.get_logger().info('All steps completed!')
                     self.shutdown_node()
                     return
 
@@ -211,7 +228,7 @@ class MoveToHome(Node):
             if self.check_step_completion():
                 if not self.reached_target:
                     self.reached_target = True
-                    self.get_logger().info(f"🎯 Step {self.current_step} completed!")
+                    self.get_logger().info(f'🎯 Step {self.current_step} completed!')
                     self.goal_handle = None
                     self.current_step += 1
                     self.reached_target = False
@@ -220,9 +237,11 @@ class MoveToHome(Node):
             current_time = self.get_clock().now().nanoseconds / 1e9
             if current_time - self.last_status_time >= self.status_interval:
                 self.last_status_time = current_time
-                self.get_logger().info(f"Current positions: {self.current_positions}")
-                self.get_logger().info(f"Target positions: {self.get_step_target_positions()}")
-                self.get_logger().info(f"Current step: {self.current_step}")
+                self.get_logger().info(f'Current positions: {self.current_positions}')
+                self.get_logger().info(
+                    f'Target positions: {self.get_step_target_positions()}'
+                )
+                self.get_logger().info(f'Current step: {self.current_step}')
 
     def shutdown_node(self):
         if self.goal_handle:
@@ -234,19 +253,27 @@ class MoveToHome(Node):
     def angle_to_radian(self, angle):
         return angle * math.pi / 180
 
+
 def main(args=None):
     rclpy.init(args=args)
 
     # Parse command line arguments
     import argparse
+
     parser = argparse.ArgumentParser(description='Pack or unpack the robot arm')
-    parser.add_argument('--mode', type=str, default='pack', choices=['pack', 'unpack'],
-                        help='Operation mode: pack or unpack (default: pack)')
+    parser.add_argument(
+        '--mode',
+        type=str,
+        default='pack',
+        choices=['pack', 'unpack'],
+        help='Operation mode: pack or unpack (default: pack)',
+    )
     args = parser.parse_args(args=args)
 
     # Create node with the specified operation mode
     node = MoveToHome(operation_mode=args.mode)
     rclpy.spin(node)
+
 
 if __name__ == '__main__':
     main()

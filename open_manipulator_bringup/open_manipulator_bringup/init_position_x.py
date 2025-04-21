@@ -16,15 +16,19 @@
 #
 # Author: Sungho Woo
 
+
 import rclpy
 from rclpy.node import Node
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-import time
+from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
+
 
 class MoveToHome(Node):
     def __init__(self):
         super().__init__('move_to_home')
-        self.publisher = self.create_publisher(JointTrajectory, '/arm_controller/joint_trajectory', 10)
+        self.publisher = self.create_publisher(
+            JointTrajectory, '/arm_controller/joint_trajectory', 10
+        )
         self.timer = self.create_timer(1.0, self.move_to_home)
 
     def move_to_home(self):
@@ -43,10 +47,12 @@ class MoveToHome(Node):
         self.destroy_node()
         rclpy.shutdown()
 
+
 def main(args=None):
     rclpy.init(args=args)
     node = MoveToHome()
     rclpy.spin(node)
+
 
 if __name__ == '__main__':
     main()

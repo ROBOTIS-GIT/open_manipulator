@@ -1,4 +1,5 @@
-from setuptools import find_packages, setup
+from setuptools import find_packages
+from setuptools import setup
 
 package_name = 'open_manipulator_teleop'
 
@@ -7,8 +8,7 @@ setup(
     version='3.2.2',
     packages=find_packages(exclude=[]),
     data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
+        ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
@@ -22,10 +22,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'keyboard_control_x = '
-            'open_manipulator_teleop.keyboard_control_x:main',
-            'keyboard_control_y = '
-            'open_manipulator_teleop.keyboard_control_y:main',
+            'keyboard_control_x = open_manipulator_teleop.keyboard_control_x:main',
+            'keyboard_control_y = open_manipulator_teleop.keyboard_control_y:main',
             'keyboard_control_y_follower = '
             'open_manipulator_teleop.keyboard_control_y_follower:main',
         ],

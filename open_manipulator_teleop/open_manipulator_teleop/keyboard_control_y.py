@@ -28,7 +28,8 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class KeyboardController(Node):
@@ -52,7 +53,12 @@ class KeyboardController(Node):
 
         self.arm_joint_positions = [0.0] * 6
         self.arm_joint_names = [
-            'joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6'
+            'joint1',
+            'joint2',
+            'joint3',
+            'joint4',
+            'joint5',
+            'joint6',
         ]
 
         self.gripper_position = 0.0
@@ -204,15 +210,13 @@ class KeyboardController(Node):
                         self.arm_joint_positions[5] = new_pos
                     elif key == 'o':  # Open gripper
                         new_pos = max(
-                            self.gripper_position - self.gripper_delta,
-                            self.gripper_min
+                            self.gripper_position - self.gripper_delta, self.gripper_min
                         )
                         self.gripper_position = new_pos
                         self.send_gripper_command()
                     elif key == 'p':  # Close gripper
                         new_pos = min(
-                            self.gripper_position + self.gripper_delta,
-                            self.gripper_max
+                            self.gripper_position + self.gripper_delta, self.gripper_max
                         )
                         self.gripper_position = new_pos
                         self.send_gripper_command()
