@@ -105,6 +105,8 @@ def generate_launch_description():
         port_name,
     ])
 
+    robot_description = {'robot_description': urdf_file}
+
     # Paths for configuration files
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
@@ -130,15 +132,15 @@ def generate_launch_description():
     control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
-        parameters=[{'robot_description': urdf_file}, controller_manager_config],
+        parameters=[robot_description, controller_manager_config],
         output='both',
         condition=UnlessCondition(use_sim),
     )
 
-    robot_state_pub_node = Node(
+    robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': urdf_file, 'use_sim_time': use_sim}],
+        parameters=[robot_description, {'use_sim_time': use_sim}],
         output='screen',
     )
 
@@ -150,29 +152,16 @@ def generate_launch_description():
         condition=IfCondition(start_rviz),
     )
 
-    joint_state_broadcaster_spawner = Node(
+    # Controller spawner node
+    robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
         arguments=[
+            'arm_controller',
+            'gripper_controller',
             'joint_state_broadcaster',
-            '--controller-manager',
-            '/controller_manager',
         ],
-        output='screen',
-    )
-
-    arm_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['arm_controller'],
-        output='screen',
-    )
-
-    gripper_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['gripper_controller'],
-        output='screen',
+        parameters=[robot_description],
     )
 
     # Joint trajectory executor node
@@ -187,31 +176,13 @@ def generate_launch_description():
     # Event handlers to ensure order of execution
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner, on_exit=[rviz_node]
-        )
-    )
-
-    delay_arm_controller_spawner_after_joint_state_broadcaster_spawner = (
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[arm_controller_spawner],
-            )
-        )
-    )
-
-    delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner = (
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[gripper_controller_spawner],
-            )
+            target_action=robot_controller_spawner, on_exit=[rviz_node]
         )
     )
 
     delay_joint_trajectory_executor_after_controllers = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=gripper_controller_spawner,
+            target_action=robot_controller_spawner,
             on_exit=[joint_trajectory_executor],
         )
     )
@@ -220,11 +191,9 @@ def generate_launch_description():
         declared_arguments
         + [
             control_node,
-            robot_state_pub_node,
-            joint_state_broadcaster_spawner,
+            robot_controller_spawner,
+            robot_state_publisher_node,
             delay_rviz_after_joint_state_broadcaster_spawner,
-            delay_arm_controller_spawner_after_joint_state_broadcaster_spawner,
-            delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner,
             delay_joint_trajectory_executor_after_controllers,
         ]
     )

@@ -160,13 +160,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    # gripper_controller_spawner = Node(
-    #     package='controller_manager',
-    #     executable='spawner',
-    #     arguments=['gripper_controller'],
-    #     output='screen',
-    # )
-
     # Event handlers to ensure order of execution
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
@@ -183,32 +176,6 @@ def generate_launch_description():
         )
     )
 
-    # delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner = (
-    #     RegisterEventHandler(
-    #         event_handler=OnProcessExit(
-    #             target_action=joint_state_broadcaster_spawner,
-    #             on_exit=[gripper_controller_spawner],
-    #         )
-    #     )
-    # )
-
-    # Timer action to run init_position.py after launch
-    # init_position_timer = TimerAction(
-    #     period=3.0,
-    #     actions=[
-    #         ExecuteProcess(
-    #             cmd=[
-    #                 'ros2',
-    #                 'run',
-    #                 'open_manipulator_bringup',
-    #                 'follower_launcher_node.py',
-    #             ],
-    #             output='screen',
-    #             condition=IfCondition(run_init_position),
-    #         )
-    #     ],
-    # )
-
     return LaunchDescription(
         declared_arguments
         + [
@@ -217,7 +184,5 @@ def generate_launch_description():
             joint_state_broadcaster_spawner,
             delay_rviz_after_joint_state_broadcaster_spawner,
             delay_arm_controller_spawner_after_joint_state_broadcaster_spawner,
-            # delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner,
-            # init_position_timer
         ]
     )
