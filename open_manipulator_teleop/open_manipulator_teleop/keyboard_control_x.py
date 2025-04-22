@@ -56,13 +56,13 @@ class KeyboardController(Node):
         self.arm_joint_names = ['joint1', 'joint2', 'joint3', 'joint4']
 
         self.gripper_position = 0.0
-        self.gripper_max = 1.1
-        self.gripper_min = 0.0
+        self.gripper_max = 0.019
+        self.gripper_min = -0.01
 
         self.joint_received = False
 
         self.max_delta = 0.02
-        self.gripper_delta = 0.1
+        self.gripper_delta = 0.002
         self.last_command_time = time.time()
         self.command_interval = 0.02
 

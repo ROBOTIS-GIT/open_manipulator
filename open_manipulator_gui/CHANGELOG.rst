@@ -4,7 +4,8 @@ Changelog for package open_manipulator_gui
 
 3.2.2 (2025-04-17)
 ------------------
-* None
+* Updated CMakeLists.txt and Handle lint errors
+* Contributors: Woojin Wie
 
 3.2.1 (2025-04-11)
 ------------------
