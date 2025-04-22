@@ -36,8 +36,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'init_position_x = open_manipulator_bringup.init_position_x:main',
-            'init_position_y_follower = open_manipulator_bringup.init_position_y_follower:main',
+            'joint_trajectory_executor = open_manipulator_bringup.joint_trajectory_executor:main',
             'pack_unpack_y = open_manipulator_bringup.pack_unpack_y:main',
         ],
     },

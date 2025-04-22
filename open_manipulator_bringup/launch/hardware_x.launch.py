@@ -18,9 +18,7 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.actions import ExecuteProcess
 from launch.actions import RegisterEventHandler
-from launch.actions import TimerAction
 from launch.conditions import IfCondition
 from launch.conditions import UnlessCondition
 from launch.event_handlers import OnProcessExit
@@ -66,7 +64,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'run_init_position',
             default_value='true',
-            description='Run init_position_x.py after launch',
+            description='Run joint_trajectory_executor after launch',
         ),
     ]
 
@@ -78,6 +76,7 @@ def generate_launch_description():
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
     port_name = LaunchConfiguration('port_name')
     run_init_position = LaunchConfiguration('run_init_position')
+    trajectory_params_file = LaunchConfiguration('trajectory_params_file')
 
     # Generate URDF file using xacro
     urdf_file = Command([
@@ -113,10 +112,18 @@ def generate_launch_description():
         'om_x',
         'hardware_controller_manager.yaml',
     ])
+
     rviz_config_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_description'),
         'rviz',
         'open_manipulator.rviz',
+    ])
+
+    trajectory_params_file = PathJoinSubstitution([
+        FindPackageShare('open_manipulator_bringup'),
+        'config',
+        'om_x',
+        'initial_positions.yaml',
     ])
 
     # Define nodes
@@ -168,6 +175,15 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Joint trajectory executor node
+    joint_trajectory_executor = Node(
+        package='open_manipulator_bringup',
+        executable='joint_trajectory_executor',
+        parameters=[trajectory_params_file],
+        output='screen',
+        condition=IfCondition(run_init_position),
+    )
+
     # Event handlers to ensure order of execution
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
@@ -193,16 +209,11 @@ def generate_launch_description():
         )
     )
 
-    # Timer action to run init_position.py after launch
-    init_position_timer = TimerAction(
-        period=3.0,
-        actions=[
-            ExecuteProcess(
-                cmd=['ros2', 'run', 'open_manipulator_bringup', 'init_position_x.py'],
-                output='screen',
-                condition=IfCondition(run_init_position),
-            )
-        ],
+    delay_joint_trajectory_executor_after_controllers = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=gripper_controller_spawner,
+            on_exit=[joint_trajectory_executor],
+        )
     )
 
     return LaunchDescription(
@@ -214,6 +225,6 @@ def generate_launch_description():
             delay_rviz_after_joint_state_broadcaster_spawner,
             delay_arm_controller_spawner_after_joint_state_broadcaster_spawner,
             delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner,
-            init_position_timer,
+            delay_joint_trajectory_executor_after_controllers,
         ]
     )
