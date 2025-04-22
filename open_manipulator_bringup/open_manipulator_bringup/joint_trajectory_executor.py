@@ -30,6 +30,8 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class JointTrajectoryExecutor(Node):
+    """Node to execute a joint trajectory."""
+
     def __init__(self):
         super().__init__('joint_trajectory_executor')
 
