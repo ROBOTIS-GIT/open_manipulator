@@ -8,9 +8,9 @@ joint_trajectory_executor:
       - joint3
       - joint4
 
-    step_names: [ready]  # Names of the steps
+    step_names: [home]  # Names of the steps
 
-    ready: [0.0, -1.0, 1.0, 0.0]  # Ready position
+    home: [0.0, -1.0, 1.0, 0.0]  # Home position
 
     duration: 3.0
     epsilon: 0.01

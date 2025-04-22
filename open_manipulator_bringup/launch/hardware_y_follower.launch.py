@@ -57,11 +57,6 @@ def generate_launch_description():
             description='Enable fake sensor commands.',
         ),
         DeclareLaunchArgument(
-            'port_name',
-            default_value='/dev/ttyAMA2',
-            description='Port name for hardware connection.',
-        ),
-        DeclareLaunchArgument(
             'run_init_position',
             default_value='false',
             description='Run init_position.py after launch',
@@ -74,7 +69,6 @@ def generate_launch_description():
     use_sim = LaunchConfiguration('use_sim')
     use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
-    port_name = LaunchConfiguration('port_name')
     # run_init_position = LaunchConfiguration('run_init_position')
 
     # Generate URDF file using xacro
@@ -99,9 +93,6 @@ def generate_launch_description():
         ' ',
         'fake_sensor_commands:=',
         fake_sensor_commands,
-        ' ',
-        'port_name:=',
-        port_name,
     ])
 
     # Paths for configuration files

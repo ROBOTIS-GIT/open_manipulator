@@ -30,9 +30,17 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class MoveToHome(Node):
+    """Node to move the robot arm to home position in pack or unpack mode."""
 
-    def __init__(self, operation_mode='pack'):
+    def __init__(self):
         super().__init__('move_to_home')
+
+        # Declare and get parameters
+        self.declare_parameter('operation_mode', 'pack')
+        self.operation_mode = (
+            self.get_parameter('operation_mode').get_parameter_value().string_value
+        )
+
         # Create action client for FollowJointTrajectory
         self.action_client = ActionClient(
             self, FollowJointTrajectory, '/arm_controller/follow_joint_trajectory'
@@ -77,8 +85,6 @@ class MoveToHome(Node):
         self.current_step = 0  # 0: move joint3 to 0, 1: move all to final positions
         self.target_positions = None  # Will be initialized after receiving joint states
 
-        # Operation mode: 'pack' or 'unpack'
-        self.operation_mode = operation_mode
         self.get_logger().info(f'Operation mode: {self.operation_mode}')
 
         self.get_logger().info('Waiting for action server...')
@@ -257,22 +263,7 @@ class MoveToHome(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-
-    # Parse command line arguments
-    import argparse
-
-    parser = argparse.ArgumentParser(description='Pack or unpack the robot arm')
-    parser.add_argument(
-        '--mode',
-        type=str,
-        default='pack',
-        choices=['pack', 'unpack'],
-        help='Operation mode: pack or unpack (default: pack)',
-    )
-    args = parser.parse_args(args=args)
-
-    # Create node with the specified operation mode
-    node = MoveToHome(operation_mode=args.mode)
+    node = MoveToHome()
     rclpy.spin(node)
 
 

@@ -2,7 +2,7 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="open_manipulator_y_end_unit" params="name prefix use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
+  <xacro:macro name="open_manipulator_y_end_unit" params="name prefix port_name:=^|/dev/ttyAMA4 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
 
     <ros2_control name="${name}" type="system">
 
@@ -11,7 +11,7 @@
           <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
       </xacro:if>
-      
+
       <xacro:unless value="$(arg use_sim)">
         <hardware>
           <xacro:if value="${use_fake_hardware}">
@@ -21,7 +21,7 @@
           </xacro:if>
           <xacro:unless value="${use_fake_hardware}">
             <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
-            <param name="port_name">/dev/ttyAMA4</param>
+            <param name="port_name">${port_name}</param>
             <param name="baud_rate">4000000</param>
             <param name="error_timeout_ms">500</param>
             <param name="dynamixel_model_folder">/param/dxl_model</param>

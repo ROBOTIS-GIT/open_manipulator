@@ -21,6 +21,7 @@ from launch.actions import ExecuteProcess
 from launch.actions import LogInfo
 from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessStart
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -36,17 +37,11 @@ def generate_launch_description():
     )
 
     # Step 2: Run the initialization script for the follower with unpack mode
-    unpack_y = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'run',
-            'open_manipulator_bringup',
-            'pack_unpack_y.py',
-            '--mode',
-            'unpack',
-        ],
+    unpack_y = Node(
+        package='open_manipulator_bringup',
+        executable='pack_unpack_y',
         output='screen',
-        shell=True,
+        parameters=[{'operation_mode': 'unpack'}],
     )
 
     return LaunchDescription([

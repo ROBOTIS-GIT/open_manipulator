@@ -2,9 +2,9 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="open_manipulator_x_system" params="name prefix port_name:=/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
+  <xacro:macro name="open_manipulator_x_system" params="name prefix port_name:=^|/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
 
-    <ros2_control name="omx" type="system">
+    <ros2_control name="${name}" type="system">
 
       <xacro:if value="$(arg use_sim)">
         <hardware>
@@ -46,8 +46,8 @@
             <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
             <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
 
-              <!-- This parameter is used for a prismatic joint
-            that operates through a revolute mechanism. If the joint does not require this configuration, this parameter can be removed. -->
+            <!-- This parameter is used for a prismatic joint that operates through a revolute mechanism.
+            If the joint does not require this configuration, this parameter can be removed. -->
             <param name="use_revolute_to_prismatic_gripper">1</param>
             <param name="revolute_to_prismatic_dxl">dxl5</param>
             <param name="revolute_max">-1.52</param>
