@@ -13,8 +13,6 @@
   <author email="wsh@robotis.com">Sungho Woo</author>
   <author email="ywh@robotis.com">Wonho Yun</author>
 
-  <buildtool_depend>ament_python</buildtool_depend>
-
   <depend>rclpy</depend>
   <depend>open_manipulator_msgs</depend>
   <depend>dynamixel_hardware_interface</depend>
