@@ -12,7 +12,7 @@ on:
 jobs:
   # The name of the job
   ROS_CI:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Ryan Shim, Sungho Woo
+// Author: Ryan Shim, Sungho Woo, Wonho Yoon, Woojin Wie
 
 #include <QtGui>
 #include <QApplication>

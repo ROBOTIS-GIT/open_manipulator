@@ -1,4 +1,4 @@
-﻿// Copyright 2024 ROBOTIS CO., LTD.
+// Copyright 2024 ROBOTIS CO., LTD.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Ryan Shim, Sungho Woo
+// Author: Ryan Shim, Sungho Woo, Wonho Yoon, Woojin Wie
 
-#include <QtGui>
+#include <QMainWindow>
+#include <QWidget>
+#include <QTableWidget>
+#include <QHeaderView>
+#include <QStringList>
+#include <QString>
+#include <QObject>
 #include <QMessageBox>
 #include <iostream>
 #include "../include/open_manipulator_y_gui/main_window.hpp"
 
-
 namespace open_manipulator_y_gui
 {
-
-using namespace Qt;
 
 MainWindow::MainWindow(int argc, char ** argv, QWidget * parent)
 : QMainWindow(parent), qnode(argc, argv)
@@ -571,4 +574,4 @@ void MainWindow::on_btn_reset_task_clicked(void)
   writeLog("Reset completed.");
 }
 
-} // namespace open_manipulator_y_gui
+}  // namespace open_manipulator_y_gui

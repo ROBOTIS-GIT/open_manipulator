@@ -22,6 +22,8 @@
 #ifndef GRAVITY_COMPENSATION_CONTROLLER__GRAVITY_COMPENSATION_CONTROLLER_HPP_
 #define GRAVITY_COMPENSATION_CONTROLLER__GRAVITY_COMPENSATION_CONTROLLER_HPP_
 
+#include <gravity_compensation_controller/visibility_control.h>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -38,7 +40,6 @@
 #include <kdl/jntarray.hpp>
 #include <kdl/tree.hpp>
 #include <kdl/treeidsolver_recursive_newton_euler.hpp>
-#include <gravity_compensation_controller/visibility_control.h>
 #include <om_gravity_compensation_controller/gravity_compensation_controller_parameters.hpp>
 
 namespace gravity_compensation_controller
@@ -127,9 +128,8 @@ protected:
 
   std::vector<double> joint_positions_;
   std::vector<double> joint_velocities_;
-  std::vector<double> previous_velocities_;  // Store previous velocities for acceleration calculation
+  std::vector<double> previous_velocities_;
 };
-
 }  // namespace gravity_compensation_controller
 
 #endif  // GRAVITY_COMPENSATION_CONTROLLER__GRAVITY_COMPENSATION_CONTROLLER_HPP_

@@ -4,7 +4,8 @@ Changelog for package om_joint_trajectory_command_broadcaster
 
 3.2.2 (2025-04-17)
 ------------------
-* None
+* Handle lint errors
+* Contributors: Woojin Wie
 
 3.2.1 (2025-04-11)
 ------------------

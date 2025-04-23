@@ -531,3 +531,6 @@ doc/
 
 ## GurumDDS
 *.ar
+
+## IDE: Cursor
+.cursor/

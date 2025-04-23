@@ -16,54 +16,90 @@
 #
 # Author: Sungho Woo
 
+"""Launch file for AI teleoperation of OpenManipulator."""
+
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, LogInfo, RegisterEventHandler
-from launch.event_handlers import OnProcessStart, OnProcessExit
+from launch.actions import ExecuteProcess
+from launch.actions import LogInfo
+from launch.actions import RegisterEventHandler
+from launch.event_handlers import OnProcessExit
+from launch.event_handlers import OnProcessStart
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+
 
 def generate_launch_description():
+    """Generate launch description for AI teleoperation."""
     # Step 1: Start follower launch file
     start_follower = ExecuteProcess(
-        cmd=["ros2", "launch", "open_manipulator_bringup", "hardware_y_follower.launch.py"],
-        output="screen"
+        cmd=[
+            'ros2',
+            'launch',
+            'open_manipulator_bringup',
+            'hardware_y_follower.launch.py',
+        ],
+        output='screen',
     )
 
-    # Step 2: Run the initialization script for the follower
-    init_follower = ExecuteProcess(
-        cmd=["ros2", "run", "open_manipulator_bringup", "init_position_y_follower.py"],
-        output="screen",
-        shell=True
+    # Step 2: Run the joint trajectory executor for the follower
+    trajectory_params_file = PathJoinSubstitution([
+        FindPackageShare('open_manipulator_bringup'),
+        'config',
+        'om_y_follower',
+        'initial_positions.yaml',
+    ])
+
+    joint_trajectory_executor = Node(
+        package='open_manipulator_bringup',
+        executable='joint_trajectory_executor',
+        parameters=[trajectory_params_file],
+        output='screen',
     )
 
     # Step 3: Start leader launch file
     start_leader = ExecuteProcess(
-        cmd=["ros2", "launch", "open_manipulator_bringup", "hardware_y_leader.launch.py"],
-        output="screen",
-        shell=True
+        cmd=[
+            'ros2',
+            'launch',
+            'open_manipulator_bringup',
+            'hardware_y_leader.launch.py',
+        ],
+        output='screen',
+        shell=True,
     )
 
     return LaunchDescription([
-        LogInfo(msg="🚀 Starting hardware_y_follower.launch.py..."),
+        LogInfo(msg='🚀 Starting hardware_y_follower.launch.py...'),
         start_follower,
-
-        # Step 2: Ensure init_follower starts only after start_follower is fully launched
+        # Step 2: Ensure joint_trajectory_executor starts after start_follower
         RegisterEventHandler(
             OnProcessStart(
                 target_action=start_follower,
                 on_start=[
-                    LogInfo(msg="✅ hardware_y_follower.launch.py has fully started. Running init_position_y_follower.py..."),
-                    init_follower
-                ]
+                    LogInfo(
+                        msg=(
+                            '✅ hardware_y_follower.launch.py has fully started. '
+                            'Running joint_trajectory_executor...'
+                        )
+                    ),
+                    joint_trajectory_executor,
+                ],
             )
         ),
-
-        # Step 3: Ensure start_leader starts only after init_follower has fully started & exited
+        # Step 3: Ensure start_leader starts after joint_trajectory_executor
         RegisterEventHandler(
             OnProcessExit(
-                target_action=init_follower,
+                target_action=joint_trajectory_executor,
                 on_exit=[
-                    LogInfo(msg="✅ init_position_y_follower.py has fully executed and exited. Starting hardware_y_leader.launch.py..."),
-                    start_leader
-                ]
+                    LogInfo(
+                        msg=(
+                            '✅ joint_trajectory_executor has completed. '
+                            'Starting hardware_y_leader.launch.py...'
+                        )
+                    ),
+                    start_leader,
+                ],
             )
         ),
     ])

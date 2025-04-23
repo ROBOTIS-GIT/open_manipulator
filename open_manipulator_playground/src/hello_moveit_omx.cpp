@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Wonho Yoon, Sungho Woo
+// Author: Sungho Woo, Wonho Yoon, Woojin Wie
 
-#include <moveit/move_group_interface/move_group_interface.hpp>
+#include "open_manipulator_playground/hello_moveit_omx.h"
+
 #include <memory>
 #include <chrono>
 #include <thread>
+
 #include <rclcpp/rclcpp.hpp>
+#include <moveit/move_group_interface/move_group_interface.hpp>
 
 int main(int argc, char * argv[])
 {

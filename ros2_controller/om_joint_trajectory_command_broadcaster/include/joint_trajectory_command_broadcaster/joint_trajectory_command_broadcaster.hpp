@@ -15,6 +15,8 @@
 #ifndef JOINT_TRAJECTORY_COMMAND_BROADCASTER__JOINT_TRAJECTORY_COMMAND_BROADCASTER_HPP_
 #define JOINT_TRAJECTORY_COMMAND_BROADCASTER__JOINT_TRAJECTORY_COMMAND_BROADCASTER_HPP_
 
+#include <joint_trajectory_command_broadcaster/visibility_control.h>
+
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -22,8 +24,8 @@
 
 #include "control_msgs/msg/dynamic_joint_state.hpp"
 #include "controller_interface/controller_interface.hpp"
-#include <joint_trajectory_command_broadcaster/visibility_control.h>
-#include <om_joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster_parameters.hpp>
+#include \
+  <om_joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster_parameters.hpp>
 #include "realtime_tools/realtime_publisher.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "urdf/model.h"

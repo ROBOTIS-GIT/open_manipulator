@@ -17,135 +17,139 @@
 # Author: Wonho Yoon, Sungho Woo
 
 import os
-import xacro
-import yaml
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
+import xacro
+import yaml
+
 
 def get_robot_model():
-    robot_model = os.getenv("ROBOT_MODEL", "om_x")
-    if robot_model not in ["om_x", "om_y", "om_y_follower", "om_y_leader"]:
-        raise ValueError(f"Invalid ROBOT_MODEL: {robot_model}")
+    robot_model = os.getenv('ROBOT_MODEL', 'om_x')
+    if robot_model not in ['om_x', 'om_y', 'om_y_follower', 'om_y_leader']:
+        raise ValueError(f'Invalid ROBOT_MODEL: {robot_model}')
     return robot_model
+
 
 def generate_launch_description():
     robot_model = get_robot_model()
 
-    if robot_model == "om_x":
-        urdf_file = "open_manipulator_x"
-        urdf_folder = "om_x"
-    elif robot_model == "om_y":
-        urdf_file = "open_manipulator_y"
-        urdf_folder = "om_y"
-    elif robot_model == "om_y_follower":
-        urdf_file = "open_manipulator_y_follower"
-        urdf_folder = "om_y_follower"
-    elif robot_model == "om_y_leader":
-        urdf_file = "open_manipulator_y_leader"
-        urdf_folder = "om_y_leader"
+    if robot_model == 'om_x':
+        urdf_file = 'open_manipulator_x'
+        urdf_folder = 'om_x'
+    elif robot_model == 'om_y':
+        urdf_file = 'open_manipulator_y'
+        urdf_folder = 'om_y'
+    elif robot_model == 'om_y_follower':
+        urdf_file = 'open_manipulator_y_follower'
+        urdf_folder = 'om_y_follower'
+    elif robot_model == 'om_y_leader':
+        urdf_file = 'open_manipulator_y_leader'
+        urdf_folder = 'om_y_leader'
     else:
-        raise ValueError(f"Invalid ROBOT_MODEL: {robot_model}")
+        raise ValueError(f'Invalid ROBOT_MODEL: {robot_model}')
 
     rviz_config = os.path.join(
-        get_package_share_directory("open_manipulator_moveit_config"),
-        "config",
+        get_package_share_directory('open_manipulator_moveit_config'),
+        'config',
         urdf_folder,
-        "moveit.rviz"
+        'moveit.rviz',
     )
 
     # Robot description (URDF)
     robot_description_config = xacro.process_file(
         os.path.join(
-            get_package_share_directory("open_manipulator_description"),
-            "urdf",
+            get_package_share_directory('open_manipulator_description'),
+            'urdf',
             urdf_folder,
-            f"{urdf_file}.urdf.xacro",
+            f'{urdf_file}.urdf.xacro',
         )
     )
-    robot_description = {"robot_description": robot_description_config.toxml()}
+    robot_description = {'robot_description': robot_description_config.toxml()}
 
     # Robot description Semantic (SRDF)
     robot_description_semantic_path = os.path.join(
-        get_package_share_directory("open_manipulator_moveit_config"),
-        "config",
+        get_package_share_directory('open_manipulator_moveit_config'),
+        'config',
         urdf_folder,
-        f"{urdf_file}.srdf",
+        f'{urdf_file}.srdf',
     )
-    with open(robot_description_semantic_path, "r") as file:
+    with open(robot_description_semantic_path, 'r') as file:
         robot_description_semantic_config = file.read()
 
-    robot_description_semantic = {"robot_description_semantic": robot_description_semantic_config}
+    robot_description_semantic = {
+        'robot_description_semantic': robot_description_semantic_config
+    }
 
     # Planning Functionality (OMPL)
     ompl_planning_pipeline_config = {
-        "move_group": {
-            "planning_plugins": ["ompl_interface/OMPLPlanner"],
-            "request_adapters": [
-                "default_planning_request_adapters/ResolveConstraintFrames",
-                "default_planning_request_adapters/ValidateWorkspaceBounds",
-                "default_planning_request_adapters/CheckStartStateBounds",
-                "default_planning_request_adapters/CheckStartStateCollision",
+        'move_group': {
+            'planning_plugins': ['ompl_interface/OMPLPlanner'],
+            'request_adapters': [
+                'default_planning_request_adapters/ResolveConstraintFrames',
+                'default_planning_request_adapters/ValidateWorkspaceBounds',
+                'default_planning_request_adapters/CheckStartStateBounds',
+                'default_planning_request_adapters/CheckStartStateCollision',
             ],
-            "response_adapters": [
-                "default_planning_response_adapters/AddTimeOptimalParameterization",
-                "default_planning_response_adapters/ValidateSolution",
-                "default_planning_response_adapters/DisplayMotionPath",
+            'response_adapters': [
+                'default_planning_response_adapters/AddTimeOptimalParameterization',
+                'default_planning_response_adapters/ValidateSolution',
+                'default_planning_response_adapters/DisplayMotionPath',
             ],
-            "start_state_max_bounds_error": 0.1,
+            'start_state_max_bounds_error': 0.1,
         }
     }
     ompl_planning_yaml_path = os.path.join(
-        get_package_share_directory("open_manipulator_moveit_config"),
-        "config",
+        get_package_share_directory('open_manipulator_moveit_config'),
+        'config',
         urdf_folder,
-        "ompl_planning.yaml",
+        'ompl_planning.yaml',
     )
-    with open(ompl_planning_yaml_path, "r") as file:
+    with open(ompl_planning_yaml_path, 'r') as file:
         ompl_planning_yaml = yaml.safe_load(file)
-    ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
+    ompl_planning_pipeline_config['move_group'].update(ompl_planning_yaml)
 
     # Kinematics yaml
     kinematics_yaml_path = os.path.join(
-        get_package_share_directory("open_manipulator_moveit_config"),
-        "config",
+        get_package_share_directory('open_manipulator_moveit_config'),
+        'config',
         urdf_folder,
-        "kinematics.yaml",
+        'kinematics.yaml',
     )
-    with open(kinematics_yaml_path, "r") as file:
+    with open(kinematics_yaml_path, 'r') as file:
         kinematics_yaml = yaml.safe_load(file)
 
-    robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
+    robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
 
     # Joint Limits yaml
     joint_limits_yaml_path = os.path.join(
-        get_package_share_directory("open_manipulator_moveit_config"),
-        "config",
+        get_package_share_directory('open_manipulator_moveit_config'),
+        'config',
         urdf_folder,
-        "joint_limits.yaml",
+        'joint_limits.yaml',
     )
-    with open(joint_limits_yaml_path, "r") as file:
+    with open(joint_limits_yaml_path, 'r') as file:
         joint_limits_yaml = yaml.safe_load(file)
-    robot_description_joint_limits = {"robot_description_planning": joint_limits_yaml}
+    robot_description_joint_limits = {'robot_description_planning': joint_limits_yaml}
 
     # Warehouse Database Config
     warehouse_ros_config = {
-        "warehouse_plugin": "warehouse_ros_sqlite::DatabaseConnection",
-        "warehouse_host": "/home/robotis/warehouse_db.sqlite",
-        "port": 33829,
-        "scene_name": "",
-        "queries_regex": ".*",
+        'warehouse_plugin': 'warehouse_ros_sqlite::DatabaseConnection',
+        'warehouse_host': '/home/robotis/warehouse_db.sqlite',
+        'port': 33829,
+        'scene_name': '',
+        'queries_regex': '.*',
     }
 
     ld = LaunchDescription()
 
     rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="log",
-        arguments=["-d", rviz_config],
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='log',
+        arguments=['-d', rviz_config],
         parameters=[
             robot_description,
             robot_description_semantic,
@@ -153,7 +157,7 @@ def generate_launch_description():
             robot_description_kinematics,
             robot_description_joint_limits,
             warehouse_ros_config,
-        ]
+        ],
     )
 
     ld.add_action(rviz_node)
