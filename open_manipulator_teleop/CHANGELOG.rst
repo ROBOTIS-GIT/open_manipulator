@@ -4,7 +4,8 @@ Changelog for package open_manipulator_teleop
 
 3.2.2 (2025-04-17)
 ------------------
-* None
+* OM-X Gripper Control Bug Fix
+* Contributors: Woojin Wie
 
 3.2.1 (2025-04-11)
 ------------------

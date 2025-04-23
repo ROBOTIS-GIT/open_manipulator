@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="open_manipulator_y_leader_system" params="name prefix use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
-    
+
     <ros2_control name="${name}" type="system">
 
       <xacro:if value="$(arg use_sim)">
@@ -59,6 +59,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
+
       <joint name="${prefix}joint2">
         <command_interface name="position"/>
         <command_interface name="effort"/>
@@ -66,6 +67,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
+
       <joint name="${prefix}joint3">
         <command_interface name="position"/>
         <command_interface name="effort"/>
@@ -73,6 +75,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
+
       <joint name="${prefix}joint4">
         <command_interface name="position"/>
         <command_interface name="effort"/>
@@ -80,6 +83,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
+
       <joint name="${prefix}joint5">
         <command_interface name="position"/>
         <command_interface name="effort"/>
@@ -87,6 +91,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
+
       <joint name="${prefix}joint6">
         <command_interface name="position"/>
         <command_interface name="effort"/>
@@ -94,6 +99,7 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
+
       <joint name="${prefix}rh_r1_joint">
         <command_interface name="position"/>
         <command_interface name="effort"/>
@@ -118,6 +124,7 @@
         <param name="Return Delay Time">0</param>
         <param name="Baud Rate">6</param>
       </gpio>
+
       <gpio name="dxl2">
         <param name="type">dxl</param>
         <param name="ID">2</param>
@@ -133,6 +140,7 @@
         <param name="Return Delay Time">0</param>
         <param name="Baud Rate">6</param>
       </gpio>
+
       <gpio name="dxl3">
         <param name="type">dxl</param>
         <param name="ID">3</param>
@@ -148,6 +156,7 @@
         <param name="Return Delay Time">0</param>
         <param name="Baud Rate">6</param>
       </gpio>
+
       <gpio name="dxl4">
         <param name="type">dxl</param>
         <param name="ID">4</param>
@@ -163,6 +172,7 @@
         <param name="Return Delay Time">0</param>
         <param name="Baud Rate">6</param>
       </gpio>
+
       <gpio name="dxl5">
         <param name="type">dxl</param>
         <param name="ID">5</param>
@@ -178,6 +188,7 @@
         <param name="Return Delay Time">0</param>
         <param name="Baud Rate">6</param>
       </gpio>
+
       <gpio name="dxl6">
         <param name="type">dxl</param>
         <param name="ID">6</param>
@@ -193,6 +204,7 @@
         <param name="Return Delay Time">0</param>
         <param name="Baud Rate">6</param>
       </gpio>
+
       <gpio name="dxl7">
         <param name="type">dxl</param>
         <param name="ID">7</param>

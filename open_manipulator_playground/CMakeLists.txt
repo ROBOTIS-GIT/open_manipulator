@@ -20,6 +20,11 @@ find_package(rclpy REQUIRED)
 ################################################################################
 # Build
 ################################################################################
+include_directories(
+  include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 add_executable(hello_moveit_omx src/hello_moveit_omx.cpp)
 target_include_directories(hello_moveit_omx PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -45,13 +50,18 @@ ament_target_dependencies(hello_moveit_omy
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS hello_moveit_omx
-  DESTINATION lib/${PROJECT_NAME}
+install(DIRECTORY include/
+  DESTINATION include
 )
 
-install(TARGETS hello_moveit_omy
-  DESTINATION lib/${PROJECT_NAME}
+install(TARGETS hello_moveit_omx hello_moveit_omy
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+
+ament_export_include_directories(include)
+ament_export_targets(export_${PROJECT_NAME})
 
 ################################################################################
 # Macro for ament package

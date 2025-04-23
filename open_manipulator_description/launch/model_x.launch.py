@@ -25,7 +25,6 @@ from launch.substitutions import Command
 from launch.substitutions import FindExecutable
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
-
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -47,60 +46,55 @@ def generate_launch_description():
     prefix = LaunchConfiguration('prefix')
     use_gui = LaunchConfiguration('use_gui')
 
-    urdf_file = Command(
-        [
-            PathJoinSubstitution([FindExecutable(name='xacro')]),
-            ' ',
-            PathJoinSubstitution(
-                [
-                    FindPackageShare('open_manipulator_description'),
-                    'urdf',
-                    'om_x',
-                    'open_manipulator_x.urdf.xacro'
-                ]
-            ),
-            ' ',
-            'prefix:=',
-            prefix,
-            ' ',
-            'use_fake_hardware:=',
-            'False',
-        ]
-    )
-
-    rviz_config_file = PathJoinSubstitution(
-        [
+    urdf_file = Command([
+        PathJoinSubstitution([FindExecutable(name='xacro')]),
+        ' ',
+        PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
-            'rviz',
-            'open_manipulator.rviz'
-        ]
-    )
+            'urdf',
+            'om_x',
+            'open_manipulator_x.urdf.xacro',
+        ]),
+        ' ',
+        'prefix:=',
+        prefix,
+        ' ',
+        'use_fake_hardware:=',
+        'False',
+    ])
+
+    rviz_config_file = PathJoinSubstitution([
+        FindPackageShare('open_manipulator_description'),
+        'rviz',
+        'open_manipulator.rviz',
+    ])
 
     return LaunchDescription([
         DeclareLaunchArgument(
             'prefix',
             default_value='""',
-            description='Prefix of the joint and link names'),
-
+            description='Prefix of the joint and link names',
+        ),
         DeclareLaunchArgument(
             'use_gui',
             default_value='true',
-            description='Run joint state publisher gui node'),
-
+            description='Run joint state publisher gui node',
+        ),
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
             parameters=[{'robot_description': urdf_file}],
-            output='screen'),
-
+            output='screen',
+        ),
         Node(
             package='rviz2',
             executable='rviz2',
             arguments=['-d', rviz_config_file],
-            output='screen'),
-
+            output='screen',
+        ),
         Node(
-            package="joint_state_publisher_gui",
-            executable="joint_state_publisher_gui",
-            condition=IfCondition(use_gui)),
+            package='joint_state_publisher_gui',
+            executable='joint_state_publisher_gui',
+            condition=IfCondition(use_gui),
+        ),
     ])

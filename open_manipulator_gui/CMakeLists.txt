@@ -60,15 +60,21 @@ set(PROJECT_UI_Y
 # Qt specific configurations
 ################################################################################
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOUIC_SEARCH_PATHS ui)
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-qt5_wrap_cpp(PROJECT_MOCS_X ${PROJECT_HEADERS_X})
+# Create output directories for UI files
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_y_gui)
+
+# Generate UI headers
 qt5_wrap_ui(PROJECT_UI_HEADERS_X ${PROJECT_UI_X})
-qt5_wrap_cpp(PROJECT_MOCS_Y ${PROJECT_HEADERS_Y})
 qt5_wrap_ui(PROJECT_UI_HEADERS_Y ${PROJECT_UI_Y})
+
+qt5_wrap_cpp(PROJECT_MOCS_X ${PROJECT_HEADERS_X})
+qt5_wrap_cpp(PROJECT_MOCS_Y ${PROJECT_HEADERS_Y})
 
 ################################################################################
 # Include directories
@@ -77,6 +83,30 @@ include_directories(
   include
   ${EIGEN3_INCLUDE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/ui
+)
+
+# Copy generated UI headers to the correct location
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_x_main_window.h
+  COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_BINARY_DIR}/ui_x_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_x_main_window.h
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_x_main_window.h
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_y_gui/ui_y_main_window.h
+  COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_BINARY_DIR}/ui_y_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_y_gui/ui_y_main_window.h
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_y_main_window.h
+)
+
+add_custom_target(copy_ui_headers ALL
+  DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_x_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_y_gui/ui_y_main_window.h
 )
 
 ################################################################################
@@ -87,6 +117,8 @@ add_executable(open_manipulator_x_gui_node
   ${PROJECT_MOCS_X}
   ${PROJECT_UI_HEADERS_X}
 )
+
+add_dependencies(open_manipulator_x_gui_node copy_ui_headers)
 
 ament_target_dependencies(open_manipulator_x_gui_node
   rclcpp
@@ -105,6 +137,8 @@ add_executable(open_manipulator_y_gui_node
   ${PROJECT_MOCS_Y}
   ${PROJECT_UI_HEADERS_Y}
 )
+
+add_dependencies(open_manipulator_y_gui_node copy_ui_headers)
 
 ament_target_dependencies(open_manipulator_y_gui_node
   rclcpp
