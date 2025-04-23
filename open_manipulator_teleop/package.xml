@@ -8,15 +8,11 @@
   <license>Apache License 2.0</license>
   <author email="wsh@robotis.com">Sungho Woo</author>
   <author email="ywh@robotis.com">Wonho Yun</author>
-
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
-  <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
-  <depend>open_manipulator_msgs</depend>
   <depend>trajectory_msgs</depend>
   <depend>control_msgs</depend>
-
   <export>
     <build_type>ament_python</build_type>
   </export>
