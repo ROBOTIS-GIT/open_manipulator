@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
    <xacro:macro name="open_manipulator_y_leader" params="prefix">
-      <xacro:property name="meshes_file_direction" value="package://open_manipulator_description/meshes/om_y_leader/" />
+      <xacro:property name="meshes_file_direction" value="package://open_manipulator_description/meshes/om_y_leader" />
       <link name="${prefix}link0">
          <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
