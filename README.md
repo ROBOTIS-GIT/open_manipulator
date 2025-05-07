@@ -139,7 +139,7 @@ Follow these steps if you prefer to install directly on your host system:
 
 6. **Create and apply udev rules**
    ```bash
-   ros2 run open_manipulator_bringup x_create_udev_rules # for om_x
+   ros2 run open_manipulator_bringup om_create_udev_rules
    ```
 
 ## **3. Execution Commands**

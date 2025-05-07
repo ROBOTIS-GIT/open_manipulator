@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_gui
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.3 (2025-05-07)
+------------------
+* None
+
+
 3.2.2 (2025-04-17)
 ------------------
 * Updated CMakeLists.txt and Handle lint errors
