@@ -25,6 +25,8 @@ setup(
             glob('config/om_y_leader/*'),
         ),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
+        (os.path.join('share', package_name), ['open-manipulator-cdc.rules']),
+
     ],
     install_requires=['setuptools'],
     zip_safe=True,
