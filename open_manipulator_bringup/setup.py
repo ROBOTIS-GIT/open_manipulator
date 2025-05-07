@@ -8,7 +8,7 @@ package_name = 'open_manipulator_bringup'
 
 setup(
     name=package_name,
-    version='3.2.2',
+    version='3.2.3',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
@@ -25,7 +25,8 @@ setup(
             glob('config/om_y_leader/*'),
         ),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
-        (os.path.join('lib', package_name), ['scripts/x_create_udev_rules']),
+        (os.path.join('share', package_name), ['open-manipulator-cdc.rules']),
+
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -38,6 +39,7 @@ setup(
         'console_scripts': [
             'joint_trajectory_executor = open_manipulator_bringup.joint_trajectory_executor:main',
             'pack_unpack_y = open_manipulator_bringup.pack_unpack_y:main',
+            'om_create_udev_rules = open_manipulator_bringup.om_create_udev_rules:main',
         ],
     },
 )
