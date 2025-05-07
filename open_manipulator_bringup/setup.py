@@ -25,7 +25,7 @@ setup(
             glob('config/om_y_leader/*'),
         ),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
-        (os.path.join('lib', package_name), ['scripts/x_create_udev_rules']),
+        (os.path.join('lib', package_name), ['scripts/om_create_udev_rules']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
