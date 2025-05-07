@@ -6,7 +6,6 @@ Changelog for package open_manipulator_moveit_config
 ------------------
 * None
 
-
 3.2.2 (2025-04-17)
 ------------------
 * Handling lint errors
