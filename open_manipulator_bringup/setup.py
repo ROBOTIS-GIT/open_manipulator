@@ -38,6 +38,7 @@ setup(
         'console_scripts': [
             'joint_trajectory_executor = open_manipulator_bringup.joint_trajectory_executor:main',
             'pack_unpack_y = open_manipulator_bringup.pack_unpack_y:main',
+            'om_create_udev_rules = open_manipulator_bringup.scripts.om_create_udev_rules:main',
         ],
     },
 )
