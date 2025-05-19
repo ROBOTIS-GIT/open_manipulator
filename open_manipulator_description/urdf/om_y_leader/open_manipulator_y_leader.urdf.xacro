@@ -5,10 +5,10 @@
   <xacro:arg name="use_fake_hardware" default="false" />
   <xacro:arg name="fake_sensor_commands" default="false" />
 
-  <xacro:property name="robot_model" value="$(env ROBOT_MODEL)" />
-
   <!-- Include OpenManipulator-Y_leader urdf macro -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/om_y_leader/open_manipulator_y_leader_arm.urdf" />
+  <!-- Include OpenManipulator-Y_leader gazebo macro -->
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/open_manipulator_y_leader.gazebo.xacro" />
 
   <!-- Include OpenManipulator-Y Leader ros2 control macro -->
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/open_manipulator_y_leader_system.ros2_control.xacro" />
@@ -24,9 +24,17 @@
   </joint>
 
   <xacro:open_manipulator_y_leader prefix="$(arg prefix)" />
+  <xacro:open_manipulator_y_gazebo prefix="$(arg prefix)" />
 
   <xacro:open_manipulator_y_leader_system
     name="OpenManipulatorYLeaderSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
     use_fake_hardware="$(arg use_fake_hardware)"
     fake_sensor_commands="$(arg fake_sensor_commands)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/om_y_leader/gazebo_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
 </robot>
