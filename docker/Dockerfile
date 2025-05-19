@@ -24,7 +24,7 @@ RUN if [ "$WITH_GAZEBO" = "true" ]; then \
     && rm -rf /var/lib/apt/lists/*; \
     fi
 
-ENV COLCON_WS=/root/colcon_ws
+ENV COLCON_WS=/root/ros2_ws
 WORKDIR ${COLCON_WS}
 
 RUN mkdir -p ${COLCON_WS}/src && \
@@ -47,6 +47,5 @@ RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc  && \
     echo "source ${COLCON_WS}/install/setup.bash" >> ~/.bashrc  && \
     echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc  && \
-    echo "export ROBOT_MODEL=om_y_follower" >> ~/.bashrc
 
 CMD ["bash"]
