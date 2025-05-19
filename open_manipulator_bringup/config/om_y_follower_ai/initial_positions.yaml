@@ -1,4 +1,4 @@
-# Configuration for Open Manipulator Y initial positions
+# Configuration for Open Manipulator Y Follower initial positions
 
 joint_trajectory_executor:
   ros__parameters:
@@ -9,11 +9,12 @@ joint_trajectory_executor:
       - joint4
       - joint5
       - joint6
+      - rh_r1_joint
 
     step_names: [home, ready]  # Names of the steps
 
-    home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # Initial position
-    ready: [0.0, -1.0, 1.0, 0.0, 0.0, 0.0]  # Ready position
+    home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # Initial position
+    ready: [0.0, -1.5708, 2.6529, -1.0821, 1.5708, 0.0, 0.0]  # Ready position
 
     duration: 10.0
     epsilon: 0.01
