@@ -63,7 +63,7 @@ def generate_launch_description():
             'ros2',
             'launch',
             'open_manipulator_bringup',
-            'hardware_y_leader.launch.py',
+            'omy_leader_ai.launch.py',
         ],
         output='screen',
         shell=True,
