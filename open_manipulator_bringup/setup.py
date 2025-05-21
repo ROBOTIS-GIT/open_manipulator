@@ -16,6 +16,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
         (os.path.join('share', package_name, 'config/om_x'), glob('config/om_x/*')),
         (os.path.join('share', package_name, 'config/om_y'), glob('config/om_y/*')),
+        (os.path.join('share', package_name, 'config/om_y_base'), glob('config/om_y_base/*')),
         (
             os.path.join('share', package_name, 'config/om_y_follower'),
             glob('config/om_y_follower/*'),
