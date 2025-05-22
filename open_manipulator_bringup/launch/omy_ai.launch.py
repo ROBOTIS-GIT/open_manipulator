@@ -37,7 +37,7 @@ def generate_launch_description():
             'ros2',
             'launch',
             'open_manipulator_bringup',
-            'hardware_y_follower.launch.py',
+            'omy_follower_ai.launch.py',
         ],
         output='screen',
     )
@@ -46,7 +46,7 @@ def generate_launch_description():
     trajectory_params_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'om_y_follower',
+        'om_y_follower_ai',
         'initial_positions.yaml',
     ])
 
