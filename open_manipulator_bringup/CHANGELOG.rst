@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.4 (2025-05-30)
+------------------
+* None
+
 3.2.3 (2025-05-07)
 ------------------
 * Updated udev settings for improved device recognition

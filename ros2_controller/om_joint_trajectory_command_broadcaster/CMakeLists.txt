@@ -12,14 +12,12 @@ endif()
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   builtin_interfaces
-  control_msgs
   controller_interface
   generate_parameter_library
   pluginlib
   rclcpp_lifecycle
   rcutils
   realtime_tools
-  sensor_msgs
   urdf
   trajectory_msgs
 )
@@ -49,9 +47,13 @@ target_include_directories(joint_trajectory_command_broadcaster PUBLIC
   $<INSTALL_INTERFACE:include/joint_trajectory_command_broadcaster>
 )
 target_link_libraries(joint_trajectory_command_broadcaster PUBLIC
+  ${builtin_interfaces_TARGETS}
+  ${trajectory_msgs_TARGETS}
+  controller_interface::controller_interface
   joint_trajectory_command_broadcaster_parameters
+  pluginlib::pluginlib
+  rclcpp_lifecycle::rclcpp_lifecycle
 )
-ament_target_dependencies(joint_trajectory_command_broadcaster PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(joint_trajectory_command_broadcaster PRIVATE "JOINT_TRAJECTORY_COMMAND_BROADCASTER_BUILDING_DLL")
