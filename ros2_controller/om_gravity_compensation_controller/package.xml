@@ -24,6 +24,7 @@
   <depend>rsl</depend>
   <depend>tl_expected</depend>
   <depend>urdf</depend>
+  <depend>kdl_parser</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
