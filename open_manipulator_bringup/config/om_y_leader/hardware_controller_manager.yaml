@@ -2,9 +2,7 @@
 /**:
   controller_manager:
     ros__parameters:
-      update_rate: 400  # Hz
-      thread_priority: 20
-      cpu_affinity: [1, 2, 3]
+      update_rate: 100  # Hz
 
       joint_state_broadcaster:
         type: joint_state_broadcaster/JointStateBroadcaster
@@ -69,11 +67,8 @@
         - joint4
         - joint5
         - joint6
-        - rh_r1_joint
       interfaces:
         - position
-      reverse_joints:
-        - rh_r1_joint
       offsets:
         - 0.0
         - 0.0
@@ -81,4 +76,3 @@
         - 0.0
         - 0.0
         - 0.0
-        - 0.2

@@ -86,8 +86,8 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         arguments=[
-            'gravity_compensation_controller',
-            'spring_actuator_controller',
+            # 'gravity_compensation_controller',
+            # 'spring_actuator_controller',
             'joint_state_broadcaster',
             'joint_trajectory_command_broadcaster',
         ],

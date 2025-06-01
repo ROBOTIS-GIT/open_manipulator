@@ -1,9 +1,7 @@
 controller_manager:
   ros__parameters:
     use_sim_time: False
-    update_rate: 400  # Hz
-    thread_priority: 40
-    cpu_affinity: [1, 2, 3]
+    update_rate: 100  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -20,7 +18,6 @@ arm_controller:
       - joint4
       - joint5
       - joint6
-      - rh_r1_joint
 
     interface_name: position
 
