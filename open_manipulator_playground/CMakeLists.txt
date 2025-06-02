@@ -29,9 +29,9 @@ target_include_directories(hello_moveit_omx PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 target_compile_features(hello_moveit_omx PUBLIC cxx_std_17)
-ament_target_dependencies(hello_moveit_omx
-  moveit_ros_planning_interface
-  rclcpp
+target_link_libraries(hello_moveit_omx PUBLIC
+  moveit_ros_planning_interface::moveit_move_group_interface
+  rclcpp::rclcpp
 )
 
 add_executable(hello_moveit_omy src/hello_moveit_omy.cpp)
@@ -40,9 +40,9 @@ target_include_directories(hello_moveit_omy PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 target_compile_features(hello_moveit_omy PUBLIC cxx_std_17)
-ament_target_dependencies(hello_moveit_omy
-  moveit_ros_planning_interface
-  rclcpp
+target_link_libraries(hello_moveit_omy PUBLIC
+  moveit_ros_planning_interface::moveit_move_group_interface
+  rclcpp::rclcpp
 )
 
 ################################################################################
