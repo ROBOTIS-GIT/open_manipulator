@@ -77,13 +77,65 @@ qt5_wrap_cpp(PROJECT_MOCS_X ${PROJECT_HEADERS_X})
 qt5_wrap_cpp(PROJECT_MOCS_Y ${PROJECT_HEADERS_Y})
 
 ################################################################################
+# Build
+################################################################################
+add_executable(open_manipulator_x_gui_node
+  ${PROJECT_SOURCES_X}
+  ${PROJECT_MOCS_X}
+  ${PROJECT_UI_HEADERS_X}
+)
+
+add_dependencies(open_manipulator_x_gui_node copy_ui_headers)
+
+################################################################################
 # Include directories
 ################################################################################
-include_directories(
+target_include_directories(open_manipulator_x_gui_node PUBLIC
   include
   ${EIGEN3_INCLUDE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/ui
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(open_manipulator_x_gui_node
+  rclcpp::rclcpp
+  ${geometry_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  ${sensor_msgs_TARGETS}
+  moveit_ros_planning_interface::moveit_move_group_interface
+  ${EIGEN3_TARGETS}
+  Qt5::Widgets
+)
+
+add_executable(open_manipulator_y_gui_node
+  ${PROJECT_SOURCES_Y}
+  ${PROJECT_MOCS_Y}
+  ${PROJECT_UI_HEADERS_Y}
+)
+
+add_dependencies(open_manipulator_y_gui_node copy_ui_headers)
+
+target_include_directories(open_manipulator_y_gui_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  include
+  ${EIGEN3_INCLUDE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/ui
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(open_manipulator_y_gui_node
+  rclcpp::rclcpp
+  ${geometry_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  ${sensor_msgs_TARGETS}
+  moveit_ros_planning_interface::moveit_move_group_interface
+  ${EIGEN3_TARGETS}
+  Qt5::Widgets
 )
 
 # Copy generated UI headers to the correct location
@@ -107,49 +159,6 @@ add_custom_target(copy_ui_headers ALL
   DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_x_main_window.h
     ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_y_gui/ui_y_main_window.h
-)
-
-################################################################################
-# Build
-################################################################################
-add_executable(open_manipulator_x_gui_node
-  ${PROJECT_SOURCES_X}
-  ${PROJECT_MOCS_X}
-  ${PROJECT_UI_HEADERS_X}
-)
-
-add_dependencies(open_manipulator_x_gui_node copy_ui_headers)
-
-ament_target_dependencies(open_manipulator_x_gui_node
-  rclcpp
-  geometry_msgs
-  std_msgs
-  sensor_msgs
-  moveit_msgs
-  moveit_ros_planning
-  moveit_ros_planning_interface
-  Eigen3
-  Qt5Widgets
-)
-
-add_executable(open_manipulator_y_gui_node
-  ${PROJECT_SOURCES_Y}
-  ${PROJECT_MOCS_Y}
-  ${PROJECT_UI_HEADERS_Y}
-)
-
-add_dependencies(open_manipulator_y_gui_node copy_ui_headers)
-
-ament_target_dependencies(open_manipulator_y_gui_node
-  rclcpp
-  geometry_msgs
-  std_msgs
-  sensor_msgs
-  moveit_msgs
-  moveit_ros_planning
-  moveit_ros_planning_interface
-  Eigen3
-  Qt5Widgets
 )
 
 ################################################################################

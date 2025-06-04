@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster.hpp>
+#include "joint_trajectory_command_broadcaster/joint_trajectory_command_broadcaster.hpp"
 
 #include <cstddef>
 #include <limits>
@@ -264,7 +264,7 @@ double get_value(
 }
 
 controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
-  const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   // Update stored values
   for (const auto & state_interface : state_interfaces_) {
@@ -272,8 +272,10 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
     if (map_interface_to_joint_state_.count(interface_name) > 0) {
       interface_name = map_interface_to_joint_state_[interface_name];
     }
-    name_if_value_mapping_[state_interface.get_prefix_name()][interface_name] =
-      state_interface.get_value();
+    auto value = state_interface.get_optional();
+    if (value) {
+      name_if_value_mapping_[state_interface.get_prefix_name()][interface_name] = *value;
+    }
   }
 
   // Publish JointTrajectory message with current positions
