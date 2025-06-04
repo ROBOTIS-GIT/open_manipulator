@@ -29,15 +29,6 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "sensor_msgs/msg/joint_state.hpp"
-#include "std_msgs/msg/float64_multi_array.hpp"
-
-// KDL includes (if needed for your calculations or expansions)
-#include <kdl_parser/kdl_parser.hpp>
-#include <kdl/frames.hpp>
-#include <kdl/jntarray.hpp>
-#include <kdl/tree.hpp>
-#include <kdl/treeidsolver_recursive_newton_euler.hpp>
 
 // Visibility and parameter definitions
 #include <om_spring_actuator_controller/spring_actuator_controller_parameters.hpp>
@@ -118,11 +109,6 @@ protected:
    */
   std::shared_ptr<ParamListener> param_listener_;
   Params params_;
-
-  // KDL data structures (used if needed for advanced calculations)
-  KDL::Tree tree_;
-  KDL::JntArray q_ddot_;
-  KDL::WrenchMap f_ext_;  // external forces, if needed
 
   /// Switch for dithering logic to overcome static friction
   bool dither_switch_;
