@@ -6,6 +6,7 @@ Changelog for package om_joint_trajectory_command_broadcaster
 ------------------
 * Modified ROS2 controller package dependencies
 * Fixed stderr output handling
+* Deprecate ament_include_dependency usage in CMakeLists.txt
 * Contributors: Wonho Yun
 
 3.2.3 (2025-05-07)

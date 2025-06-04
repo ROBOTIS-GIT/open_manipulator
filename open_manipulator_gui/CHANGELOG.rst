@@ -4,7 +4,8 @@ Changelog for package open_manipulator_gui
 
 3.2.4 (2025-05-30)
 ------------------
-* None
+* Deprecate ament_include_dependency usage in CMakeLists.txt
+* Contributors: Wonho Yun
 
 3.2.3 (2025-05-07)
 ------------------
