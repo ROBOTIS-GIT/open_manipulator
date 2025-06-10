@@ -2,6 +2,14 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.4 (2025-05-30)
+------------------
+* None
+
+3.2.3 (2025-05-07)
+------------------
+* None
+
 3.2.2 (2025-04-17)
 ------------------
 * Streamlined Ros2 control config files and Handle lint errors

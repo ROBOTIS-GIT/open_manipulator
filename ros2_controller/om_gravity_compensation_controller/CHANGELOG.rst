@@ -2,6 +2,17 @@
 Changelog for package om_gravity_compensation_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.4 (2025-05-30)
+------------------
+* Modified ROS2 controller package dependencies
+* Fixed stderr output handling
+* Deprecate ament_include_dependency usage in CMakeLists.txt
+* Contributors: Wonho Yun
+
+3.2.3 (2025-05-07)
+------------------
+* None
+
 3.2.2 (2025-04-17)
 ------------------
 * None

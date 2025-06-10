@@ -2,6 +2,18 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.4 (2025-05-30)
+------------------
+* Modified ROS2 controller package dependencies
+* Fixed stderr output handling
+* Deprecate ament_include_dependency usage in CMakeLists.txt
+* Contributors: Wonho Yun
+
+3.2.3 (2025-05-07)
+------------------
+* Updated udev settings for improved device recognition
+* Contributors: Wonho Yun
+
 3.2.2 (2025-04-17)
 ------------------
 * Optimized ROS2 control configurations for better performance

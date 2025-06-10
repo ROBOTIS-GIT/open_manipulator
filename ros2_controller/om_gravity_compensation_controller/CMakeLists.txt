@@ -53,9 +53,19 @@ target_include_directories(gravity_compensation_controller PUBLIC
   $<INSTALL_INTERFACE:include/gravity_compensation_controller>
 )
 target_link_libraries(gravity_compensation_controller PUBLIC
+  controller_interface::controller_interface
+  hardware_interface::mock_components
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rclcpp_lifecycle::rclcpp_lifecycle
+  realtime_tools::realtime_tools
+  ${backward_ros_LIBRARIES}
+  ${tl_expected_LIBRARIES}
+  ${urdf_LIBRARIES}
+  ${kdl_parser_TARGETS}
+  ${orocos_kdl_vendor_TARGETS}
   gravity_compensation_controller_parameters
 )
-ament_target_dependencies(gravity_compensation_controller PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.

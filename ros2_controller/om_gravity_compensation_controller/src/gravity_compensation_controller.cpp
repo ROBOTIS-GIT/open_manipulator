@@ -58,12 +58,13 @@ GravityCompensationController::state_interface_configuration() const
 }
 
 controller_interface::return_type GravityCompensationController::update(
-  const rclcpp::Time & time, const rclcpp::Duration & period)
+  [[maybe_unused]] const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   auto assign_point_from_interface =
     [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface) {
       for (size_t index = 0; index < n_joints_; ++index) {
-        trajectory_point_interface[index] = joint_interface[index].get().get_value();
+        trajectory_point_interface[index] =
+          joint_interface[index].get().get_optional().value_or(0.0);
       }
     };
 
@@ -138,7 +139,12 @@ controller_interface::return_type GravityCompensationController::update(
       }
     }
 
-    joint_command_interface_[0][i].get().set_value(torques(i) * params_.torque_scaling_factors[i]);
+    bool set_ok = joint_command_interface_[0][i].get().set_value(
+      torques(i) * params_.torque_scaling_factors[i]);
+    if (!set_ok) {
+      RCLCPP_ERROR(
+        get_node()->get_logger(), "Failed to set command value for joint %zu, interface %u", i, 0);
+    }
   }
 
   // Update previous velocities for next iteration
@@ -274,7 +280,11 @@ controller_interface::CallbackReturn GravityCompensationController::on_deactivat
 {
   for (size_t i = 0; i < n_joints_; ++i) {
     for (size_t j = 0; j < command_interface_types_.size(); ++j) {
-      command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
+      bool set_ok = command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
+      if (!set_ok) {
+        RCLCPP_ERROR(get_node()->get_logger(),
+          "Failed to reset command value for joint %zu, interface %zu", i, j);
+      }
     }
   }
   RCLCPP_INFO(get_node()->get_logger(), "GravityCompensationController deactivated successfully.");

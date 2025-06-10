@@ -71,7 +71,8 @@ controller_interface::return_type SpringActuatorController::update(
   auto assign_point_from_interface =
     [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface) {
       for (size_t index = 0; index < dof_; ++index) {
-        trajectory_point_interface[index] = joint_interface[index].get().get_value();
+        trajectory_point_interface[index] =
+          joint_interface[index].get().get_optional().value_or(0.0);
       }
     };
 
@@ -113,7 +114,10 @@ controller_interface::return_type SpringActuatorController::update(
   for (size_t i = 0; i < dof_; ++i) {
     // Multiply by any user-defined torque scaling if desired
     double scaled_torque = torques[i] * params_.torque_scaling_factors[i];
-    joint_command_interface_[0][i].get().set_value(scaled_torque);
+    bool set_ok = joint_command_interface_[0][i].get().set_value(scaled_torque);
+    if (!set_ok) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Failed to set command value for joint %zu", i);
+    }
   }
 
   return controller_interface::return_type::OK;
@@ -176,20 +180,6 @@ controller_interface::CallbackReturn SpringActuatorController::on_configure(
   joint_command_interface_.resize(command_interface_types_.size());
   joint_state_interface_.resize(state_interface_types_.size());
 
-  const std::string & urdf = get_robot_description();
-  if (!urdf.empty()) {
-    if (!kdl_parser::treeFromString(urdf, tree_)) {
-      RCLCPP_ERROR(get_node()->get_logger(), "Failed to parse robot description!");
-      return CallbackReturn::ERROR;
-    }
-    RCLCPP_INFO(get_node()->get_logger(), "Successfully parsed the robot description.");
-  } else {
-    RCLCPP_DEBUG(get_node()->get_logger(), "No URDF file given, continuing...");
-  }
-
-  // Example: resizing certain arrays if needed
-  q_ddot_.resize(dof_);
-
   RCLCPP_INFO(get_node()->get_logger(), "SpringActuatorController configured successfully.");
   return CallbackReturn::SUCCESS;
 }
@@ -240,7 +230,11 @@ controller_interface::CallbackReturn SpringActuatorController::on_deactivate(
 {
   for (size_t i = 0; i < n_joints_; ++i) {
     for (size_t j = 0; j < command_interface_types_.size(); ++j) {
-      command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
+      bool set_ok = command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
+      if (!set_ok) {
+        RCLCPP_ERROR(get_node()->get_logger(),
+          "Failed to reset command value for joint %zu, interface %zu", i, j);
+      }
     }
   }
   RCLCPP_INFO(get_node()->get_logger(), "SpringActuatorController deactivated successfully.");
@@ -251,8 +245,6 @@ controller_interface::CallbackReturn SpringActuatorController::on_cleanup(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   dither_switch_ = false;
-  tree_ = KDL::Tree();
-  f_ext_.clear();
 
   RCLCPP_INFO(get_node()->get_logger(), "SpringActuatorController cleaned up successfully.");
   return CallbackReturn::SUCCESS;
