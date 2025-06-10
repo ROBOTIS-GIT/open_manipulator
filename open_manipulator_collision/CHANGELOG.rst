@@ -2,7 +2,7 @@
 Changelog for package open_manipulator_collision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.2.5 (2025-06-05)
+3.3.0 (2025-06-10)
 ------------------
-* Updated a self-collision node for the leader robot
+* Added self-collision functionality to OMY Follower
 * Contributors: Sungho Woo
