@@ -43,7 +43,7 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 0 -0.035" rpy="0 0 0" />
+            <origin xyz="0 -0.01 -0.035" rpy="0 0 0" />
             <geometry>
                <cylinder radius="0.055" length="0.1"/>
             </geometry>
@@ -73,7 +73,7 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 -0.02 0.13" rpy="0 0 0" />
+            <origin xyz="-0.005 -0.02 0.13" rpy="0 0 0" />
             <geometry>
                <cylinder radius="0.046" length="0.28"/>
             </geometry>
@@ -103,9 +103,9 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 0.125 0.12" rpy="0 0 0" />
+            <origin xyz="0 0.125 0.08" rpy="0 0 0" />
             <geometry>
-               <cylinder radius="0.042" length="0.23"/>
+               <cylinder radius="0.042" length="0.19"/>
             </geometry>
          </collision>
          <inertial>
@@ -163,7 +163,7 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 0 0.01" rpy="0 0 0" />
+            <origin xyz="0 0.01 0.005" rpy="0 0 0" />
             <geometry>
                <cylinder radius="0.043" length="0.05"/>
             </geometry>
@@ -195,7 +195,7 @@
          <collision>
             <origin xyz="0 -0.1 0" rpy="1.57 0 0" />
             <geometry>
-               <cylinder radius="0.07" length="0.25"/>
+               <cylinder radius="0.09" length="0.22"/>
             </geometry>
          </collision>
          <inertial>
@@ -233,3 +233,4 @@
       </link>
    </xacro:macro>
 </robot>
+
