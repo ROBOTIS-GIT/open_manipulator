@@ -25,10 +25,10 @@ from launch.substitutions import PathJoinSubstitution
 
 def generate_launch_description():
     urdf_path = PathJoinSubstitution([
-        FindPackageShare("open_manipulator_description"),
-        "urdf",
-        "om_y",
-        "open_manipulator_y.urdf.xacro"
+        FindPackageShare('open_manipulator_description'),
+        'urdf',
+        'om_y',
+        'open_manipulator_y.urdf.xacro'
     ])
 
     return LaunchDescription([
