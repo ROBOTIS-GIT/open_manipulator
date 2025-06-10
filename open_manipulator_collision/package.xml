@@ -18,15 +18,11 @@
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
-  <depend>tf2_ros</depend>
-  <depend>tf2</depend>
-  <depend>trajectory_msgs</depend>
   <depend>eigen</depend>
   <depend>visualization_msgs</depend>
   <depend>fcl</depend>
   <depend>kdl_parser</depend>
   <depend>urdf</depend>
-  <depend>tf2_kdl</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

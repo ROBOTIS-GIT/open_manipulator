@@ -41,7 +41,7 @@ def generate_launch_description():
                 'robot_description': Command(['xacro ', urdf_path]),
                 'base_link': 'link0',
                 'tip_link': 'rh_p12_rn_base',
-                'enable_marker': True
+                'enable_marker': False
             }],
             output='screen'
         )

@@ -20,7 +20,6 @@ find_package(fcl REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(kdl_parser REQUIRED)
 find_package(urdf REQUIRED)
-find_package(tf2_kdl REQUIRED)
 
 include_directories(
   include
@@ -36,11 +35,11 @@ ament_target_dependencies(self_collision_node
   rclcpp
   std_msgs
   sensor_msgs
-  fcl
   visualization_msgs
-  kdl_parser
   urdf
-  tf2_kdl
+  kdl_parser
+  fcl
+  Eigen3
 )
 
 target_link_libraries(self_collision_node fcl)
