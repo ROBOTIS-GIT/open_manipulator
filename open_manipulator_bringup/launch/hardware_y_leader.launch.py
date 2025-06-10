@@ -115,7 +115,6 @@ def generate_launch_description():
     self_collision_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution([
             FindPackageShare('open_manipulator_collision'),
-            'launch',
             'self_collision.launch.py'
         ])),
         condition=IfCondition(use_self_collision)
