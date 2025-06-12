@@ -19,6 +19,9 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
+from launch.actions import IncludeLaunchDescription
+from launch.conditions import IfCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch.substitutions import FindExecutable
 from launch.substitutions import LaunchConfiguration
@@ -43,11 +46,17 @@ def generate_launch_description():
             default_value='open_manipulator_y_leader.urdf.xacro',
             description='URDF/XACRO description file with the robot.',
         ),
+        DeclareLaunchArgument(
+            'use_self_collision',
+            default_value='true',
+            description='Whether to launch the self-collision detection node',
+        ),
     ]
 
     # Launch configurations
     description_file = LaunchConfiguration('description_file')
     prefix = LaunchConfiguration('prefix')
+    use_self_collision = LaunchConfiguration('use_self_collision')
 
     # Robot controllers config file path
     robot_controllers = PathJoinSubstitution([
@@ -99,16 +108,25 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='both',
-        parameters=[robot_description],
+        parameters=[robot_description, {'frame_prefix': 'leader_'}],
     )
 
-    # Wrap everything in a namespace 'leader'
+    # Conditionally included self-collision detection launch
+    self_collision_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution([
+            FindPackageShare('open_manipulator_collision'),
+            'self_collision.launch.py'
+        ])),
+        condition=IfCondition(use_self_collision)
+    )
+
     leader_with_namespace = GroupAction(
         actions=[
             PushRosNamespace('leader'),
             control_node,
             robot_controller_spawner,
             robot_state_publisher_node,
+            self_collision_launch,
         ]
     )
 

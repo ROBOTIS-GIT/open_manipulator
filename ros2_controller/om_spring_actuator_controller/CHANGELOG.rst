@@ -2,6 +2,10 @@
 Changelog for package om_spring_actuator_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.3.0 (2025-06-10)
+------------------
+* None
+
 3.2.4 (2025-05-30)
 ------------------
 * Modified ROS2 controller package dependencies

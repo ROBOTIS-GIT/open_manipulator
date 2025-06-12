@@ -30,6 +30,7 @@
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "urdf/model.h"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include "std_msgs/msg/bool.hpp"
 
 namespace joint_trajectory_command_broadcaster
 {
@@ -92,6 +93,7 @@ protected:
   bool init_joint_data();
   void init_joint_trajectory_msg();
   bool use_all_available_interfaces() const;
+  void collision_callback(const std_msgs::msg::Bool::SharedPtr msg);
 
 protected:
   // Optional parameters
@@ -110,6 +112,9 @@ protected:
 
   urdf::Model model_;
   bool is_model_loaded_ = false;
+
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr collision_flag_sub_;
+  std::atomic_bool collision_detected_{false};
 };
 
 }  // namespace joint_trajectory_command_broadcaster
