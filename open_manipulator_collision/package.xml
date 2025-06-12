@@ -14,19 +14,14 @@
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <author email="wsh@robotis.com">Sungho Woo</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
-
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>eigen</depend>
   <depend>visualization_msgs</depend>
-  <depend>fcl</depend>
+  <depend>libfcl</depend>
   <depend>kdl_parser</depend>
   <depend>urdf</depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
-
   <export>
     <build_type>ament_cmake</build_type>
   </export>
