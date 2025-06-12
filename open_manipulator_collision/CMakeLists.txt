@@ -51,7 +51,23 @@ target_link_libraries(self_collision_node
 )
 
 ################################################################################
-# Export dependencies
+# Install
+################################################################################
+install(TARGETS
+  self_collision_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY include/
+  DESTINATION include/
+)
+
+install(DIRECTORY launch/
+  DESTINATION share/${PROJECT_NAME}
+)
+
+################################################################################
+# Macro for ament package
 ################################################################################
 ament_export_dependencies(
   rclcpp
@@ -74,23 +90,4 @@ ament_export_include_directories(
 
 ament_export_libraries(self_collision_node)
 
-################################################################################
-# Install
-################################################################################
-install(TARGETS
-  self_collision_node
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(DIRECTORY include/
-  DESTINATION include/
-)
-
-install(DIRECTORY launch/
-  DESTINATION share/${PROJECT_NAME}
-)
-
-################################################################################
-# Ament package
-################################################################################
 ament_package()

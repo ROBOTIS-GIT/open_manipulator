@@ -183,13 +183,9 @@ install(DIRECTORY launch ui
 install(DIRECTORY config DESTINATION share/open_manipulator_gui)
 
 ################################################################################
-# Export information
+# Macro for ament package
 ################################################################################
 ament_export_include_directories(include)
 ament_export_libraries(open_manipulator_x_gui_node)
 ament_export_libraries(open_manipulator_y_gui_node)
-
-################################################################################
-# Macro for ament package
-################################################################################
 ament_package()
