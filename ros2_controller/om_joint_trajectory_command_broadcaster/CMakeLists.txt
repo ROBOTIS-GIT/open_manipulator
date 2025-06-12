@@ -77,12 +77,8 @@ install(
 )
 
 ################################################################################
-# Export information
+# Macro for ament package
 ################################################################################
 ament_export_targets(export_joint_trajectory_command_broadcaster HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
-
-################################################################################
-# Macro for ament package
-################################################################################
 ament_package()

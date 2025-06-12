@@ -58,10 +58,9 @@ install(TARGETS hello_moveit_omx hello_moveit_omy
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-ament_export_include_directories(include)
-ament_export_targets(export_${PROJECT_NAME})
-
 ################################################################################
 # Macro for ament package
 ################################################################################
+ament_export_include_directories(include)
+ament_export_targets(export_${PROJECT_NAME})
 ament_package()

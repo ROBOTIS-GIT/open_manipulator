@@ -58,6 +58,7 @@ jobs:
           package-name: |
             open_manipulator
             open_manipulator_bringup
+            open_manipulator_collision
             open_manipulator_description
             open_manipulator_gui
             open_manipulator_moveit_config
