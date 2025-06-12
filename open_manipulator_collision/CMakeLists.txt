@@ -21,28 +21,58 @@ find_package(visualization_msgs REQUIRED)
 find_package(kdl_parser REQUIRED)
 find_package(urdf REQUIRED)
 
-include_directories(
-  include
-  ${EIGEN3_INCLUDE_DIR}
-)
-
 ################################################################################
 # Build
 ################################################################################
 add_executable(self_collision_node src/self_collision_node.cpp)
 
-ament_target_dependencies(self_collision_node
+target_include_directories(self_collision_node
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${urdf_INCLUDE_DIRS}
+    ${kdl_parser_INCLUDE_DIRS}
+    ${sensor_msgs_INCLUDE_DIRS}
+    ${visualization_msgs_INCLUDE_DIRS}
+    ${std_msgs_INCLUDE_DIRS}
+    ${EIGEN3_INCLUDE_DIR}
+)
+
+target_link_libraries(self_collision_node
+  PUBLIC
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
+    ${sensor_msgs_TARGETS}
+    ${visualization_msgs_TARGETS}
+    ${kdl_parser_TARGETS}
+    ${urdf_TARGETS}
+    Eigen3::Eigen
+    fcl
+)
+
+################################################################################
+# Export dependencies
+################################################################################
+ament_export_dependencies(
   rclcpp
   std_msgs
   sensor_msgs
   visualization_msgs
-  urdf
   kdl_parser
-  fcl
-  Eigen3
+  urdf
 )
 
-target_link_libraries(self_collision_node fcl)
+ament_export_include_directories(
+  include
+  ${urdf_INCLUDE_DIRS}
+  ${kdl_parser_INCLUDE_DIRS}
+  ${sensor_msgs_INCLUDE_DIRS}
+  ${visualization_msgs_INCLUDE_DIRS}
+  ${std_msgs_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
+)
+
+ament_export_libraries(self_collision_node)
 
 ################################################################################
 # Install
