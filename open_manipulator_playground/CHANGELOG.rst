@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_playground
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.3.0 (2025-06-10)
+------------------
+* None
+
 3.2.4 (2025-05-30)
 ------------------
 * Deprecate ament_include_dependency usage in CMakeLists.txt
