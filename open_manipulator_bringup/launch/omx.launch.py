@@ -85,8 +85,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'om_x',
-            'open_manipulator_x.urdf.xacro',
+            'omx',
+            'omx.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
@@ -111,7 +111,7 @@ def generate_launch_description():
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'om_x',
+        'omx',
         'hardware_controller_manager.yaml',
     ])
 
@@ -124,7 +124,7 @@ def generate_launch_description():
     trajectory_params_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'om_x',
+        'omx',
         'initial_positions.yaml',
     ])
 
