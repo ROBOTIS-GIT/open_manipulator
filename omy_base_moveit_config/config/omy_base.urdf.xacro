@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="omy_base">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import omy_base urdf file -->
+    <xacro:include filename="$(find open_manipulator_description)/urdf/omy_base/omy_base.urdf.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="omy_base.ros2_control.xacro" />
+
+
+    <xacro:omy_base_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>
