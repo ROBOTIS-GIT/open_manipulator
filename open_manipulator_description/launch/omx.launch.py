@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Sungho Woo
+# Author: Wonho Yoon, Sungho Woo
 
 import os
 
@@ -52,8 +52,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'om_y',
-            'open_manipulator_y.urdf.xacro',
+            'omx',
+            'omx.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
@@ -73,7 +73,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'prefix',
             default_value='""',
-            description='prefix of the joint and link names',
+            description='Prefix of the joint and link names',
         ),
         DeclareLaunchArgument(
             'use_gui',
