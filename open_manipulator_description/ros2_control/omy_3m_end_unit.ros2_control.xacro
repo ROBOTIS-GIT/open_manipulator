@@ -6,12 +6,6 @@
 
     <ros2_control name="${name}" type="system">
 
-      <xacro:if value="$(arg use_sim)">
-        <hardware>
-          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-        </hardware>
-      </xacro:if>
-
       <xacro:unless value="$(arg use_sim)">
         <hardware>
           <xacro:if value="${use_fake_hardware}">
@@ -42,12 +36,12 @@
         </hardware>
       </xacro:unless>
 
-      <joint name="${prefix}rh_r1_joint">
+      <!-- <joint name="${prefix}rh_r1_joint">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
-      </joint>
+      </joint> -->
 
       <!-- <gpio name="dxl7">
         <param name="type">dxl</param>
