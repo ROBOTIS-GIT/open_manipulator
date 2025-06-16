@@ -36,13 +36,6 @@
         </hardware>
       </xacro:unless>
 
-      <!-- <joint name="${prefix}rh_r1_joint">
-        <command_interface name="position"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint> -->
-
       <!-- <gpio name="dxl7">
         <param name="type">dxl</param>
         <param name="ID">7</param>
