@@ -14,7 +14,7 @@ setup(
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
-        (os.path.join('share', package_name, 'config/om_x'), glob('config/om_x/*')),
+        (os.path.join('share', package_name, 'config/omx'), glob('config/omx/*')),
         (os.path.join('share', package_name, 'config/om_y'), glob('config/om_y/*')),
         (os.path.join('share', package_name, 'config/om_y_base'), glob('config/om_y_base/*')),
         (
