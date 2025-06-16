@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: open_manipulator_description
+    relative_path: urdf/omy_base/omy_base.urdf.xacro
+  srdf:
+    relative_path: config/omy_base.srdf
+  package_settings:
+    author_name: ywh
+    author_email: ywh@robotis.com
+    generated_timestamp: 1749601834
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
