@@ -1,5 +1,5 @@
 services:
-  ros2:
+  open_manipulator:
     container_name: open_manipulator
     build:
       context: .
