@@ -75,7 +75,7 @@ def generate_launch_description():
         'omy_f3m.urdf.xacro',
     )
 
-    doc = xacro.process_file(xacro_file, mappings={'use_sim': 'true', 'config_type': 'omy_f3m'})
+    doc = xacro.process_file(xacro_file, mappings={'use_sim': 'true', 'config_type': 'omy_f3m_follower_ai'})
 
     robot_desc = doc.toprettyxml(indent='  ')
 
