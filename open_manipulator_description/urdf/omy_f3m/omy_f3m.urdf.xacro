@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- OpenManipulator-Y -->
 <robot name="omy_f3m" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:arg name="prefix" default="" />
   <xacro:arg name="use_sim" default="false" />
@@ -7,28 +6,20 @@
   <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="config_type" default="omy_f3m" />
 
-  <xacro:property name="robot_model" value="$(env ROBOT_MODEL)" />
-
-  <!-- Include OpenManipulator-Y urdf macro -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/omy_f3m_arm.urdf.xacro" />
 
-  <!-- Include OpenManipulator-Y gazebo macro -->
   <xacro:include filename="$(find open_manipulator_description)/gazebo/omy_f3m.gazebo.xacro" />
 
-  <!-- Include Gripper urdf macro -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/rh_p12_rn_a.urdf.xacro" />
 
-  <!-- Include Gripper gazebo macro -->
   <xacro:include filename="$(find open_manipulator_description)/gazebo/rh_p12_rn_a.gazebo.xacro" />
 
-  <!-- Include OpenManipulator-Y ros2 control macro -->
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m.ros2_control.xacro" />
+
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m_end_unit.ros2_control.xacro" />
 
-  <!-- World -->
   <link name="world"/>
 
-  <!-- Used for fixing OpenManipulator-Y -->
   <joint name="$(arg prefix)world_fixed" type="fixed">
     <parent link="world"/>
     <child link="$(arg prefix)link0"/>
@@ -48,12 +39,12 @@
   <xacro:rh_p12_rn_a_gazebo prefix="$(arg prefix)" />
 
   <xacro:omy_f3m_system
-    name="OmyF3mSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    name="OMYF3MSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
     use_fake_hardware="$(arg use_fake_hardware)"
     fake_sensor_commands="$(arg fake_sensor_commands)"/>
 
-  <xacro:omy_f3m_end_unit
-    name="OmyF3mEndUnit" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+  <xacro:omy_f3m_end_unit_system
+    name="OMYF3MEndUnitSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
     use_fake_hardware="$(arg use_fake_hardware)"
     fake_sensor_commands="$(arg fake_sensor_commands)"/>
 
