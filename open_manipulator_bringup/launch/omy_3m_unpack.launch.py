@@ -37,7 +37,7 @@ def generate_launch_description():
     )
 
     # Step 2: Run the initialization script for the follower with unpack mode
-    unpack_3m = Node(
+    omy_3m_unpack = Node(
         package='open_manipulator_bringup',
         executable='pack_unpack_3m',
         output='screen',
@@ -47,16 +47,15 @@ def generate_launch_description():
     return LaunchDescription([
         LogInfo(msg='🚀 Starting omy_3m.launch.py...'),
         start_y,
-        # Step 2: Ensure unpack_y starts only after start_y is fully launched
         RegisterEventHandler(
             OnProcessStart(
                 target_action=start_y,
                 on_start=[
                     LogInfo(
                         msg='✅ omy_3m.launch.py has fully started.'
-                        'Running unpack_3m.launch.py...'
+                        'Start to unpack...'
                     ),
-                    unpack_3m,
+                    omy_3m_unpack,
                 ],
             )
         ),
