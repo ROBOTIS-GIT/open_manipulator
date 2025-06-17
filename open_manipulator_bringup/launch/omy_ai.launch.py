@@ -37,7 +37,7 @@ def generate_launch_description():
             'ros2',
             'launch',
             'open_manipulator_bringup',
-            'omy_follower_ai.launch.py',
+            'omy_f3m_follower_ai.launch.py',
         ],
         output='screen',
     )
@@ -46,7 +46,7 @@ def generate_launch_description():
     trajectory_params_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'om_y_follower_ai',
+        'omy_f3m_follower_ai',
         'initial_positions.yaml',
     ])
 
@@ -63,7 +63,7 @@ def generate_launch_description():
             'ros2',
             'launch',
             'open_manipulator_bringup',
-            'omy_leader_ai.launch.py',
+            'omy_l100_leader_ai.launch.py',
         ],
         output='screen',
         shell=True,
@@ -95,7 +95,7 @@ def generate_launch_description():
                     LogInfo(
                         msg=(
                             '✅ joint_trajectory_executor has completed. '
-                            'Starting hardware_y_leader.launch.py...'
+                            'Starting omy_l100_leader_ai.launch.py...'
                         )
                     ),
                     start_leader,

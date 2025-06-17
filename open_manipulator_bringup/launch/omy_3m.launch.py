@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Wonho Yoon, Sungho Woo
+# Author: Wonho Yun, Sungho Woo
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -78,8 +78,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'om_y',
-            'open_manipulator_y.urdf.xacro',
+            'omy_3m',
+            'omy_3m.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
@@ -102,7 +102,7 @@ def generate_launch_description():
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'om_y',
+        'omy_3m',
         'hardware_controller_manager.yaml',
     ])
     rviz_config_file = PathJoinSubstitution([
@@ -118,6 +118,7 @@ def generate_launch_description():
         parameters=[{'robot_description': urdf_file}, controller_manager_config],
         output='both',
         condition=UnlessCondition(use_sim),
+        remappings=[('/arm_controller/joint_trajectory', '/leader/joint_trajectory')],
     )
 
     robot_state_pub_node = Node(
@@ -153,13 +154,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    gripper_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['gripper_controller'],
-        output='screen',
-    )
-
     # Event handlers to ensure order of execution
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
@@ -176,15 +170,6 @@ def generate_launch_description():
         )
     )
 
-    delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner = (
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[gripper_controller_spawner],
-            )
-        )
-    )
-
     return LaunchDescription(
         declared_arguments
         + [
@@ -193,6 +178,5 @@ def generate_launch_description():
             joint_state_broadcaster_spawner,
             delay_rviz_after_joint_state_broadcaster_spawner,
             delay_arm_controller_spawner_after_joint_state_broadcaster_spawner,
-            delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner,
         ]
     )

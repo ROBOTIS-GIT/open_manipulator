@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Wonho Yoon, Sungho Woo
+# Author: Wonho Yun, Sungho Woo
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -34,7 +34,7 @@ def generate_launch_description():
     # Declare launch arguments
     declared_arguments = [
         DeclareLaunchArgument(
-            'start_rviz', default_value='false', description='Whether to execute rviz2'
+            'start_rviz', default_value='true', description='Whether to execute rviz2'
         ),
         DeclareLaunchArgument(
             'prefix',
@@ -57,9 +57,9 @@ def generate_launch_description():
             description='Enable fake sensor commands.',
         ),
         DeclareLaunchArgument(
-            'run_init_position',
-            default_value='false',
-            description='Run init_position.py after launch',
+            'port_name',
+            default_value='/dev/ttyACM0',
+            description='Port name for hardware connection.',
         ),
     ]
 
@@ -69,7 +69,7 @@ def generate_launch_description():
     use_sim = LaunchConfiguration('use_sim')
     use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
-    # run_init_position = LaunchConfiguration('run_init_position')
+    port_name = LaunchConfiguration('port_name')
 
     # Generate URDF file using xacro
     urdf_file = Command([
@@ -78,8 +78,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'om_y_follower',
-            'open_manipulator_y_follower.urdf.xacro',
+            'omy_f3m',
+            'omy_f3m.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
@@ -93,13 +93,16 @@ def generate_launch_description():
         ' ',
         'fake_sensor_commands:=',
         fake_sensor_commands,
+        ' ',
+        'port_name:=',
+        port_name,
     ])
 
     # Paths for configuration files
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'om_y_follower',
+        'omy_f3m',
         'hardware_controller_manager.yaml',
     ])
     rviz_config_file = PathJoinSubstitution([
@@ -115,7 +118,6 @@ def generate_launch_description():
         parameters=[{'robot_description': urdf_file}, controller_manager_config],
         output='both',
         condition=UnlessCondition(use_sim),
-        remappings=[('/arm_controller/joint_trajectory', '/leader/joint_trajectory')],
     )
 
     robot_state_pub_node = Node(
@@ -151,6 +153,13 @@ def generate_launch_description():
         output='screen',
     )
 
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper_controller'],
+        output='screen',
+    )
+
     # Event handlers to ensure order of execution
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
@@ -167,6 +176,15 @@ def generate_launch_description():
         )
     )
 
+    delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner = (
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[gripper_controller_spawner],
+            )
+        )
+    )
+
     return LaunchDescription(
         declared_arguments
         + [
@@ -175,5 +193,6 @@ def generate_launch_description():
             joint_state_broadcaster_spawner,
             delay_rviz_after_joint_state_broadcaster_spawner,
             delay_arm_controller_spawner_after_joint_state_broadcaster_spawner,
+            delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner,
         ]
     )
