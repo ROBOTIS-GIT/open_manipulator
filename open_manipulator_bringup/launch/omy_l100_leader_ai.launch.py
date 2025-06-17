@@ -14,13 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Wonho Yoon, Sungho Woo
+# Author: Wonho Yun, Sungho Woo, Woojin Wie
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
 from launch.actions import IncludeLaunchDescription
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch.substitutions import FindExecutable
@@ -37,14 +37,22 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'prefix',
             default_value='""',
-            description='Prefix of the joint names, useful for multi-robot setup. '
-            "If changed, then also joint names in the controllers' configuration "
-            'must be updated.',
+            description='Prefix of the joint and link names',
         ),
         DeclareLaunchArgument(
-            'description_file',
-            default_value='open_manipulator_y_leader.urdf.xacro',
-            description='URDF/XACRO description file with the robot.',
+            'use_sim',
+            default_value='false',
+            description='Start robot in Gazebo simulation.',
+        ),
+        DeclareLaunchArgument(
+            'use_fake_hardware',
+            default_value='false',
+            description='Use fake hardware mirroring command.',
+        ),
+        DeclareLaunchArgument(
+            'fake_sensor_commands',
+            default_value='false',
+            description='Enable fake sensor commands.',
         ),
         DeclareLaunchArgument(
             'use_self_collision',
@@ -54,43 +62,52 @@ def generate_launch_description():
     ]
 
     # Launch configurations
-    description_file = LaunchConfiguration('description_file')
     prefix = LaunchConfiguration('prefix')
     use_self_collision = LaunchConfiguration('use_self_collision')
+=======
+    use_sim = LaunchConfiguration('use_sim')
+    use_fake_hardware = LaunchConfiguration('use_fake_hardware')
+    fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
 
-    # Robot controllers config file path
-    robot_controllers = PathJoinSubstitution([
-        FindPackageShare('open_manipulator_bringup'),
-        'config',
-        'om_y_leader',
-        'hardware_controller_manager.yaml',
-    ])
-
-    # ros2_control Node
-    control_node = Node(
-        package='controller_manager',
-        executable='ros2_control_node',
-        parameters=[robot_controllers],
-        output='both',
-    )
-
-    # Robot description from Xacro
-    robot_description_content = Command([
+    # Generate URDF file using xacro
+    urdf_file = Command([
         PathJoinSubstitution([FindExecutable(name='xacro')]),
         ' ',
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
             'omy_l100',
-            description_file,
+            'omy_l100.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
         prefix,
+        ' ',
+        'use_sim:=',
+        use_sim,
+        ' ',
+        'use_fake_hardware:=',
+        use_fake_hardware,
+        ' ',
+        'fake_sensor_commands:=',
+        fake_sensor_commands,
     ])
-    robot_description = {'robot_description': robot_description_content}
 
-    # Controller spawner node
+    controller_manager_config = PathJoinSubstitution([
+        FindPackageShare('open_manipulator_bringup'),
+        'config',
+        'omy_l100_leader_ai',
+        'hardware_controller_manager.yaml',
+    ])
+
+    control_node = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[{'robot_description': urdf_file}, controller_manager_config],
+        output='both',
+        condition=UnlessCondition(use_sim),
+    )
+
     robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -100,15 +117,14 @@ def generate_launch_description():
             'joint_state_broadcaster',
             'joint_trajectory_command_broadcaster',
         ],
-        parameters=[robot_description],
+        parameters=[{'robot_description': urdf_file}],
     )
 
-    # Robot State Publisher
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
+        parameters=[{'robot_description': urdf_file}, {'use_sim_time': use_sim}, {'frame_prefix': 'leader_'}],
         output='both',
-        parameters=[robot_description, {'frame_prefix': 'leader_'}],
     )
 
     # Conditionally included self-collision detection launch
@@ -130,5 +146,4 @@ def generate_launch_description():
         ]
     )
 
-    # Return combined LaunchDescription
     return LaunchDescription(declared_arguments + [leader_with_namespace])
