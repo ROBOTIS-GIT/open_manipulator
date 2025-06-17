@@ -99,6 +99,31 @@ controller_interface::return_type GravityCompensationController::update(
     torques(2) += std::abs(q(2) - 0.5) * 2.5;
   }
 
+  //Add leader sync function
+  if (has_follower_data_)
+  {
+    double gain_joint_1_to_3 = 6.0;
+    double default_gain = 1.0;
+    double min_error_rad = 10.0 * M_PI / 180.0;
+
+    bool all_joints_exceed_threshold = true;
+    for (size_t i = 0; i < n_joints_; ++i) {
+      double error = follower_joint_positions_[i] - joint_positions_[i];
+      if (std::abs(error) < min_error_rad) {
+        all_joints_exceed_threshold = false;
+        break;
+      }
+    }
+
+    if (collision_flag_ || all_joints_exceed_threshold) {
+      for (size_t i = 0; i < n_joints_; ++i) {
+        double error = follower_joint_positions_[i] - joint_positions_[i];
+        double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
+        torques(i) += gain * error;
+      }
+    }
+  }
+
   // Apply friction compensation
   for (size_t i = 0; i < tree_.getNrOfJoints(); ++i) {
     if (i >= joint_names_.size()) {
@@ -191,6 +216,22 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
+  follower_joint_positions_.resize(n_joints_);
+
+  follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
+    "/joint_states", rclcpp::QoS(10),
+    [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
+      if (msg->position.size() >= n_joints_) {
+        std::copy_n(msg->position.begin(), n_joints_, follower_joint_positions_.begin());
+        has_follower_data_ = true;
+      }
+    });
+
+  collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
+    "/collision_flag", rclcpp::QoS(1),
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+      collision_flag_ = msg->data;
+    });
 
   if (params_.joints.empty()) {
     // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?

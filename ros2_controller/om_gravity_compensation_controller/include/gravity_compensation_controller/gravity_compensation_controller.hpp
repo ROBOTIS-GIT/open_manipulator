@@ -41,6 +41,8 @@
 #include <kdl/tree.hpp>
 #include <kdl/treeidsolver_recursive_newton_euler.hpp>
 #include <om_gravity_compensation_controller/gravity_compensation_controller_parameters.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
+#include <std_msgs/msg/bool.hpp>
 
 namespace gravity_compensation_controller
 {
@@ -129,6 +131,12 @@ protected:
   std::vector<double> joint_positions_;
   std::vector<double> joint_velocities_;
   std::vector<double> previous_velocities_;
+
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr follower_joint_state_sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr collision_flag_sub_;
+  std::vector<double> follower_joint_positions_;
+  bool has_follower_data_ = false;
+  bool collision_flag_ = false;
 };
 }  // namespace gravity_compensation_controller
 
