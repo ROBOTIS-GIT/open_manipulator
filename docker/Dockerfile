@@ -40,6 +40,12 @@ RUN if [ "$WITH_GAZEBO" = "true" ]; then \
     git clone -b jazzy https://github.com/ros-controls/gz_ros2_control; \
     fi
 
+RUN cd ${COLCON_WS} && \
+    apt-get update && \
+    rosdep update && \
+    rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys="dynamixel_hardware_interface dynamixel_interfaces dynamixel_sdk open_manipulator gz_ros2_control" -y && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     cd ${COLCON_WS} && \
     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release"
