@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - WITH_GAZEBO=${WITH_GAZEBO:-true}
+        - WITH_GAZEBO=${WITH_GAZEBO:-false}
     tty: true
     restart: always
     cap_add:
