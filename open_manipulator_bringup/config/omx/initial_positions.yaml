@@ -1,5 +1,3 @@
-# Configuration for Open Manipulator X initial positions
-
 joint_trajectory_executor:
   ros__parameters:
     joint_names:
