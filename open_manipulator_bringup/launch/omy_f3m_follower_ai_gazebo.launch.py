@@ -108,7 +108,7 @@ def generate_launch_description():
             '-Y',
             '0.0',
             '-name',
-            'omy_f3m',
+            'omy_f3m_follower_ai',
             '-allow_renaming',
             'true-use_sim',
             'true',

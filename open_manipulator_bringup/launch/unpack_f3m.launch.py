@@ -31,32 +31,32 @@ def generate_launch_description():
             'ros2',
             'launch',
             'open_manipulator_bringup',
-            'hardware_y_follower.launch.py',
+            'omy_f3m.launch.py',
         ],
         output='screen',
     )
 
     # Step 2: Run the initialization script for the follower with unpack mode
-    unpack_y = Node(
+    unpack_f3m = Node(
         package='open_manipulator_bringup',
-        executable='pack_unpack_y',
+        executable='pack_unpack_f3m',
         output='screen',
         parameters=[{'operation_mode': 'unpack'}],
     )
 
     return LaunchDescription([
-        LogInfo(msg='🚀 Starting hardware_y_follower.launch.py...'),
+        LogInfo(msg='🚀 Starting omy_f3m.launch.py...'),
         start_y,
-        # Step 2: Ensure unpack_y starts only after start_y is fully launched
+        # Step 2: Ensure unpack_f3m starts only after start_y is fully launched
         RegisterEventHandler(
             OnProcessStart(
                 target_action=start_y,
                 on_start=[
                     LogInfo(
-                        msg='✅ hardware_y_follower.launch.py has fully started.'
-                        'Running unpack_y.launch.py...'
+                        msg='✅ omy_f3m.launch.py has fully started.'
+                        'Running unpack_f3m.launch.py...'
                     ),
-                    unpack_y,
+                    unpack_f3m,
                 ],
             )
         ),

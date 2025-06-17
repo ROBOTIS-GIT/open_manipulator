@@ -81,7 +81,7 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'om_y_leader',
+            'omy_l100',
             description_file,
         ]),
         ' ',
