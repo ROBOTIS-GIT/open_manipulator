@@ -1,17 +1,12 @@
 <?xml version="1.0"?>
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
   <xacro:macro name="omy_f3m_system" params="name prefix port_name:=^|/dev/ttyAMA2 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
-
     <ros2_control name="${name}" type="system">
-
       <xacro:if value="$(arg use_sim)">
         <hardware>
           <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
       </xacro:if>
-
       <xacro:unless value="$(arg use_sim)">
         <hardware>
           <xacro:if value="${use_fake_hardware}">
@@ -58,35 +53,30 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint2">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint3">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint4">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint5">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint6">
         <command_interface name="position"/>
         <state_interface name="position"/>
@@ -115,7 +105,6 @@
         <param name="Velocity I Gain">1565630</param>
         <param name="Operating Mode">3</param>
       </gpio>
-
       <gpio name="dxl2">
         <param name="type">dxl</param>
         <param name="ID">2</param>
@@ -136,7 +125,6 @@
         <param name="Velocity I Gain">1565630</param>
         <param name="Operating Mode">3</param>
       </gpio>
-
       <gpio name="dxl3">
         <param name="type">dxl</param>
         <param name="ID">3</param>
@@ -157,7 +145,6 @@
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
       </gpio>
-
       <gpio name="dxl4">
         <param name="type">dxl</param>
         <param name="ID">4</param>
@@ -178,7 +165,6 @@
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
       </gpio>
-
       <gpio name="dxl5">
         <param name="type">dxl</param>
         <param name="ID">5</param>
@@ -199,7 +185,6 @@
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
       </gpio>
-
       <gpio name="dxl6">
         <param name="type">dxl</param>
         <param name="ID">6</param>
@@ -220,7 +205,6 @@
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
       </gpio>
-
       <gpio name="omy_hat">
         <param name="type">controller</param>
         <param name="ID">200</param>
@@ -235,7 +219,5 @@
       </gpio>
 
     </ros2_control>
-
   </xacro:macro>
-
 </robot>

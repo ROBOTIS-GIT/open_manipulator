@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-  <xacro:macro name="omy_3m_end_unit" params="name prefix port_name:=^|/dev/ttyAMA4 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
-
+  <xacro:macro name="omy_3m_end_unit_system" params="name prefix port_name:=^|/dev/ttyAMA4 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
     <ros2_control name="${name}" type="system">
-
+      <xacro:if value="$(arg use_sim)">
+        <hardware>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+      </xacro:if>
       <xacro:unless value="$(arg use_sim)">
         <hardware>
           <xacro:if value="${use_fake_hardware}">
@@ -36,26 +37,7 @@
         </hardware>
       </xacro:unless>
 
-      <!-- <gpio name="dxl7">
-        <param name="type">dxl</param>
-        <param name="ID">7</param>
-        <command_interface name="Goal Position"/>
-        <state_interface name="Present Position"/>
-        <state_interface name="Present Velocity"/>
-        <state_interface name="Present Current"/>
-        <state_interface name="Torque Enable"/>
-        <state_interface name="Present Input Voltage"/>
-        <param name="Operating Mode">5</param>
-        <param name="Return Delay Time">0</param>
-      </gpio> -->
       <gpio name="omy_end">
-        <command_interface name="Goal Position"/>
-        <!-- <command_interface name="Goal Velocity"/> -->
-        <!-- <command_interface name="Goal Current"/> -->
-        <state_interface name="Present Position"/>
-        <state_interface name="Present Velocity"/>
-        <state_interface name="Present Current"/>
-        <state_interface name="Torque Enable"/>
         <param name="type">dxl</param>
         <param name="ID">210</param>
         <param name="Baud Rate (Bus)">6</param>
@@ -76,7 +58,5 @@
       </gpio>
 
     </ros2_control>
-
   </xacro:macro>
-
 </robot>
