@@ -5,7 +5,7 @@ FROM ros:jazzy-ros-base
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Define build argument for Gazebo support
-ARG WITH_GAZEBO=true
+ARG WITH_GAZEBO=false
 
 # Install common system dependencies
 RUN apt-get update && apt-get install -y \
