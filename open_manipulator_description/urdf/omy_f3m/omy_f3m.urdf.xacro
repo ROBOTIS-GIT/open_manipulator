@@ -5,6 +5,7 @@
   <xacro:arg name="use_sim" default="false" />
   <xacro:arg name="use_fake_hardware" default="false" />
   <xacro:arg name="fake_sensor_commands" default="false" />
+  <xacro:arg name="config_type" default="omy_f3m" />
 
   <xacro:property name="robot_model" value="$(env ROBOT_MODEL)" />
 
@@ -58,7 +59,7 @@
 
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find open_manipulator_bringup)/config/omy_f3m/hardware_controller_manager.yaml</parameters>
+      <parameters>$(find open_manipulator_bringup)/config/$(arg config_type)/hardware_controller_manager.yaml</parameters>
     </plugin>
   </gazebo>
 
