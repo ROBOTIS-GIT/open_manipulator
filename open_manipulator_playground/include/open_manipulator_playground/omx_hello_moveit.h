@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Sungho Woo, Wonho Yoon, Woojin Wie
+// Author: Sungho Woo, Wonho Yun, Woojin Wie
 
-#ifndef OPEN_MANIPULATOR_PLAYGROUND__HELLO_MOVEIT_OMX_H_
-#define OPEN_MANIPULATOR_PLAYGROUND__HELLO_MOVEIT_OMX_H_
+#ifndef OPEN_MANIPULATOR_PLAYGROUND__OMX_HELLO_MOVEIT_H_
+#define OPEN_MANIPULATOR_PLAYGROUND__OMX_HELLO_MOVEIT_H_
 
 #include <memory>
 #include <chrono>
@@ -24,4 +24,4 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.hpp>
 
-#endif  // OPEN_MANIPULATOR_PLAYGROUND__HELLO_MOVEIT_OMX_H_
+#endif  // OPEN_MANIPULATOR_PLAYGROUND__OMX_HELLO_MOVEIT_H_

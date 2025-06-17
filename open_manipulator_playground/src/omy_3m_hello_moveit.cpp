@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Sungho Woo, Wonho Yoon, Woojin Wie
+// Author: Sungho Woo, Wonho Yun, Woojin Wie
 
-#include "open_manipulator_playground/hello_moveit_omy.h"
+#include "open_manipulator_playground/omy_3m_hello_moveit.h"
 
 #include <memory>
 #include <chrono>
@@ -77,16 +77,16 @@ int main(int argc, char * argv[])
   }
 
   // Create the MoveIt MoveGroup Interface for the "gripper" planning group
-  auto gripper_interface = MoveGroupInterface(node, "gripper");
+  // auto gripper_interface = MoveGroupInterface(node, "gripper");
 
   // Set the "close" position for the gripper and move it
-  gripper_interface.setNamedTarget("close");
-  if (gripper_interface.move()) {
-    RCLCPP_INFO(logger, "Gripper closed successfully");  // Log success
-    std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds
-  } else {
-    RCLCPP_ERROR(logger, "Failed to close the gripper");
-  }
+  // gripper_interface.setNamedTarget("close");
+  // if (gripper_interface.move()) {
+  //   RCLCPP_INFO(logger, "Gripper closed successfully");  // Log success
+  //   std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds
+  // } else {
+  //   RCLCPP_ERROR(logger, "Failed to close the gripper");
+  // }
 
   // Move the arm back to the "home" position
   move_group_interface.setNamedTarget("home");
@@ -95,12 +95,12 @@ int main(int argc, char * argv[])
     std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds
 
     // Open the gripper
-    gripper_interface.setNamedTarget("open");
-    if (gripper_interface.move()) {
-      RCLCPP_INFO(logger, "Gripper opened successfully");  // Log success
-    } else {
-      RCLCPP_ERROR(logger, "Failed to open the gripper");
-    }
+    // gripper_interface.setNamedTarget("open");
+    // if (gripper_interface.move()) {
+    //   RCLCPP_INFO(logger, "Gripper opened successfully");  // Log success
+    // } else {
+    //   RCLCPP_ERROR(logger, "Failed to open the gripper");
+    // }
 
   } else {
     RCLCPP_ERROR(logger, "Failed to move the arm back to home position");
