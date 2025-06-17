@@ -108,7 +108,7 @@ def generate_launch_description():
             '-Y',
             '0.0',
             '-name',
-            'om',
+            'omy_3m',
             '-allow_renaming',
             'true-use_sim',
             'true',
