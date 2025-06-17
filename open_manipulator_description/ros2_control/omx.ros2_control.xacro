@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
   <xacro:macro name="omx_system" params="name prefix port_name:=^|/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
-
     <ros2_control name="${name}" type="system">
-
       <xacro:if value="$(arg use_sim)">
         <hardware>
           <plugin>gz_ros2_control/GazeboSimSystem</plugin>
@@ -45,9 +41,6 @@
             <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
             <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
             <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
-
-            <!-- This parameter is used for a prismatic joint that operates through a revolute mechanism.
-            If the joint does not require this configuration, this parameter can be removed. -->
             <param name="use_revolute_to_prismatic_gripper">1</param>
             <param name="revolute_to_prismatic_dxl">dxl5</param>
             <param name="revolute_max">-1.52</param>
@@ -65,35 +58,30 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint2">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint3">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}joint4">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <joint name="${prefix}gripper_left_joint">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
       <xacro:if value="$(arg use_sim)">
         <joint name="${prefix}gripper_right_joint">
           <param name="mimic">${prefix}gripper_left_joint</param>
@@ -111,8 +99,6 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
-        <state_interface name="Torque Enable"/>
-        <state_interface name="Present Input Voltage"/>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
@@ -120,7 +106,6 @@
         <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
-
       <gpio name="dxl2">
         <param name="type">dxl</param>
         <param name="ID">12</param>
@@ -128,8 +113,6 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
-        <state_interface name="Torque Enable"/>
-        <state_interface name="Present Input Voltage"/>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
@@ -137,7 +120,6 @@
         <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
-
       <gpio name="dxl3">
         <param name="type">dxl</param>
         <param name="ID">13</param>
@@ -145,8 +127,6 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
-        <state_interface name="Torque Enable"/>
-        <state_interface name="Present Input Voltage"/>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
@@ -154,7 +134,6 @@
         <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
-
       <gpio name="dxl4">
         <param name="type">dxl</param>
         <param name="ID">14</param>
@@ -162,8 +141,6 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
-        <state_interface name="Torque Enable"/>
-        <state_interface name="Present Input Voltage"/>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
@@ -171,7 +148,6 @@
         <param name="Profile Acceleration">50</param>
         <param name="Drive Mode">0</param>
       </gpio>
-
       <gpio name="dxl5">
         <param name="type">dxl</param>
         <param name="ID">15</param>
@@ -179,12 +155,8 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
-        <state_interface name="Torque Enable"/>
-        <state_interface name="Present Input Voltage"/>
       </gpio>
 
     </ros2_control>
-
   </xacro:macro>
-
 </robot>
