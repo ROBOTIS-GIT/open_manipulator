@@ -22,7 +22,6 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.actions import ExecuteProcess
 from launch.actions import IncludeLaunchDescription
 from launch.actions import RegisterEventHandler
 from launch.actions import SetEnvironmentVariable
@@ -115,27 +114,29 @@ def generate_launch_description():
         ],
     )
 
-    load_joint_state_controller = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'control',
-            'load_controller',
-            '--set-state',
-            'active',
+    # Controller spawner nodes
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
             'joint_state_broadcaster',
+            '--controller-manager',
+            '/controller_manager',
         ],
         output='screen',
     )
 
-    load_arm_controller = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'control',
-            'load_controller',
-            '--set-state',
-            'active',
-            'arm_controller',
-        ],
+    arm_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['arm_controller'],
+        output='screen',
+    )
+
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper_controller'],
         output='screen',
     )
 
@@ -162,13 +163,19 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=gz_spawn_entity,
-                on_exit=[load_joint_state_controller],
+                on_exit=[joint_state_broadcaster_spawner],
             )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=load_joint_state_controller,
-                on_exit=[load_arm_controller],
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[arm_controller_spawner],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=arm_controller_spawner,
+                on_exit=[gripper_controller_spawner],
             )
         ),
         bridge,
