@@ -106,16 +106,16 @@ controller_interface::return_type GravityCompensationController::update(
     double default_gain = 1.0;
     double min_error_rad = 10.0 * M_PI / 180.0;
 
-    bool all_joints_exceed_threshold = true;
+    bool any_joint_exceeds_threshold = false;
     for (size_t i = 0; i < n_joints_; ++i) {
       double error = follower_joint_positions_[i] - joint_positions_[i];
-      if (std::abs(error) < min_error_rad) {
-        all_joints_exceed_threshold = false;
+      if (std::abs(error) >= min_error_rad) {
+        any_joint_exceeds_threshold = true;
         break;
       }
     }
 
-    if (collision_flag_ || all_joints_exceed_threshold) {
+    if (collision_flag_ || any_joint_exceeds_threshold) {
       for (size_t i = 0; i < n_joints_; ++i) {
         double error = follower_joint_positions_[i] - joint_positions_[i];
         double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
@@ -216,13 +216,34 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
-  follower_joint_positions_.resize(n_joints_);
+  follower_joint_positions_.assign(n_joints_, 0.0);  // 초기화
 
   follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
     "/joint_states", rclcpp::QoS(10),
     [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
-      if (msg->position.size() >= n_joints_) {
-        std::copy_n(msg->position.begin(), n_joints_, follower_joint_positions_.begin());
+      if (msg->name.size() != msg->position.size()) {
+        RCLCPP_WARN(get_node()->get_logger(), "JointState message has mismatched name/position sizes");
+        return;
+      }
+
+      std::unordered_map<std::string, double> name_to_position;
+      for (size_t i = 0; i < msg->name.size(); ++i) {
+        name_to_position[msg->name[i]] = msg->position[i];
+      }
+
+      bool all_found = true;
+      for (size_t i = 0; i < joint_names_.size(); ++i) {
+        auto it = name_to_position.find(joint_names_[i]);
+        if (it != name_to_position.end()) {
+          follower_joint_positions_[i] = it->second;
+        } else {
+          all_found = false;
+          RCLCPP_WARN_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 2000,
+            "Joint name '%s' not found in follower joint state", joint_names_[i].c_str());
+        }
+      }
+
+      if (all_found) {
         has_follower_data_ = true;
       }
     });
