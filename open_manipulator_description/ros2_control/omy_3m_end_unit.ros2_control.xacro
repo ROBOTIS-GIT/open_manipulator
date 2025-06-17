@@ -15,14 +15,10 @@
             <param name="baud_rate">4000000</param>
             <param name="error_timeout_ms">500</param>
             <param name="dynamixel_model_folder">/param/dxl_model</param>
-            <param name="number_of_joints">1</param>
-            <param name="number_of_transmissions">1</param>
-            <param name="transmission_to_joint_matrix">
-              1
-            </param>
-            <param name="joint_to_transmission_matrix">
-              1
-            </param>
+            <param name="number_of_joints">0</param>
+            <param name="number_of_transmissions">0</param>
+            <param name="transmission_to_joint_matrix"></param>
+            <param name="joint_to_transmission_matrix"></param>
             <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
             <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
             <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
@@ -33,7 +29,7 @@
       </xacro:unless>
 
       <gpio name="omy_end">
-        <param name="type">dxl</param>
+        <param name="type">controller</param>
         <param name="ID">210</param>
         <param name="Baud Rate (Bus)">6</param>
         <param name="Tool Analog Enable">0</param>
