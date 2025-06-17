@@ -222,7 +222,7 @@
          <collision>
             <origin xyz="0 0.03 0.04" rpy="0 0 0" />
             <geometry>
-               <cylinder radius="0.04" length="0.12"/>
+               <cylinder radius="0.035" length="0.12"/>
             </geometry>
          </collision>
          <inertial>

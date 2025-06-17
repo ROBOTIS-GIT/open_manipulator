@@ -100,27 +100,14 @@ controller_interface::return_type GravityCompensationController::update(
   }
 
   //Add leader sync function
-  if (has_follower_data_)
-  {
-    double gain_joint_1_to_3 = 6.0;
-    double default_gain = 1.0;
-    double min_error_rad = 10.0 * M_PI / 180.0;
+  double gain_joint_1_to_3 = 6.0;
+  double default_gain = 1.0;
 
-    bool any_joint_exceeds_threshold = false;
+  if (collision_flag_ && has_follower_data_) {
     for (size_t i = 0; i < n_joints_; ++i) {
       double error = follower_joint_positions_[i] - joint_positions_[i];
-      if (std::abs(error) >= min_error_rad) {
-        any_joint_exceeds_threshold = true;
-        break;
-      }
-    }
-
-    if (collision_flag_ || any_joint_exceeds_threshold) {
-      for (size_t i = 0; i < n_joints_; ++i) {
-        double error = follower_joint_positions_[i] - joint_positions_[i];
-        double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
-        torques(i) += gain * error;
-      }
+      double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
+      torques(i) += gain * error;
     }
   }
 
