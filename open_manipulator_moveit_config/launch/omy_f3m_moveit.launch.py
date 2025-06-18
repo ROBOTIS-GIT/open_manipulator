@@ -44,7 +44,7 @@ def declare_arguments():
             ),
             DeclareLaunchArgument(
                 "use_sim_time",
-                default_value="true",
+                default_value="false",
                 description="Using or not time from simulation",
             ),
             DeclareLaunchArgument(
@@ -54,6 +54,7 @@ def declare_arguments():
             ),
         ]
     )
+
 
 def generate_launch_description():
     launch_rviz = LaunchConfiguration("launch_rviz")

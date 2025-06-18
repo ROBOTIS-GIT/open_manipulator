@@ -23,7 +23,7 @@
   <joint name="$(arg prefix)world_fixed" type="fixed">
     <parent link="world"/>
     <child link="$(arg prefix)link0"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
   <joint name="$(arg prefix)gripper_fixed" type="fixed">
@@ -32,6 +32,24 @@
     <axis xyz="0 0 0"/>
     <child link="$(arg prefix)rh_p12_rn_base"/>
   </joint>
+
+  <joint name="$(arg prefix)end_effector_joint" type="fixed">
+    <parent link="$(arg prefix)end_effector_flange_link"/>
+    <child link="$(arg prefix)end_effector_link"/>
+    <origin xyz="0 -0.141 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="$(arg prefix)end_effector_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01" />
+      </geometry>
+      <material name="red">
+        <color rgba="1.0 0.0 0.0 1"/>
+      </material>
+    </visual>
+  </link>
 
   <xacro:omy_f3m prefix="$(arg prefix)" />
   <xacro:omy_f3m_gazebo prefix="$(arg prefix)" />
