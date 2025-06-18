@@ -63,7 +63,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'init_position',
-            default_value='false',
+            default_value='true',
             description='Whether to launch the init_position node',
         ),
     ]
