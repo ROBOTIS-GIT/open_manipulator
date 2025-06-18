@@ -19,10 +19,10 @@
         <joint name="end_effector_joint"/>
     </group>
     <group name="gripper">
-        <joint name="rh_l1"/>
-        <joint name="rh_l2"/>
         <joint name="rh_r1_joint"/>
-        <joint name="rh_r2"/>
+        <passive_joint name="rh_r2"/>
+        <passive_joint name="rh_l1"/>
+        <passive_joint name="rh_l2"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="init" group="arm">
