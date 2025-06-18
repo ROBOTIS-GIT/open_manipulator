@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-tf-transformations \
     ros-${ROS_DISTRO}-pal-statistics \
     vim \
-    && apt-get install -y ros-${ROS_DISTRO}-moveit-* --no-install-recommends \
+    && apt-get install -y ros-${ROS_DISTRO}-moveit-* ros-${ROS_DISTRO}-warehouse-ros-sqlite --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Gazebo dependencies conditionally
