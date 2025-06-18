@@ -16,7 +16,6 @@
 #
 # Author: Wonho Yun, Sungho Woo, Woojin Wie
 
-import os
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
