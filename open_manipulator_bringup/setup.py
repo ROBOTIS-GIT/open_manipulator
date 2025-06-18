@@ -17,8 +17,11 @@ setup(
         (os.path.join('share', package_name, 'config/omx'), glob('config/omx/*')),
         (os.path.join('share', package_name, 'config/omy_3m'), glob('config/omy_3m/*')),
         (os.path.join('share', package_name, 'config/omy_f3m'), glob('config/omy_f3m/*')),
-        (os.path.join('share', package_name, 'config/omy_f3m_follower_ai'), glob('config/omy_f3m_follower_ai/*')),
-        (os.path.join('share', package_name, 'config/omy_l100_leader_ai'), glob('config/omy_l100_leader_ai/*')),
+        (os.path.join('share', package_name, 'config/omy_f3m_follower_ai'),
+            glob('config/omy_f3m_follower_ai/*')),
+        (os.path.join('share', package_name, 'config/omy_l100_leader_ai'),
+            glob('config/omy_l100_leader_ai/*')),
+        (os.path.join('share', package_name, 'config/omx'), glob('config/omx/*')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
         (os.path.join('share', package_name), ['open-manipulator-cdc.rules']),
 

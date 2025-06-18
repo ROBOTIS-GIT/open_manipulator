@@ -1,7 +1,8 @@
+from glob import glob
+import os
+
 from setuptools import find_packages
 from setuptools import setup
-import os
-from glob import glob
 
 package_name = 'open_manipulator_teleop'
 
