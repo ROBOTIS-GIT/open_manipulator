@@ -8,6 +8,7 @@ moveit_simple_controller_manager:
 
   arm_controller:
     type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
     joints:
       - joint1
       - joint2

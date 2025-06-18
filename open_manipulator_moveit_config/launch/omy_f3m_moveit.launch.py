@@ -63,10 +63,10 @@ def generate_launch_description():
     publish_robot_description_semantic = LaunchConfiguration("publish_robot_description_semantic")
 
     moveit_config = (
-        MoveItConfigsBuilder(robot_name="omy_3m", package_name="open_manipulator_moveit_config")
-        .robot_description_semantic(Path("config") / "omy_3m" / "omy_3m.srdf")
-        .joint_limits(Path("config") / "omy_3m" / "joint_limits.yaml")
-        .trajectory_execution(Path("config") / "omy_3m" / "moveit_controllers.yaml")
+        MoveItConfigsBuilder(robot_name="omy_f3m", package_name="open_manipulator_moveit_config")
+        .robot_description_semantic(Path("config") / "omy_f3m" / "omy_f3m.srdf")
+        .joint_limits(Path("config") / "omy_f3m" / "joint_limits.yaml")
+        .trajectory_execution(Path("config") / "omy_f3m" / "moveit_controllers.yaml")
         .to_moveit_configs()
     )
 
