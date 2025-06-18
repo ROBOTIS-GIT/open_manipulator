@@ -16,6 +16,7 @@
         <joint name="joint4"/>
         <joint name="joint5"/>
         <joint name="joint6"/>
+        <joint name="end_effector_joint"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="init" group="arm">
@@ -26,14 +27,8 @@
         <joint name="joint5" value="0"/>
         <joint name="joint6" value="0"/>
     </group_state>
-
-    <group name="end_effector_group">
-    <link name="link6"/> 
-    </group>
-
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="end_effector" parent_link="link6" group="end_effector_group"/>
-
+    <end_effector name="end_effector" parent_link="end_effector_link" group="arm"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="link0" link2="link1" reason="Adjacent"/>
     <disable_collisions link1="link1" link2="link2" reason="Adjacent"/>
