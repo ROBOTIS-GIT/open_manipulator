@@ -48,9 +48,9 @@ int main(int argc, char * argv[])
       msg.orientation.y = 0.0;  // Orientation (quaternion y)
       msg.orientation.z = 0.0;  // Orientation (quaternion z)
       msg.orientation.w = 1.0;  // Orientation (quaternion w)
-      msg.position.x = 0.059;   // Position in x
-      msg.position.y = -0.315;  // Position in y
-      msg.position.z = 0.662;   // Position in z
+      msg.position.x = -0.062;   // Position in x
+      msg.position.y = -0.468;  // Position in y
+      msg.position.z = 0.599;   // Position in z
       return msg;
     }();
 
@@ -58,8 +58,8 @@ int main(int argc, char * argv[])
   move_group_interface.setPoseTarget(target_pose);
 
   // Set tolerances for goal position and orientation
-  move_group_interface.setGoalPositionTolerance(0.001);
-  move_group_interface.setGoalOrientationTolerance(0.001);
+  move_group_interface.setGoalPositionTolerance(0.01);
+  move_group_interface.setGoalOrientationTolerance(0.01);
 
   // Plan the motion for the arm to reach the target pose
   auto const [success, plan] = [&move_group_interface] {

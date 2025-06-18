@@ -48,9 +48,9 @@ int main(int argc, char * argv[])
       msg.orientation.y = 0.0;  // Orientation (quaternion y)
       msg.orientation.z = 0.0;  // Orientation (quaternion z)
       msg.orientation.w = 1.0;  // Orientation (quaternion w)
-      msg.position.x = 0.059;   // Position in x
-      msg.position.y = -0.315;  // Position in y
-      msg.position.z = 0.662;   // Position in z
+      msg.position.x = 0.295;   // Position in x
+      msg.position.y = -0.220;  // Position in y
+      msg.position.z = 0.549;   // Position in z
       return msg;
     }();
 
@@ -58,8 +58,8 @@ int main(int argc, char * argv[])
   move_group_interface.setPoseTarget(target_pose);
 
   // Set tolerances for goal position and orientation
-  move_group_interface.setGoalPositionTolerance(0.001);
-  move_group_interface.setGoalOrientationTolerance(0.001);
+  move_group_interface.setGoalPositionTolerance(0.01);
+  move_group_interface.setGoalOrientationTolerance(0.01);
 
   // Plan the motion for the arm to reach the target pose
   auto const [success, plan] = [&move_group_interface] {
@@ -76,31 +76,11 @@ int main(int argc, char * argv[])
     RCLCPP_ERROR(logger, "Planning failed for the arm!");
   }
 
-  // Create the MoveIt MoveGroup Interface for the "gripper" planning group
-  // auto gripper_interface = MoveGroupInterface(node, "gripper");
-
-  // Set the "close" position for the gripper and move it
-  // gripper_interface.setNamedTarget("close");
-  // if (gripper_interface.move()) {
-  //   RCLCPP_INFO(logger, "Gripper closed successfully");  // Log success
-  //   std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds
-  // } else {
-  //   RCLCPP_ERROR(logger, "Failed to close the gripper");
-  // }
-
   // Move the arm back to the "home" position
   move_group_interface.setNamedTarget("home");
   if (move_group_interface.move()) {
     RCLCPP_INFO(logger, "Arm moved back to home position");  // Log success
     std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds
-
-    // Open the gripper
-    // gripper_interface.setNamedTarget("open");
-    // if (gripper_interface.move()) {
-    //   RCLCPP_INFO(logger, "Gripper opened successfully");  // Log success
-    // } else {
-    //   RCLCPP_ERROR(logger, "Failed to open the gripper");
-    // }
 
   } else {
     RCLCPP_ERROR(logger, "Failed to move the arm back to home position");
