@@ -55,7 +55,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'publish_robot_description_semantic',
             default_value='true',
-            description='MoveGroup publishes robot description semantic',
+            description='Whether to publish robot description semantic',
         ),
     ]
 
