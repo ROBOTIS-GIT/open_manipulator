@@ -19,7 +19,6 @@
 import os
 from pathlib import Path
 
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
@@ -30,7 +29,6 @@ from launch.substitutions import (
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from moveit_configs_utils import MoveItConfigsBuilder
-import yaml
 
 
 def generate_launch_description():
@@ -50,9 +48,6 @@ def generate_launch_description():
             description='Path where the warehouse database should be stored',
         ),
         DeclareLaunchArgument(
-            'launch_servo', default_value='false', description='Whether to launch Servo'
-        ),
-        DeclareLaunchArgument(
             'publish_robot_description_semantic',
             default_value='true',
             description='Whether to publish robot description semantic',
@@ -62,7 +57,6 @@ def generate_launch_description():
     start_rviz = LaunchConfiguration('start_rviz')
     use_sim = LaunchConfiguration('use_sim')
     warehouse_sqlite_path = LaunchConfiguration('warehouse_sqlite_path')
-    launch_servo = LaunchConfiguration('launch_servo')
     publish_robot_description_semantic = LaunchConfiguration('publish_robot_description_semantic')
 
     moveit_config = (
@@ -90,26 +84,6 @@ def generate_launch_description():
                 'publish_robot_description_semantic': publish_robot_description_semantic,
             },
         ],
-    )
-
-    servo_yaml_path = os.path.join(
-        get_package_share_directory('open_manipulator_moveit_config'),
-        'config',
-        'servo.yaml',
-    )
-    with open(servo_yaml_path, 'r') as file:
-        servo_yaml = yaml.safe_load(file)
-
-    servo_params = {'moveit_servo': servo_yaml}
-    servo_node = Node(
-        package='moveit_servo',
-        condition=IfCondition(launch_servo),
-        executable='servo_node',
-        parameters=[
-            moveit_config.to_dict(),
-            servo_params,
-        ],
-        output='screen',
     )
 
     rviz_config_file = PathJoinSubstitution(
@@ -140,6 +114,5 @@ def generate_launch_description():
         + [
             move_group_node,
             rviz_node,
-            servo_node,
         ]
     )
