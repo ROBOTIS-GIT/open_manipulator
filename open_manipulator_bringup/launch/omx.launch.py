@@ -34,7 +34,7 @@ def generate_launch_description():
     # Declare launch arguments
     declared_arguments = [
         DeclareLaunchArgument(
-            'start_rviz', default_value='true', description='Whether to execute rviz2'
+            'start_rviz', default_value='false', description='Whether to execute rviz2'
         ),
         DeclareLaunchArgument(
             'prefix',
