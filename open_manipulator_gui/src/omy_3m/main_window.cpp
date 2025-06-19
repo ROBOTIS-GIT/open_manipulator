@@ -405,7 +405,6 @@ void MainWindow::on_btn_play_clicked(void)
             }
 
             if (joint_angle.size() == 6) {
-
               QMetaObject::invokeMethod(
                 this, [this, row]() {
                   for (int col = 0; col < 7; ++col) {
@@ -435,7 +434,6 @@ void MainWindow::on_btn_play_clicked(void)
                   }
                   tableWidget->item(row, 6)->setText("Done");
                 }, Qt::QueuedConnection);
-
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -495,4 +493,4 @@ void MainWindow::on_btn_reset_task_clicked(void)
   writeLog("Reset completed.");
 }
 
-}  // namespace open_manipulator_y_gui
+}  // namespace omy_3m_gui

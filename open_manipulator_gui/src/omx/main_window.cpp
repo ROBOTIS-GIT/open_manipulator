@@ -566,4 +566,4 @@ void MainWindow::on_btn_reset_task_clicked(void)
   writeLog("Reset completed.");
 }
 
-}  // namespace open_manipulator_x_gui
+}  // namespace omx_gui

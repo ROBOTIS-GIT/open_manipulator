@@ -108,7 +108,6 @@ void QNode::updateRobotState()
 
 
   present_kinematics_position_ = temp_position;
-
 }
 
 std::string QNode::getCSVPath() const

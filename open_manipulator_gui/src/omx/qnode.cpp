@@ -312,4 +312,4 @@ bool QNode::sendTorqueSrv(bool checked)
   return true;
 }
 
-}  // namespace open_manipulator_x_gui
+}  // namespace omx_gui
