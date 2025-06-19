@@ -2,10 +2,10 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_collision</name>
-  <version>3.3.0</version>
+  <version>4.0.0</version>
   <description>
     This package implements a self-collision detection system for the follower robot during
-    follow-the-leader teleoperation. Its primary purpose is to enhance safety by detecting
+    leader-follower teleoperation. Its primary purpose is to enhance safety by detecting
     potential self-collisions in real time while the robot is being remotely operated.  </description>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
@@ -19,7 +19,7 @@
   <depend>std_msgs</depend>
   <depend>eigen</depend>
   <depend>visualization_msgs</depend>
-  <depend>libfcl</depend>
+  <depend>libfcl-dev</depend>
   <depend>kdl_parser</depend>
   <depend>urdf</depend>
   <export>

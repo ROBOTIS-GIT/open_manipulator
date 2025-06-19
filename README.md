@@ -4,7 +4,7 @@
 
 This repository provides an integrated management package for **ROBOTIS** robotic arms, including:
 
-- **OpenMANIPULATOR-Y**
+- **OMY**
 - **OpenMANIPULATOR-X**
 - **Leader-Follower Manipulator System**
 
@@ -23,7 +23,7 @@ This package supports **ROS 2 Jazzy** and **Gazebo Harmonic** on Ubuntu 24.04, o
 
 ## **1. Introduction**
 
-The **OpenMANIPULATOR-Y** is a 6-DOF robotic arm designed for advanced robotic manipulation tasks. This ROS 2 package provides seamless integration, enhanced control, and versatile functionality for simulation and hardware applications.
+The **OMY** is a 6-DOF robotic arm designed for advanced robotic manipulation tasks. This ROS 2 package provides seamless integration, enhanced control, and versatile functionality for simulation and hardware applications.
 
 ## **2. Installation Methods**
 
@@ -49,11 +49,8 @@ This method provides an isolated environment with all dependencies pre-installed
    # Show help
    ./docker/container.sh help
 
-   # Start container with Gazebo support
-   ./docker/container.sh start with_gz
-
-   # Start container without Gazebo support
-   ./docker/container.sh start without_gz
+   # Start container
+   ./docker/container.sh start
 
    # Enter the running container
    ./docker/container.sh enter
@@ -67,7 +64,7 @@ This method provides an isolated environment with all dependencies pre-installed
 4. **Data Persistence**
    The container maps the following directories for data persistence:
    - `./docker/workspace:/workspace` - The workspace directory inside the docker folder is mapped to `/workspace` inside the container
-   
+
    [***Important***] <u>Data Persistence Rules:
    - Data in `/workspace` inside the container is saved to `docker/workspace` on your host
    - Container restart (using `docker restart`) maintains all data
@@ -91,172 +88,159 @@ Follow these steps if you prefer to install directly on your host system:
      ```
      **A login and logout are required.**
 
-   - **Environment Configuration**
-     Set the robot model based on your system:
-     - **`om_y_follower`** – OpenMANIPULATOR-Y with leader-follower functionality.
-     - **`om_y`** – OpenMANIPULATOR-Y as a standalone model.
-     - **`om_x`** – OpenMANIPULATOR-X.
+2. **Install Intel RealSense ROS Wrapper**
 
-     [***Caution***] <u>Make sure to configure it properly before using the desired mode.</u>
+   Please follow the official instructions for installing and using the RealSense ROS wrapper at:
+   - https://github.com/IntelRealSense/realsense-ros
 
-     ex) Add the configuration to `~/.bashrc`:
-     ```bash
-     echo 'export ROBOT_MODEL=om_y' >> ~/.bashrc
-     source ~/.bashrc
-     ```
-
-2. **Install Required Packages**
-   ```bash
-   sudo apt-get update && sudo apt-get install -y \
-       libboost-all-dev \
-       ros-jazzy-hardware-interface \
-       ros-jazzy-controller-manager \
-       ros-jazzy-ros2-controllers \
-       ros-jazzy-tf-transformations \
-       ros-jazzy-gz* \
-       ros-jazzy-pal-statistics
-   sudo apt-get install -y ros-jazzy-moveit-* --no-install-recommends
-   ```
+   This will ensure you have the latest and most compatible version for your system and camera.
 
 3. **Clone the Repository**
    ```bash
-   cd ~/${WORKSPACE}/src
+   cd ~/ros2_ws/src
    git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
    git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
-   git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git
+   git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
+   git clone -b jazzy https://github.com/ROBOTIS-GIT/open_manipulator.git
    ```
 
-4. **Build the Package**
+4. **Install ROS 2 Dependencies**
    ```bash
-   cd ~/${WORKSPACE}
-   colcon build --symlink-install
+   cd ~/ros2_ws
+   rosdep update
+   rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys="librealsense2 dynamixel_hardware_interface dynamixel_interfaces dynamixel_sdk open_manipulator" -y
    ```
 
-5. **Source the Workspace**
+5. **Build the Package**
    ```bash
-   source ~/${WORKSPACE}/install/setup.bash
+   colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
    ```
 
-6. **Create and apply udev rules**
+6. **Source the Workspace**
+   ```bash
+   source ~/ros2_ws/install/setup.bash
+   ```
+
+7. **(Optional) Add Convenience Alias**
+   Add the following to your `~/.bashrc` for a convenient build alias:
+   ```bash
+   echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+8. **Create and apply udev rules**
    ```bash
    ros2 run open_manipulator_bringup om_create_udev_rules
    ```
 
-## **3. Execution Commands**
+## **3. Launch Files Overview**
 
-### **Step 1: Choose Your Operating Mode**
+Below is a comprehensive list of available launch files, grouped by function. Use these to start the system in various modes, simulations, or with special features.
 
-#### **1️⃣ Leader-Follower Mode**
-
-For **leader-follower functionality**, use:
+### **A. Hardware Launch (Real Robot)**
 
 ```bash
-ros2 launch open_manipulator_bringup ai_teleoperation.launch.py
+# Launch OMY 3M hardware
+ros2 launch open_manipulator_bringup omy_3m.launch.py
+
+# Launch OMY F3M hardware
+ros2 launch open_manipulator_bringup omy_f3m.launch.py
+
+# Launch OpenMANIPULATOR-X hardware
+ros2 launch open_manipulator_bringup omx.launch.py
+
+# Launch F3M follower for AI leader-follower mode
+ros2 launch open_manipulator_bringup omy_f3m_follower_ai.launch.py
+
+# Launch L100 as leader for AI leader-follower mode
+ros2 launch open_manipulator_bringup omy_l100_leader_ai.launch.py
+
+# Launch the full AI teleoperation leader-follower stack (runs both leader and follower)
+ros2 launch open_manipulator_bringup omy_ai.launch.py
 ```
 
-Ensure proper connection and detection of leader and follower devices.
-
-#### **2️⃣ Standalone Mode**
-
-For **standalone mode**, launch:
+### **B. Simulation (Gazebo)**
 
 ```bash
-ros2 launch open_manipulator_bringup hardware_y.launch.py #for om_y
-ros2 launch open_manipulator_bringup hardware_x.launch.py #for om_x
+# Simulate OMY 3M in Gazebo
+ros2 launch open_manipulator_bringup omy_3m_gazebo.launch.py
+
+# Simulate OMY F3M in Gazebo
+ros2 launch open_manipulator_bringup omy_f3m_gazebo.launch.py
+
+# Simulate OpenMANIPULATOR-X in Gazebo
+ros2 launch open_manipulator_bringup omx_gazebo.launch.py
+
+# Simulate F3M follower in AI mode in Gazebo
+ros2 launch open_manipulator_bringup omy_f3m_follower_ai_gazebo.launch.py
 ```
 
-Confirm that hardware is properly connected before execution.
-
-#### **3️⃣ Gazebo Simulation Mode**
-
-For **Gazebo simulation mode**, launch:
+### **C. Specialized/Utility Launch**
 
 ```bash
-ros2 launch open_manipulator_bringup gazebo.launch.py #for om_x and om_y
+# Packs the OMY 3M manipulator (can also be used for OMY F3M)
+ros2 launch open_manipulator_bringup omy_3m_pack.launch.py
+
+# Unpacks the OMY 3M manipulator (can also be used for OMY F3M)
+ros2 launch open_manipulator_bringup omy_3m_unpack.launch.py
+
+# Launch Intel RealSense camera nodes
+ros2 launch open_manipulator_bringup camera_realsense.launch.py
 ```
 
-Ensure that Gazebo Harmonic is properly installed and configured before running the simulation.
-
-
-### **Step 2: Extend Functionality**
-
-#### **1. Keyboard Teleoperation**
-
-Control the manipulator (simulation or hardware) using your keyboard:
+### **D. GUI Launch**
 
 ```bash
-ros2 run open_manipulator_teleop keyboard_control_y.py # for om_y
-ros2 run open_manipulator_teleop keyboard_control_x.py # for om_x
+# GUI for OMY 3M
+ros2 launch open_manipulator_gui omy_3m_gui.launch.py
+
+# GUI for OMY F3M
+ros2 launch open_manipulator_gui omy_f3m_gui.launch.py
+
+# GUI for OpenMANIPULATOR-X
+ros2 launch open_manipulator_gui omx_gui.launch.py
 ```
 
-##### **Joint Control**
-
-- `1` / `q` - Joint 1
-- `2` / `w` - Joint 2
-- `3` / `e` - Joint 3
-- `4` / `r` - Joint 4
-- `5` / `t` - Joint 5
-- `6` / `y` - Joint 6
-
-##### **Gripper Control**
-
-- `o` - Open gripper
-- `p` - Close gripper
-
-#### **2. MoveIt! Launch**
-
-Enable MoveIt functionality for advanced motion planning in RViz:
+### **E. MoveIt! Launch**
 
 ```bash
-ros2 launch open_manipulator_moveit_config moveit_core.launch.py
+# MoveIt! for OMY 3M
+ros2 launch open_manipulator_moveit_config omy_3m_moveit.launch.py
+
+# MoveIt! for OMY F3M
+ros2 launch open_manipulator_moveit_config omy_f3m_moveit.launch.py
+
+# MoveIt! for OpenMANIPULATOR-X
+ros2 launch open_manipulator_moveit_config omx_moveit.launch.py
 ```
 
-Move interactive markers to position the robotic arm, then click **Plan** and **Execute**.
-
-#### **3. GUI Control**
-
-Launch MoveIt GUI:
+### **F. Description Launch**
 
 ```bash
-ros2 launch open_manipulator_moveit_config move_group.launch.py
+# Load robot description for OMY 3M
+ros2 launch open_manipulator_description omy_3m.launch.py
+
+# Load robot description for OMY F3M
+ros2 launch open_manipulator_description omy_f3m.launch.py
+
+# Load robot description for OMY L100
+ros2 launch open_manipulator_description omy_l100.launch.py
+
+# Load robot description for OpenMANIPULATOR-X
+ros2 launch open_manipulator_description omx.launch.py
 ```
 
-Launch the OpenMANIPULATOR GUI:
+---
 
-```bash
-ros2 launch open_manipulator_gui open_manipulator_y_gui.launch.py # for om_y
-ros2 launch open_manipulator_gui open_manipulator_x_gui.launch.py # for om_x
-```
+### **Mode Clarification**
 
-
-### **Step 3: Explore GUI Features**
-
-#### **Basic Controls**
-
-- **Start Timer**: Activates the system.
-- **Robot Status**: Displays current manipulator state.
-- **Init Pose**: Moves the manipulator to a vertical position.
-- **Home Pose**: Moves the manipulator to a compact, safe position.
-- **Gripper Open/Close**: Opens or closes the gripper.
-
-#### **Task Execution**
-
-- **Joint Space Tab**: Adjust individual joint angles.
-
-- **Task Space Tab**: Control the end-effector position.
-
-- Task Constructor Tab
-
-  - **Read Task**: View saved poses.
-  - **Save Pose**: Save current state.
-  - **Rap**: Set task repetition (1–999).
-  - **Play**: Execute saved tasks.
-  - **Stop**: Halt operations.
-  - **Reset Task**: Clear saved tasks.
-
+- **Hardware Mode:** For real robot operation, use the hardware launch files from section A.
+- **Simulation Mode:** For Gazebo simulation, use the launch files from section B.
+- **AI Leader-Follower Mode:** Use `omy_ai.launch.py` to start both leader and follower, or launch `omy_f3m_follower_ai.launch.py` and `omy_l100_leader_ai.launch.py` separately for advanced setups.
+- **Specialized Modes:** Use pack/unpack launch files for special poses, and camera launch for vision integration.
 
 ## (Legacy) ROBOTIS e-Manual for OpenMANIPULATOR-X
 
 - [ROBOTIS e-Manual](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/)
 
-The **OpenMANIPULATOR-X operation method** is similar to **OpenMANIPULATOR-Y**, and the e-Manual is currently being updated.
+The **OpenMANIPULATOR-X operation method** is similar to **OMY**, and the e-Manual is currently being updated.
