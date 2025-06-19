@@ -1,3 +1,21 @@
+#!/usr/bin/env python3
+#
+# Copyright 2025 ROBOTIS CO., LTD.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Author: Woojin Wie
+
 import os
 from pathlib import Path
 
@@ -13,17 +31,6 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from moveit_configs_utils import MoveItConfigsBuilder
 import yaml
-
-
-def load_yaml(package_name, file_path):
-    package_path = get_package_share_directory(package_name)
-    absolute_file_path = os.path.join(package_path, file_path)
-
-    try:
-        with open(absolute_file_path) as file:
-            return yaml.safe_load(file)
-    except OSError:
-        return None
 
 
 def generate_launch_description():
@@ -86,7 +93,14 @@ def generate_launch_description():
         ],
     )
 
-    servo_yaml = load_yaml('open_manipulator_moveit_config', 'config/servo.yaml')
+    servo_yaml_path = os.path.join(
+        get_package_share_directory('open_manipulator_moveit_config'),
+        'config',
+        'servo.yaml',
+    )
+    with open(servo_yaml_path, 'r') as file:
+        servo_yaml = yaml.safe_load(file)
+
     servo_params = {'moveit_servo': servo_yaml}
     servo_node = Node(
         package='moveit_servo',
