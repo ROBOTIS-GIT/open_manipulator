@@ -184,7 +184,7 @@
       <child link="${prefix}gripper_left_link"/>
       <origin xyz="0.0817 0.021 0.0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit velocity="4.8" effort="1000" lower="-0.010" upper="0.019" />
+      <limit velocity="4.8" effort="1000" lower="-0.011" upper="0.02" />
       <dynamics damping="0.1"/>
     </joint>
 
@@ -220,7 +220,7 @@
       <child link="${prefix}gripper_right_link"/>
       <origin xyz="0.0817 -0.021 0" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit velocity="4.8" effort="1000" lower="-0.010" upper="0.019" />
+      <limit velocity="4.8" effort="1000" lower="-0.011" upper="0.02" />
       <dynamics damping="0.7"/>
       <mimic joint="${prefix}gripper_left_joint" multiplier="1"/>
     </joint>

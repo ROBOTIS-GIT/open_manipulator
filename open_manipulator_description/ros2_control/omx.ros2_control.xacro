@@ -22,6 +22,7 @@
             <param name="dynamixel_model_folder">/param/dxl_model</param>
             <param name="number_of_joints">5</param>
             <param name="number_of_transmissions">5</param>
+            <param name="disable_torque_at_init">true</param>
             <param name="transmission_to_joint_matrix">
               1, 0, 0, 0, 0,
               0, 1, 0, 0, 0,
@@ -99,12 +100,13 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Operating Mode">3</param>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">200</param>
-        <param name="Profile Acceleration">50</param>
-        <param name="Drive Mode">0</param>
+        <param name="Profile Velocity">11</param>
+        <param name="Profile Acceleration">2</param>
+        <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
       <gpio name="dxl2">
@@ -114,12 +116,13 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Operating Mode">3</param>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">200</param>
-        <param name="Profile Acceleration">50</param>
-        <param name="Drive Mode">0</param>
+        <param name="Profile Velocity">11</param>
+        <param name="Profile Acceleration">2</param>
+        <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
       <gpio name="dxl3">
@@ -129,12 +132,13 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Operating Mode">3</param>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">200</param>
-        <param name="Profile Acceleration">50</param>
-        <param name="Drive Mode">0</param>
+        <param name="Profile Velocity">11</param>
+        <param name="Profile Acceleration">2</param>
+        <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
       <gpio name="dxl4">
@@ -144,12 +148,13 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Operating Mode">3</param>
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">200</param>
-        <param name="Profile Acceleration">50</param>
-        <param name="Drive Mode">0</param>
+        <param name="Profile Velocity">11</param>
+        <param name="Profile Acceleration">2</param>
+        <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
       <gpio name="dxl5">
@@ -159,7 +164,12 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Operating Mode">5</param>
+        <param name="Profile Velocity">11</param>
+        <param name="Profile Acceleration">2</param>
+        <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
+        <param name="Goal Current">200</param>
       </gpio>
 
     </ros2_control>

@@ -22,6 +22,7 @@
             <param name="dynamixel_model_folder">/param/dxl_model</param>
             <param name="number_of_joints">1</param>
             <param name="number_of_transmissions">1</param>
+            <param name="disable_torque_at_init">true</param>
             <param name="transmission_to_joint_matrix">
               1
             </param>
