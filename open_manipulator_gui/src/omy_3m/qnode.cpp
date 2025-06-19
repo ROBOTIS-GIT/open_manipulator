@@ -221,34 +221,6 @@ bool QNode::setTaskSpacePath(
   return true;
 }
 
-bool QNode::setToolControl(std::vector<double> joint_angle)
-{
-
-
-
-  // std::vector<double> joint_group_positions;
-
-  // joint_group_positions[0] = joint_angle.at(0);  // radians
-
-  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-
-
-  std::atomic<bool> move_completed(false);
-
-  std::thread move_thread([&]() {
-      move_completed.store(true);
-    });
-
-  std::this_thread::sleep_for(std::chrono::seconds(2));
-
-  if (!move_completed.load()) {
-    move_thread.join();
-    return true;
-  }
-  move_thread.join();
-  return true;
-}
-
 void QNode::stopMotion()
 {
   stop_requested_ = true;
