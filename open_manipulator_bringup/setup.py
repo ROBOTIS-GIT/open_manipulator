@@ -8,22 +8,20 @@ package_name = 'open_manipulator_bringup'
 
 setup(
     name=package_name,
-    version='3.3.0',
+    version='4.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
-        (os.path.join('share', package_name, 'config/om_x'), glob('config/om_x/*')),
-        (os.path.join('share', package_name, 'config/om_y'), glob('config/om_y/*')),
-        (
-            os.path.join('share', package_name, 'config/om_y_follower'),
-            glob('config/om_y_follower/*'),
-        ),
-        (
-            os.path.join('share', package_name, 'config/om_y_leader'),
-            glob('config/om_y_leader/*'),
-        ),
+        (os.path.join('share', package_name, 'config/omx'), glob('config/omx/*')),
+        (os.path.join('share', package_name, 'config/omy_3m'), glob('config/omy_3m/*')),
+        (os.path.join('share', package_name, 'config/omy_f3m'), glob('config/omy_f3m/*')),
+        (os.path.join('share', package_name, 'config/omy_f3m_follower_ai'),
+            glob('config/omy_f3m_follower_ai/*')),
+        (os.path.join('share', package_name, 'config/omy_l100_leader_ai'),
+            glob('config/omy_l100_leader_ai/*')),
+        (os.path.join('share', package_name, 'config/omx'), glob('config/omx/*')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
         (os.path.join('share', package_name), ['open-manipulator-cdc.rules']),
 
@@ -38,7 +36,7 @@ setup(
     entry_points={
         'console_scripts': [
             'joint_trajectory_executor = open_manipulator_bringup.joint_trajectory_executor:main',
-            'pack_unpack_y = open_manipulator_bringup.pack_unpack_y:main',
+            'pack_unpack_3m = open_manipulator_bringup.pack_unpack_3m:main',
             'om_create_udev_rules = open_manipulator_bringup.om_create_udev_rules:main',
         ],
     },

@@ -71,6 +71,13 @@ controller_interface::return_type GravityCompensationController::update(
   assign_point_from_interface(joint_positions_, joint_state_interface_[0]);
   assign_point_from_interface(joint_velocities_, joint_state_interface_[1]);
 
+  // Temporary: match the velocity unit to the previous dynamixel_hardware_interface version
+  // TODO(Woojin Wie): remove this after the gain is tuned for the new dynamixel_hardware_interface
+  //                  version
+  for (size_t i = 0; i < joint_velocities_.size(); i++) {
+    joint_velocities_[i] = joint_velocities_[i] * 0.01 / 0.229;
+  }
+
   // Calculate acceleration from velocity using finite difference
   std::vector<double> joint_accelerations(n_joints_);
   for (size_t i = 0; i < n_joints_; ++i) {

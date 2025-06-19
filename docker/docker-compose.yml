@@ -1,11 +1,10 @@
 services:
-  ros2:
+  open_manipulator:
     container_name: open_manipulator
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - WITH_GAZEBO=${WITH_GAZEBO:-true}
+    image: robotis/open-manipulator:latest
     tty: true
     restart: always
     cap_add:
@@ -23,5 +22,6 @@ services:
       - ./workspace:/workspace
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - ../:/root/ros2_ws/src/open_manipulator/
     privileged: true
     command: bash

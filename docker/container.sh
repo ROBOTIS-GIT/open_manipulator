@@ -6,29 +6,22 @@ CONTAINER_NAME="open_manipulator"
 
 # Function to display help
 show_help() {
-    echo "Usage: $0 [command] [options]"
+    echo "Usage: $0 [command]"
     echo ""
     echo "Commands:"
     echo "  help                    Show this help message"
-    echo "  start [with_gz|without_gz]  Start the container with or without Gazebo support"
+    echo "  start                   Start the container"
     echo "  enter                   Enter the running container"
     echo "  stop                    Stop the container"
     echo ""
     echo "Examples:"
-    echo "  $0 start with_gz        Start container with Gazebo support"
-    echo "  $0 start without_gz     Start container without Gazebo support"
+    echo "  $0 start                Start container"
     echo "  $0 enter                Enter the running container"
     echo "  $0 stop                 Stop the container"
 }
 
 # Function to start the container
 start_container() {
-    if [ $# -eq 0 ]; then
-        echo "Error: Please specify 'with_gz' or 'without_gz'"
-        show_help
-        exit 1
-    fi
-
     # Set up X11 forwarding only if DISPLAY is set
     if [ -n "$DISPLAY" ]; then
         echo "Setting up X11 forwarding..."
@@ -37,22 +30,7 @@ start_container() {
         echo "Warning: DISPLAY environment variable is not set. X11 forwarding will not be available."
     fi
 
-    # Set environment variables based on argument
-    case "$1" in
-        "with_gz")
-            echo "Running with Gazebo support..."
-            export WITH_GAZEBO=true
-            ;;
-        "without_gz")
-            echo "Running without Gazebo support..."
-            export WITH_GAZEBO=false
-            ;;
-        *)
-            echo "Invalid argument: $1"
-            show_help
-            exit 1
-            ;;
-    esac
+    echo "Starting Open Manipulator container..."
 
     # Run docker-compose
     docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
@@ -91,8 +69,7 @@ case "$1" in
         show_help
         ;;
     "start")
-        shift
-        start_container "$@"
+        start_container
         ;;
     "enter")
         enter_container

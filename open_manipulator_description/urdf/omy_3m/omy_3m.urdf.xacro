@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<robot name="omy_3m" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_fake_hardware" default="false" />
+  <xacro:arg name="fake_sensor_commands" default="false" />
+
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omy_3m/omy_3m_arm.urdf.xacro" />
+
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/omy_3m.gazebo.xacro" />
+
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_3m.ros2_control.xacro" />
+
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_3m_end_unit.ros2_control.xacro" />
+
+  <link name="world"/>
+
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="$(arg prefix)link0"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="$(arg prefix)end_effector_joint" type="fixed">
+      <parent link="$(arg prefix)link6" />
+      <child link="$(arg prefix)end_effector_link" />
+      <origin xyz="0 -0.103 0" rpy="0 0 0" />
+  </joint>
+
+  <link name="$(arg prefix)end_effector_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+        <box size="0.01 0.01 0.01" />
+        </geometry>
+        <material name="red">
+        <color rgba="1.0 0.0 0.0 1"/>
+        </material>
+      </visual>
+  </link>
+
+  <xacro:omy_3m prefix="$(arg prefix)" />
+  <xacro:omy_3m_gazebo prefix="$(arg prefix)" />
+
+  <xacro:omy_3m_system
+    name="OMY3MSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"/>
+
+  <xacro:omy_3m_end_unit_system
+    name="OMY3MEndUnitSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/omy_3m/hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
