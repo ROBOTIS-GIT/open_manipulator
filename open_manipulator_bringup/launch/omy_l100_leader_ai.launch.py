@@ -55,15 +55,15 @@ def generate_launch_description():
             description='Enable fake sensor commands.',
         ),
         DeclareLaunchArgument(
-            'use_self_collision',
-            default_value='true',
+            'use_self_collision_avoidance',
+            default_value='false',
             description='Whether to launch the self-collision detection node',
         ),
     ]
 
     # Launch configurations
     prefix = LaunchConfiguration('prefix')
-    use_self_collision = LaunchConfiguration('use_self_collision')
+    use_self_collision_avoidance = LaunchConfiguration('use_self_collision_avoidance')
     use_sim = LaunchConfiguration('use_sim')
     use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
@@ -133,7 +133,7 @@ def generate_launch_description():
             FindPackageShare('open_manipulator_collision'),
             'self_collision.launch.py'
         ])),
-        condition=IfCondition(use_self_collision)
+        condition=IfCondition(use_self_collision_avoidance)
     )
 
     leader_with_namespace = GroupAction(
