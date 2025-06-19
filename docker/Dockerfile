@@ -65,7 +65,7 @@ RUN cd /usr/src/librealsense \
     && make install
 
 # Use the base ROS2 Jazzy image
-FROM ros:jazzy-ros-base as open-manipulator
+FROM ros:jazzy-ros-base AS open-manipulator
 
 COPY --from=librealsense-builder /opt/librealsense /usr/local/
 COPY --from=librealsense-builder /usr/local/lib/python3.12/dist-packages/pyrealsense2 /usr/local/lib/python3.12/dist-packages/pyrealsense2
