@@ -178,10 +178,10 @@ ros2 launch open_manipulator_bringup omy_f3m_follower_ai_gazebo.launch.py
 ### **C. Specialized/Utility Launch**
 
 ```bash
-# Packs the 3M manipulator (can also be used for OMY F3M)
+# Packs the OMY 3M manipulator (can also be used for OMY F3M)
 ros2 launch open_manipulator_bringup omy_3m_pack.launch.py
 
-# Unpacks the 3M manipulator (can also be used for OMY F3M)
+# Unpacks the OMY 3M manipulator (can also be used for OMY F3M)
 ros2 launch open_manipulator_bringup omy_3m_unpack.launch.py
 
 # Launch Intel RealSense camera nodes
