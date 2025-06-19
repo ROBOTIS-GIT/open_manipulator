@@ -60,5 +60,5 @@ spring_actuator_controller:
 
   trigger_damping:
     type: double_array
-    default_value: [0.1]
+    default_value: [0.004]
     description: "Damping coefficient for the trigger joint"
