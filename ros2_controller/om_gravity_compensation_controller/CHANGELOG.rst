@@ -2,6 +2,11 @@
 Changelog for package om_gravity_compensation_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2025-06-19)
+------------------
+* Fix the velocity unit issue to match the new dynamixel_hardware_interface version
+* Contributors: Woojin Wie
+
 3.3.0 (2025-06-10)
 ------------------
 * None
