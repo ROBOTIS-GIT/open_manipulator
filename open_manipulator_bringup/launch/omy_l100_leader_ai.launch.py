@@ -132,7 +132,9 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': urdf_file, 'use_sim_time': use_sim, 'frame_prefix': 'leader_'}],
+        parameters=[{'robot_description': urdf_file,
+                     'use_sim_time': use_sim,
+                     'frame_prefix': 'leader_'}],
         output='both',
     )
 
