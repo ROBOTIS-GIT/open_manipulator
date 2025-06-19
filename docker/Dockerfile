@@ -76,6 +76,12 @@ ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Install realsense-viewer dependencies
+RUN apt-get update && apt-get install -y \
+    libusb-1.0-0-dev \
+    libglfw3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV COLCON_WS=/root/ros2_ws
 WORKDIR ${COLCON_WS}
 
