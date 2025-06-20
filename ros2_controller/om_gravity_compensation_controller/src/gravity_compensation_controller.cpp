@@ -106,6 +106,18 @@ controller_interface::return_type GravityCompensationController::update(
     torques(2) += std::abs(q(2) - 0.5) * 2.5;
   }
 
+  //Add leader sync function
+  double gain_joint_1_to_3 = 6.0;
+  double default_gain = 1.0;
+
+  if (collision_flag_ && has_follower_data_) {
+    for (size_t i = 0; i < n_joints_; ++i) {
+      double error = follower_joint_positions_[i] - joint_positions_[i];
+      double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
+      torques(i) += gain * error;
+    }
+  }
+
   // Apply friction compensation
   for (size_t i = 0; i < tree_.getNrOfJoints(); ++i) {
     if (i >= joint_names_.size()) {
@@ -198,6 +210,43 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
+  follower_joint_positions_.assign(n_joints_, 0.0);  // 초기화
+
+  follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
+    "/joint_states", rclcpp::QoS(10),
+    [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
+      if (msg->name.size() != msg->position.size()) {
+        RCLCPP_WARN(get_node()->get_logger(), "JointState message has mismatched name/position sizes");
+        return;
+      }
+
+      std::unordered_map<std::string, double> name_to_position;
+      for (size_t i = 0; i < msg->name.size(); ++i) {
+        name_to_position[msg->name[i]] = msg->position[i];
+      }
+
+      bool all_found = true;
+      for (size_t i = 0; i < joint_names_.size(); ++i) {
+        auto it = name_to_position.find(joint_names_[i]);
+        if (it != name_to_position.end()) {
+          follower_joint_positions_[i] = it->second;
+        } else {
+          all_found = false;
+          RCLCPP_WARN_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 2000,
+            "Joint name '%s' not found in follower joint state", joint_names_[i].c_str());
+        }
+      }
+
+      if (all_found) {
+        has_follower_data_ = true;
+      }
+    });
+
+  collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
+    "/collision_flag", rclcpp::QoS(1),
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+      collision_flag_ = msg->data;
+    });
 
   if (params_.joints.empty()) {
     // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?
