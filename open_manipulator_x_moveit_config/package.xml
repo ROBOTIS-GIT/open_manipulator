@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_x_moveit_config</name>
-  <version>3.0.1</version>
+  <version>3.0.2</version>
   <description>
      An automatically generated package with all the configuration and launch files for using the open_manipulator_x with the MoveIt Motion Planning Framework
   </description>
@@ -34,7 +34,6 @@
   <exec_depend>rviz_common</exec_depend>
   <exec_depend>rviz_default_plugins</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
-  <exec_depend>warehouse_ros_mongo</exec_depend>
   <exec_depend>xacro</exec_depend>
   <export>
       <build_type>ament_cmake</build_type>
