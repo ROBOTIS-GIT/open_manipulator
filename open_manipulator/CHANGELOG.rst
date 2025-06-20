@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.2 (2025-06-20)
+------------------
+* Removed unnecessary dependencies
+* Contributors: Wonho Yun
+
 3.0.1 (2025-04-11)
 ------------------
 * Modified Update Rate
