@@ -44,7 +44,6 @@
       type: gpio_controllers/GpioCommandController
       gpios:
         - omy_end
-        - omy_hat
       command_interfaces:
         omy_end:
           - interfaces:
