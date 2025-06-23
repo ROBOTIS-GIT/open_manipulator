@@ -2,6 +2,10 @@
 Changelog for package om_spring_actuator_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.1 (2025-06-23)
+------------------
+* None
+
 4.0.0 (2025-06-19)
 ------------------
 * Fix the velocity unit issue to match the new dynamixel_hardware_interface version

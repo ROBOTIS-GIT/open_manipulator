@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.1 (2025-06-23)
+------------------
+* Changed default dynamixel profile configuration to use time-based profile for all OM Series
+* Contributors: Woojin Wie
+
 4.0.0 (2025-06-19)
 ------------------
 * Refactored the package to support the new OMY-3M, OMY-F3M, OMY-L100

@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_playground</name>
-  <version>4.0.0</version>
+  <version>4.0.1</version>
   <description>
-    This package provides an example for utilizing the MoveIt API with the OpenMANIPULATOR-X,
+    This package provides an example for utilizing the MoveIt API with the OpenMANIPULATOR,
     allowing users to practice and experiment freely.
   </description>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
