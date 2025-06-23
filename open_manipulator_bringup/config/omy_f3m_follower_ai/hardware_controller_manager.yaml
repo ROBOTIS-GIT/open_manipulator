@@ -12,6 +12,9 @@
       arm_controller:
         type: joint_trajectory_controller/JointTrajectoryController
 
+      gpio_command_controller:
+        type: gpio_controllers/GpioCommandController
+
 /**:
   arm_controller:
     ros__parameters:
@@ -34,3 +37,20 @@
         - velocity
 
       allow_partial_joints_goal: true
+
+/**:
+  gpio_command_controller:
+    ros__parameters:
+      type: gpio_controllers/GpioCommandController
+      gpios:
+        - omy_end
+      command_interfaces:
+        omy_end:
+          - interfaces:
+            - R LED
+            - G LED
+            - B LED
+      state_interfaces:
+        omy_end:
+          - interfaces:
+            - Button Status

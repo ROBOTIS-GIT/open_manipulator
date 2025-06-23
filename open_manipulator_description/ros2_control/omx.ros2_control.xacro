@@ -104,8 +104,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">11</param>
-        <param name="Profile Acceleration">2</param>
+        <param name="Profile Velocity">20</param>
+        <param name="Profile Acceleration">10</param>
         <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
@@ -120,8 +120,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">11</param>
-        <param name="Profile Acceleration">2</param>
+        <param name="Profile Velocity">20</param>
+        <param name="Profile Acceleration">10</param>
         <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
@@ -136,8 +136,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">11</param>
-        <param name="Profile Acceleration">2</param>
+        <param name="Profile Velocity">20</param>
+        <param name="Profile Acceleration">10</param>
         <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
@@ -152,8 +152,8 @@
         <param name="Position P Gain">800</param>
         <param name="Position I Gain">100</param>
         <param name="Position D Gain">100</param>
-        <param name="Profile Velocity">11</param>
-        <param name="Profile Acceleration">2</param>
+        <param name="Profile Velocity">20</param>
+        <param name="Profile Acceleration">10</param>
         <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
       </gpio>
@@ -165,8 +165,8 @@
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
         <param name="Operating Mode">5</param>
-        <param name="Profile Velocity">11</param>
-        <param name="Profile Acceleration">2</param>
+        <param name="Profile Velocity">20</param>
+        <param name="Profile Acceleration">10</param>
         <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
         <param name="Goal Current">200</param>

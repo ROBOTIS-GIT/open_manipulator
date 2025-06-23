@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_gui</name>
-  <version>4.0.0</version>
+  <version>4.0.1</version>
   <description>
-    The OpenMANIPULATOR-X GUI ROS 2 package enables users to explore Joint Space,
+    The OpenMANIPULATOR GUI ROS 2 package enables users to explore Joint Space,
     Task Space, and even work with the Task Constructor functionality.  </description>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>

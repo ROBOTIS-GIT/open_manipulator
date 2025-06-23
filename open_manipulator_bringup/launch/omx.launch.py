@@ -66,6 +66,11 @@ def generate_launch_description():
             default_value='true',
             description='Whether to launch the init_position node',
         ),
+        DeclareLaunchArgument(
+            'ros2_control_type',
+            default_value='omx',
+            description='Type of ros2_control',
+        ),
     ]
 
     # Launch configurations
@@ -76,6 +81,7 @@ def generate_launch_description():
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
     port_name = LaunchConfiguration('port_name')
     init_position = LaunchConfiguration('init_position')
+    ros2_control_type = LaunchConfiguration('ros2_control_type')
 
     # Generate URDF file using xacro
     urdf_file = Command([
@@ -102,6 +108,9 @@ def generate_launch_description():
         ' ',
         'port_name:=',
         port_name,
+        ' ',
+        'ros2_control_type:=',
+        ros2_control_type,
     ])
 
     # Paths for configuration files
