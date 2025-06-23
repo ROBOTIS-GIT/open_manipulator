@@ -88,6 +88,10 @@
       </gpio>
 
       <gpio name="omy_end">
+        <!-- <command_interface name="R LED"/>
+        <command_interface name="G LED"/>
+        <command_interface name="B LED"/> -->
+        <state_interface name="Button Status"/>
         <param name="type">controller</param>
         <param name="ID">210</param>
         <param name="Baud Rate (Bus)">6</param>

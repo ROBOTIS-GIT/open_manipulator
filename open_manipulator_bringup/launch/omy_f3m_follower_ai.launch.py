@@ -141,6 +141,7 @@ def generate_launch_description():
         arguments=[
             'arm_controller',
             'joint_state_broadcaster',
+            # 'gpio_command_controller',
         ],
         output='both',
         parameters=[{'robot_description': urdf_file}],
