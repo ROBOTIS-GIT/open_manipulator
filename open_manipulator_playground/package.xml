@@ -4,7 +4,7 @@
   <name>open_manipulator_playground</name>
   <version>4.0.0</version>
   <description>
-    This package provides an example for utilizing the MoveIt API with the OpenMANIPULATOR-X,
+    This package provides an example for utilizing the MoveIt API with the OpenMANIPULATOR,
     allowing users to practice and experiment freely.
   </description>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
