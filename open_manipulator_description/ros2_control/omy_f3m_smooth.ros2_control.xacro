@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="omy_3m_system" params="name prefix port_name:=^|/dev/ttyAMA2 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
+  <xacro:macro name="omy_f3m_system" params="name prefix port_name:=^|/dev/ttyAMA2 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
     <ros2_control name="${name}" type="system" is_async="true">
       <xacro:if value="$(arg use_sim)">
         <hardware>
@@ -103,8 +103,8 @@
         <param name="Velocity P Gain">41387</param>
         <param name="Velocity I Gain">1565630</param>
         <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">13</param>
-        <param name="Profile Time">26</param>
+        <param name="Profile Acceleration Time">250</param>
+        <param name="Profile Time">500</param>
       </gpio>
       <gpio name="dxl2">
         <param name="type">dxl</param>
@@ -123,8 +123,8 @@
         <param name="Velocity P Gain">41387</param>
         <param name="Velocity I Gain">1565630</param>
         <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">13</param>
-        <param name="Profile Time">26</param>
+        <param name="Profile Acceleration Time">250</param>
+        <param name="Profile Time">500</param>
       </gpio>
       <gpio name="dxl3">
         <param name="type">dxl</param>
@@ -143,8 +143,8 @@
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">13</param>
-        <param name="Profile Time">26</param>
+        <param name="Profile Acceleration Time">250</param>
+        <param name="Profile Time">500</param>
       </gpio>
       <gpio name="dxl4">
         <param name="type">dxl</param>
@@ -163,8 +163,8 @@
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">13</param>
-        <param name="Profile Time">26</param>
+        <param name="Profile Acceleration Time">250</param>
+        <param name="Profile Time">500</param>
       </gpio>
       <gpio name="dxl5">
         <param name="type">dxl</param>
@@ -183,8 +183,8 @@
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">13</param>
-        <param name="Profile Time">26</param>
+        <param name="Profile Acceleration Time">250</param>
+        <param name="Profile Time">500</param>
       </gpio>
       <gpio name="dxl6">
         <param name="type">dxl</param>
@@ -203,8 +203,8 @@
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
         <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">13</param>
-        <param name="Profile Time">26</param>
+        <param name="Profile Acceleration Time">250</param>
+        <param name="Profile Time">500</param>
       </gpio>
       <gpio name="omy_hat">
         <param name="type">controller</param>

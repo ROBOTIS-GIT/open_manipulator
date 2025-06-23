@@ -74,12 +74,25 @@
         </joint>
       </xacro:if>
 
-      <gpio name="omy_end">
+      <gpio name="dxl7">
         <command_interface name="Goal Position"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
-        <param name="type">dxl</param>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">7</param>
+        <param name="model_num">231</param>
+        <param name="comm_id">210</param>
+        <param name="Goal Velocity">2970</param>
+        <param name="Goal Current">661</param>
+      </gpio>
+
+      <gpio name="omy_end">
+        <!-- <command_interface name="R LED"/>
+        <command_interface name="G LED"/>
+        <command_interface name="B LED"/> -->
+        <state_interface name="Button Status"/>
+        <param name="type">controller</param>
         <param name="ID">210</param>
         <param name="Baud Rate (Bus)">6</param>
         <param name="Tool Analog Enable">0</param>
@@ -94,8 +107,6 @@
         <param name="SyncTable Write Address">665</param>
         <param name="SyncTable Write Size">12</param>
         <param name="SyncTable Enable">1</param>
-        <param name="Goal Velocity">2970</param>
-        <param name="Goal Current">661</param>
       </gpio>
 
     </ros2_control>

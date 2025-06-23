@@ -64,6 +64,11 @@ def generate_launch_description():
             default_value='false',
             description='Whether to launch the self-collision detection node',
         ),
+        DeclareLaunchArgument(
+            'ros2_control_type',
+            default_value='omy_l100',
+            description='Type of ros2_control',
+        ),
     ]
 
     # Launch configurations
@@ -73,6 +78,7 @@ def generate_launch_description():
     use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
     port_name = LaunchConfiguration('port_name')
+    ros2_control_type = LaunchConfiguration('ros2_control_type')
 
     # Generate URDF file using xacro
     urdf_file = Command([
@@ -99,6 +105,9 @@ def generate_launch_description():
         ' ',
         'port_name:=',
         port_name,
+        ' ',
+        'ros2_control_type:=',
+        ros2_control_type,
     ])
 
     # Paths for configuration files

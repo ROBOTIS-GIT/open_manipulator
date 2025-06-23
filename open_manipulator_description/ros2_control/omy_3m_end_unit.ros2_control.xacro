@@ -45,8 +45,6 @@
         <param name="SyncTable Write Address">665</param>
         <param name="SyncTable Write Size">12</param>
         <param name="SyncTable Enable">1</param>
-        <param name="Goal Velocity">2970</param>
-        <param name="Goal Current">661</param>
       </gpio>
 
     </ros2_control>
