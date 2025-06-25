@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.3 (2025-06-25)
+------------------
+* None
+
 4.0.2 (2025-06-25)
 ------------------
 * Fixed launch file paths for OMY-3M and OMY-F3M
