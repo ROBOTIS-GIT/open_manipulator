@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.3 (2025-06-25)
+------------------
+* Changed Dockerfile to use pre-built librealsense image
+* Contributors: Woojin Wie
+
 4.0.2 (2025-06-25)
 ------------------
 * Fixed launch file paths for OMY-3M and OMY-F3M
