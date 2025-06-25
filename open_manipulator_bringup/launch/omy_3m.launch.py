@@ -121,7 +121,7 @@ def generate_launch_description():
     trajectory_params_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omy_f3m_follower_ai',
+        'omy_3m',
         'initial_positions.yaml',
     ])
 
