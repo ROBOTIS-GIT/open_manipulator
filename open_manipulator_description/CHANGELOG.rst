@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.2 (2025-06-25)
+------------------
+* None
+
 4.0.1 (2025-06-23)
 ------------------
 * Changed default dynamixel profile configuration to use time-based profile for all OM Series
