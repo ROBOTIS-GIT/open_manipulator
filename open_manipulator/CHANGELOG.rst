@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.4 (2025-06-26)
+------------------
+* Added udev rule apply logic to container.sh
+* Contributors: Woojin Wie
+
 4.0.3 (2025-06-25)
 ------------------
 * Changed Dockerfile to use pre-built librealsense image
