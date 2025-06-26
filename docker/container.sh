@@ -37,7 +37,7 @@ start_container() {
 
     # Reload udev rules
     echo "Reloading udev rules..."
-    sudo udevadm control --reload
+    sudo udevadm control --reload-rules
     sudo udevadm trigger
 
     # Pull the latest images
