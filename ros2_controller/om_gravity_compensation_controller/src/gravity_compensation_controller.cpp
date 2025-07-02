@@ -219,7 +219,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   tmp_positions_.resize(joint_names_.size(), 0.0);
 
   follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
-    "/joint_states", rclcpp::QoS(1),
+    "/joint_states", rclcpp::QoS(10),
     [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
       if (msg->name.size() != msg->position.size()) {
         RCLCPP_WARN(get_node()->get_logger(),
@@ -251,7 +251,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
     });
 
   collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
-    "/collision_flag", rclcpp::QoS(1),
+    "/collision_flag", rclcpp::QoS(10),
     [this](const std_msgs::msg::Bool::SharedPtr msg) {
       collision_flag_buffer_.writeFromNonRT(msg->data);
     });
