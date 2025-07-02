@@ -105,22 +105,21 @@ controller_interface::return_type GravityCompensationController::update(
   if (q(2) < 0.5) {
     torques(2) += std::abs(q(2) - 0.5) * 2.5;
   }
-
-  //Add leader sync function
+  // Add leader sync function
   double gain_joint_1_to_3 = 6.0;
   double default_gain = 1.0;
   bool collision = *collision_flag_buffer_.readFromRT();
 
-if (collision && has_follower_data_) {
-  auto follower_positions_ptr = follower_joint_positions_buffer_.readFromRT();
-  if (follower_positions_ptr) {
-    for (size_t i = 0; i < n_joints_; ++i) {
-      double error = (*follower_positions_ptr)[i] - joint_positions_[i];
-      double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
-      torques(i) += gain * error;
+  if (collision && has_follower_data_) {
+    auto follower_positions_ptr = follower_joint_positions_buffer_.readFromRT();
+    if (follower_positions_ptr) {
+      for (size_t i = 0; i < n_joints_; ++i) {
+        double error = (*follower_positions_ptr)[i] - joint_positions_[i];
+        double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
+        torques(i) += gain * error;
+      }
     }
   }
-}
 
   // Apply friction compensation
   for (size_t i = 0; i < tree_.getNrOfJoints(); ++i) {
@@ -222,8 +221,9 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
     "/joint_states", rclcpp::QoS(10),
     [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
       if (msg->name.size() != msg->position.size()) {
-        RCLCPP_WARN(get_node()->get_logger(),
-                    "JointState message has mismatched name/position sizes");
+        RCLCPP_WARN(
+          get_node()->get_logger(),
+          "JointState message has mismatched name/position sizes");
         return;
       }
 
@@ -233,8 +233,10 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
           if (it != msg->name.end()) {
             joint_name_to_index_[i] = static_cast<int>(std::distance(msg->name.begin(), it));
           } else {
-            RCLCPP_ERROR(get_node()->get_logger(),
-              "Joint name '%s' not found in the first joint state message", joint_names_[i].c_str());
+            RCLCPP_ERROR(
+              get_node()->get_logger(),
+              "Joint name '%s' not found in the first joint state message",
+              joint_names_[i].c_str());
             return;
           }
         }
@@ -242,9 +244,9 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
         RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
       }
 
-        for (size_t i = 0; i < joint_names_.size(); ++i) {
-          tmp_positions_[i] = msg->position[joint_name_to_index_[i]];
-        }
+      for (size_t i = 0; i < joint_names_.size(); ++i) {
+        tmp_positions_[i] = msg->position[joint_name_to_index_[i]];
+      }
 
       follower_joint_positions_buffer_.writeFromNonRT(tmp_positions_);
       has_follower_data_ = true;
@@ -344,7 +346,8 @@ controller_interface::CallbackReturn GravityCompensationController::on_deactivat
     for (size_t j = 0; j < command_interface_types_.size(); ++j) {
       bool set_ok = command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
       if (!set_ok) {
-        RCLCPP_ERROR(get_node()->get_logger(),
+        RCLCPP_ERROR(
+          get_node()->get_logger(),
           "Failed to reset command value for joint %zu, interface %zu", i, j);
       }
     }
