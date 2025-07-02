@@ -109,8 +109,9 @@ controller_interface::return_type GravityCompensationController::update(
   //Add leader sync function
   double gain_joint_1_to_3 = 6.0;
   double default_gain = 1.0;
+  bool collision = *collision_flag_buffer_.readFromRT();
 
-if (collision_flag_ && has_follower_data_) {
+if (collision && has_follower_data_) {
   auto follower_positions_ptr = follower_joint_positions_buffer_.readFromRT();
   if (follower_positions_ptr) {
     for (size_t i = 0; i < n_joints_; ++i) {
@@ -210,7 +211,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   // get degrees of freedom
   n_joints_ = params_.joints.size();
   joint_names_ = params_.joints;
-
+  collision_flag_buffer_.writeFromNonRT(false);
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
@@ -255,7 +256,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
     "/collision_flag", rclcpp::QoS(1),
     [this](const std_msgs::msg::Bool::SharedPtr msg) {
-      collision_flag_ = msg->data;
+      collision_flag_buffer_.writeFromNonRT(msg->data);
     });
 
   if (params_.joints.empty()) {

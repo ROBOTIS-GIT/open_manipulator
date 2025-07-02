@@ -137,7 +137,7 @@ protected:
 
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr follower_joint_state_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr collision_flag_sub_;
-  bool collision_flag_ = false;
+  realtime_tools::RealtimeBuffer<bool> collision_flag_buffer_;
   bool joint_index_initialized_ = false;
   std::vector<int> joint_name_to_index_; 
   realtime_tools::RealtimeBuffer<std::vector<double>> follower_joint_positions_buffer_;
