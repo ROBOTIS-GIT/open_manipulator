@@ -252,7 +252,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
     });
 
   collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
-    "/collision_flag", rclcpp::QoS(1),
+    "/collision_flag", rclcpp::QoS(10),
     [this](const std_msgs::msg::Bool::SharedPtr msg) {
       collision_flag_buffer_.writeFromNonRT(msg->data);
     });
