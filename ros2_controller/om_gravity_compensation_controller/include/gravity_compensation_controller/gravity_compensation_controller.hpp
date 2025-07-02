@@ -134,6 +134,7 @@ protected:
   std::vector<double> joint_positions_;
   std::vector<double> joint_velocities_;
   std::vector<double> previous_velocities_;
+  std::vector<double> tmp_positions_; 
 
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr follower_joint_state_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr collision_flag_sub_;

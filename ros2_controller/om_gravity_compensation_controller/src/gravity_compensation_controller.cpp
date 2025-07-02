@@ -216,9 +216,10 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
   joint_name_to_index_.resize(joint_names_.size(), -1);
+  tmp_positions_.resize(joint_names_.size(), 0.0);
 
   follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
-    "/joint_states", rclcpp::QoS(10),
+    "/joint_states", rclcpp::QoS(1),
     [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
       if (msg->name.size() != msg->position.size()) {
         RCLCPP_WARN(get_node()->get_logger(),
@@ -241,19 +242,16 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
         RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
       }
 
-      if (joint_index_initialized_) {
-        std::vector<double> tmp_positions(joint_names_.size(), 0.0);
         for (size_t i = 0; i < joint_names_.size(); ++i) {
-          tmp_positions[i] = msg->position[joint_name_to_index_[i]];
+          tmp_positions_[i] = msg->position[joint_name_to_index_[i]];
         }
 
-      follower_joint_positions_buffer_.writeFromNonRT(tmp_positions);
+      follower_joint_positions_buffer_.writeFromNonRT(tmp_positions_);
       has_follower_data_ = true;
-      }
     });
 
   collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
-    "/collision_flag", rclcpp::QoS(10),
+    "/collision_flag", rclcpp::QoS(1),
     [this](const std_msgs::msg::Bool::SharedPtr msg) {
       collision_flag_buffer_.writeFromNonRT(msg->data);
     });
