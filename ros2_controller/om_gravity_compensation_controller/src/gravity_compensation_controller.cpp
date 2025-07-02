@@ -206,12 +206,12 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
 
   // get degrees of freedom
   n_joints_ = params_.joints.size();
+  joint_names_ = params_.joints;
 
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
   follower_joint_positions_.assign(n_joints_, 0.0); 
-
   joint_name_to_index_.resize(joint_names_.size(), -1);
 
   follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
@@ -258,8 +258,6 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
     // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?
     RCLCPP_WARN(logger, "'joints' parameter is empty.");
   }
-
-  joint_names_ = params_.joints;
 
   command_joint_names_ = params_.command_joints;
 
