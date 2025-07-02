@@ -241,13 +241,11 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
         RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
       }
 
-      std::vector<double> tmp_positions(joint_names_.size(), 0.0);
-      for (size_t i = 0; i < joint_names_.size(); ++i) {
-        int idx = joint_name_to_index_[i];
-        if (idx >= 0 && static_cast<size_t>(idx) < msg->position.size()) {
-          tmp_positions[i] = msg->position[idx];
+      if (joint_index_initialized_) {
+        std::vector<double> tmp_positions(joint_names_.size(), 0.0);
+        for (size_t i = 0; i < joint_names_.size(); ++i) {
+          tmp_positions[i] = msg->position[joint_name_to_index_[i]];
         }
-      }
 
       follower_joint_positions_buffer_.writeFromNonRT(tmp_positions);
       has_follower_data_ = true;
