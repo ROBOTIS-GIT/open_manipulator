@@ -137,6 +137,9 @@ protected:
   std::vector<double> follower_joint_positions_;
   bool has_follower_data_ = false;
   bool collision_flag_ = false;
+  bool joint_index_initialized_ = false;
+  std::vector<int> joint_name_to_index_; 
+
 };
 }  // namespace gravity_compensation_controller
 

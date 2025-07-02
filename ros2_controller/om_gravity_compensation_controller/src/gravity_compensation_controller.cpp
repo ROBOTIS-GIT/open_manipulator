@@ -210,7 +210,9 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
-  follower_joint_positions_.assign(n_joints_, 0.0);  // 초기화
+  follower_joint_positions_.assign(n_joints_, 0.0); 
+
+  joint_name_to_index_.resize(joint_names_.size(), -1);
 
   follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
     "/joint_states", rclcpp::QoS(10),
@@ -220,26 +222,30 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
         return;
       }
 
-      std::unordered_map<std::string, double> name_to_position;
-      for (size_t i = 0; i < msg->name.size(); ++i) {
-        name_to_position[msg->name[i]] = msg->position[i];
+      if (!joint_index_initialized_) {
+        for (size_t i = 0; i < joint_names_.size(); ++i) {
+          auto it = std::find(msg->name.begin(), msg->name.end(), joint_names_[i]);
+          if (it != msg->name.end()) {
+            joint_name_to_index_[i] = static_cast<int>(std::distance(msg->name.begin(), it));
+          } else {
+            RCLCPP_ERROR(get_node()->get_logger(),
+              "Joint name '%s' not found in the first joint state message", joint_names_[i].c_str());
+            return; 
+          }
+        }
+
+        joint_index_initialized_ = true;
+        RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
       }
 
-      bool all_found = true;
       for (size_t i = 0; i < joint_names_.size(); ++i) {
-        auto it = name_to_position.find(joint_names_[i]);
-        if (it != name_to_position.end()) {
-          follower_joint_positions_[i] = it->second;
-        } else {
-          all_found = false;
-          RCLCPP_WARN_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 2000,
-            "Joint name '%s' not found in follower joint state", joint_names_[i].c_str());
+        int idx = joint_name_to_index_[i];
+        if (idx >= 0 && static_cast<size_t>(idx) < msg->position.size()) {
+          follower_joint_positions_[i] = msg->position[idx];
         }
       }
 
-      if (all_found) {
-        has_follower_data_ = true;
-      }
+      has_follower_data_ = true;
     });
 
   collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
