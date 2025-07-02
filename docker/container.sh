@@ -32,12 +32,31 @@ start_container() {
 
     echo "Starting Open Manipulator container..."
 
+    # Copy udev rule for FTDI (U2D2)
+    echo 'KERNEL=="ttyUSB*", DRIVERS=="ftdi_sio", MODE="0666", ATTR{device/latency_timer}="1"' | sudo tee /etc/udev/rules.d/99-u2d2.rules > /dev/null
+
+    # Reload udev rules
+    echo "Reloading udev rules..."
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+
+    # Pull the latest images
+    docker compose -f "${SCRIPT_DIR}/docker-compose.yml" pull
+
     # Run docker-compose
     docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
 }
 
 # Function to enter the container
 enter_container() {
+    # Set up X11 forwarding only if DISPLAY is set
+    if [ -n "$DISPLAY" ]; then
+        echo "Setting up X11 forwarding..."
+        xhost +local:docker || true
+    else
+        echo "Warning: DISPLAY environment variable is not set. X11 forwarding will not be available."
+    fi
+
     if ! docker ps | grep -q "$CONTAINER_NAME"; then
         echo "Error: Container is not running"
         exit 1

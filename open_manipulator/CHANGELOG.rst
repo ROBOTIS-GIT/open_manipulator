@@ -2,6 +2,21 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.4 (2025-06-26)
+------------------
+* Added udev rule apply logic to container.sh
+* Contributors: Woojin Wie
+
+4.0.3 (2025-06-25)
+------------------
+* Changed Dockerfile to use pre-built librealsense image
+* Contributors: Woojin Wie
+
+4.0.2 (2025-06-25)
+------------------
+* Fixed launch file paths for OMY-3M and OMY-F3M
+* Contributors: Woojin Wie
+
 4.0.1 (2025-06-23)
 ------------------
 * Changed default dynamixel profile configuration to use time-based profile for all OM Series
