@@ -249,6 +249,7 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
 
       follower_joint_positions_buffer_.writeFromNonRT(tmp_positions);
       has_follower_data_ = true;
+      }
     });
 
   collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
