@@ -8,7 +8,7 @@ package_name = 'open_manipulator_bringup'
 
 setup(
     name=package_name,
-    version='4.0.4',
+    version='4.0.5',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
