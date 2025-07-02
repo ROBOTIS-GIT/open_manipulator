@@ -23,7 +23,10 @@
 #define GRAVITY_COMPENSATION_CONTROLLER__GRAVITY_COMPENSATION_CONTROLLER_HPP_
 
 #include <gravity_compensation_controller/visibility_control.h>
+#include <realtime_tools/realtime_buffer.hpp>
 
+
+#include <atomic>
 #include <memory>
 #include <string>
 #include <vector>
@@ -134,12 +137,11 @@ protected:
 
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr follower_joint_state_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr collision_flag_sub_;
-  std::vector<double> follower_joint_positions_;
-  bool has_follower_data_ = false;
   bool collision_flag_ = false;
   bool joint_index_initialized_ = false;
   std::vector<int> joint_name_to_index_; 
-
+  realtime_tools::RealtimeBuffer<std::vector<double>> follower_joint_positions_buffer_;
+  std::atomic<bool> has_follower_data_{false};
 };
 }  // namespace gravity_compensation_controller
 

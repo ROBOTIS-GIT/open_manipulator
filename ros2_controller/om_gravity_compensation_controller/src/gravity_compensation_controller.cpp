@@ -110,13 +110,16 @@ controller_interface::return_type GravityCompensationController::update(
   double gain_joint_1_to_3 = 6.0;
   double default_gain = 1.0;
 
-  if (collision_flag_ && has_follower_data_) {
+if (collision_flag_ && has_follower_data_) {
+  auto follower_positions_ptr = follower_joint_positions_buffer_.readFromRT();
+  if (follower_positions_ptr) {
     for (size_t i = 0; i < n_joints_; ++i) {
-      double error = follower_joint_positions_[i] - joint_positions_[i];
+      double error = (*follower_positions_ptr)[i] - joint_positions_[i];
       double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
       torques(i) += gain * error;
     }
   }
+}
 
   // Apply friction compensation
   for (size_t i = 0; i < tree_.getNrOfJoints(); ++i) {
@@ -211,14 +214,14 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
-  follower_joint_positions_.assign(n_joints_, 0.0); 
   joint_name_to_index_.resize(joint_names_.size(), -1);
 
   follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
     "/joint_states", rclcpp::QoS(10),
     [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
       if (msg->name.size() != msg->position.size()) {
-        RCLCPP_WARN(get_node()->get_logger(), "JointState message has mismatched name/position sizes");
+        RCLCPP_WARN(get_node()->get_logger(),
+                    "JointState message has mismatched name/position sizes");
         return;
       }
 
@@ -230,21 +233,22 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
           } else {
             RCLCPP_ERROR(get_node()->get_logger(),
               "Joint name '%s' not found in the first joint state message", joint_names_[i].c_str());
-            return; 
+            return;
           }
         }
-
         joint_index_initialized_ = true;
         RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
       }
 
+      std::vector<double> tmp_positions(joint_names_.size(), 0.0);
       for (size_t i = 0; i < joint_names_.size(); ++i) {
         int idx = joint_name_to_index_[i];
         if (idx >= 0 && static_cast<size_t>(idx) < msg->position.size()) {
-          follower_joint_positions_[i] = msg->position[idx];
+          tmp_positions[i] = msg->position[idx];
         }
       }
 
+      follower_joint_positions_buffer_.writeFromNonRT(tmp_positions);
       has_follower_data_ = true;
     });
 
