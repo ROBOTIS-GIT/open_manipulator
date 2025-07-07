@@ -5,7 +5,9 @@ Changelog for package open_manipulator_bringup
 4.0.5 (2025-07-02)
 ------------------
 * Added init_position_file argument to launch files
-* Contributors: Woojin Wie
+* Added qc_position file for OMY series
+* Enabled self-collision avoidance by default for OMY series
+* Contributors: Woojin Wie, Sungho Woo
 
 4.0.4 (2025-06-26)
 ------------------

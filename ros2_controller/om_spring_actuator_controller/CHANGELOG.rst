@@ -4,7 +4,8 @@ Changelog for package om_spring_actuator_controller
 
 4.0.5 (2025-07-02)
 ------------------
-* None
+* Fixed lint errors
+* Contributors: Sungho Woo
 
 4.0.4 (2025-06-26)
 ------------------

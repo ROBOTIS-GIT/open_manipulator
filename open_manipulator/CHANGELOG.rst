@@ -6,7 +6,10 @@ Changelog for package open_manipulator
 ------------------
 * Added init_position_file argument to launch files
 * Updated profile time and acceleration time for OMY series
-* Contributors: Woojin Wie
+* Fixed lint errors
+* Updated Collision area for OMY series
+* Added feedback control for leader-follower synchronization
+* Contributors: Woojin Wie, Sungho Woo
 
 4.0.4 (2025-06-26)
 ------------------
