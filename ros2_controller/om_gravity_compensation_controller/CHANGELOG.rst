@@ -2,6 +2,11 @@
 Changelog for package om_gravity_compensation_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.5 (2025-07-02)
+------------------
+* Added feedback control for leader-follower synchronization
+* Contributors: Sungho Woo
+
 4.0.4 (2025-06-26)
 ------------------
 * None

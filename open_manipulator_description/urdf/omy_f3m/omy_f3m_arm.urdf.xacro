@@ -105,7 +105,7 @@
          <collision>
             <origin xyz="0 0.125 0.08" rpy="0 0 0" />
             <geometry>
-               <cylinder radius="0.042" length="0.19"/>
+               <cylinder radius="0.042" length="0.17"/>
             </geometry>
          </collision>
          <inertial>
@@ -195,7 +195,7 @@
          <collision>
             <origin xyz="0 -0.1 0" rpy="1.57 0 0" />
             <geometry>
-               <cylinder radius="0.09" length="0.22"/>
+               <cylinder radius="0.08" length="0.22"/>
             </geometry>
          </collision>
          <inertial>
@@ -222,7 +222,7 @@
          <collision>
             <origin xyz="0 0.03 0.04" rpy="0 0 0" />
             <geometry>
-               <cylinder radius="0.04" length="0.12"/>
+               <cylinder radius="0.035" length="0.12"/>
             </geometry>
          </collision>
          <inertial>

@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_collision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.5 (2025-07-02)
+------------------
+* Updated urdf file path for OMY
+* Contributors: Sungho Woo
+
 4.0.4 (2025-06-26)
 ------------------
 * None

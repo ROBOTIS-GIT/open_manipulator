@@ -1,7 +1,7 @@
 /**:
   controller_manager:
     ros__parameters:
-      update_rate: 400  # Hz
+      update_rate: 300  # Hz
       thread_priority: 20
       cpu_affinity: [1, 2, 3]
 

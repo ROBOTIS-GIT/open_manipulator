@@ -232,7 +232,8 @@ controller_interface::CallbackReturn SpringActuatorController::on_deactivate(
     for (size_t j = 0; j < command_interface_types_.size(); ++j) {
       bool set_ok = command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
       if (!set_ok) {
-        RCLCPP_ERROR(get_node()->get_logger(),
+        RCLCPP_ERROR(
+          get_node()->get_logger(),
           "Failed to reset command value for joint %zu, interface %zu", i, j);
       }
     }

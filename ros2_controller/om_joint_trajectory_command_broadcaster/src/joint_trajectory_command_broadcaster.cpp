@@ -273,7 +273,8 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   if (collision_detected_.load()) {
-    RCLCPP_WARN_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 2000,
+    RCLCPP_WARN_THROTTLE(
+      get_node()->get_logger(), *get_node()->get_clock(), 2000,
       "Collision detected. Skipping joint_trajectory publish.");
     return controller_interface::return_type::OK;
   }
