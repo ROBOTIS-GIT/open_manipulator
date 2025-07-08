@@ -2,6 +2,12 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.5 (2025-07-02)
+------------------
+* Updated profile time and acceleration time for OMY series
+* Updated Collision area for OMY series
+* Contributors: Woojin Wie, Sungho Woo
+
 4.0.4 (2025-06-26)
 ------------------
 * None

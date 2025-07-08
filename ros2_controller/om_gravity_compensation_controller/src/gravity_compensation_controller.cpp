@@ -105,6 +105,21 @@ controller_interface::return_type GravityCompensationController::update(
   if (q(2) < 0.5) {
     torques(2) += std::abs(q(2) - 0.5) * 2.5;
   }
+  // Add leader sync function
+  double gain_joint_1_to_3 = 6.0;
+  double default_gain = 1.0;
+  bool collision = *collision_flag_buffer_.readFromRT();
+
+  if (collision && has_follower_data_) {
+    auto follower_positions_ptr = follower_joint_positions_buffer_.readFromRT();
+    if (follower_positions_ptr) {
+      for (size_t i = 0; i < n_joints_; ++i) {
+        double error = (*follower_positions_ptr)[i] - joint_positions_[i];
+        double gain = (i <= 2) ? gain_joint_1_to_3 : default_gain;
+        torques(i) += gain * error;
+      }
+    }
+  }
 
   // Apply friction compensation
   for (size_t i = 0; i < tree_.getNrOfJoints(); ++i) {
@@ -194,17 +209,59 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
 
   // get degrees of freedom
   n_joints_ = params_.joints.size();
-
+  joint_names_ = params_.joints;
+  collision_flag_buffer_.writeFromNonRT(false);
   joint_positions_.resize(n_joints_);
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);  // Initialize previous velocities vector
+  joint_name_to_index_.resize(joint_names_.size(), -1);
+  tmp_positions_.resize(joint_names_.size(), 0.0);
+
+  follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
+    "/joint_states", rclcpp::QoS(10),
+    [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
+      if (msg->name.size() != msg->position.size()) {
+        RCLCPP_WARN(
+          get_node()->get_logger(),
+          "JointState message has mismatched name/position sizes");
+        return;
+      }
+
+      if (!joint_index_initialized_) {
+        for (size_t i = 0; i < joint_names_.size(); ++i) {
+          auto it = std::find(msg->name.begin(), msg->name.end(), joint_names_[i]);
+          if (it != msg->name.end()) {
+            joint_name_to_index_[i] = static_cast<int>(std::distance(msg->name.begin(), it));
+          } else {
+            RCLCPP_ERROR(
+              get_node()->get_logger(),
+              "Joint name '%s' not found in the first joint state message",
+              joint_names_[i].c_str());
+            return;
+          }
+        }
+        joint_index_initialized_ = true;
+        RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
+      }
+
+      for (size_t i = 0; i < joint_names_.size(); ++i) {
+        tmp_positions_[i] = msg->position[joint_name_to_index_[i]];
+      }
+
+      follower_joint_positions_buffer_.writeFromNonRT(tmp_positions_);
+      has_follower_data_ = true;
+    });
+
+  collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
+    "/collision_flag", rclcpp::QoS(10),
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+      collision_flag_buffer_.writeFromNonRT(msg->data);
+    });
 
   if (params_.joints.empty()) {
     // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?
     RCLCPP_WARN(logger, "'joints' parameter is empty.");
   }
-
-  joint_names_ = params_.joints;
 
   command_joint_names_ = params_.command_joints;
 
@@ -289,7 +346,8 @@ controller_interface::CallbackReturn GravityCompensationController::on_deactivat
     for (size_t j = 0; j < command_interface_types_.size(); ++j) {
       bool set_ok = command_interfaces_[i * command_interface_types_.size() + j].set_value(0.0);
       if (!set_ok) {
-        RCLCPP_ERROR(get_node()->get_logger(),
+        RCLCPP_ERROR(
+          get_node()->get_logger(),
           "Failed to reset command value for joint %zu, interface %zu", i, j);
       }
     }

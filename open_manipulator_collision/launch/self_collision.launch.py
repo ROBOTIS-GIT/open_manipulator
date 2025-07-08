@@ -26,8 +26,8 @@ def generate_launch_description():
     urdf_path = PathJoinSubstitution([
         FindPackageShare('open_manipulator_description'),
         'urdf',
-        'om_y',
-        'open_manipulator_y.urdf.xacro'
+        'omy_f3m',
+        'omy_f3m.urdf.xacro'
     ])
 
     return LaunchDescription([

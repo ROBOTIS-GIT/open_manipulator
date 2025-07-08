@@ -61,7 +61,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'use_self_collision_avoidance',
-            default_value='false',
+            default_value='true',
             description='Whether to launch the self-collision detection node',
         ),
         DeclareLaunchArgument(
