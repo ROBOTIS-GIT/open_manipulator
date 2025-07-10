@@ -25,7 +25,6 @@ from launch.substitutions import Command
 from launch.substitutions import FindExecutable
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
-
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -99,7 +98,7 @@ def generate_launch_description():
             output='screen'),
 
         Node(
-            package="joint_state_publisher_gui",
-            executable="joint_state_publisher_gui",
+            package='joint_state_publisher_gui',
+            executable='joint_state_publisher_gui',
             condition=IfCondition(use_gui)),
     ])

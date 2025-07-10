@@ -34,6 +34,7 @@ def is_valid_to_launch():
     else:
         return True
 
+
 def generate_launch_description():
     if not is_valid_to_launch():
         print('Can not launch fake robot in Raspberry Pi')

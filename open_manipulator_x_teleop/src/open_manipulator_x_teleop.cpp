@@ -60,7 +60,9 @@ KeyboardServo::KeyboardServo()
     nh_->create_client<std_srvs::srv::Trigger>("/servo_node/stop_servo");
 
   joint_pub_ = nh_->create_publisher<control_msgs::msg::JointJog>(ARM_JOINT_TOPIC, ROS_QUEUE_SIZE);
-  client_ = rclcpp_action::create_client<control_msgs::action::GripperCommand>(nh_, "gripper_controller/gripper_cmd");
+  client_ = rclcpp_action::create_client<control_msgs::action::GripperCommand>(
+    nh_,
+    "gripper_controller/gripper_cmd");
 }
 
 KeyboardServo::~KeyboardServo()
@@ -179,15 +181,19 @@ int KeyboardServo::keyLoop()
 
 void KeyboardServo::send_goal(float position)
 {
-    auto goal_msg = control_msgs::action::GripperCommand::Goal();
-    goal_msg.command.position = position;
-    goal_msg.command.max_effort = 100.0;
+  auto goal_msg = control_msgs::action::GripperCommand::Goal();
+  goal_msg.command.position = position;
+  goal_msg.command.max_effort = 100.0;
 
-    auto send_goal_options = rclcpp_action::Client<control_msgs::action::GripperCommand>::SendGoalOptions();
-    send_goal_options.result_callback = std::bind(&KeyboardServo::goal_result_callback, this, std::placeholders::_1);
+  auto send_goal_options = rclcpp_action::Client<
+    control_msgs::action::GripperCommand>::SendGoalOptions();
+  send_goal_options.result_callback = std::bind(
+    &KeyboardServo::goal_result_callback,
+    this,
+    std::placeholders::_1);
 
-    RCLCPP_INFO(nh_->get_logger(), "Sending goal");
-    client_->async_send_goal(goal_msg, send_goal_options);
+  RCLCPP_INFO(nh_->get_logger(), "Sending goal");
+  client_->async_send_goal(goal_msg, send_goal_options);
 }
 
 void KeyboardServo::connect_moveit_servo()

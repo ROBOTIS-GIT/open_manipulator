@@ -1,28 +1,26 @@
+// Copyright 2024 ROBOTIS CO., LTD.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Authors: Wonho Yoon, Sungho Woo
 
-/*******************************************************************************
- * Copyright 2024 ROBOTIS CO., LTD.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+#include <moveit/move_group_interface/move_group_interface.h>
 
-/* Authors: Wonho Yoon, Sungho Woo */
-
+#include <chrono>
 #include <memory>
+#include <thread>
 
 #include <rclcpp/rclcpp.hpp>
-#include <moveit/move_group_interface/move_group_interface.h>
-#include <chrono>
-#include <thread>
 
 int main(int argc, char * argv[])
 {
@@ -43,17 +41,17 @@ int main(int argc, char * argv[])
   auto move_group_interface = MoveGroupInterface(node, "arm");
 
   // Define the target pose for the robot arm
-  auto const target_pose = []{
-    geometry_msgs::msg::Pose msg;
-    msg.orientation.x = 0.0;  // Orientation (quaternion x)
-    msg.orientation.y = 0.0;  // Orientation (quaternion y)
-    msg.orientation.z = 0.0;  // Orientation (quaternion z)
-    msg.orientation.w = 1.0;  // Orientation (quaternion w)
-    msg.position.x = 0.163;   // Position in x
-    msg.position.y = 0.0;  // Position in y
-    msg.position.z = 0.2;   // Position in z
-    return msg;
-  }();
+  auto const target_pose = [] {
+      geometry_msgs::msg::Pose msg;
+      msg.orientation.x = 0.0;  // Orientation (quaternion x)
+      msg.orientation.y = 0.0;  // Orientation (quaternion y)
+      msg.orientation.z = 0.0;  // Orientation (quaternion z)
+      msg.orientation.w = 1.0;  // Orientation (quaternion w)
+      msg.position.x = 0.163;   // Position in x
+      msg.position.y = 0.0;  // Position in y
+      msg.position.z = 0.2;   // Position in z
+      return msg;
+    }();
 
   // Set the target pose for the arm
   move_group_interface.setPoseTarget(target_pose);
@@ -63,14 +61,14 @@ int main(int argc, char * argv[])
   move_group_interface.setGoalOrientationTolerance(0.02);
 
   // Plan the motion for the arm to reach the target pose
-  auto const [success, plan] = [&move_group_interface]{
-    moveit::planning_interface::MoveGroupInterface::Plan msg;
-    auto const ok = static_cast<bool>(move_group_interface.plan(msg));
-    return std::make_pair(ok, msg);
-  }();
+  auto const [success, plan] = [&move_group_interface] {
+      moveit::planning_interface::MoveGroupInterface::Plan msg;
+      auto const ok = static_cast<bool>(move_group_interface.plan(msg));
+      return std::make_pair(ok, msg);
+    }();
 
   // If planning succeeds, execute the planned motion
-  if(success) {
+  if (success) {
     move_group_interface.execute(plan);
     std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds after execution
   } else {
@@ -104,7 +102,8 @@ int main(int argc, char * argv[])
     }
 
   } else {
-    RCLCPP_ERROR(logger, "Failed to move the arm back to home position");  // Log an error if it fails
+    RCLCPP_ERROR(
+      logger, "Failed to move the arm back to home position");  // Log an error if it fails
   }
 
   // Shut down the ROS2 node
