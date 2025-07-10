@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_x_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.6 (2025-07-10)
+------------------
+* Fixed an issue where meshes were not loading in the Gazebo simulation by adding the Gazebo model path export
+* Contributors: Hyungyu Kim
+
 3.0.2 (2025-06-20)
 ------------------
 * None
