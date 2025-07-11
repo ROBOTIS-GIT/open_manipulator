@@ -141,7 +141,7 @@ def generate_launch_description():
             {'robot_description': urdf_file},
             controller_manager_config
         ],
-        output="both",
+        output='both',
         condition=UnlessCondition(use_sim))
 
     robot_state_pub_node = Node(
