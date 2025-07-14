@@ -60,6 +60,7 @@ include_directories(
   include
   ${EIGEN3_INCLUDE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/..
 )
 
 ################################################################################
