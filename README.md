@@ -10,7 +10,7 @@ To learn more about the Physical AI Tools, visit:
 To explore our open-source platforms in a simulation environment, visit:
   - [Simulation Models](https://github.com/ROBOTIS-GIT/robotis_mujoco_menagerie)
 
-For usage instructions and demonstrations of the AI Worker, check out:
+For usage instructions and demonstrations of the OpenMANIPULATOR, check out:
   - [Tutorial Videos](https://www.youtube.com/@ROBOTISOpenSourceTeam)
 
 To access datasets and pre-trained models for our open-source platforms, see:
