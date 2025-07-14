@@ -17,13 +17,14 @@
 # Author: Wonho Yoon, Sungho Woo
 
 import os
-import yaml
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
 import xacro
+import yaml
 
 
 def generate_launch_description():
@@ -40,56 +41,56 @@ def generate_launch_description():
     # Robot description
     robot_description_config = xacro.process_file(
         os.path.join(
-            get_package_share_directory("open_manipulator_x_description"),
-            "urdf",
-            "open_manipulator_x_robot.urdf.xacro",
+            get_package_share_directory('open_manipulator_x_description'),
+            'urdf',
+            'open_manipulator_x_robot.urdf.xacro',
         )
     )
-    robot_description = {"robot_description": robot_description_config.toxml()}
+    robot_description = {'robot_description': robot_description_config.toxml()}
 
     # Robot description Semantic config
     robot_description_semantic_path = os.path.join(
-        get_package_share_directory("open_manipulator_x_moveit_config"),
-        "config",
-        "open_manipulator_x.srdf",
+        get_package_share_directory('open_manipulator_x_moveit_config'),
+        'config',
+        'open_manipulator_x.srdf',
     )
     try:
-        with open(robot_description_semantic_path, "r") as file:
+        with open(robot_description_semantic_path, 'r') as file:
             robot_description_semantic_config = file.read()
     except EnvironmentError:  # parent of IOError, OSError *and* WindowsError where available
         return None
 
     robot_description_semantic = {
-        "robot_description_semantic": robot_description_semantic_config
+        'robot_description_semantic': robot_description_semantic_config
     }
 
-        # kinematics yaml
+    # kinematics yaml
     kinematics_yaml_path = os.path.join(
-        get_package_share_directory("open_manipulator_x_moveit_config"),
-        "config",
-        "kinematics.yaml",
+        get_package_share_directory('open_manipulator_x_moveit_config'),
+        'config',
+        'kinematics.yaml',
     )
-    with open(kinematics_yaml_path, "r") as file:
+    with open(kinematics_yaml_path, 'r') as file:
         kinematics_yaml = yaml.safe_load(file)
 
     # Get parameters for the Servo node
     servo_yaml_path = os.path.join(
-        get_package_share_directory("open_manipulator_x_moveit_config"),
-        "config",
-        "moveit_servo.yaml",
+        get_package_share_directory('open_manipulator_x_moveit_config'),
+        'config',
+        'moveit_servo.yaml',
     )
     try:
-        with open(servo_yaml_path, "r") as file:
-            servo_params = {"moveit_servo": yaml.safe_load(file)}
+        with open(servo_yaml_path, 'r') as file:
+            servo_params = {'moveit_servo': yaml.safe_load(file)}
     except EnvironmentError:  # parent of IOError, OSError *and* WindowsError where available
         return None
 
     # Launch as much as possible in components
     servo_node = Node(
-        package="moveit_servo",
-        executable="servo_node_main",
+        package='moveit_servo',
+        executable='servo_node_main',
         parameters=[
-            {'use_gazebo':use_sim},
+            {'use_gazebo': use_sim},
             servo_params,
             robot_description,
             robot_description_semantic,

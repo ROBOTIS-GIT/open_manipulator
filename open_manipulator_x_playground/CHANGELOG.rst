@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_x_playground
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.3 (2025-07-10)
+------------------
+* Linted the codebase
+* Contributors: Hyungyu Kim
+
 3.0.2 (2025-06-20)
 ------------------
 * None
