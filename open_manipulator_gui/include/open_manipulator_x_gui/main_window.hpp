@@ -14,8 +14,8 @@
 //
 // Author: Ryan Shim, Sungho Woo, Wonho Yun, Woojin Wie
 
-#ifndef OMX_GUI__MAIN_WINDOW_HPP_
-#define OMX_GUI__MAIN_WINDOW_HPP_
+#ifndef OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
+#define OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
 
 #include <QMainWindow>
 #include <QTimer>
@@ -33,10 +33,10 @@
 #include <sstream>
 #include <string>
 
-#include "omx_gui/qnode.hpp"
-#include "omx_gui/ui_omx_main_window.h"
+#include "open_manipulator_x_gui/qnode.hpp"
+#include "open_manipulator_x_gui/ui_open_manipulator_x_main_window.h"
 
-namespace omx_gui
+namespace open_manipulator_x_gui
 {
 
 class MainWindow : public QMainWindow
@@ -76,6 +76,6 @@ private:
   std::string csv_file_path_;
 };
 
-}  // namespace omx_gui
+}  // namespace open_manipulator_x_gui
 
-#endif  // OMX_GUI__MAIN_WINDOW_HPP_
+#endif  // OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_

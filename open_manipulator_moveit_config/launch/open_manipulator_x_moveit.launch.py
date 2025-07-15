@@ -60,11 +60,15 @@ def generate_launch_description():
     publish_robot_description_semantic = LaunchConfiguration('publish_robot_description_semantic')
 
     moveit_config = (
-        MoveItConfigsBuilder(robot_name='omx', package_name='open_manipulator_moveit_config')
-        .robot_description_semantic(str(Path('config') / 'omx' / 'omx.srdf'))
-        .joint_limits(str(Path('config') / 'omx' / 'joint_limits.yaml'))
-        .trajectory_execution(str(Path('config') / 'omx' / 'moveit_controllers.yaml'))
-        .robot_description_kinematics(str(Path('config') / 'omx' / 'kinematics.yaml'))
+        MoveItConfigsBuilder(
+            robot_name='open_manipulator_x', package_name='open_manipulator_moveit_config')
+        .robot_description_semantic(
+            str(Path('config') / 'open_manipulator_x' / 'open_manipulator_x.srdf'))
+        .joint_limits(str(Path('config') / 'open_manipulator_x' / 'joint_limits.yaml'))
+        .trajectory_execution(
+            str(Path('config') / 'open_manipulator_x' / 'moveit_controllers.yaml'))
+        .robot_description_kinematics(
+            str(Path('config') / 'open_manipulator_x' / 'kinematics.yaml'))
         .to_moveit_configs()
     )
 

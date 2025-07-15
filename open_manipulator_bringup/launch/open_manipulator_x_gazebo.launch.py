@@ -70,8 +70,8 @@ def generate_launch_description():
     xacro_file = os.path.join(
         open_manipulator_description_path,
         'urdf',
-        'omx',
-        'omx.urdf.xacro',
+        'open_manipulator_x',
+        'open_manipulator_x.urdf.xacro',
     )
 
     doc = xacro.process_file(xacro_file, mappings={'use_sim': 'true'})

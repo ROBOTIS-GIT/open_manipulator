@@ -14,8 +14,8 @@
 //
 // Author: Ryan Shim, Sungho Woo, Wonho Yun, Woojin Wie
 
-#ifndef OMX_GUI__QNODE_HPP_
-#define OMX_GUI__QNODE_HPP_
+#ifndef OPEN_MANIPULATOR_X_GUI__QNODE_HPP_
+#define OPEN_MANIPULATOR_X_GUI__QNODE_HPP_
 
 #include <QThread>
 #include <QStringListModel>
@@ -32,7 +32,7 @@
 
 #include <moveit/move_group_interface/move_group_interface.hpp>
 
-namespace omx_gui
+namespace open_manipulator_x_gui
 {
 
 class QNode : public QThread
@@ -82,6 +82,6 @@ Q_SIGNALS:
   void rosShutdown();
 };
 
-}  // namespace omx_gui
+}  // namespace open_manipulator_x_gui
 
-#endif  // OMX_GUI__QNODE_HPP_
+#endif  // OPEN_MANIPULATOR_X_GUI__QNODE_HPP_
