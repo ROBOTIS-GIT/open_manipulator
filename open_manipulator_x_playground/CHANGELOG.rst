@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_x_playground
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.4 (2025-07-15)
+------------------
+* None
+
 3.0.3 (2025-07-10)
 ------------------
 * Linted the codebase

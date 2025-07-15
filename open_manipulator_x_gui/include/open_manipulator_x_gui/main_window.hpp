@@ -30,7 +30,7 @@
 #include <sstream>
 #include <string>
 
-#include "../open_manipulator_x_gui/ui_main_window.h"
+#include "gui_headers/ui_main_window.h"
 #include "open_manipulator_x_gui/qnode.hpp"
 
 namespace open_manipulator_x_gui

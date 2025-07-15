@@ -50,6 +50,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gui_headers)
+
 qt5_wrap_cpp(PROJECT_MOCS ${PROJECT_HEADERS})
 qt5_wrap_ui(PROJECT_UI_HEADERS ${PROJECT_UI})
 
@@ -81,6 +83,24 @@ ament_target_dependencies(${PROJECT_NAME}_node
   moveit_ros_planning_interface
   Eigen3
   Qt5Widgets
+)
+
+
+add_dependencies(${PROJECT_NAME}_node copy_ui_header)
+
+################################################################################
+# Copy generated UI headers to the correct location
+################################################################################
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/gui_headers/ui_main_window.h
+  COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_BINARY_DIR}/ui_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/gui_headers/ui_main_window.h
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_main_window.h
+)
+
+add_custom_target(copy_ui_header ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/gui_headers/ui_main_window.h
 )
 
 ################################################################################
