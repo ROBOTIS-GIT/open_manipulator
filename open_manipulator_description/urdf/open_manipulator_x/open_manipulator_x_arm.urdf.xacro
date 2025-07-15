@@ -2,11 +2,11 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="omx" params="prefix=''">
+  <xacro:macro name="open_manipulator_x" params="prefix=''">
 
     <xacro:property
       name="meshes_file_direction"
-      value="package://open_manipulator_description/meshes/omx"/>
+      value="package://open_manipulator_description/meshes/open_manipulator_x"/>
 
     <link name="${prefix}link1">
       <visual>

@@ -26,19 +26,19 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 ################################################################################
 # Define project sources and headers
 ################################################################################
-set(PROJECT_SOURCES_OMX
-  src/omx/main.cpp
-  src/omx/main_window.cpp
-  src/omx/qnode.cpp
+set(PROJECT_SOURCES_open_manipulator_x
+  src/open_manipulator_x/main.cpp
+  src/open_manipulator_x/main_window.cpp
+  src/open_manipulator_x/qnode.cpp
 )
 
-set(PROJECT_HEADERS_OMX
-  include/omx_gui/main_window.hpp
-  include/omx_gui/qnode.hpp
+set(PROJECT_HEADERS_open_manipulator_x
+  include/open_manipulator_x_gui/main_window.hpp
+  include/open_manipulator_x_gui/qnode.hpp
 )
 
-set(PROJECT_UI_OMX
-  ui/omx_main_window.ui
+set(PROJECT_UI_open_manipulator_x
+  ui/open_manipulator_x_main_window.ui
 )
 
 ################################################################################
@@ -89,34 +89,34 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Create output directories for UI files
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/omx_gui)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/omy_3m_gui)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/omy_f3m_gui)
 
 # Generate UI headers
-qt5_wrap_ui(PROJECT_UI_HEADERS_OMX ${PROJECT_UI_OMX})
+qt5_wrap_ui(PROJECT_UI_HEADERS_open_manipulator_x ${PROJECT_UI_open_manipulator_x})
 qt5_wrap_ui(PROJECT_UI_HEADERS_OMY3M ${PROJECT_UI_OMY3M})
 qt5_wrap_ui(PROJECT_UI_HEADERS_OMYF3M ${PROJECT_UI_OMYF3M})
 
-qt5_wrap_cpp(PROJECT_MOCS_OMX ${PROJECT_HEADERS_OMX})
+qt5_wrap_cpp(PROJECT_MOCS_open_manipulator_x ${PROJECT_HEADERS_open_manipulator_x})
 qt5_wrap_cpp(PROJECT_MOCS_OMY3M ${PROJECT_HEADERS_OMY3M})
 qt5_wrap_cpp(PROJECT_MOCS_OMYF3M ${PROJECT_HEADERS_OMYF3M})
 
 ################################################################################
 # Build
 ################################################################################
-add_executable(omx_gui_node
-  ${PROJECT_SOURCES_OMX}
-  ${PROJECT_MOCS_OMX}
-  ${PROJECT_UI_HEADERS_OMX}
+add_executable(open_manipulator_x_gui_node
+  ${PROJECT_SOURCES_open_manipulator_x}
+  ${PROJECT_MOCS_open_manipulator_x}
+  ${PROJECT_UI_HEADERS_open_manipulator_x}
 )
 
-add_dependencies(omx_gui_node copy_ui_headers)
+add_dependencies(open_manipulator_x_gui_node copy_ui_headers)
 
 ################################################################################
 # Include directories
 ################################################################################
-target_include_directories(omx_gui_node PUBLIC
+target_include_directories(open_manipulator_x_gui_node PUBLIC
   include
   ${EIGEN3_INCLUDE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -125,7 +125,7 @@ target_include_directories(omx_gui_node PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(omx_gui_node
+target_link_libraries(open_manipulator_x_gui_node
   rclcpp::rclcpp
   ${geometry_msgs_TARGETS}
   ${std_msgs_TARGETS}
@@ -135,7 +135,7 @@ target_link_libraries(omx_gui_node
   Qt5::Widgets
 )
 
-add_dependencies(omx_gui_node copy_ui_headers)
+add_dependencies(open_manipulator_x_gui_node copy_ui_headers)
 
 ################################################################################
 # OMY 3M
@@ -205,11 +205,11 @@ target_link_libraries(omy_f3m_gui_node
 # Copy generated UI headers to the correct location
 ################################################################################
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/omx_gui/ui_omx_main_window.h
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_open_manipulator_x_main_window.h
   COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_CURRENT_BINARY_DIR}/ui_omx_main_window.h
-    ${CMAKE_CURRENT_BINARY_DIR}/omx_gui/ui_omx_main_window.h
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_omx_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/ui_open_manipulator_x_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_open_manipulator_x_main_window.h
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_open_manipulator_x_main_window.h
 )
 
 add_custom_command(
@@ -230,7 +230,7 @@ add_custom_command(
 
 add_custom_target(copy_ui_headers ALL
   DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/omx_gui/ui_omx_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_open_manipulator_x_main_window.h
     ${CMAKE_CURRENT_BINARY_DIR}/omy_3m_gui/ui_omy_3m_main_window.h
     ${CMAKE_CURRENT_BINARY_DIR}/omy_f3m_gui/ui_omy_f3m_main_window.h
 )
@@ -238,7 +238,7 @@ add_custom_target(copy_ui_headers ALL
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS omx_gui_node
+install(TARGETS open_manipulator_x_gui_node
   DESTINATION lib/open_manipulator_gui
 )
 
@@ -264,7 +264,7 @@ install(DIRECTORY config DESTINATION share/open_manipulator_gui)
 # Macro for ament package
 ################################################################################
 ament_export_include_directories(include)
-ament_export_libraries(omx_gui_node)
+ament_export_libraries(open_manipulator_x_gui_node)
 ament_export_libraries(omy_3m_gui_node)
 ament_export_libraries(omy_f3m_gui_node)
 

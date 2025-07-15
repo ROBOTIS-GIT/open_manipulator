@@ -26,7 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'omx_teleop = open_manipulator_teleop.omx_teleop:main',
+            'open_manipulator_x_teleop = open_manipulator_teleop.open_manipulator_x_teleop:main',
             'omy_3m_teleop = open_manipulator_teleop.omy_3m_teleop:main',
             'omy_f3m_teleop = open_manipulator_teleop.omy_f3m_teleop:main',
         ],

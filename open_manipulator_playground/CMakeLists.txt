@@ -23,13 +23,13 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(omx_hello_moveit src/omx_hello_moveit.cpp)
-target_include_directories(omx_hello_moveit PUBLIC
+add_executable(open_manipulator_x_hello_moveit src/open_manipulator_x_hello_moveit.cpp)
+target_include_directories(open_manipulator_x_hello_moveit PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-target_compile_features(omx_hello_moveit PUBLIC cxx_std_17)
-target_link_libraries(omx_hello_moveit PUBLIC
+target_compile_features(open_manipulator_x_hello_moveit PUBLIC cxx_std_17)
+target_link_libraries(open_manipulator_x_hello_moveit PUBLIC
   moveit_ros_planning_interface::moveit_move_group_interface
   rclcpp::rclcpp
 )
@@ -63,7 +63,7 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-install(TARGETS omx_hello_moveit omy_f3m_hello_moveit omy_3m_hello_moveit
+install(TARGETS open_manipulator_x_hello_moveit omy_f3m_hello_moveit omy_3m_hello_moveit
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
