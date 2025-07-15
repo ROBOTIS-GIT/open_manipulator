@@ -14,10 +14,10 @@
 //
 // Author: Ryan Shim, Sungho Woo, Wonho Yun, Woojin Wie
 
-#include "omx_gui/qnode.hpp"
+#include "open_manipulator_x_gui/qnode.hpp"
 
 
-namespace omx_gui
+namespace open_manipulator_x_gui
 {
 
 QNode::QNode(int argc, char ** argv)
@@ -39,7 +39,7 @@ bool QNode::init()
 {
   rclcpp::init(init_argc, init_argv);
 
-  std::string node_name = "omx_gui";
+  std::string node_name = "open_manipulator_x_gui";
   node_ = std::make_shared<rclcpp::Node>(node_name);
 
   if (!rclcpp::ok()) {
@@ -312,4 +312,4 @@ bool QNode::sendTorqueSrv(bool checked)
   return true;
 }
 
-}  // namespace omx_gui
+}  // namespace open_manipulator_x_gui

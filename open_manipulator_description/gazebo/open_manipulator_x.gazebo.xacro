@@ -2,7 +2,7 @@
 
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:macro name="omx_gazebo" params="prefix">
+  <xacro:macro name="open_manipulator_x_gazebo" params="prefix">
 
   <xacro:macro name="SimpleTransmission" params="trans joint actuator">
     <transmission name="${trans}">

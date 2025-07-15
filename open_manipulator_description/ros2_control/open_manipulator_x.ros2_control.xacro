@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="omx_system" params="name prefix port_name:=^|/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
+  <xacro:macro name="open_manipulator_x_system" params="name prefix port_name:=^|/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
     <ros2_control name="${name}" type="system">
       <xacro:if value="$(arg use_sim)">
         <hardware>

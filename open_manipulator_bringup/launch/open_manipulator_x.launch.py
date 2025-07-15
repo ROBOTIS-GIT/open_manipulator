@@ -68,7 +68,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'ros2_control_type',
-            default_value='omx',
+            default_value='open_manipulator_x',
             description='Type of ros2_control',
         ),
         DeclareLaunchArgument(
@@ -96,8 +96,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'omx',
-            'omx.urdf.xacro',
+            'open_manipulator_x',
+            'open_manipulator_x.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
@@ -123,7 +123,7 @@ def generate_launch_description():
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omx',
+        'open_manipulator_x',
         'hardware_controller_manager.yaml',
     ])
 
@@ -136,7 +136,7 @@ def generate_launch_description():
     trajectory_params_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omx',
+        'open_manipulator_x',
         init_position_file,
     ])
 

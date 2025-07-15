@@ -23,9 +23,9 @@
 #include <QObject>
 #include <QMessageBox>
 #include <iostream>
-#include "../include/omx_gui/main_window.hpp"
+#include "../include/open_manipulator_x_gui/main_window.hpp"
 
-namespace omx_gui
+namespace open_manipulator_x_gui
 {
 
 MainWindow::MainWindow(int argc, char ** argv, QWidget * parent)
@@ -566,4 +566,4 @@ void MainWindow::on_btn_reset_task_clicked(void)
   writeLog("Reset completed.");
 }
 
-}  // namespace omx_gui
+}  // namespace open_manipulator_x_gui

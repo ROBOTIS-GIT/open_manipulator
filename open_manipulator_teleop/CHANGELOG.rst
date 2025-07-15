@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_teleop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.6 (2025-07-15)
+------------------
+* Renamed omx to open_manipulator_x
+* Contributors: Wonho Yun
+
 4.0.5 (2025-07-02)
 ------------------
 * None

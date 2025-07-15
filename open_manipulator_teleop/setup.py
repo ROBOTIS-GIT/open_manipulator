@@ -8,7 +8,7 @@ package_name = 'open_manipulator_teleop'
 
 setup(
     name=package_name,
-    version='4.0.5',
+    version='4.0.6',
     packages=find_packages(exclude=[]),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
@@ -26,7 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'omx_teleop = open_manipulator_teleop.omx_teleop:main',
+            'open_manipulator_x_teleop = open_manipulator_teleop.open_manipulator_x_teleop:main',
             'omy_3m_teleop = open_manipulator_teleop.omy_3m_teleop:main',
             'omy_f3m_teleop = open_manipulator_teleop.omy_f3m_teleop:main',
         ],

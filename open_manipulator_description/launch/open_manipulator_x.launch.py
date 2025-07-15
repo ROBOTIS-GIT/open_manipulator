@@ -38,8 +38,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'omx',
-            'omx.urdf.xacro',
+            'open_manipulator_x',
+            'open_manipulator_x.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
