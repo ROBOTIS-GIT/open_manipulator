@@ -2,6 +2,10 @@
 Changelog for package om_joint_trajectory_command_broadcaster
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.6 (2025-07-15)
+------------------
+* None
+
 4.0.5 (2025-07-02)
 ------------------
 * Fixed lint errors
