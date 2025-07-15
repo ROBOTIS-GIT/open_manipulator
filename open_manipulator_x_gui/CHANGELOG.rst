@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_x_gui
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.4 (2025-07-15)
+------------------
+* Changed the output path of the Qt5-generated header file (ui_main_window.h) by adding a custom command in CMake. The generated file is now copied to a structured subdirectory (gui_headers/) within the build directory to improve include path consistency and comply with linting rules
+* Contributors: Hyungyu Kim
+
 3.0.3 (2025-07-10)
 ------------------
 * Linted the codebase
