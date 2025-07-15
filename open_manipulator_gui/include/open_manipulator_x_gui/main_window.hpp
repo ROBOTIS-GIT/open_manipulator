@@ -14,8 +14,8 @@
 //
 // Author: Ryan Shim, Sungho Woo, Wonho Yun, Woojin Wie
 
-#ifndef open_manipulator_x_GUI__MAIN_WINDOW_HPP_
-#define open_manipulator_x_GUI__MAIN_WINDOW_HPP_
+#ifndef OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
+#define OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
 
 #include <QMainWindow>
 #include <QTimer>
@@ -78,4 +78,4 @@ private:
 
 }  // namespace open_manipulator_x_gui
 
-#endif  // open_manipulator_x_GUI__MAIN_WINDOW_HPP_
+#endif  // OPEN_MANIPULATOR_X_GUI__MAIN_WINDOW_HPP_
