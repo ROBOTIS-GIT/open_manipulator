@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_gui
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.7 (2025-07-17)
+------------------
+* None
+
 4.0.6 (2025-07-15)
 ------------------
 * Renamed omx to open_manipulator_x
