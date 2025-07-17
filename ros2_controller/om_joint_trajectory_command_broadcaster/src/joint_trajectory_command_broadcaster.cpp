@@ -148,22 +148,21 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_activ
     return CallbackReturn::ERROR;
   }
   // Check offsets and create mapping based on params_.joints order
-  const size_t num_joints = joint_names_.size();
   joint_offsets_.clear();
-  joint_offsets_.resize(num_joints, 0.0);
+  joint_offsets_.resize(params_.joints.size(), 0.0);
 
   if (!params_.offsets.empty()) {
-    if (params_.offsets.size() != num_joints) {
+    if (params_.offsets.size() != params_.joints.size()) {
       RCLCPP_ERROR(
         get_node()->get_logger(),
         "The number of provided offsets (%zu) does not match the number of joints in params (%zu).",
-        params_.offsets.size(), num_joints);
+        params_.offsets.size(), params_.joints.size());
       return CallbackReturn::ERROR;
     }
 
     // Create mapping from joint name to offset based on params_.joints order
     std::unordered_map<std::string, double> joint_offset_map;
-    for (size_t i = 0; i < num_joints; ++i) {
+    for (size_t i = 0; i < params_.joints.size(); ++i) {
       joint_offset_map[params_.joints[i]] = params_.offsets[i];
     }
 
