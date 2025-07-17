@@ -8,7 +8,7 @@ package_name = 'open_manipulator_teleop'
 
 setup(
     name=package_name,
-    version='4.0.6',
+    version='4.0.7',
     packages=find_packages(exclude=[]),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
