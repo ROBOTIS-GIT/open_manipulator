@@ -66,7 +66,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'ros2_control_type',
-            default_value='omx_leader',
+            default_value='omx_l',
             description='Type of ros2_control',
         ),
     ]
@@ -87,8 +87,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'omx_leader',
-            'omx_leader.urdf.xacro',
+            'omx_l',
+            'omx_l.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
@@ -114,7 +114,7 @@ def generate_launch_description():
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omx_leader_ai',
+        'omx_l_leader_ai',
         'hardware_controller_manager.yaml',
     ])
 
