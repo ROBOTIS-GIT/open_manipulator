@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-   <xacro:macro name="omx_leader" params="prefix">
+   <xacro:macro name="omx_f" params="prefix">
       <link name="${prefix}link0" />
       <joint name="${prefix}joint1" type="revolute">
          <parent link="${prefix}link0" />
