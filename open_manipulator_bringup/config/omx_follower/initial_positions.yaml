@@ -12,5 +12,5 @@ joint_trajectory_executor:
 
     duration: 3.0
     epsilon: 0.01
-    action_topic: '/arm_controller/follow_joint_trajectory'
-    joint_states_topic: 'joint_states'
+    action_topic: '/follower/arm_controller/follow_joint_trajectory'
+    joint_states_topic: '/joint_states'

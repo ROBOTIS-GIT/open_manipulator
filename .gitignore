@@ -534,3 +534,6 @@ doc/
 
 ## IDE: Cursor
 .cursor/
+
+src/debug_output.txt
+src/debug_shell.sh
