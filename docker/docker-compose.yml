@@ -24,4 +24,4 @@ services:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ../:/root/ros2_ws/src/open_manipulator/
     privileged: true
-    command: bash
+    command: bash -c "source ~/.bashrc && source /workspace/ros2_ws/install/setup.bash && ros2 launch open_manipulator_bringup omx_ai.launch.py"
