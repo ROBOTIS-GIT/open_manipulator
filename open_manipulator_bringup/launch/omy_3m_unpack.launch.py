@@ -16,47 +16,32 @@
 #
 # Author: Sungho Woo, Woojin Wie
 
+import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess
+from launch.actions import IncludeLaunchDescription
 from launch.actions import LogInfo
-from launch.actions import RegisterEventHandler
-from launch.event_handlers import OnProcessStart
-from launch_ros.actions import Node
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    # Step 1: Start follower launch file
-    start_y = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'launch',
-            'open_manipulator_bringup',
-            'omy_3m.launch.py',
-        ],
-        output='screen',
-    )
+    # Get the package share directory
+    pkg_share = get_package_share_directory('open_manipulator_bringup')
 
-    # Step 2: Run the initialization script for the follower with unpack mode
-    omy_3m_unpack = Node(
-        package='open_manipulator_bringup',
-        executable='pack_unpack_3m',
-        output='screen',
-        parameters=[{'operation_mode': 'unpack'}],
+    # Path to the omy_3m.launch.py file
+    omy_3m_launch_file = os.path.join(pkg_share, 'launch', 'omy_3m.launch.py')
+
+    # Include the omy_3m.launch.py with pack parameters
+    omy_3m_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([omy_3m_launch_file]),
+        launch_arguments={
+            'init_position': 'true',
+            'init_position_file': 'initial_positions.yaml'
+        }.items()
     )
 
     return LaunchDescription([
-        LogInfo(msg='🚀 Starting omy_3m.launch.py...'),
-        start_y,
-        RegisterEventHandler(
-            OnProcessStart(
-                target_action=start_y,
-                on_start=[
-                    LogInfo(
-                        msg='✅ omy_3m.launch.py has fully started.'
-                        'Start to unpack...'
-                    ),
-                    omy_3m_unpack,
-                ],
-            )
-        ),
+        LogInfo(msg='Starting OMY unpacking...'),
+        omy_3m_launch,
     ])

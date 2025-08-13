@@ -36,7 +36,7 @@ RUN mkdir -p ${COLCON_WS}/src && \
 RUN cd ${COLCON_WS} && \
     apt-get update && \
     rosdep update && \
-    rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys="librealsense2 dynamixel_hardware_interface dynamixel_interfaces dynamixel_sdk open_manipulator" -y && \
+    rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys="librealsense2" -y && \
     rm -rf /var/lib/apt/lists/*
 
 RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
@@ -45,6 +45,7 @@ RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
 
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc  && \
     echo "source ${COLCON_WS}/install/setup.bash" >> ~/.bashrc  && \
-    echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc
+    echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc && \
+    echo "export ROS_DOMAIN_ID=30" >> ~/.bashrc
 
 CMD ["bash"]

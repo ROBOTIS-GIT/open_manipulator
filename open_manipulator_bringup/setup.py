@@ -8,7 +8,7 @@ package_name = 'open_manipulator_bringup'
 
 setup(
     name=package_name,
-    version='4.0.6',
+    version='4.0.7',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
@@ -38,7 +38,6 @@ setup(
     entry_points={
         'console_scripts': [
             'joint_trajectory_executor = open_manipulator_bringup.joint_trajectory_executor:main',
-            'pack_unpack_3m = open_manipulator_bringup.pack_unpack_3m:main',
             'om_create_udev_rules = open_manipulator_bringup.om_create_udev_rules:main',
         ],
     },

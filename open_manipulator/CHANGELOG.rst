@@ -2,6 +2,12 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.7 (2025-07-17)
+------------------
+* Fixed joint offset functionality of joint trajectory command broadcaster
+* Updated launch files for OMY Packing and Unpacking
+* Contributors: Woojin Wie
+
 4.0.6 (2025-07-15)
 ------------------
 * Renamed omx to open_manipulator_x
