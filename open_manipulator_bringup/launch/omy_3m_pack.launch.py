@@ -42,6 +42,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        LogInfo(msg='🚀 Starting OMY packing...'),
+        LogInfo(msg='Starting OMY packing...'),
         omy_3m_launch,
     ])
