@@ -163,9 +163,9 @@
         <param name="Drive Mode">4</param>
         <param name="Operating Mode">5</param>
         <param name="Return Delay Time">0</param>
-        <param name="Position P Gain">1000</param>
+        <param name="Position P Gain">1200</param>
         <param name="Position I Gain">0</param>
-        <param name="Position D Gain">100</param>
+        <param name="Position D Gain">800</param>
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
       </gpio>

@@ -56,7 +56,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'port_name',
-            default_value='/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_AD65E286503059384C2E3120FF050725-if00',
+            default_value='/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_A05B2D4A503059384C2E3120FF062330-if00',
             description='Port name for hardware connection.',
         ),
         DeclareLaunchArgument(
@@ -130,8 +130,8 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         arguments=[
-            # 'gravity_compensation_controller',
-            # 'spring_actuator_controller',
+            #'gravity_compensation_controller',
+            'spring_actuator_controller',
             'joint_state_broadcaster',
             'joint_trajectory_command_broadcaster',
         ],
