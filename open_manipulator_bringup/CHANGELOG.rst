@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.7 (2025-07-17)
+------------------
+* Updated launch files for OMY Packing and Unpacking
+* Contributors: Woojin Wie
+
 4.0.6 (2025-07-15)
 ------------------
 * Renamed omx to open_manipulator_x

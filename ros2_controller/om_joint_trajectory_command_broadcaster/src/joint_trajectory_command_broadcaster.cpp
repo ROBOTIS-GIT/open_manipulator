@@ -147,23 +147,34 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_activ
       get_node()->get_logger(), "None of requested interfaces exist. Controller will not run.");
     return CallbackReturn::ERROR;
   }
+  // Check offsets and create mapping based on params_.joints order
+  joint_offsets_.clear();
+  joint_offsets_.resize(params_.joints.size(), 0.0);
 
-  // Check offsets
-  const size_t num_joints = joint_names_.size();
-  if (params_.offsets.empty()) {
-    // If no offsets provided, use zeros
-    joint_offsets_.assign(num_joints, 0.0);
-  } else if (params_.offsets.size() != num_joints) {
-    RCLCPP_ERROR(
-      get_node()->get_logger(),
-      "The number of provided offsets (%zu) does not match the number of joints (%zu).",
-      params_.offsets.size(), num_joints);
-    return CallbackReturn::ERROR;
-  } else {
-    // Use provided offsets
-    joint_offsets_ = params_.offsets;
+  if (!params_.offsets.empty()) {
+    if (params_.offsets.size() != params_.joints.size()) {
+      RCLCPP_ERROR(
+        get_node()->get_logger(),
+        "The number of provided offsets (%zu) does not match the number of joints in params (%zu).",
+        params_.offsets.size(), params_.joints.size());
+      return CallbackReturn::ERROR;
+    }
+
+    // Create mapping from joint name to offset based on params_.joints order
+    std::unordered_map<std::string, double> joint_offset_map;
+    for (size_t i = 0; i < params_.joints.size(); ++i) {
+      joint_offset_map[params_.joints[i]] = params_.offsets[i];
+    }
+
+    // Apply offsets to joint_names_ in their actual order
+    for (size_t i = 0; i < joint_names_.size(); ++i) {
+      auto it = joint_offset_map.find(joint_names_[i]);
+      if (it != joint_offset_map.end()) {
+        joint_offsets_[i] = it->second;
+      }
+      // If joint not found in params_.joints, offset remains 0.0
+    }
   }
-
   // No need to init JointState or DynamicJointState messages, only JointTrajectory
   // will be published. We'll construct it on-the-fly in update()
 
