@@ -68,7 +68,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'ros2_control_type',
-            default_value='open_manipulator_x',
+            default_value='open_manipulator_x_position',
             description='Type of ros2_control',
         ),
         DeclareLaunchArgument(

@@ -1,8 +1,8 @@
 /**:
   controller_manager:
     ros__parameters:
-      update_rate: 300  # Hz
-      thread_priority: 20
+      update_rate: 400  # Hz
+      thread_priority: 40
       cpu_affinity: [1, 2, 3]
 
       joint_state_broadcaster:
@@ -10,9 +10,6 @@
 
       gravity_compensation_controller:
         type: gravity_compensation_controller/GravityCompensationController
-
-      spring_actuator_controller:
-        type: spring_actuator_controller/SpringActuatorController
 
       joint_trajectory_command_broadcaster:
         type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
@@ -32,38 +29,48 @@
       state_interfaces:
         - position
         - velocity
+      # kinetic_friction_scalars:
+      #   - 3.0
+      #   - 0.6
+      #   - 0.6
+      #   - 3.0
+      #   - 3.0
+      #   - 3.0
       kinetic_friction_scalars:
-        - 0.8
-        - 0.8
-        - 0.8
-        - 0.1
-        - 0.1
-        - 0.1
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
       torque_scaling_factors:
-        - 1.0
-        - 1.0
-        - 1.0
-        - 0.8
-        - 0.8
-        - 1.0
+        - 13.0
+        - 13.0
+        - 25.0
+        - 25.0
+        - 25.0
+        - 25.0
+      friction_compensation_velocity_thresholds:
+        - 2.0
+        - 2.0
+        - 2.0
+        - 2.0
+        - 2.0
+        - 2.0
       input_velocity_scaling_factors:
-        - 0.1
-        - 0.1
-        - 0.1
-        - 0.1
-        - 0.1
-        - 0.1
-
-/**:
-  spring_actuator_controller:
-    ros__parameters:
-      joints:
-        - rh_r1_joint
-      command_interfaces:
-        - effort
-      state_interfaces:
-        - position
-        - velocity
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+        - 1.0
+      input_acceleration_scaling_factors:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
 
 /**:
   joint_trajectory_command_broadcaster:
@@ -75,11 +82,8 @@
         - joint4
         - joint5
         - joint6
-        - rh_r1_joint
       interfaces:
         - position
-      reverse_joints:
-        - rh_r1_joint
       offsets:
         - 0.0
         - 0.0
@@ -87,4 +91,3 @@
         - 0.0
         - 0.0
         - 0.0
-        - 0.2

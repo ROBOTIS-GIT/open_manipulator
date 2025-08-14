@@ -5,7 +5,7 @@
   <xacro:arg name="use_fake_hardware" default="false" />
   <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="port_name" default="/dev/ttyUSB0" />
-  <xacro:arg name="ros2_control_type" default="open_manipulator_x" />
+  <xacro:arg name="ros2_control_type" default="open_manipulator_x_position" />
 
   <xacro:include filename="$(find open_manipulator_description)/gazebo/open_manipulator_x.gazebo.xacro" />
 

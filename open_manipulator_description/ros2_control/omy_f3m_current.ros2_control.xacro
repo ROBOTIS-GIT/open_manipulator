@@ -49,37 +49,37 @@
       </xacro:unless>
 
       <joint name="${prefix}joint1">
-        <command_interface name="position"/>
+        <command_interface name="effort"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
       <joint name="${prefix}joint2">
-        <command_interface name="position"/>
+        <command_interface name="effort"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
       <joint name="${prefix}joint3">
-        <command_interface name="position"/>
+        <command_interface name="effort"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
       <joint name="${prefix}joint4">
-        <command_interface name="position"/>
+        <command_interface name="effort"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
       <joint name="${prefix}joint5">
-        <command_interface name="position"/>
+        <command_interface name="effort"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
       <joint name="${prefix}joint6">
-        <command_interface name="position"/>
+        <command_interface name="effort"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
@@ -88,10 +88,11 @@
       <gpio name="dxl1">
         <param name="type">dxl</param>
         <param name="ID">1</param>
-        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
         <param name="Drive Mode">4</param>
         <param name="Velocity Limit">3591</param>
         <param name="Acceleration Limit">8050</param>
@@ -102,17 +103,19 @@
         <param name="Position P Gain">1583185</param>
         <param name="Velocity P Gain">41387</param>
         <param name="Velocity I Gain">1565630</param>
-        <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">500</param>
-        <param name="Profile Time">1000</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
       </gpio>
       <gpio name="dxl2">
         <param name="type">dxl</param>
         <param name="ID">2</param>
-        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
         <param name="Drive Mode">5</param>
         <param name="Velocity Limit">3591</param>
         <param name="Acceleration Limit">8050</param>
@@ -122,17 +125,19 @@
         <param name="Position P Gain">1583185</param>
         <param name="Velocity P Gain">41387</param>
         <param name="Velocity I Gain">1565630</param>
-        <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">500</param>
-        <param name="Profile Time">1000</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
       </gpio>
       <gpio name="dxl3">
         <param name="type">dxl</param>
         <param name="ID">3</param>
-        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
         <param name="Drive Mode">4</param>
         <param name="Velocity Limit">6486</param>
         <param name="Acceleration Limit">8050</param>
@@ -142,17 +147,19 @@
         <param name="Position P Gain">1583185</param>
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
-        <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">500</param>
-        <param name="Profile Time">1000</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
       </gpio>
       <gpio name="dxl4">
         <param name="type">dxl</param>
         <param name="ID">4</param>
-        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
         <param name="Drive Mode">5</param>
         <param name="Velocity Limit">6486</param>
         <param name="Acceleration Limit">8050</param>
@@ -162,17 +169,19 @@
         <param name="Position P Gain">1583185</param>
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
-        <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">500</param>
-        <param name="Profile Time">1000</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
       </gpio>
       <gpio name="dxl5">
         <param name="type">dxl</param>
         <param name="ID">5</param>
-        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
         <param name="Drive Mode">4</param>
         <param name="Velocity Limit">6486</param>
         <param name="Acceleration Limit">8050</param>
@@ -182,17 +191,19 @@
         <param name="Position P Gain">1583185</param>
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
-        <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">500</param>
-        <param name="Profile Time">1000</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
       </gpio>
       <gpio name="dxl6">
         <param name="type">dxl</param>
         <param name="ID">6</param>
-        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
         <param name="Drive Mode">5</param>
         <param name="Velocity Limit">6486</param>
         <param name="Acceleration Limit">8050</param>
@@ -202,9 +213,10 @@
         <param name="Position P Gain">1583185</param>
         <param name="Velocity P Gain">18184</param>
         <param name="Velocity I Gain">1585331</param>
-        <param name="Operating Mode">3</param>
-        <param name="Profile Acceleration Time">500</param>
-        <param name="Profile Time">1000</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
       </gpio>
       <gpio name="omy_hat">
         <param name="type">controller</param>
