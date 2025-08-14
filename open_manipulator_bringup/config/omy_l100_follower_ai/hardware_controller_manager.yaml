@@ -1,8 +1,8 @@
 /**:
   controller_manager:
     ros__parameters:
-      update_rate: 400  # Hz
-      thread_priority: 40
+      update_rate: 300  # Hz
+      thread_priority: 20
       cpu_affinity: [1, 2, 3]
 
       joint_state_broadcaster:
@@ -10,9 +10,6 @@
 
       arm_controller:
         type: joint_trajectory_controller/JointTrajectoryController
-
-      gpio_command_controller:
-        type: gpio_controllers/GpioCommandController
 
 /**:
   arm_controller:
@@ -36,20 +33,3 @@
         - velocity
 
       allow_partial_joints_goal: true
-
-/**:
-  gpio_command_controller:
-    ros__parameters:
-      type: gpio_controllers/GpioCommandController
-      gpios:
-        - omy_end
-      command_interfaces:
-        omy_end:
-          - interfaces:
-            - R LED
-            - G LED
-            - B LED
-      state_interfaces:
-        omy_end:
-          - interfaces:
-            - Button Status

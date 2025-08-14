@@ -66,7 +66,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'ros2_control_type',
-            default_value='omy_l100',
+            default_value='omy_l100_current',
             description='Type of ros2_control',
         ),
     ]

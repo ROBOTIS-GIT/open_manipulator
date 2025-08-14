@@ -57,13 +57,18 @@ def generate_launch_description():
             description='Enable fake sensor commands.',
         ),
         DeclareLaunchArgument(
+            'port_name',
+            default_value='/dev/ttyUSB0',
+            description='Port name for hardware connection.',
+        ),
+        DeclareLaunchArgument(
             'init_position',
             default_value='false',
             description='Whether to launch the init_position node',
         ),
         DeclareLaunchArgument(
             'ros2_control_type',
-            default_value='omy_3m_position',
+            default_value='omy_l100_position',
             description='Type of ros2_control',
         ),
         DeclareLaunchArgument(
@@ -79,6 +84,7 @@ def generate_launch_description():
     use_sim = LaunchConfiguration('use_sim')
     use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
+    port_name = LaunchConfiguration('port_name')
     init_position = LaunchConfiguration('init_position')
     ros2_control_type = LaunchConfiguration('ros2_control_type')
     init_position_file = LaunchConfiguration('init_position_file')
@@ -90,8 +96,8 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
             'urdf',
-            'omy_3m',
-            'omy_3m.urdf.xacro',
+            'omy_l100',
+            'omy_l100.urdf.xacro',
         ]),
         ' ',
         'prefix:=',
@@ -106,6 +112,9 @@ def generate_launch_description():
         'fake_sensor_commands:=',
         fake_sensor_commands,
         ' ',
+        'port_name:=',
+        port_name,
+        ' ',
         'ros2_control_type:=',
         ros2_control_type,
     ])
@@ -114,7 +123,7 @@ def generate_launch_description():
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omy_3m',
+        'omy_l100_follower_ai',
         'hardware_controller_manager.yaml',
     ])
 
@@ -127,7 +136,7 @@ def generate_launch_description():
     trajectory_params_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omy_3m',
+        'omy_l100_follower_ai',
         init_position_file,
     ])
 
