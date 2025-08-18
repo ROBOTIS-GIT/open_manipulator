@@ -132,15 +132,14 @@
       <gpio name="dxl6">
         <param name="type">dxl</param>
         <param name="ID">6</param>
+        <command_interface name="Goal Current"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
-        <param name="Torque Enable">1</param>
+        <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>  
         <param name="Drive Mode">0</param>
-        <param name="Operating Mode">5</param>
+        <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Position P Gain">800</param>
-        <param name="Position D Gain">3000</param>
-        <param name="Current Limit">300</param>
       </gpio>
 
     </ros2_control>
