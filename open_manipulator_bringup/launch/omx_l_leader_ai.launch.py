@@ -63,11 +63,6 @@ def generate_launch_description():
             description='Port name for hardware connection.',
         ),
         DeclareLaunchArgument(
-            'use_self_collision_avoidance',
-            default_value='false',
-            description='Whether to launch the self-collision detection node',
-        ),
-        DeclareLaunchArgument(
             'ros2_control_type',
             default_value='omx_l',
             description='Type of ros2_control',
@@ -76,7 +71,6 @@ def generate_launch_description():
 
     # Launch configurations
     prefix = LaunchConfiguration('prefix')
-    use_self_collision_avoidance = LaunchConfiguration('use_self_collision_avoidance')
     use_sim = LaunchConfiguration('use_sim')
     use_fake_hardware = LaunchConfiguration('use_fake_hardware')
     fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
@@ -149,15 +143,6 @@ def generate_launch_description():
         output='both',
     )
 
-    # Conditionally included self-collision detection launch
-    self_collision_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(PathJoinSubstitution([
-            FindPackageShare('open_manipulator_collision'),
-            'self_collision.launch.py'
-        ])),
-        condition=IfCondition(use_self_collision_avoidance)
-    )
-
     # Execute process to publish position command
     position_command_process = ExecuteProcess(
         cmd=['ros2', 'topic', 'pub', '-r', '50', '-t', '50', '-p', '50', '/leader/position_controller/commands', 'std_msgs/msg/Float64MultiArray', 'data: [0.7]'],
@@ -176,7 +161,6 @@ def generate_launch_description():
             control_node,
             robot_controller_spawner,
             robot_state_publisher_node,
-            self_collision_launch,
             delay_position_command_after_controllers,
         ]
     )
