@@ -161,7 +161,6 @@ def generate_launch_description():
     # Execute process to publish position command
     position_command_process = ExecuteProcess(
         cmd=['ros2', 'topic', 'pub', '-r', '50', '-t', '50', '-p', '50', '/leader/position_controller/commands', 'std_msgs/msg/Float64MultiArray', 'data: [0.7]'],
-        output='screen'
     )
 
     delay_position_command_after_controllers = RegisterEventHandler(
