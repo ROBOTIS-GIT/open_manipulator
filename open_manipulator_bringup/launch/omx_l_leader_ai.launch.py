@@ -18,9 +18,12 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
+from launch.actions import RegisterEventHandler
 from launch.actions import GroupAction
 from launch.actions import IncludeLaunchDescription
+from launch.actions import ExecuteProcess
 from launch.conditions import IfCondition, UnlessCondition
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch.substitutions import FindExecutable
@@ -130,9 +133,8 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         arguments=[
-            # 'gravity_compensation_controller',
-            'spring_actuator_controller',
             'joint_state_broadcaster',
+            'position_controller',
             'joint_trajectory_command_broadcaster',
         ],
         parameters=[{'robot_description': urdf_file}],
@@ -156,6 +158,19 @@ def generate_launch_description():
         condition=IfCondition(use_self_collision_avoidance)
     )
 
+    # Execute process to publish position command
+    position_command_process = ExecuteProcess(
+        cmd=['ros2', 'topic', 'pub', '-r', '50', '-t', '50', '-p', '50', '/leader/position_controller/commands', 'std_msgs/msg/Float64MultiArray', 'data: [0.7]'],
+        output='screen'
+    )
+
+    delay_position_command_after_controllers = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=robot_controller_spawner,
+            on_exit=[position_command_process],
+        )
+    )
+
     leader_with_namespace = GroupAction(
         actions=[
             PushRosNamespace('leader'),
@@ -163,6 +178,7 @@ def generate_launch_description():
             robot_controller_spawner,
             robot_state_publisher_node,
             self_collision_launch,
+            delay_position_command_after_controllers,
         ]
     )
 
