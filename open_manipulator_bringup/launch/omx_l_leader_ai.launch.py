@@ -128,7 +128,7 @@ def generate_launch_description():
         executable='spawner',
         arguments=[
             'joint_state_broadcaster',
-            'position_controller',
+            'trigger_position_controller',
             'joint_trajectory_command_broadcaster',
         ],
         parameters=[{'robot_description': urdf_file}],
@@ -145,7 +145,8 @@ def generate_launch_description():
 
     # Execute process to publish position command
     position_command_process = ExecuteProcess(
-        cmd=['ros2', 'topic', 'pub', '-r', '50', '-t', '50', '-p', '50', '/leader/position_controller/commands', 'std_msgs/msg/Float64MultiArray', 'data: [0.7]'],
+        name='trigger_position_command',
+        cmd=['ros2', 'topic', 'pub', '-r', '50', '-t', '50', '-p', '50', '/leader/trigger_position_controller/commands', 'std_msgs/msg/Float64MultiArray', 'data: [0.7]'],
     )
 
     delay_position_command_after_controllers = RegisterEventHandler(
