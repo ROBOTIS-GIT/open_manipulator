@@ -161,13 +161,15 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <param name="Drive Mode">4</param>
-        <param name="Operating Mode">5</param>
+        <param name="Operating Mode">3</param>
         <param name="Return Delay Time">0</param>
         <param name="Position P Gain">1000</param>
         <param name="Position I Gain">0</param>
         <param name="Position D Gain">1000</param>
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
+        <param name="Current Limit">1000</param>
+        <param name="Goal Current">1000</param>
       </gpio>
 
     </ros2_control>
