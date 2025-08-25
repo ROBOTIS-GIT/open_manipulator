@@ -17,6 +17,6 @@ joint_trajectory_executor:
     step2: [0.0076, -1.6413, 1.5930, 1.4718, 0.1012, -0.0291]
 
     duration: 5.0
-    epsilon: 0.3
+    epsilon: 0.1
     action_topic: '/arm_controller/follow_joint_trajectory'
     joint_states_topic: '/joint_states'
