@@ -18,9 +18,9 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
+from launch.actions import ExecuteProcess
 from launch.actions import GroupAction
 from launch.actions import RegisterEventHandler
-from launch.actions import ExecuteProcess
 from launch.conditions import UnlessCondition
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import Command
@@ -144,7 +144,15 @@ def generate_launch_description():
     # Execute process to publish position command
     position_command_process = ExecuteProcess(
         name='trigger_position_command',
-        cmd=['ros2', 'topic', 'pub', '-r', '50', '-t', '50', '-p', '50', '/leader/trigger_position_controller/commands', 'std_msgs/msg/Float64MultiArray', 'data: [0.7]'],
+        cmd=[
+            'ros2', 'topic', 'pub',
+            '-r', '50',
+            '-t', '50',
+            '-p', '50',
+            '/leader/trigger_position_controller/commands',
+            'std_msgs/msg/Float64MultiArray',
+            'data: [0.7]',
+        ],
     )
 
     delay_position_command_after_controllers = RegisterEventHandler(

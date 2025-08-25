@@ -31,6 +31,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 import xacro
 
+
 def generate_launch_description():
     # Launch Arguments
     open_manipulator_description_path = os.path.join(
