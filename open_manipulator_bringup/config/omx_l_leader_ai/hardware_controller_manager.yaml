@@ -1,0 +1,39 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 100  # Hz
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      trigger_position_controller:
+        type: position_controllers/JointGroupPositionController
+
+      joint_trajectory_command_broadcaster:
+        type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
+
+/**:
+  trigger_position_controller:
+    ros__parameters:
+      joints:
+        - joint6
+
+/**:
+  joint_trajectory_command_broadcaster:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
+      interfaces:
+        - position
+      offsets:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
