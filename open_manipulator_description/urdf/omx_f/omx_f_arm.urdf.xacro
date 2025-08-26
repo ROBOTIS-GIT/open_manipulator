@@ -47,7 +47,7 @@
          <dynamics damping="0.1" />
       </joint>
       <link name="${prefix}link5" />
-      <joint name="${prefix}joint6" type="revolute">
+      <joint name="${prefix}gripper_joint_1" type="revolute">
          <parent link="${prefix}link5" />
          <child link="${prefix}link6" />
          <origin xyz="0.05 0 0" rpy="0 0 0" />

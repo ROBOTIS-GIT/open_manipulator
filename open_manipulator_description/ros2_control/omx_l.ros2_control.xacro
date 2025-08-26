@@ -68,7 +68,7 @@
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
-      <joint name="${prefix}joint6">
+      <joint name="${prefix}gripper_joint_1">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
