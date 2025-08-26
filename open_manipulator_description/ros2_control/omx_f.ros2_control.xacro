@@ -73,7 +73,7 @@
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
-      <joint name="${prefix}joint6">
+      <joint name="${prefix}gripper_joint_1">
         <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
@@ -81,7 +81,7 @@
 
       <gpio name="dxl1">
         <param name="type">dxl</param>
-        <param name="ID">1</param>
+        <param name="ID">11</param>
         <command_interface name="Goal Position"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
@@ -98,7 +98,7 @@
       </gpio>
       <gpio name="dxl2">
         <param name="type">dxl</param>
-        <param name="ID">2</param>
+        <param name="ID">12</param>
         <command_interface name="Goal Position"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
@@ -115,7 +115,7 @@
       </gpio>
       <gpio name="dxl3">
         <param name="type">dxl</param>
-        <param name="ID">3</param>
+        <param name="ID">13</param>
         <command_interface name="Goal Position"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
@@ -132,7 +132,7 @@
       </gpio>
       <gpio name="dxl4">
         <param name="type">dxl</param>
-        <param name="ID">4</param>
+        <param name="ID">14</param>
         <command_interface name="Goal Position"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
@@ -149,7 +149,7 @@
       </gpio>
       <gpio name="dxl5">
         <param name="type">dxl</param>
-        <param name="ID">5</param>
+        <param name="ID">15</param>
         <command_interface name="Goal Position"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
@@ -166,7 +166,7 @@
       </gpio>
       <gpio name="dxl6">
         <param name="type">dxl</param>
-        <param name="ID">6</param>
+        <param name="ID">16</param>
         <command_interface name="Goal Position"/>
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
@@ -178,8 +178,8 @@
         <param name="Position D Gain">1000</param>
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
-        <param name="Current Limit">1000</param>
-        <param name="Goal Current">1000</param>
+        <param name="Current Limit">100</param>
+        <param name="Goal Current">100</param>
       </gpio>
 
     </ros2_control>
