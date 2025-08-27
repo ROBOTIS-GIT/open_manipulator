@@ -178,8 +178,8 @@
         <param name="Position D Gain">1000</param>
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
-        <param name="Current Limit">100</param>
-        <param name="Goal Current">100</param>
+        <param name="Current Limit">1000</param>
+        <param name="Goal Current">1000</param>
       </gpio>
 
     </ros2_control>

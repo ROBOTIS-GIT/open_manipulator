@@ -30,6 +30,8 @@
         - gripper_joint_1
       interfaces:
         - position
+      reverse_joints:
+        - gripper_joint_1
       offsets:
         - 0.0
         - 0.0

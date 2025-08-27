@@ -68,7 +68,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'port_name',
-            default_value='/dev/ttyACM2',
+            default_value='/dev/ttyACM1',
             description='Port name for the hardware interface',
         ),
     ]
