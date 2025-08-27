@@ -57,7 +57,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'port_name',
-            default_value='/dev/ttyACM0',
+            default_value='/dev/ttyACM2',
             description='Port name for hardware connection.',
         ),
         DeclareLaunchArgument(
@@ -151,7 +151,7 @@ def generate_launch_description():
             '-p', '50',
             '/leader/trigger_position_controller/commands',
             'std_msgs/msg/Float64MultiArray',
-            'data: [0.7]',
+            'data: [-0.7]',
         ],
     )
 
