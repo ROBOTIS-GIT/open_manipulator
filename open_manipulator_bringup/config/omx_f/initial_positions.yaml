@@ -6,15 +6,14 @@ joint_trajectory_executor:
       - joint3
       - joint4
       - joint5
-      - gripper_joint_1
 
     step_names: [step1, step2]  # Names of the steps
 
     # Step 1: Move to all-zero pose
-    step1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    step1: [0.0, 0.0, 0.0, 0.0, 0.0]
 
     # Step 2: Move to initial position
-    step2: [0.0, -1.57, 1.57, 1.57, 0.0, 0.0]
+    step2: [0.0, -1.57, 1.57, 1.57, 0.0]
 
     duration: 5.0
     epsilon: 0.1
