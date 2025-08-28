@@ -123,7 +123,7 @@ def generate_launch_description():
     controller_manager_config = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omx_f_follower_ai',
+        'omx_f',
         'hardware_controller_manager.yaml',
     ])
 
@@ -136,7 +136,7 @@ def generate_launch_description():
     trajectory_params_file = PathJoinSubstitution([
         FindPackageShare('open_manipulator_bringup'),
         'config',
-        'omx_f_follower_ai',
+        'omx_f',
         init_position_file,
     ])
 
@@ -154,6 +154,7 @@ def generate_launch_description():
         executable='spawner',
         arguments=[
             'arm_controller',
+            'gripper_controller',
             'joint_state_broadcaster',
         ],
         output='both',
