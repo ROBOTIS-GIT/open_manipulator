@@ -9,6 +9,8 @@
 
   <xacro:include filename="$(find open_manipulator_description)/urdf/omx_l/omx_l_arm.urdf" />
 
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/omx_l.gazebo.xacro" />
+
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/$(arg ros2_control_type).ros2_control.xacro" />
 
   <link name="world"/>
@@ -20,11 +22,18 @@
   </joint>
 
   <xacro:omx_l prefix="$(arg prefix)" />
+  <xacro:omx_l_gazebo prefix="$(arg prefix)" />
 
   <xacro:omx_l_system
     name="OMXLEADERSYSTEM" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
     use_fake_hardware="$(arg use_fake_hardware)"
     fake_sensor_commands="$(arg fake_sensor_commands)"
     port_name="$(arg port_name)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/omx_l_leader/hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
 
 </robot>

@@ -57,7 +57,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'port_name',
-            default_value='/dev/ttyACM2',
+            default_value='/dev/ttyACM0',
             description='Port name for hardware connection.',
         ),
         DeclareLaunchArgument(
@@ -125,6 +125,7 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         arguments=[
+            # 'gravity_compensation_controller',
             'joint_state_broadcaster',
             'trigger_position_controller',
             'joint_trajectory_command_broadcaster',
