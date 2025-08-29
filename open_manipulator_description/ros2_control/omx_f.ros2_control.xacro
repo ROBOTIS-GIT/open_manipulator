@@ -78,6 +78,15 @@
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
+      <xacro:if value="$(arg use_sim)">
+        <joint name="${prefix}gripper_joint_2">
+          <param name="mimic">${prefix}gripper_joint_1</param>
+          <param name="multiplier">-1</param>
+          <state_interface name="position"/>
+          <state_interface name="velocity"/>
+          <state_interface name="effort"/>
+        </joint>
+      </xacro:if>
 
       <gpio name="dxl1">
         <param name="type">dxl</param>
