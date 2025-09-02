@@ -29,13 +29,6 @@
       state_interfaces:
         - position
         - velocity
-      # kinetic_friction_scalars:
-      #   - 3.0
-      #   - 0.6
-      #   - 0.6
-      #   - 3.0
-      #   - 3.0
-      #   - 3.0
       kinetic_friction_scalars:
         - 0.0
         - 0.0
