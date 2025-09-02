@@ -46,13 +46,6 @@
         - 0.8
         - 0.8
         - 1.0
-      input_velocity_scaling_factors:
-        - 0.1
-        - 0.1
-        - 0.1
-        - 0.1
-        - 0.1
-        - 0.1
       enable_spring_effect: true
 
 /**:
