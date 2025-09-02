@@ -163,7 +163,7 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <param name="Drive Mode">4</param>
-        <param name="Operating Mode">4</param>
+        <param name="Operating Mode">3</param>
         <param name="Return Delay Time">0</param>
         <param name="Min Position Limit">2048</param>
         <param name="Max Position Limit">3186</param>
