@@ -98,10 +98,12 @@ controller_interface::return_type GravityCompensationController::update(
   // Compute torques
   idsolver.CartToJnt(q, q_dot, q_ddot, f_ext_, torques);
 
-  // Add a spring effect to joint 2
-  // if (q(2) < 0.5) {
-  //   torques(2) += std::abs(q(2) - 0.5) * 2.5;
-  // }
+  // Optional spring effect on joint 2
+  if (params_.enable_spring_effect) {
+    if (q(2) < 0.5) {
+      torques(2) += std::abs(q(2) - 0.5) * 2.5;
+    }
+  }
   // Add leader sync function
   double gain_joint_1_to_3 = 6.0;
   double default_gain = 1.0;

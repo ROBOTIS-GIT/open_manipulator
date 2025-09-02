@@ -53,6 +53,7 @@
         - 0.1
         - 0.1
         - 0.1
+      enable_spring_effect: true
 
 /**:
   spring_actuator_controller:
