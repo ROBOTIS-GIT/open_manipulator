@@ -78,7 +78,8 @@ controller_interface::return_type GravityCompensationController::update(
   // Calculate acceleration from velocity using finite difference
   std::vector<double> joint_accelerations(n_joints_);
   for (size_t i = 0; i < n_joints_; ++i) {
-    joint_accelerations[i] = (joint_velocities_[i] - previous_velocities_[i]) / period.seconds() * params_.input_acceleration_scaling_factors[i];
+    joint_accelerations[i] = (joint_velocities_[i] - previous_velocities_[i]) / period.seconds() *
+      params_.input_acceleration_scaling_factors[i];
   }
 
   // Create KDL objects for computation

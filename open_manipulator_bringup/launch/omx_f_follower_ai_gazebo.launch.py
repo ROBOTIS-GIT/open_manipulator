@@ -119,12 +119,12 @@ def generate_launch_description():
     robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-            arguments=[
-                'arm_controller',
-                '--controller-ros-args',
-                '-r /arm_controller/joint_trajectory:=/leader/joint_trajectory',
-            ],
-            parameters=[robot_description],
+        arguments=[
+            'arm_controller',
+            '--controller-ros-args',
+            '-r /arm_controller/joint_trajectory:=/leader/joint_trajectory',
+        ],
+        parameters=[robot_description],
     )
 
     bridge = Node(
@@ -134,7 +134,8 @@ def generate_launch_description():
         output='screen'
     )
 
-    # rviz_config_file = os.path.join(open_manipulator_description_path, 'rviz', 'open_manipulator.rviz')
+    # rviz_config_file = os.path.join(
+    #     open_manipulator_description_path, 'rviz', 'open_manipulator.rviz')
 
     # rviz = Node(
     #     package='rviz2',
