@@ -2,6 +2,14 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.8 (2025-09-03)
+------------------
+* Added camera_usb_cam launch file
+* Support OMX series
+* Removed unused use_sim_time parameter in the configuration files
+* Added OMY-F3M Leader and OMY-L100 Follower configuration files
+* Contributors: Woojin Wie, Junha Cha
+
 4.0.7 (2025-07-17)
 ------------------
 * Updated launch files for OMY Packing and Unpacking
