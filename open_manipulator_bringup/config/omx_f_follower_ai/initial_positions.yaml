@@ -10,13 +10,10 @@ joint_trajectory_executor:
 
     step_names: [step1, step2]  # Names of the steps
 
-    # Step 1: Move to all-zero pose
     step1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-    # Step 2: Move to initial position
     step2: [0.0, -1.57, 1.57, 1.57, 0.0, 0.0]
 
     duration: 5.0
-    epsilon: 0.1
+    epsilon: 0.05
     action_topic: '/arm_controller/follow_joint_trajectory'
     joint_states_topic: '/joint_states'
