@@ -44,7 +44,7 @@
   <xacro:omx_f_gazebo prefix="$(arg prefix)" />
 
   <xacro:omx_f_system
-    name="OMXFOLLOWERSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    name="OMXFSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
     use_fake_hardware="$(arg use_fake_hardware)"
     fake_sensor_commands="$(arg fake_sensor_commands)"
     port_name="$(arg port_name)"/>
