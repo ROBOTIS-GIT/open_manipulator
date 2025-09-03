@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Sungho Woo
+# Author: Sungho Woo, Woojin Wie, Junha Cha
 
-"""Launch file for AI teleoperation of OpenManipulator OMX."""
+"""Launch file for AI teleoperation of OMX L for leader, OMX F for follower."""
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
@@ -30,7 +30,7 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    """Generate launch description for AI teleoperation of OMX."""
+    """Generate launch description for AI teleoperation."""
     # Step 1: Start follower launch file
     start_follower = ExecuteProcess(
         cmd=[
@@ -70,7 +70,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        LogInfo(msg='🚀 Starting omx_f_follower_ai.launch.py...'),
+        LogInfo(msg='Starting omx_f_follower_ai.launch.py...'),
         start_follower,
         # Step 2: Ensure joint_trajectory_executor starts after start_follower
         RegisterEventHandler(

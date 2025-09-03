@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Sungho Woo
+# Author: Sungho Woo, Woojin Wie
 
-"""Launch file for AI teleoperation of OpenManipulator."""
+"""Launch file for AI teleoperation of OMY F3M for leader, OMY L100 for follower."""
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
