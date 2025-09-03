@@ -12,6 +12,7 @@
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
   <author email="wsh@robotis.com">Sungho Woo</author>
   <author email="ywh@robotis.com">Wonho Yun</author>
+  <author email="wwj@robotis.com">Woojin Wie</author>
   <depend>rclpy</depend>
   <depend>dynamixel_hardware_interface</depend>
   <depend>ros_gz_bridge</depend>
