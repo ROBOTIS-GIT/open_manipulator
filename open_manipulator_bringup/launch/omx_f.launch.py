@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Wonho Yun, Sungho Woo, Woojin Wie
+# Author: Wonho Yun, Sungho Woo, Woojin Wie, Junha Cha
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
