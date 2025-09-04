@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Wonho Yoon, Sungho Woo
+# Author: Wonho Yoon, Sungho Woo, Woojin Wie
 
 import os
 from pathlib import Path
@@ -109,7 +109,8 @@ def generate_launch_description():
             '-name',
             'omy_3m',
             '-allow_renaming',
-            'true-use_sim',
+            'true',
+            '-use_sim',
             'true',
         ],
     )

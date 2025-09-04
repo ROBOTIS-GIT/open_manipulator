@@ -107,9 +107,10 @@ def generate_launch_description():
             '-Y',
             '0.0',
             '-name',
-            'om',
+            'omx_f',
             '-allow_renaming',
-            'true-use_sim',
+            'true',
+            '-use_sim',
             'true',
         ],
     )

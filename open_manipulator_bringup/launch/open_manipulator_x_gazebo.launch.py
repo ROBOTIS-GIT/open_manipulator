@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Wonho Yun, Sungho Woo
+# Author: Wonho Yun, Sungho Woo, Woojin Wie
 
 import os
 from pathlib import Path
@@ -107,9 +107,10 @@ def generate_launch_description():
             '-Y',
             '0.0',
             '-name',
-            'om',
+            'open_manipulator_x',
             '-allow_renaming',
-            'true-use_sim',
+            'true',
+            '-use_sim',
             'true',
         ],
     )
