@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<robot name="omx_f" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_fake_hardware" default="false" />
+  <xacro:arg name="fake_sensor_commands" default="false" />
+  <xacro:arg name="config_type" default="omx_f" />
+  <xacro:arg name="ros2_control_type" default="omx_f" />
+  <xacro:arg name="port_name" default="/dev/ttyACM1" />
+
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/omx_f.gazebo.xacro" />
+
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omx_f/omx_f_arm.urdf.xacro" />
+
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/$(arg ros2_control_type).ros2_control.xacro" />
+
+  <link name="world"/>
+
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="$(arg prefix)link0"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="$(arg prefix)end_effector_joint" type="fixed">
+    <parent link="$(arg prefix)link5"/>
+    <child link="$(arg prefix)end_effector_link"/>
+    <origin xyz="0.09193 -0.0016 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="$(arg prefix)end_effector_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01" />
+      </geometry>
+      <material name="red">
+        <color rgba="1.0 0.0 0.0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <xacro:omx_f prefix="$(arg prefix)" />
+  <xacro:omx_f_gazebo prefix="$(arg prefix)" />
+
+  <xacro:omx_f_system
+    name="OMXFSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"
+    port_name="$(arg port_name)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/$(arg config_type)/hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+
+</robot>

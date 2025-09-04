@@ -5,9 +5,9 @@
   <xacro:arg name="use_fake_hardware" default="false" />
   <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="port_name" default="/dev/ttyUSB0" />
-  <xacro:arg name="ros2_control_type" default="omy_l100" />
+  <xacro:arg name="ros2_control_type" default="omy_l100_current" />
 
-  <xacro:include filename="$(find open_manipulator_description)/urdf/omy_l100/omy_l100_arm.urdf" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omy_l100/omy_l100_arm.urdf.xacro" />
 
   <xacro:include filename="$(find open_manipulator_description)/gazebo/omy_l100.gazebo.xacro" />
 

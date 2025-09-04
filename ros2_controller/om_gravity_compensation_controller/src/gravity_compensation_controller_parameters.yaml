@@ -69,3 +69,18 @@ gravity_compensation_controller:
     default_value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
     description: "Velocity thresholds for kinetic friction compensation"
   }
+  input_velocity_scaling_factors: {
+    type: double_array,
+    default_value: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
+    description: "Scaling factors for input joint velocities"
+  }
+  input_acceleration_scaling_factors: {
+    type: double_array,
+    default_value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    description: "Scaling factors for input joint accelerations"
+  }
+  enable_spring_effect: {
+    type: bool,
+    default_value: false,
+    description: "Enable additional spring effect on joint 2"
+  }

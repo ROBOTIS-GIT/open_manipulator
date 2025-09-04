@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="omy_f3m_system" params="name prefix port_name:=^|/dev/ttyAMA2 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
+    <ros2_control name="${name}" type="system" is_async="true">
+      <xacro:if value="$(arg use_sim)">
+        <hardware>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+      </xacro:if>
+      <xacro:unless value="$(arg use_sim)">
+        <hardware>
+          <xacro:if value="${use_fake_hardware}">
+            <plugin>fake_components/GenericSystem</plugin>
+            <param name="fake_sensor_commands">${fake_sensor_commands}</param>
+            <param name="state_following_offset">0.0</param>
+          </xacro:if>
+          <xacro:unless value="${use_fake_hardware}">
+            <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
+            <param name="port_name">${port_name}</param>
+            <param name="baud_rate">6250000</param>
+            <param name="error_timeout_ms">500</param>
+            <param name="dynamixel_model_folder">/param/dxl_model</param>
+            <param name="number_of_joints">6</param>
+            <param name="number_of_transmissions">6</param>
+            <param name="disable_torque_at_init">true</param>
+            <param name="transmission_to_joint_matrix">
+              1, 0, 0, 0, 0, 0,
+              0, 1, 0, 0, 0, 0,
+              0, 0, 1, 0, 0, 0,
+              0, 0, 0, 1, 0, 0,
+              0, 0, 0, 0, 1, 0,
+              0, 0, 0, 0, 0, 1
+            </param>
+            <param name="joint_to_transmission_matrix">
+              1, 0, 0, 0, 0, 0,
+              0, 1, 0, 0, 0, 0,
+              0, 0, 1, 0, 0, 0,
+              0, 0, 0, 1, 0, 0,
+              0, 0, 0, 0, 1, 0,
+              0, 0, 0, 0, 0, 1
+            </param>
+            <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
+            <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
+            <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
+            <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
+            <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
+          </xacro:unless>
+        </hardware>
+      </xacro:unless>
+
+      <joint name="${prefix}joint1">
+        <command_interface name="effort"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint2">
+        <command_interface name="effort"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint3">
+        <command_interface name="effort"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint4">
+        <command_interface name="effort"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint5">
+        <command_interface name="effort"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="${prefix}joint6">
+        <command_interface name="effort"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+
+      <gpio name="dxl1">
+        <param name="type">dxl</param>
+        <param name="ID">1</param>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
+        <param name="Drive Mode">4</param>
+        <param name="Velocity Limit">3591</param>
+        <param name="Acceleration Limit">8050</param>
+        <param name="Profile Velocity">3591</param>
+        <param name="Profile Acceleration">8050</param>
+        <param name="Homing Offset">0</param>
+        <param name="Return Delay Time">0</param>
+        <param name="Position P Gain">1583185</param>
+        <param name="Velocity P Gain">41387</param>
+        <param name="Velocity I Gain">1565630</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
+      </gpio>
+      <gpio name="dxl2">
+        <param name="type">dxl</param>
+        <param name="ID">2</param>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
+        <param name="Drive Mode">5</param>
+        <param name="Velocity Limit">3591</param>
+        <param name="Acceleration Limit">8050</param>
+        <param name="Profile Velocity">3591</param>
+        <param name="Profile Acceleration">8050</param>
+        <param name="Return Delay Time">0</param>
+        <param name="Position P Gain">1583185</param>
+        <param name="Velocity P Gain">41387</param>
+        <param name="Velocity I Gain">1565630</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
+      </gpio>
+      <gpio name="dxl3">
+        <param name="type">dxl</param>
+        <param name="ID">3</param>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
+        <param name="Drive Mode">4</param>
+        <param name="Velocity Limit">6486</param>
+        <param name="Acceleration Limit">8050</param>
+        <param name="Profile Velocity">6486</param>
+        <param name="Profile Acceleration">8050</param>
+        <param name="Return Delay Time">0</param>
+        <param name="Position P Gain">1583185</param>
+        <param name="Velocity P Gain">18184</param>
+        <param name="Velocity I Gain">1585331</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
+      </gpio>
+      <gpio name="dxl4">
+        <param name="type">dxl</param>
+        <param name="ID">4</param>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
+        <param name="Drive Mode">5</param>
+        <param name="Velocity Limit">6486</param>
+        <param name="Acceleration Limit">8050</param>
+        <param name="Profile Velocity">6486</param>
+        <param name="Profile Acceleration">8050</param>
+        <param name="Return Delay Time">0</param>
+        <param name="Position P Gain">1583185</param>
+        <param name="Velocity P Gain">18184</param>
+        <param name="Velocity I Gain">1585331</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
+      </gpio>
+      <gpio name="dxl5">
+        <param name="type">dxl</param>
+        <param name="ID">5</param>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
+        <param name="Drive Mode">4</param>
+        <param name="Velocity Limit">6486</param>
+        <param name="Acceleration Limit">8050</param>
+        <param name="Profile Velocity">6486</param>
+        <param name="Profile Acceleration">8050</param>
+        <param name="Return Delay Time">0</param>
+        <param name="Position P Gain">1583185</param>
+        <param name="Velocity P Gain">18184</param>
+        <param name="Velocity I Gain">1585331</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
+      </gpio>
+      <gpio name="dxl6">
+        <param name="type">dxl</param>
+        <param name="ID">6</param>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="Torque Enable">1</param>
+        <param name="Drive Mode">5</param>
+        <param name="Velocity Limit">6486</param>
+        <param name="Acceleration Limit">8050</param>
+        <param name="Profile Velocity">6486</param>
+        <param name="Profile Acceleration">8050</param>
+        <param name="Return Delay Time">0</param>
+        <param name="Position P Gain">1583185</param>
+        <param name="Velocity P Gain">18184</param>
+        <param name="Velocity I Gain">1585331</param>
+        <param name="Operating Mode">0</param>
+        <param name="Profile Acceleration Time">20</param>
+        <param name="Profile Time">40</param>
+        <param name="Bus Watchdog">1</param>
+      </gpio>
+      <gpio name="omy_hat">
+        <param name="type">controller</param>
+        <param name="ID">200</param>
+        <param name="Power Enable">1</param>
+        <param name="Voltage Control Enable">1</param>
+        <param name="R LED">200</param>
+        <param name="G LED">200</param>
+        <param name="B LED">120</param>
+        <param name="Baud Rate (Bus)">8</param>
+        <param name="DXL Baud Rate">8</param>
+        <param name="Status">0</param>
+      </gpio>
+
+    </ros2_control>
+  </xacro:macro>
+</robot>

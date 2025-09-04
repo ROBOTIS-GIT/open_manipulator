@@ -14,138 +14,128 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Wonho Yun, Sungho Woo
+# Author: Wonho Yun, Sungho Woo, Woojin Wie
 
 import os
 from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
-from launch.actions import RegisterEventHandler
-from launch.actions import SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
-import xacro
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    # Launch Arguments
+    declared_arguments = [
+        DeclareLaunchArgument('model', default_value='omy_f3m',
+                              description='Robot model name.'),
+        DeclareLaunchArgument('world', default_value='empty_world',
+                              description='Gz sim World'),
+    ]
+
+    model = LaunchConfiguration('model')
+    world = LaunchConfiguration('world')
+
     open_manipulator_description_path = os.path.join(
-        get_package_share_directory('open_manipulator_description')
-    )
+        get_package_share_directory('open_manipulator_description'))
 
     open_manipulator_bringup_path = os.path.join(
-        get_package_share_directory('open_manipulator_bringup')
-    )
+        get_package_share_directory('open_manipulator_bringup'))
 
     # Set gazebo sim resource path
     gazebo_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=[
-            os.path.join(open_manipulator_bringup_path, 'worlds'),
-            ':' + str(Path(open_manipulator_description_path).parent.resolve()),
-        ],
-    )
-
-    arguments = LaunchDescription([
-        DeclareLaunchArgument(
-            'world', default_value='empty_world', description='Gz sim World'
-        ),
-    ])
+            os.path.join(open_manipulator_bringup_path, 'worlds'), ':' +
+            str(Path(open_manipulator_description_path).parent.resolve())
+            ]
+        )
 
     gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(get_package_share_directory('ros_gz_sim'), 'launch'),
-            '/gz_sim.launch.py',
-        ]),
-        launch_arguments=[
-            ('gz_args', [LaunchConfiguration('world'), '.sdf', ' -v 1', ' -r'])
-        ],
-    )
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('ros_gz_sim'), 'launch'), '/gz_sim.launch.py']),
+                launch_arguments=[
+                    ('gz_args', [
+                        world,
+                        '.sdf',
+                        ' -v 1',
+                        ' -r'
+                    ])
+                ]
+             )
 
-    xacro_file = os.path.join(
-        open_manipulator_description_path,
-        'urdf',
-        'omy_f3m',
-        'omy_f3m.urdf.xacro',
-    )
+    robot_description_content = Command([
+        PathJoinSubstitution([FindExecutable(name='xacro')]),
+        ' ',
+        PathJoinSubstitution([FindPackageShare('open_manipulator_description'),
+                              'urdf',
+                              model,
+                              'omy_f3m.urdf.xacro']),
+        ' ',
+        'model:=', model,
+        ' ',
+        'use_sim:=true',
+        ' ',
+        'config_type:=omy_f3m_follower_ai'
+    ])
 
-    doc = xacro.process_file(xacro_file, mappings={
-        'use_sim': 'true',
-        'config_type': 'omy_f3m_follower_ai',
-    })
+    robot_description = {'robot_description': robot_description_content}
 
-    robot_desc = doc.toprettyxml(indent='  ')
-
-    params = {'robot_description': robot_desc}
-
-    node_robot_state_publisher = Node(
+    robot_state_pub_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        output='screen',
-        parameters=[params],
+        parameters=[robot_description, {'use_sim_time': True}],
+        output='screen'
     )
 
     gz_spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
         output='screen',
-        arguments=[
-            '-string',
-            robot_desc,
-            '-x',
-            '0.0',
-            '-y',
-            '0.0',
-            '-z',
-            '0.0',
-            '-R',
-            '0.0',
-            '-P',
-            '0.0',
-            '-Y',
-            '0.0',
-            '-name',
-            'omy_f3m_follower_ai',
-            '-allow_renaming',
-            'true-use_sim',
-            'true',
-        ],
+        arguments=['-topic', 'robot_description',
+                   '-x', '0.0',
+                   '-y', '0.0',
+                   '-z', '0.0',
+                   '-R', '0.0',
+                   '-P', '0.0',
+                   '-Y', '0.0',
+                   '-name', model,
+                   '-allow_renaming', 'true',
+                   '-use_sim', 'true'],
     )
 
-    # Controller spawner nodes
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=[
-            'joint_state_broadcaster',
-            '--controller-manager',
-            '/controller_manager',
-        ],
-        output='screen',
+        arguments=['joint_state_broadcaster'],
+        output='screen'
     )
 
-    arm_controller_spawner = Node(
+    robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['arm_controller'],
-        output='screen',
+        arguments=[
+            'arm_controller',
+            '--controller-ros-args',
+            '-r /arm_controller/joint_trajectory:=/leader/joint_trajectory',
+        ],
+        parameters=[robot_description],
     )
 
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
-        output='screen',
+        output='screen'
     )
 
     # rviz_config_file = os.path.join(
-    #     open_manipulator_description_path, 'rviz', 'open_manipulator.rviz'
-    # )
+    #     open_manipulator_description_path, 'rviz', 'open_manipulator.rviz')
 
     # rviz = Node(
     #     package='rviz2',
@@ -156,6 +146,7 @@ def generate_launch_description():
     # )
 
     return LaunchDescription([
+        *declared_arguments,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=gz_spawn_entity,
@@ -164,15 +155,14 @@ def generate_launch_description():
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[arm_controller_spawner],
+               target_action=joint_state_broadcaster_spawner,
+               on_exit=[robot_controller_spawner],
             )
         ),
         bridge,
         gazebo_resource_path,
-        arguments,
         gazebo,
-        node_robot_state_publisher,
+        robot_state_pub_node,
         gz_spawn_entity,
         # rviz,
     ])
