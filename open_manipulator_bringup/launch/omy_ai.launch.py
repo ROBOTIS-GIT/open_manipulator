@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: Sungho Woo
+# Author: Sungho Woo, Woojin Wie
 
-"""Launch file for AI teleoperation of OpenManipulator."""
+"""Launch file for AI teleoperation of OMY L100 for leader, OMY F3M for follower."""
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
@@ -70,7 +70,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        LogInfo(msg='🚀 Starting hardware_y_follower.launch.py...'),
+        LogInfo(msg='Starting omy_f3m_follower_ai.launch.py...'),
         start_follower,
         # Step 2: Ensure joint_trajectory_executor starts after start_follower
         RegisterEventHandler(
@@ -79,7 +79,7 @@ def generate_launch_description():
                 on_start=[
                     LogInfo(
                         msg=(
-                            '✅ hardware_y_follower.launch.py has fully started. '
+                            '✅ omy_f3m_follower_ai.launch.py has fully started. '
                             'Running joint_trajectory_executor...'
                         )
                     ),

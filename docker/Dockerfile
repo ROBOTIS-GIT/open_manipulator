@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     libusb-1.0-0-dev \
     libglfw3-dev \
     ros-${ROS_DISTRO}-image-transport-plugins \
+    ros-${ROS_DISTRO}-usb-cam \
     vim \
     nano \
     && rm -rf /var/lib/apt/lists/*

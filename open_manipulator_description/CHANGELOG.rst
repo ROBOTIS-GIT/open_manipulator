@@ -2,6 +2,12 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.8 (2025-09-03)
+------------------
+* Support OMX series
+* Renamed ros2_control files to include operating mode
+* Contributors: Woojin Wie, Junha Cha
+
 4.0.7 (2025-07-17)
 ------------------
 * None

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_bringup</name>
-  <version>4.0.7</version>
+  <version>4.0.8</version>
   <description>OpenMANIPULATOR bringup ROS 2 package.</description>
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
@@ -12,6 +12,7 @@
   <author email="hjkim@robotis.com">Hye-Jong KIM</author>
   <author email="wsh@robotis.com">Sungho Woo</author>
   <author email="ywh@robotis.com">Wonho Yun</author>
+  <author email="wwj@robotis.com">Woojin Wie</author>
   <depend>rclpy</depend>
   <depend>dynamixel_hardware_interface</depend>
   <depend>ros_gz_bridge</depend>

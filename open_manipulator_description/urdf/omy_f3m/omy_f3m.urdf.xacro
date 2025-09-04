@@ -5,7 +5,7 @@
   <xacro:arg name="use_fake_hardware" default="false" />
   <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="config_type" default="omy_f3m" />
-  <xacro:arg name="ros2_control_type" default="omy_f3m" />
+  <xacro:arg name="ros2_control_type" default="omy_f3m_position" />
 
   <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/omy_f3m_arm.urdf.xacro" />
 
