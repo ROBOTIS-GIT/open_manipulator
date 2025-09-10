@@ -53,7 +53,6 @@ def generate_launch_description():
         Node(
             package='usb_cam',
             executable='usb_cam_node_exe',
-            namespace=name,
             parameters=[
                 camera_config,
                 {
@@ -61,6 +60,13 @@ def generate_launch_description():
                 },
             ],
             output='both',
+            remappings=[
+                ('image_raw', [name, '/image_raw']),
+                ('image_raw/compressed', [name, '/image_raw/compressed']),
+                ('image_raw/compressedDepth', [name, '/image_raw/compressedDepth']),
+                ('image_raw/theora', [name, '/image_raw/theora']),
+                ('camera_info', [name, '/camera_info']),
+            ]
         )
     ]
 
