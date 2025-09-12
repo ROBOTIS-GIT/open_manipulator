@@ -128,14 +128,6 @@ controller_interface::CallbackReturn JointTrajectoryCommandBroadcaster::on_confi
     "/collision_flag", rclcpp::QoS(10),
     std::bind(&JointTrajectoryCommandBroadcaster::collision_callback, this, std::placeholders::_1));
 
-  const std::string & urdf = get_robot_description();
-  is_model_loaded_ = !urdf.empty() && model_.initString(urdf);
-  if (!is_model_loaded_) {
-    RCLCPP_ERROR(
-      get_node()->get_logger(),
-      "Failed to parse robot description. Will proceed without URDF-based filtering.");
-  }
-
   return CallbackReturn::SUCCESS;
 }
 
@@ -231,19 +223,6 @@ bool JointTrajectoryCommandBroadcaster::init_joint_data()
       interface_name = map_interface_to_joint_state_[interface_name];
     }
     name_if_value_mapping_[si->get_prefix_name()][interface_name] = kUninitializedValue;
-  }
-
-  // Filter out joints without position interface (since we want positions)
-  for (const auto & name_ifv : name_if_value_mapping_) {
-    const auto & interfaces_and_values = name_ifv.second;
-    if (has_any_key(interfaces_and_values, {HW_IF_POSITION})) {
-      if (
-        !params_.use_urdf_to_filter || !params_.joints.empty() || !is_model_loaded_ ||
-        model_.getJoint(name_ifv.first))
-      {
-        joint_names_.push_back(name_ifv.first);
-      }
-    }
   }
 
   // Add extra joints if needed

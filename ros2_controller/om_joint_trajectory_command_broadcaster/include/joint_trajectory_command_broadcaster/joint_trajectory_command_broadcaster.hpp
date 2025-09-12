@@ -110,9 +110,6 @@ protected:
 
   std::unordered_map<std::string, std::unordered_map<std::string, double>> name_if_value_mapping_;
 
-  urdf::Model model_;
-  bool is_model_loaded_ = false;
-
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr collision_flag_sub_;
   std::atomic_bool collision_detected_{false};
 };

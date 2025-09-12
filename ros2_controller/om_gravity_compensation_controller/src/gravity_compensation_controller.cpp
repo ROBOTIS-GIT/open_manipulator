@@ -274,7 +274,12 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_command_interface_.resize(command_interface_types_.size());
   joint_state_interface_.resize(state_interface_types_.size());
 
-  const std::string & urdf = get_robot_description();
+  // Declare and get robot_description parameter
+  get_node()->declare_parameter("robot_description", rclcpp::ParameterType::PARAMETER_STRING);
+  std::string robot_description;
+  get_node()->get_parameter("robot_description", robot_description);
+  
+  const std::string & urdf = robot_description;
   if (!urdf.empty()) {
     if (!kdl_parser::treeFromString(urdf, tree_)) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to parse robot description!");
