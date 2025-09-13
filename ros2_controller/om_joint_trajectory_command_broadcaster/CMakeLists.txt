@@ -49,10 +49,12 @@ target_include_directories(joint_trajectory_command_broadcaster PUBLIC
 target_link_libraries(joint_trajectory_command_broadcaster PUBLIC
   ${builtin_interfaces_TARGETS}
   ${trajectory_msgs_TARGETS}
-  controller_interface::controller_interface
+  ${controller_interface_LIBRARIES}
   joint_trajectory_command_broadcaster_parameters
   pluginlib::pluginlib
   rclcpp_lifecycle::rclcpp_lifecycle
+  realtime_tools::realtime_tools
+  urdf::urdf
 )
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.

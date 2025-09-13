@@ -30,7 +30,7 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 
-#include <moveit/move_group_interface/move_group_interface.hpp>
+#include <moveit/move_group_interface/move_group_interface.h>
 
 namespace omy_3m_gui
 {

@@ -274,10 +274,8 @@ controller_interface::return_type JointTrajectoryCommandBroadcaster::update(
     if (map_interface_to_joint_state_.count(interface_name) > 0) {
       interface_name = map_interface_to_joint_state_[interface_name];
     }
-    auto value = state_interface.get_optional();
-    if (value) {
-      name_if_value_mapping_[state_interface.get_prefix_name()][interface_name] = *value;
-    }
+    double value = state_interface.get_value();
+    name_if_value_mapping_[state_interface.get_prefix_name()][interface_name] = value;
   }
 
   // Publish JointTrajectory message with current positions

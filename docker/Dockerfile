@@ -1,7 +1,7 @@
 FROM robotis/ros:jazzy-ros-base-librealsense AS librealsense
 
-# Use the base ROS2 Jazzy image
-FROM ros:jazzy-ros-base AS open-manipulator
+# Use the base ROS2 humble image
+FROM ros:humble-ros-base AS open-manipulator
 
 COPY --from=librealsense /opt/librealsense /usr/local/
 COPY --from=librealsense /usr/local/lib/python3.12/dist-packages/pyrealsense2 /usr/local/lib/python3.12/dist-packages/pyrealsense2
@@ -27,10 +27,10 @@ WORKDIR ${COLCON_WS}
 
 RUN mkdir -p ${COLCON_WS}/src && \
     cd ${COLCON_WS}/src && \
-    git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
-    git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
-    git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
-    git clone -b jazzy https://github.com/ROBOTIS-GIT/open_manipulator.git && \
+    git clone -b humble https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git && \
+    git clone -b humble https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
+    git clone -b humble https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
+    git clone -b feature-omy-humble https://github.com/ROBOTIS-GIT/open_manipulator.git && \
     git clone -b r/4.56.4 https://github.com/IntelRealSense/realsense-ros.git && \
     cd realsense-ros && git checkout cbd8b8487d4c0126bb590822db9469414496e62a
 

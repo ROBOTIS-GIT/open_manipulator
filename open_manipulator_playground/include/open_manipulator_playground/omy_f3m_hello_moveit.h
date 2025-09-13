@@ -22,6 +22,6 @@
 #include <thread>
 
 #include <rclcpp/rclcpp.hpp>
-#include <moveit/move_group_interface/move_group_interface.hpp>
+#include <moveit/move_group_interface/move_group_interface.h>
 
 #endif  // OPEN_MANIPULATOR_PLAYGROUND__OMY_F3M_HELLO_MOVEIT_H_

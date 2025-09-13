@@ -53,8 +53,7 @@ target_include_directories(gravity_compensation_controller PUBLIC
   $<INSTALL_INTERFACE:include/gravity_compensation_controller>
 )
 target_link_libraries(gravity_compensation_controller PUBLIC
-  controller_interface::controller_interface
-  hardware_interface::mock_components
+  ${controller_interface_LIBRARIES}
   pluginlib::pluginlib
   rclcpp::rclcpp
   rclcpp_lifecycle::rclcpp_lifecycle
