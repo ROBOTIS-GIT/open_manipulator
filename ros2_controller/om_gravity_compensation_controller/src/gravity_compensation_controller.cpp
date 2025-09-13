@@ -269,8 +269,6 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_command_interface_.resize(command_interface_types_.size());
   joint_state_interface_.resize(state_interface_types_.size());
 
-  // Declare and get robot_description parameter
-  get_node()->declare_parameter("robot_description", rclcpp::ParameterType::PARAMETER_STRING);
   std::string robot_description;
   get_node()->get_parameter("robot_description", robot_description);
   
