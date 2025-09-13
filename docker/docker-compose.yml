@@ -4,7 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: robotis/open-manipulator:latest
+    image: robotis/open-manipulator:humble
+    pull_policy: never
     tty: true
     restart: always
     cap_add:
