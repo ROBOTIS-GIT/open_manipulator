@@ -32,10 +32,16 @@ def generate_launch_description():
             default_value='camera1',
             description='Name of the camera',
         ),
+        DeclareLaunchArgument(
+            'video_device',
+            default_value='/dev/video0',
+            description='Video device path to open (e.g., /dev/video2)',
+        ),
     ]
 
     # Launch configurations
     name = LaunchConfiguration('name')
+    video_device = LaunchConfiguration('video_device')
 
     camera_config = PathJoinSubstitution([
         FindPackageShare('usb_cam'),
@@ -47,7 +53,12 @@ def generate_launch_description():
         Node(
             package='usb_cam',
             executable='usb_cam_node_exe',
-            parameters=[camera_config],
+            parameters=[
+                camera_config,
+                {
+                    'video_device': video_device,
+                },
+            ],
             output='both',
             remappings=[
                 ('image_raw', [name, '/image_raw']),
