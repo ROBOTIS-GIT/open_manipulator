@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.9 (2025-09-15)
+------------------
+* Support custom camera namespace and connection
+* Contributors: Junha Cha
+
 4.0.8 (2025-09-03)
 ------------------
 * Added camera_usb_cam launch file

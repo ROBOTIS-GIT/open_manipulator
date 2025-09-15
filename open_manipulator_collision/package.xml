@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_collision</name>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
   <description>
     This package implements a self-collision detection system for the follower robot during
     leader-follower teleoperation. Its primary purpose is to enhance safety by detecting

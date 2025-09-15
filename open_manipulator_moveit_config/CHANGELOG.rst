@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.9 (2025-09-15)
+------------------
+* None
+
 4.0.8 (2025-09-03)
 ------------------
 * Support OMX series

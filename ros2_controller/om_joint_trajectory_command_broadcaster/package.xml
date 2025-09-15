@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>om_joint_trajectory_command_broadcaster</name>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
   <description>
     Joint Trajectory Command Broadcaster ROS 2 package.
   </description>
