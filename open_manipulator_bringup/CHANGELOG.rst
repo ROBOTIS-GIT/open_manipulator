@@ -4,7 +4,7 @@ Changelog for package open_manipulator_bringup
 
 4.0.9 (2025-09-16)
 ------------------
-* Support custom camera namspace and connection
+* Support custom camera namespace and connection
 * Contributors: Junha Cha
 
 4.0.8 (2025-09-03)
