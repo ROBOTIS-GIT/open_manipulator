@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_playground</name>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
   <description>
     This package provides an example for utilizing the MoveIt API with the OpenMANIPULATOR,
     allowing users to practice and experiment freely.
