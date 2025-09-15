@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_gui</name>
-  <version>4.0.8</version>
+  <version>4.0.9</version>
   <description>
     The OpenMANIPULATOR GUI ROS 2 package enables users to explore Joint Space,
     Task Space, and even work with the Task Constructor functionality.  </description>
