@@ -141,7 +141,7 @@ void MainWindow::on_btn_init_pose_clicked(void)
   std::thread(
     [this]()
     {
-      std::vector<double> joint_angle = {0.0, 0.0, 0.0, 0.0};
+      std::vector<double> joint_angle = {0.0, 0.0, 0.0, 0.0, 0.0};
 
       if (!qnode.setJointSpacePath(joint_angle)) {
         QMetaObject::invokeMethod(
@@ -163,7 +163,7 @@ void MainWindow::on_btn_home_pose_clicked(void)
   std::thread(
     [this]()
     {
-      std::vector<double> joint_angle = {0.0, -1.0, 0.7, 0.3};
+      std::vector<double> joint_angle = {0.0, -1.57, 1.57, 1.57, 0.0};
 
       if (!qnode.setJointSpacePath(joint_angle)) {
         QMetaObject::invokeMethod(
@@ -185,7 +185,7 @@ void MainWindow::on_btn_gripper_open_clicked(void)
   std::thread(
     [this]()
     {
-      std::vector<double> joint_angle = {0.019};
+      std::vector<double> joint_angle = {1.0};
 
       if (!qnode.setToolControl(joint_angle)) {
         QMetaObject::invokeMethod(
@@ -207,7 +207,7 @@ void MainWindow::on_btn_gripper_close_clicked(void)
   std::thread(
     [this]()
     {
-      std::vector<double> joint_angle = {-0.01};
+      std::vector<double> joint_angle = {0.0};
 
       if (!qnode.setToolControl(joint_angle)) {
         QMetaObject::invokeMethod(
@@ -231,8 +231,9 @@ void MainWindow::on_btn_read_joint_angle_clicked(void)
   ui.doubleSpinBox_j2->setValue(joint_angle.at(1));
   ui.doubleSpinBox_j3->setValue(joint_angle.at(2));
   ui.doubleSpinBox_j4->setValue(joint_angle.at(3));
+  ui.doubleSpinBox_j5->setValue(joint_angle.at(4));
 
-  ui.doubleSpinBox_gripper->setValue(joint_angle.at(4));
+  ui.doubleSpinBox_gripper->setValue(joint_angle.at(5));
 
   writeLog("Read joint angle");
 }
@@ -245,6 +246,7 @@ void MainWindow::on_btn_send_joint_angle_clicked(void)
   joint_angle.push_back(ui.doubleSpinBox_j2->value());
   joint_angle.push_back(ui.doubleSpinBox_j3->value());
   joint_angle.push_back(ui.doubleSpinBox_j4->value());
+  joint_angle.push_back(ui.doubleSpinBox_j5->value());
 
   std::thread(
     [this, joint_angle]()
@@ -334,7 +336,7 @@ void MainWindow::on_btn_save_pose_clicked(void)
   if (file.is_open()) {
     file << joint_angle.at(0) << "," << joint_angle.at(1) << ","
          << joint_angle.at(2) << "," << joint_angle.at(3) << ","
-         << joint_angle.at(4) << std::endl;
+         << joint_angle.at(4) << "," << joint_angle.at(5) << std::endl;
     file.close();
 
     writeLog("Pose saved to CSV.");
@@ -369,15 +371,15 @@ void MainWindow::on_btn_read_task_clicked(void)
         values.push_back(value);
       }
 
-      if (values.size() == 5) {
+      if (values.size() == 6) {
         tableWidget->insertRow(row);
-        for (int col = 0; col < 5; ++col) {
+        for (int col = 0; col < 6; ++col) {
           double doubleValue = std::stod(values.at(col));
           QTableWidgetItem * item = new QTableWidgetItem(QString::number(doubleValue, 'f', 3));
           tableWidget->setItem(row, col, item);
         }
         QTableWidgetItem * statusItem = new QTableWidgetItem("Loaded");
-        tableWidget->setItem(row, 5, statusItem);
+        tableWidget->setItem(row, 6, statusItem);
         ++row;
       }
     }
@@ -430,7 +432,7 @@ void MainWindow::on_btn_play_clicked(void)
           }
           QMetaObject::invokeMethod(
             this, [this, row]() {
-              tableWidget->item(row, 5)->setText("Pending");
+              tableWidget->item(row, 6)->setText("Pending");
             }, Qt::QueuedConnection);
         }
 
@@ -458,15 +460,15 @@ void MainWindow::on_btn_play_clicked(void)
               joint_angle.push_back(std::stod(value));
             }
 
-            if (joint_angle.size() == 5) {
+            if (joint_angle.size() == 6) {
               double current_gripper_value = joint_angle.back();
 
               QMetaObject::invokeMethod(
                 this, [this, row]() {
-                  for (int col = 0; col < 6; ++col) {
+                  for (int col = 0; col < 7; ++col) {
                     tableWidget->item(row, col)->setBackground(Qt::yellow);
                   }
-                  tableWidget->item(row, 5)->setText("Executing...");
+                  tableWidget->item(row, 6)->setText("Executing...");
                 }, Qt::QueuedConnection);
 
               if (!qnode.setJointSpacePath(joint_angle)) {
@@ -500,10 +502,10 @@ void MainWindow::on_btn_play_clicked(void)
 
               QMetaObject::invokeMethod(
                 this, [this, row]() {
-                  for (int col = 0; col < 6; ++col) {
+                  for (int col = 0; col < 7; ++col) {
                     tableWidget->item(row, col)->setBackground(Qt::green);
                   }
-                  tableWidget->item(row, 5)->setText("Done");
+                  tableWidget->item(row, 6)->setText("Done");
                 }, Qt::QueuedConnection);
 
               previous_gripper_value = current_gripper_value;
@@ -526,10 +528,10 @@ void MainWindow::on_btn_play_clicked(void)
           writeLog("All repetitions completed. Resetting table.");
           int rowCount = tableWidget->rowCount();
           for (int row = 0; row < rowCount; ++row) {
-            for (int col = 0; col < 6; ++col) {
+            for (int col = 0; col < 7; ++col) {
               tableWidget->item(row, col)->setBackground(Qt::white);
             }
-            tableWidget->item(row, 5)->setText("Done");
+            tableWidget->item(row, 6)->setText("Done");
           }
           ui.btn_reset_task->setEnabled(true);
         }, Qt::QueuedConnection);
@@ -544,10 +546,10 @@ void MainWindow::on_btn_stop_clicked(void)
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
   int rowCount = tableWidget->rowCount();
   for (int row = 0; row < rowCount; ++row) {
-    for (int col = 0; col < 6; ++col) {
+    for (int col = 0; col < 7; ++col) {
       tableWidget->item(row, col)->setBackground(Qt::white);
     }
-    tableWidget->item(row, 5)->setText("Stopped");
+    tableWidget->item(row, 6)->setText("Stopped");
   }
   writeLog("Robot motion stopped and state reset.");
 }

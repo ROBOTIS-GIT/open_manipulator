@@ -157,6 +157,7 @@ bool QNode::setJointSpacePath(std::vector<double> joint_angle)
   joint_group_positions[1] = joint_angle.at(1);  // radians
   joint_group_positions[2] = joint_angle.at(2);  // radians
   joint_group_positions[3] = joint_angle.at(3);  // radians
+  joint_group_positions[4] = joint_angle.at(4);  // radians
   move_group_->setJointValueTarget(joint_group_positions);
 
   moveit::planning_interface::MoveGroupInterface::Plan my_plan;
