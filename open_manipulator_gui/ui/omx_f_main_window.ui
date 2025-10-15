@@ -48,7 +48,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_11" stretch="1,20,1,25">
         <item>
-         <widget class="QLabel" name="label_18">
+         <widget class="QLabel" name="label_74">
           <property name="text">
            <string>Logging</string>
           </property>
@@ -123,7 +123,7 @@
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QLabel" name="label_12">
+             <widget class="QLabel" name="label_13">
               <property name="text">
                <string>rad</string>
               </property>
@@ -144,21 +144,21 @@
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>rad</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
              <widget class="QLabel" name="label_14">
               <property name="text">
                <string>rad</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="2">
+            <item row="3" column="2">
              <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>rad</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QLabel" name="label_16">
               <property name="text">
                <string>rad</string>
               </property>
@@ -281,7 +281,7 @@
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QLabel" name="label_11">
+             <widget class="QLabel" name="label_12">
               <property name="text">
                <string>rad</string>
               </property>
@@ -344,14 +344,14 @@
              </widget>
             </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel" name="label_9">
               <property name="text">
                <string>X</string>
               </property>
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_8">
+             <widget class="QLabel" name="label_11">
               <property name="text">
                <string>Z</string>
               </property>
@@ -377,7 +377,7 @@
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QLabel" name="label_16">
+             <widget class="QLabel" name="label_17">
               <property name="text">
                <string>m</string>
               </property>
@@ -391,7 +391,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel" name="label_10">
               <property name="text">
                <string>Y</string>
               </property>
@@ -488,14 +488,14 @@
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QLabel" name="label_17">
+             <widget class="QLabel" name="label_18">
               <property name="text">
                <string>m</string>
               </property>
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QLabel" name="label_15">
+             <widget class="QLabel" name="label_19">
               <property name="text">
                <string>m</string>
               </property>
@@ -662,7 +662,7 @@
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QLabel" name="label_19">
+                <widget class="QLabel" name="label_25">
                  <property name="text">
                   <string>Joint 3</string>
                  </property>
@@ -715,6 +715,39 @@
                  </property>
                 </widget>
                </item>
+              <item row="4" column="0">
+              <widget class="QLabel" name="label_33">
+                <property name="text">
+                <string>Joint 5</string>
+                </property>
+              </widget>
+              </item>
+              <item row="4" column="1">
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_j5">
+                <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="decimals">
+                <number>3</number>
+                </property>
+                <property name="minimum">
+                <double>-3.140000000000000</double>
+                </property>
+                <property name="maximum">
+                <double>3.140000000000000</double>
+                </property>
+                <property name="singleStep">
+                <double>0.050000000000000</double>
+                </property>
+              </widget>
+              </item>
+              <item row="4" column="2">
+              <widget class="QLabel" name="label_28">
+                <property name="text">
+                <string>rad</string>
+                </property>
+              </widget>
+              </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_26">
                  <property name="text">
@@ -943,7 +976,7 @@
                 </widget>
                </item>
                <item row="2" column="2">
-                <widget class="QLabel" name="label_28">
+                <widget class="QLabel" name="label_34">
                  <property name="text">
                   <string>m</string>
                  </property>
