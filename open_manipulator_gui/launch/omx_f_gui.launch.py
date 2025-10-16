@@ -27,7 +27,7 @@ def generate_launch_description():
     csv_file_path = os.path.join(
         get_package_share_directory('open_manipulator_gui'),
         'config',
-        'omx_f_gui_joint_log.csv',
+        'omx_f_joint_log.csv',
     )
 
     gui_node = Node(
