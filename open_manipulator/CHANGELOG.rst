@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.10 (2025-10-16)
+-------------------
+* Support OMX-F GUI
+* Contributors: Heewon Lee
+
 4.0.9 (2025-09-15)
 ------------------
 * Support custom camera namespace and connection
