@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Author: Ryan Shim, Sungho Woo, Wonho Yun, Woojin Wie
+// Author: Ryan Shim, Sungho Woo, Wonho Yun, Woojin Wie, Heewon Lee
 
 #ifndef OMX_F_GUI__MAIN_WINDOW_HPP_
 #define OMX_F_GUI__MAIN_WINDOW_HPP_
