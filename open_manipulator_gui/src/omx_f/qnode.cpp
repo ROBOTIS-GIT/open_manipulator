@@ -95,7 +95,7 @@ void QNode::updateRobotState()
   std::vector<double> jointValues2 = move_group2_->getCurrentJointValues();
   std::vector<double> temp_angle;
 
-  if (jointValues.size() >= 5){
+  if (jointValues.size() >= 5) {
     temp_angle.push_back(jointValues.at(0));
     temp_angle.push_back(jointValues.at(1));
     temp_angle.push_back(jointValues.at(2));
