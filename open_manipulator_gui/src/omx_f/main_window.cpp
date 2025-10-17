@@ -343,12 +343,12 @@ void MainWindow::on_btn_save_pose_clicked(void)
 
     int row = tableWidget->rowCount();
     tableWidget->insertRow(row);
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 6; ++i) {
       QTableWidgetItem * item = new QTableWidgetItem(QString::number(joint_angle.at(i), 'f', 3));
       tableWidget->setItem(row, i, item);
     }
     QTableWidgetItem * statusItem = new QTableWidgetItem("Saved");
-    tableWidget->setItem(row, 5, statusItem);
+    tableWidget->setItem(row, 6, statusItem);
   } else {
     writeLog("[ERR!!] Unable to open file.");
   }
@@ -424,7 +424,7 @@ void MainWindow::on_btn_play_clicked(void)
 
         int rowCount = tableWidget->rowCount();
         for (int row = 0; row < rowCount; ++row) {
-          for (int col = 0; col < 6; ++col) {
+          for (int col = 0; col < 7; ++col) {
             QMetaObject::invokeMethod(
               this, [this, row, col]() {
                 tableWidget->item(row, col)->setBackground(Qt::white);
