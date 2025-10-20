@@ -29,6 +29,7 @@ setup(
             'open_manipulator_x_teleop = open_manipulator_teleop.open_manipulator_x_teleop:main',
             'omy_3m_teleop = open_manipulator_teleop.omy_3m_teleop:main',
             'omy_f3m_teleop = open_manipulator_teleop.omy_f3m_teleop:main',
+            'omx_f_teleop = open_manipulator_teleop.omx_f_teleop:main',
         ],
     },
 )
