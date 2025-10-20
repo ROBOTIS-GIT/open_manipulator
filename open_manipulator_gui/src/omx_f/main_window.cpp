@@ -39,7 +39,7 @@ MainWindow::MainWindow(int argc, char ** argv, QWidget * parent)
   tableWidget->setHorizontalHeaderLabels(headers);
   tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-  ui.verticalLayout_19->addWidget(tableWidget);
+  ui.verticalLayout->addWidget(tableWidget);
 
   QObject::connect(ui.actionAbout_Qt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
   connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabSelected()));
@@ -92,7 +92,6 @@ void MainWindow::timerCallback()
   ui.txt_q_z->setText(QString::number(position.at(5), 'f', 3));
   ui.txt_q_w->setText(QString::number(position.at(6), 'f', 3));
 }
-
 void MainWindow::tabSelected()
 {
   if (ui.tabWidget->currentIndex() == 0) {
