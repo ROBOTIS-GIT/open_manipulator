@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.10 (2025-10-23)
+-------------------
+* Changed default drive mode to 0 for OMX-L
+* Contributors: Woojin Wie
+
 4.0.9 (2025-09-15)
 ------------------
 * None
