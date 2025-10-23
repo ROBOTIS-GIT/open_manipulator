@@ -152,7 +152,7 @@
         <state_interface name="Present Position"/>
         <state_interface name="Present Velocity"/>
         <!-- <state_interface name="Present Current"/> -->
-        <param name="Drive Mode">1</param>
+        <param name="Drive Mode">0</param>
         <param name="Operating Mode">5</param>
         <param name="Return Delay Time">0</param>
         <param name="Position P Gain">1000</param>
