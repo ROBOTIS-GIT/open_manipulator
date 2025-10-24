@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.10 (2025-10-23)
+-------------------
+* None
+
 4.0.9 (2025-09-16)
 ------------------
 * Support custom camera namespace and connection
