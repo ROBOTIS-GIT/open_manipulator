@@ -80,6 +80,24 @@ set(PROJECT_UI_OMYF3M
 
 
 ################################################################################
+# OMX F
+################################################################################
+set(PROJECT_SOURCES_OMXF
+  src/omx_f/main.cpp
+  src/omx_f/main_window.cpp
+  src/omx_f/qnode.cpp
+)
+
+set(PROJECT_HEADERS_OMXF
+  include/omx_f_gui/main_window.hpp
+  include/omx_f_gui/qnode.hpp
+)
+
+set(PROJECT_UI_OMXF
+  ui/omx_f_main_window.ui
+)
+
+################################################################################
 # Qt specific configurations
 ################################################################################
 set(CMAKE_AUTOUIC ON)
@@ -92,15 +110,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/omy_3m_gui)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/omy_f3m_gui)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/omx_f_gui)
 
 # Generate UI headers
 qt5_wrap_ui(PROJECT_UI_HEADERS_open_manipulator_x ${PROJECT_UI_open_manipulator_x})
 qt5_wrap_ui(PROJECT_UI_HEADERS_OMY3M ${PROJECT_UI_OMY3M})
 qt5_wrap_ui(PROJECT_UI_HEADERS_OMYF3M ${PROJECT_UI_OMYF3M})
+qt5_wrap_ui(PROJECT_UI_HEADERS_OMXF ${PROJECT_UI_OMXF})
 
 qt5_wrap_cpp(PROJECT_MOCS_open_manipulator_x ${PROJECT_HEADERS_open_manipulator_x})
 qt5_wrap_cpp(PROJECT_MOCS_OMY3M ${PROJECT_HEADERS_OMY3M})
 qt5_wrap_cpp(PROJECT_MOCS_OMYF3M ${PROJECT_HEADERS_OMYF3M})
+qt5_wrap_cpp(PROJECT_MOCS_OMXF ${PROJECT_HEADERS_OMXF})
 
 ################################################################################
 # Build
@@ -202,6 +223,38 @@ target_link_libraries(omy_f3m_gui_node
 )
 
 ################################################################################
+# OMX F
+################################################################################
+add_executable(omx_f_gui_node
+  ${PROJECT_SOURCES_OMXF}
+  ${PROJECT_MOCS_OMXF}
+  ${PROJECT_UI_HEADERS_OMXF}
+)
+
+add_dependencies(omx_f_gui_node copy_ui_headers)
+
+target_include_directories(omx_f_gui_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  include
+  ${EIGEN3_INCLUDE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/ui
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(omx_f_gui_node
+  rclcpp::rclcpp
+  ${geometry_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  ${sensor_msgs_TARGETS}
+  moveit_ros_planning_interface::moveit_move_group_interface
+  ${EIGEN3_TARGETS}
+  Qt5::Widgets
+)
+
+################################################################################
 # Copy generated UI headers to the correct location
 ################################################################################
 add_custom_command(
@@ -228,11 +281,20 @@ add_custom_command(
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_omy_f3m_main_window.h
 )
 
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/omx_f_gui/ui_omx_f_main_window.h
+  COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_BINARY_DIR}/ui_omx_f_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/omx_f_gui/ui_omx_f_main_window.h
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ui_omx_f_main_window.h
+)
+
 add_custom_target(copy_ui_headers ALL
   DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/open_manipulator_x_gui/ui_open_manipulator_x_main_window.h
     ${CMAKE_CURRENT_BINARY_DIR}/omy_3m_gui/ui_omy_3m_main_window.h
     ${CMAKE_CURRENT_BINARY_DIR}/omy_f3m_gui/ui_omy_f3m_main_window.h
+    ${CMAKE_CURRENT_BINARY_DIR}/omx_f_gui/ui_omx_f_main_window.h
 )
 
 ################################################################################
@@ -247,6 +309,10 @@ install(TARGETS omy_3m_gui_node
 )
 
 install(TARGETS omy_f3m_gui_node
+  DESTINATION lib/open_manipulator_gui
+)
+
+install(TARGETS omx_f_gui_node
   DESTINATION lib/open_manipulator_gui
 )
 
@@ -267,6 +333,7 @@ ament_export_include_directories(include)
 ament_export_libraries(open_manipulator_x_gui_node)
 ament_export_libraries(omy_3m_gui_node)
 ament_export_libraries(omy_f3m_gui_node)
+ament_export_libraries(omx_f_gui_node)
 
 ################################################################################
 # Macro for ament package
