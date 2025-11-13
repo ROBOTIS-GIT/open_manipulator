@@ -5,6 +5,7 @@ Changelog for package open_manipulator
 4.1.1 (2025-11-13)
 ------------------
 * Update for new DHI, mock_components
+* Update for docker-compose.yml to use host IPC and PID and shared memory
 * Contributors: Woojin Wie
 
 4.1.0 (2025-10-24)
