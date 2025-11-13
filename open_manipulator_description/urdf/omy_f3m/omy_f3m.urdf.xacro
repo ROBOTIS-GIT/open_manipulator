@@ -2,8 +2,8 @@
 <robot name="omy_f3m" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:arg name="prefix" default="" />
   <xacro:arg name="use_sim" default="false" />
-  <xacro:arg name="use_fake_hardware" default="false" />
-  <xacro:arg name="fake_sensor_commands" default="false" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
   <xacro:arg name="config_type" default="omy_f3m" />
   <xacro:arg name="ros2_control_type" default="omy_f3m_position" />
 
@@ -59,13 +59,13 @@
 
   <xacro:omy_f3m_system
     name="OMYF3MSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
-    use_fake_hardware="$(arg use_fake_hardware)"
-    fake_sensor_commands="$(arg fake_sensor_commands)"/>
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
 
   <xacro:omy_f3m_end_unit_system
     name="OMYF3MEndUnitSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
-    use_fake_hardware="$(arg use_fake_hardware)"
-    fake_sensor_commands="$(arg fake_sensor_commands)"/>
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
 
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
