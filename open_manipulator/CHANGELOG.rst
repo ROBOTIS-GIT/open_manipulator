@@ -2,8 +2,13 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2025-11-13)
+------------------
+* Update for new DHI, mock_components
+* Contributors: Woojin Wie
+
 4.1.0 (2025-10-24)
--------------------
+------------------
 * Support OMX-F GUI
 * Support OMX-F Keyboard Teleop
 * Contributors: Heewon Lee
