@@ -23,32 +23,11 @@
             <param name="number_of_joints">5</param>
             <param name="number_of_transmissions">5</param>
             <param name="disable_torque_at_init">true</param>
-            <param name="transmission_to_joint_matrix">
-              1, 0, 0, 0, 0,
-              0, 1, 0, 0, 0,
-              0, 0, 1, 0, 0,
-              0, 0, 0, 1, 0,
-              0, 0, 0, 0, 1
-            </param>
-            <param name="joint_to_transmission_matrix">
-              1, 0, 0, 0, 0,
-              0, 1, 0, 0, 0,
-              0, 0, 1, 0, 0,
-              0, 0, 0, 1, 0,
-              0, 0, 0, 0, 1
-            </param>
             <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
             <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
             <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
             <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
             <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
-            <param name="use_revolute_to_prismatic_gripper">1</param>
-            <param name="revolute_to_prismatic_dxl">dxl5</param>
-            <param name="revolute_max">-1.52</param>
-            <param name="revolute_min">0.92</param>
-            <param name="revolute_to_prismatic_joint">${prefix}gripper_left_joint</param>
-            <param name="prismatic_max">0.019</param>
-            <param name="prismatic_min">-0.01</param>
           </xacro:unless>
         </hardware>
       </xacro:unless>
@@ -170,6 +149,10 @@
         <param name="Drive Mode">4</param>
         <param name="Return Delay Time">0</param>
         <param name="Goal Current">200</param>
+        <param name="[unit info]">
+          Present Position,-0.00001823173887241131,m,signed,0.03827302744020655;
+          Goal Position,-0.00001823173887241131,m,signed,0.03827302744020655;
+        </param>
       </gpio>
 
     </ros2_control>
