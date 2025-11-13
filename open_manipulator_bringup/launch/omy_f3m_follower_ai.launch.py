@@ -47,14 +47,14 @@ def generate_launch_description():
             description='Start robot in Gazebo simulation.',
         ),
         DeclareLaunchArgument(
-            'use_fake_hardware',
+            'use_mock_hardware',
             default_value='false',
-            description='Use fake hardware mirroring command.',
+            description='Use mock hardware mirroring command.',
         ),
         DeclareLaunchArgument(
-            'fake_sensor_commands',
+            'mock_sensor_commands',
             default_value='false',
-            description='Enable fake sensor commands.',
+            description='Enable mock sensor commands.',
         ),
         DeclareLaunchArgument(
             'init_position',
@@ -77,8 +77,8 @@ def generate_launch_description():
     start_rviz = LaunchConfiguration('start_rviz')
     prefix = LaunchConfiguration('prefix')
     use_sim = LaunchConfiguration('use_sim')
-    use_fake_hardware = LaunchConfiguration('use_fake_hardware')
-    fake_sensor_commands = LaunchConfiguration('fake_sensor_commands')
+    use_mock_hardware = LaunchConfiguration('use_mock_hardware')
+    mock_sensor_commands = LaunchConfiguration('mock_sensor_commands')
     init_position = LaunchConfiguration('init_position')
     ros2_control_type = LaunchConfiguration('ros2_control_type')
     init_position_file = LaunchConfiguration('init_position_file')
@@ -100,11 +100,11 @@ def generate_launch_description():
         'use_sim:=',
         use_sim,
         ' ',
-        'use_fake_hardware:=',
-        use_fake_hardware,
+        'use_mock_hardware:=',
+        use_mock_hardware,
         ' ',
-        'fake_sensor_commands:=',
-        fake_sensor_commands,
+        'mock_sensor_commands:=',
+        mock_sensor_commands,
         ' ',
         'ros2_control_type:=',
         ros2_control_type,

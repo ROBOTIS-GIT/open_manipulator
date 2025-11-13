@@ -2,8 +2,13 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2025-11-13)
+------------------
+* Update for new DHI, mock_components
+* Contributors: Woojin Wie
+
 4.1.0 (2025-10-24)
--------------------
+------------------
 * None
 
 4.0.10 (2025-10-23)
