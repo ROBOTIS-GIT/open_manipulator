@@ -85,6 +85,18 @@
         <state_interface name="effort"/>
       </joint>
 
+      <gpio name="omy_hat">
+        <param name="type">controller</param>
+        <param name="ID">200</param>
+        <param name="Power Enable">1</param>
+        <param name="Voltage Control Enable">1</param>
+        <param name="R LED">200</param>
+        <param name="G LED">200</param>
+        <param name="B LED">120</param>
+        <param name="Baud Rate (Bus)">8</param>
+        <param name="DXL Baud Rate">8</param>
+        <param name="Status">0</param>
+      </gpio>
       <gpio name="dxl1">
         <param name="type">dxl</param>
         <param name="ID">1</param>
@@ -217,18 +229,6 @@
         <param name="Profile Acceleration Time">20</param>
         <param name="Profile Time">40</param>
         <param name="Bus Watchdog">1</param>
-      </gpio>
-      <gpio name="omy_hat">
-        <param name="type">controller</param>
-        <param name="ID">200</param>
-        <param name="Power Enable">1</param>
-        <param name="Voltage Control Enable">1</param>
-        <param name="R LED">200</param>
-        <param name="G LED">200</param>
-        <param name="B LED">120</param>
-        <param name="Baud Rate (Bus)">8</param>
-        <param name="DXL Baud Rate">8</param>
-        <param name="Status">0</param>
       </gpio>
 
     </ros2_control>
