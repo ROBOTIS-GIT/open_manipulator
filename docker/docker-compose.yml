@@ -19,6 +19,7 @@ services:
     environment:
      - DISPLAY=${DISPLAY}
      - QT_X11_NO_MITSHM=1
+     # - RMW_IMPLEMENTATION=rmw_zenoh_cpp
     volumes:
       - /dev:/dev
       - /dev/shm:/dev/shm
