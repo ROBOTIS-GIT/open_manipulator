@@ -2,8 +2,12 @@
 Changelog for package open_manipulator_teleop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2025-11-13)
+------------------
+* None
+
 4.1.0 (2025-10-24)
--------------------
+------------------
 * Support OMX-F Keyboard Teleop
 * Contributors: Heewon Lee
 

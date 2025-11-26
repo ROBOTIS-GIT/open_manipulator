@@ -2,8 +2,12 @@
 Changelog for package open_manipulator_gui
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2025-11-13)
+------------------
+* None
+
 4.1.0 (2025-10-24)
--------------------
+------------------
 * Support OMX-F GUI
 * Contributors: Heewon Lee
 
