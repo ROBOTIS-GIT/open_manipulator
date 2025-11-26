@@ -146,12 +146,14 @@
         <param name="Operating Mode">5</param>
         <param name="Profile Velocity">20</param>
         <param name="Profile Acceleration">10</param>
-        <param name="Drive Mode">4</param>
+        <param name="Drive Mode">5</param>
         <param name="Return Delay Time">0</param>
         <param name="Goal Current">200</param>
         <param name="[unit info]">
-          Present Position,-0.00001823173887241131,m,signed,0.03827302744020655;
-          Goal Position,-0.00001823173887241131,m,signed,0.03827302744020655;
+          Present Position,0.000017626621790,m,signed,-0.036099321;
+          Goal Position,0.000017626621790,m,signed,-0.036099321;
+          Present Velocity,0.000275558153557,rad/s,signed,0.0;
+          Goal Velocity,0.000275558153557,rad/s,signed,0.0;
         </param>
       </gpio>
 
