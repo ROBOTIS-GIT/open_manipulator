@@ -6,7 +6,8 @@ Changelog for package open_manipulator
 ------------------
 * Update for new DHI, mock_components
 * Update for docker-compose.yml to use host IPC and PID and shared memory
-* Contributors: Woojin Wie
+* Update gazebo plugin parameters for omx_l
+* Contributors: Woojin Wie, Heewon Lee
 
 4.1.0 (2025-10-24)
 ------------------
