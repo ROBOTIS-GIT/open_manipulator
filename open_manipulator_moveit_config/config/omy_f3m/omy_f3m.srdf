@@ -45,7 +45,7 @@
         <joint name="rh_r1_joint" value="0"/>
     </group_state>
     <group_state name="close" group="gripper">
-        <joint name="rh_r1_joint" value="1.1"/>
+        <joint name="rh_r1_joint" value="1.12"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="end_effector" parent_link="end_effector_link" group="arm"/>
