@@ -7,6 +7,8 @@ Changelog for package open_manipulator
 * Update for new DHI, mock_components
 * Update for docker-compose.yml to use host IPC and PID and shared memory
 * Update gazebo plugin parameters for omx_l
+* Updated for new realtime_tools::RealtimePublisher API
+* Updated Dockerfile for DHI
 * Contributors: Woojin Wie, Heewon Lee
 
 4.1.0 (2025-10-24)
