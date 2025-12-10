@@ -57,9 +57,9 @@ jobs:
           echo "--- Updating rosdep definitions ---"
           rosdep update
           echo "--- Installing system dependencies for ROS 2 ${{ matrix.ros_distribution }} ---"
-          rosdep install --from-paths ros_ws/src --ignore-src -y -r --rosdistro ${{ matrix.ros_distribution }}
+          rosdep install --from-paths ros_ws/src --ignore-src -y -r --rosdistro ${{ matrix.ros_distribution }} --skip-keys dynamixel_hardware_interface
           echo "--- Performing rosdep check for ROS 2 ${{ matrix.ros_distribution }} ---"
-          if rosdep check --from-paths ros_ws/src --ignore-src --rosdistro ${{ matrix.ros_distribution }}; then
+          if rosdep check --from-paths ros_ws/src --ignore-src --rosdistro ${{ matrix.ros_distribution }} --skip-keys dynamixel_hardware_interface; then
             echo "--- rosdep check passed ---"
           else
             echo "--- rosdep check failed: Missing system dependencies or unresolvable keys. ---"
@@ -71,7 +71,7 @@ jobs:
 
         with:
           target-ros2-distro: ${{ matrix.ros_distribution }}
-          vcs-repo-file-url: ""
+          vcs-repo-file-url: "https://raw.githubusercontent.com/ROBOTIS-GIT/open_manipulator/${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}/open_manipulator_ci.repos"
           package-name: |
             open_manipulator
             open_manipulator_bringup
