@@ -23,22 +23,6 @@
             <param name="number_of_joints">6</param>
             <param name="number_of_transmissions">6</param>
             <param name="disable_torque_at_init">true</param>
-            <param name="transmission_to_joint_matrix">
-              1, 0, 0, 0, 0, 0,
-              0, 1, 0, 0, 0, 0,
-              0, 0, 1, 0, 0, 0,
-              0, 0, 0, 1, 0, 0,
-              0, 0, 0, 0, 1, 0,
-              0, 0, 0, 0, 0, 1
-            </param>
-            <param name="joint_to_transmission_matrix">
-              1, 0, 0, 0, 0, 0,
-              0, 1, 0, 0, 0, 0,
-              0, 0, 1, 0, 0, 0,
-              0, 0, 0, 1, 0, 0,
-              0, 0, 0, 0, 1, 0,
-              0, 0, 0, 0, 0, 1
-            </param>
             <param name="dynamixel_state_pub_msg_name">omx_l/dxl_state</param>
             <param name="get_dynamixel_data_srv_name">omx_l/get_dxl_data</param>
             <param name="set_dynamixel_data_srv_name">omx_l/set_dxl_data</param>

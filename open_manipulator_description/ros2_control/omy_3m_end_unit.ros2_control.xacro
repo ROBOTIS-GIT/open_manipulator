@@ -18,8 +18,6 @@
             <param name="number_of_joints">0</param>
             <param name="number_of_transmissions">0</param>
             <param name="disable_torque_at_init">true</param>
-            <param name="transmission_to_joint_matrix"></param>
-            <param name="joint_to_transmission_matrix"></param>
             <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
             <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
             <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
