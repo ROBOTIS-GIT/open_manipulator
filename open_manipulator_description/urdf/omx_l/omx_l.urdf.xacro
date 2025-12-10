@@ -4,9 +4,9 @@
   <xacro:arg name="use_sim" default="false" />
   <xacro:arg name="use_fake_hardware" default="false" />
   <xacro:arg name="fake_sensor_commands" default="false" />
-  <xacro:arg name="config_type" default="omx_l_leader_ai" />
-  <xacro:arg name="ros2_control_type" default="omx_l" />
   <xacro:arg name="port_name" default="/dev/ttyACM1" />
+  <xacro:arg name="ros2_control_type" default="omx_l" />
+  <xacro:arg name="config_type" default="omx_l_leader_ai" />
 
   <xacro:include filename="$(find open_manipulator_description)/urdf/omx_l/omx_l_arm.urdf.xacro" />
 
