@@ -25,6 +25,7 @@
   <depend>tl_expected</depend>
   <depend>urdf</depend>
   <depend>kdl_parser</depend>
+  <depend>orocos_kdl</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
