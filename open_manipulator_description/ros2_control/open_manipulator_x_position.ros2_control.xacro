@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="open_manipulator_x_system" params="name prefix port_name:=^|/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
+  <xacro:macro name="open_manipulator_x_system" params="name prefix port_name:=^|/dev/ttyUSB0 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
     <ros2_control name="${name}" type="system">
       <xacro:if value="$(arg use_sim)">
         <hardware>
@@ -9,12 +9,12 @@
       </xacro:if>
       <xacro:unless value="$(arg use_sim)">
         <hardware>
-          <xacro:if value="${use_fake_hardware}">
-            <plugin>fake_components/GenericSystem</plugin>
-            <param name="fake_sensor_commands">${fake_sensor_commands}</param>
+          <xacro:if value="${use_mock_hardware}">
+            <plugin>mock_components/GenericSystem</plugin>
+            <param name="mock_sensor_commands">${mock_sensor_commands}</param>
             <param name="state_following_offset">0.0</param>
           </xacro:if>
-          <xacro:unless value="${use_fake_hardware}">
+          <xacro:unless value="${use_mock_hardware}">
             <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
             <param name="port_name">${port_name}</param>
             <param name="baud_rate">1000000</param>
@@ -23,32 +23,11 @@
             <param name="number_of_joints">5</param>
             <param name="number_of_transmissions">5</param>
             <param name="disable_torque_at_init">true</param>
-            <param name="transmission_to_joint_matrix">
-              1, 0, 0, 0, 0,
-              0, 1, 0, 0, 0,
-              0, 0, 1, 0, 0,
-              0, 0, 0, 1, 0,
-              0, 0, 0, 0, 1
-            </param>
-            <param name="joint_to_transmission_matrix">
-              1, 0, 0, 0, 0,
-              0, 1, 0, 0, 0,
-              0, 0, 1, 0, 0,
-              0, 0, 0, 1, 0,
-              0, 0, 0, 0, 1
-            </param>
             <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
             <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
             <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
             <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
             <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
-            <param name="use_revolute_to_prismatic_gripper">1</param>
-            <param name="revolute_to_prismatic_dxl">dxl5</param>
-            <param name="revolute_max">-1.52</param>
-            <param name="revolute_min">0.92</param>
-            <param name="revolute_to_prismatic_joint">${prefix}gripper_left_joint</param>
-            <param name="prismatic_max">0.019</param>
-            <param name="prismatic_min">-0.01</param>
           </xacro:unless>
         </hardware>
       </xacro:unless>
@@ -167,9 +146,15 @@
         <param name="Operating Mode">5</param>
         <param name="Profile Velocity">20</param>
         <param name="Profile Acceleration">10</param>
-        <param name="Drive Mode">4</param>
+        <param name="Drive Mode">5</param>
         <param name="Return Delay Time">0</param>
         <param name="Goal Current">200</param>
+        <param name="[unit info]">
+          Present Position,0.000017626621790,m,signed,-0.036099321;
+          Goal Position,0.000017626621790,m,signed,-0.036099321;
+          Present Velocity,0.000275558153557,rad/s,signed,0.0;
+          Goal Velocity,0.000275558153557,rad/s,signed,0.0;
+        </param>
       </gpio>
 
     </ros2_control>

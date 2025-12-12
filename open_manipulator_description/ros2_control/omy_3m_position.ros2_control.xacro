@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="omy_3m_system" params="name prefix port_name:=^|/dev/ttyAMA2 use_sim:=^|false use_fake_hardware:=^|false fake_sensor_commands:=^|false">
+  <xacro:macro name="omy_3m_system" params="name prefix port_name:=^|/dev/ttyAMA2 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
     <ros2_control name="${name}" type="system" is_async="true">
       <xacro:if value="$(arg use_sim)">
         <hardware>
@@ -9,12 +9,12 @@
       </xacro:if>
       <xacro:unless value="$(arg use_sim)">
         <hardware>
-          <xacro:if value="${use_fake_hardware}">
-            <plugin>fake_components/GenericSystem</plugin>
-            <param name="fake_sensor_commands">${fake_sensor_commands}</param>
+          <xacro:if value="${use_mock_hardware}">
+            <plugin>mock_components/GenericSystem</plugin>
+            <param name="mock_sensor_commands">${mock_sensor_commands}</param>
             <param name="state_following_offset">0.0</param>
           </xacro:if>
-          <xacro:unless value="${use_fake_hardware}">
+          <xacro:unless value="${use_mock_hardware}">
             <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
             <param name="port_name">${port_name}</param>
             <param name="baud_rate">6250000</param>
@@ -23,22 +23,6 @@
             <param name="number_of_joints">6</param>
             <param name="number_of_transmissions">6</param>
             <param name="disable_torque_at_init">true</param>
-            <param name="transmission_to_joint_matrix">
-              1, 0, 0, 0, 0, 0,
-              0, 1, 0, 0, 0, 0,
-              0, 0, 1, 0, 0, 0,
-              0, 0, 0, 1, 0, 0,
-              0, 0, 0, 0, 1, 0,
-              0, 0, 0, 0, 0, 1
-            </param>
-            <param name="joint_to_transmission_matrix">
-              1, 0, 0, 0, 0, 0,
-              0, 1, 0, 0, 0, 0,
-              0, 0, 1, 0, 0, 0,
-              0, 0, 0, 1, 0, 0,
-              0, 0, 0, 0, 1, 0,
-              0, 0, 0, 0, 0, 1
-            </param>
             <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
             <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
             <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
@@ -85,6 +69,18 @@
         <state_interface name="effort"/>
       </joint>
 
+      <gpio name="omy_hat">
+        <param name="type">controller</param>
+        <param name="ID">200</param>
+        <param name="Power Enable">1</param>
+        <param name="Voltage Control Enable">1</param>
+        <param name="R LED">200</param>
+        <param name="G LED">200</param>
+        <param name="B LED">120</param>
+        <param name="Baud Rate (Bus)">8</param>
+        <param name="DXL Baud Rate">8</param>
+        <param name="Status">0</param>
+      </gpio>
       <gpio name="dxl1">
         <param name="type">dxl</param>
         <param name="ID">1</param>
@@ -205,18 +201,6 @@
         <param name="Operating Mode">3</param>
         <param name="Profile Acceleration Time">20</param>
         <param name="Profile Time">40</param>
-      </gpio>
-      <gpio name="omy_hat">
-        <param name="type">controller</param>
-        <param name="ID">200</param>
-        <param name="Power Enable">1</param>
-        <param name="Voltage Control Enable">1</param>
-        <param name="R LED">200</param>
-        <param name="G LED">200</param>
-        <param name="B LED">120</param>
-        <param name="Baud Rate (Bus)">8</param>
-        <param name="DXL Baud Rate">8</param>
-        <param name="Status">0</param>
       </gpio>
 
     </ros2_control>

@@ -25,7 +25,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   tl_expected
   urdf
   kdl_parser
-  orocos_kdl_vendor
+  orocos_kdl
 )
 
 ################################################################################
@@ -63,7 +63,7 @@ target_link_libraries(gravity_compensation_controller PUBLIC
   ${tl_expected_LIBRARIES}
   ${urdf_LIBRARIES}
   ${kdl_parser_TARGETS}
-  ${orocos_kdl_vendor_TARGETS}
+  ${orocos_kdl_TARGETS}
   gravity_compensation_controller_parameters
 )
 
