@@ -1,0 +1,5 @@
+repositories:
+  utils/dynamixel_hardware_interface:
+    type: git
+    url: https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface.git
+    version: main
