@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
    <xacro:macro name="omx_f" params="prefix">
-   <xacro:property name="meshes_file_direction" value="package://open_manipulator_description/meshes/omx_f/" />
+   <xacro:property name="meshes_file_direction" value="package://open_manipulator_description/meshes/omx_f" />
       <link name="${prefix}link0" >
          <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />

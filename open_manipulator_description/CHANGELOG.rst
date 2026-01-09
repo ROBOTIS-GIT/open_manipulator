@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.2 (2026-01-09)
+------------------
+* Add urdf for every model
+* Contributors: Woojin Wie
+
 4.1.1 (2025-11-13)
 ------------------
 * Update for new DHI, mock_components
