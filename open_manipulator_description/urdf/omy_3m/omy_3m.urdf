@@ -30,7 +30,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_3m//base_unit.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_3m/base_unit.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -60,7 +60,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_3m//link1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_3m/link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -90,7 +90,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_3m//link2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_3m/link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -120,7 +120,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_3m//link3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_3m/link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -150,7 +150,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_3m//link4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_3m/link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -180,7 +180,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_3m//link5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_3m/link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -210,7 +210,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_3m//link6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_3m/link6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>

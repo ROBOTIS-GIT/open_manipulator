@@ -14,7 +14,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//base_unit.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/base_unit.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -23,7 +23,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//base_unit.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/base_unit.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -43,7 +43,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -52,7 +52,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -72,7 +72,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -81,7 +81,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -101,7 +101,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -110,7 +110,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link3.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -130,7 +130,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -139,7 +139,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link4.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -159,7 +159,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -168,7 +168,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link5.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -188,7 +188,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -197,7 +197,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link6.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -217,7 +217,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link7.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -226,7 +226,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omy_l100//link7.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://open_manipulator_description/meshes/omy_l100/link7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
