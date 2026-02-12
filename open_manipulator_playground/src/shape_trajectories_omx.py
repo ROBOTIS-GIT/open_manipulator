@@ -1,39 +1,67 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2024 ROBOTIS CO., LTD.
 # SPDX-License-Identifier: Apache-2.0
+
 from __future__ import annotations
+
 import math
 from typing import List, Tuple
 
 
-def plane_embed(plane: str, cx: float, cy: float, cz: float, x2d: float, y2d: float) -> List[float]:
-    plane = (plane or "xy").lower()
-    if plane == "xy":
+def plane_embed(
+    plane: str,
+    cx: float,
+    cy: float,
+    cz: float,
+    x2d: float,
+    y2d: float,
+) -> List[float]:
+    plane = (plane or 'xy').lower()
+    if plane == 'xy':
         return [cx + x2d, cy + y2d, cz]
-    if plane == "xz":
+    if plane == 'xz':
         return [cx + x2d, cy, cz + y2d]
-    if plane == "yz":
+    if plane == 'yz':
         return [cx, cy + x2d, cz + y2d]
     return [cx + x2d, cy + y2d, cz]
 
 
-def circle_point(t: float, center: List[float], radius: float, hz: float, plane: str, phase_deg: float) -> List[float]:
+def circle_point(
+    t: float,
+    center: List[float],
+    radius: float,
+    hz: float,
+    plane: str,
+    phase_deg: float = 0.0,
+) -> List[float]:
     cx, cy, cz = float(center[0]), float(center[1]), float(center[2])
     phase = float(phase_deg) * math.pi / 180.0
     w = 2.0 * math.pi * float(hz)
     ct = math.cos(w * t + phase)
     st = math.sin(w * t + phase)
-    return plane_embed(plane, cx, cy, cz, radius * ct, radius * st)
+    return plane_embed(plane, cx, cy, cz, float(radius) * ct, float(radius) * st)
 
 
-def heart_point(t: float, center: List[float], scale: float, hz: float, plane: str, phase_deg: float) -> List[float]:
+def heart_point(
+    t: float,
+    center: List[float],
+    scale: float,
+    hz: float,
+    plane: str,
+    phase_deg: float = 0.0,
+) -> List[float]:
     cx, cy, cz = float(center[0]), float(center[1]), float(center[2])
     phase = float(phase_deg) * math.pi / 180.0
     w = 2.0 * math.pi * float(hz)
     th = w * t + phase
 
     x = 16.0 * (math.sin(th) ** 3)
-    y = 13.0 * math.cos(th) - 5.0 * math.cos(2.0 * th) - 2.0 * math.cos(3.0 * th) - math.cos(4.0 * th)
+    y = (
+        13.0 * math.cos(th)
+        - 5.0 * math.cos(2.0 * th)
+        - 2.0 * math.cos(3.0 * th)
+        - math.cos(4.0 * th)
+    )
 
     x = (x / 18.0) * float(scale)
     y = (y / 18.0) * float(scale)
@@ -41,7 +69,12 @@ def heart_point(t: float, center: List[float], scale: float, hz: float, plane: s
     return plane_embed(plane, cx, cy, cz, x, y)
 
 
-def rounded_rect_point(u: float, width: float, height: float, corner_r: float) -> Tuple[float, float]:
+def rounded_rect_point(
+    u: float,
+    width: float,
+    height: float,
+    corner_r: float,
+) -> Tuple[float, float]:
     u = float(u) % 1.0
     w = max(float(width), 1e-9)
     h = max(float(height), 1e-9)
@@ -52,8 +85,8 @@ def rounded_rect_point(u: float, width: float, height: float, corner_r: float) -
     r = min(r, a - 1e-9, b - 1e-9)
 
     if r < 1e-6:
-        P = 2.0 * w + 2.0 * h
-        s = u * P
+        perim = 2.0 * w + 2.0 * h
+        s = u * perim
         if s < w:
             return (-a + s, -b)
         s -= w
@@ -65,49 +98,49 @@ def rounded_rect_point(u: float, width: float, height: float, corner_r: float) -
         s -= w
         return (-a, b - s)
 
-    Lx = max(w - 2.0 * r, 0.0)
-    Ly = max(h - 2.0 * r, 0.0)
-    P = 2.0 * (Lx + Ly) + 2.0 * math.pi * r
-    s = u * P
-    arcL = 0.5 * math.pi * r
+    lx = max(w - 2.0 * r, 0.0)
+    ly = max(h - 2.0 * r, 0.0)
+    perim = 2.0 * (lx + ly) + 2.0 * math.pi * r
+    s = u * perim
+    arc_l = 0.5 * math.pi * r
 
-    if s < Lx:
+    if s < lx:
         return ((-a + r) + s, -b)
-    s -= Lx
+    s -= lx
 
-    if s < arcL:
+    if s < arc_l:
         ang = (-0.5 * math.pi) + (s / r)
-        cx, cy = (a - r), (-b + r)
-        return (cx + r * math.cos(ang), cy + r * math.sin(ang))
-    s -= arcL
+        ccx, ccy = (a - r), (-b + r)
+        return (ccx + r * math.cos(ang), ccy + r * math.sin(ang))
+    s -= arc_l
 
-    if s < Ly:
+    if s < ly:
         return (a, (-b + r) + s)
-    s -= Ly
+    s -= ly
 
-    if s < arcL:
+    if s < arc_l:
         ang = 0.0 + (s / r)
-        cx, cy = (a - r), (b - r)
-        return (cx + r * math.cos(ang), cy + r * math.sin(ang))
-    s -= arcL
+        ccx, ccy = (a - r), (b - r)
+        return (ccx + r * math.cos(ang), ccy + r * math.sin(ang))
+    s -= arc_l
 
-    if s < Lx:
+    if s < lx:
         return ((a - r) - s, b)
-    s -= Lx
+    s -= lx
 
-    if s < arcL:
+    if s < arc_l:
         ang = 0.5 * math.pi + (s / r)
-        cx, cy = (-a + r), (b - r)
-        return (cx + r * math.cos(ang), cy + r * math.sin(ang))
-    s -= arcL
+        ccx, ccy = (-a + r), (b - r)
+        return (ccx + r * math.cos(ang), ccy + r * math.sin(ang))
+    s -= arc_l
 
-    if s < Ly:
+    if s < ly:
         return (-a, (b - r) - s)
-    s -= Ly
+    s -= ly
 
     ang = math.pi + (s / r)
-    cx, cy = (-a + r), (-b + r)
-    return (cx + r * math.cos(ang), cy + r * math.sin(ang))
+    ccx, ccy = (-a + r), (-b + r)
+    return (ccx + r * math.cos(ang), ccy + r * math.sin(ang))
 
 
 def rectangle_point(
@@ -115,10 +148,10 @@ def rectangle_point(
     center: List[float],
     width: float,
     height: float,
+    corner_r: float,
     hz: float,
     plane: str,
-    phase_deg: float,
-    corner_r: float,
+    phase_deg: float = 0.0,
 ) -> List[float]:
     cx, cy, cz = float(center[0]), float(center[1]), float(center[2])
     f = float(hz)

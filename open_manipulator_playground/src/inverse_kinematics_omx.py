@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2024 ROBOTIS CO., LTD.
 # SPDX-License-Identifier: Apache-2.0
+
 from __future__ import annotations
 
-import math
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass
+import math
 from typing import Dict, List, Optional, Tuple
+
+import xml.etree.ElementTree as ET
 
 import numpy as np
 
 
-# =========================
-# Math utils
-# =========================
 def rpy_to_rot(r: float, p: float, y: float) -> np.ndarray:
     cr, sr = math.cos(r), math.sin(r)
     cp, sp = math.cos(p), math.sin(p)
@@ -31,23 +30,24 @@ def rpy_to_rot(r: float, p: float, y: float) -> np.ndarray:
 def quat_to_rot(qx: float, qy: float, qz: float, qw: float) -> np.ndarray:
     n = math.sqrt(qx * qx + qy * qy + qz * qz + qw * qw)
     if n < 1e-12:
-        return np.eye(3)
+        return np.eye(3, dtype=float)
+
     qx, qy, qz, qw = qx / n, qy / n, qz / n, qw / n
     xx, yy, zz = qx * qx, qy * qy, qz * qz
     xy, xz, yz = qx * qy, qx * qz, qy * qz
     wx, wy, wz = qw * qx, qw * qy, qw * qz
+
     return np.array(
         [
-            [1 - 2 * (yy + zz), 2 * (xy - wz), 2 * (xz + wy)],
-            [2 * (xy + wz), 1 - 2 * (xx + zz), 2 * (yz - wx)],
-            [2 * (xz - wy), 2 * (yz + wx), 1 - 2 * (xx + yy)],
+            [1.0 - 2.0 * (yy + zz), 2.0 * (xy - wz), 2.0 * (xz + wy)],
+            [2.0 * (xy + wz), 1.0 - 2.0 * (xx + zz), 2.0 * (yz - wx)],
+            [2.0 * (xz - wy), 2.0 * (yz + wx), 1.0 - 2.0 * (xx + yy)],
         ],
         dtype=float,
     )
 
 
 def rot_to_quat(R: np.ndarray) -> Tuple[float, float, float, float]:
-    # Robust conversion
     tr = float(np.trace(R))
     if tr > 0.0:
         S = math.sqrt(tr + 1.0) * 2.0
@@ -56,13 +56,13 @@ def rot_to_quat(R: np.ndarray) -> Tuple[float, float, float, float]:
         qy = (R[0, 2] - R[2, 0]) / S
         qz = (R[1, 0] - R[0, 1]) / S
     else:
-        if R[0, 0] > R[1, 1] and R[0, 0] > R[2, 2]:
+        if float(R[0, 0]) > float(R[1, 1]) and float(R[0, 0]) > float(R[2, 2]):
             S = math.sqrt(1.0 + float(R[0, 0]) - float(R[1, 1]) - float(R[2, 2])) * 2.0
             qw = (R[2, 1] - R[1, 2]) / S
             qx = 0.25 * S
             qy = (R[0, 1] + R[1, 0]) / S
             qz = (R[0, 2] + R[2, 0]) / S
-        elif R[1, 1] > R[2, 2]:
+        elif float(R[1, 1]) > float(R[2, 2]):
             S = math.sqrt(1.0 + float(R[1, 1]) - float(R[0, 0]) - float(R[2, 2])) * 2.0
             qw = (R[0, 2] - R[2, 0]) / S
             qx = (R[0, 1] + R[1, 0]) / S
@@ -94,141 +94,156 @@ def skew(v: np.ndarray) -> np.ndarray:
 
 
 def rot_log(R: np.ndarray) -> np.ndarray:
-    # SO(3) logarithm map -> rotation vector (axis * angle)
     tr = float(np.trace(R))
     cos_theta = max(-1.0, min(1.0, (tr - 1.0) * 0.5))
     theta = math.acos(cos_theta)
     if theta < 1e-9:
         return np.zeros(3, dtype=float)
 
-    # When sin(theta) is small, numerical issues can happen
     sin_theta = math.sin(theta)
     if abs(sin_theta) < 1e-9:
-        # Fallback: approximate using diagonal
-        return np.array([0.0, 0.0, 0.0], dtype=float)
+        return np.zeros(3, dtype=float)
 
     w_hat = (R - R.T) * (0.5 / sin_theta)
     return np.array([w_hat[2, 1], w_hat[0, 2], w_hat[1, 0]], dtype=float) * theta
 
 
-# =========================
-# URDF chain (FK / Jacobian)
-# =========================
+def _parse_vec3(s: str) -> np.ndarray:
+    parts = [p for p in s.split() if p != '']
+    if len(parts) != 3:
+        return np.zeros(3, dtype=float)
+    return np.array([float(parts[0]), float(parts[1]), float(parts[2])], dtype=float)
+
+
+def _is_active_joint(jtype: str) -> bool:
+    return jtype in ('revolute', 'continuous', 'prismatic')
+
+
 class SimpleURDFChain:
     def __init__(
         self,
         urdf_xml: str,
         base_link: str,
         ee_link: str,
-        active_joints: List[str],
         ee_fixed_joint: Optional[str] = None,
     ) -> None:
         self.base_link = base_link
         self.ee_link = ee_link
-        self.active_joints = active_joints
         self.ee_fixed_joint = ee_fixed_joint
 
         root = ET.fromstring(urdf_xml)
-        self.joint_map: Dict[str, dict] = {}
-        for j in root.findall("joint"):
-            name = j.get("name")
-            jtype = j.get("type")
-            parent = j.find("parent").get("link")
-            child = j.find("child").get("link")
 
-            origin = j.find("origin")
+        joint_map: Dict[str, Dict[str, object]] = {}
+        child_to_joint: Dict[str, str] = {}
+
+        for j in root.findall('joint'):
+            name = j.get('name')
+            jtype = j.get('type')
+            if name is None or jtype is None:
+                continue
+
+            parent_elem = j.find('parent')
+            child_elem = j.find('child')
+            if parent_elem is None or child_elem is None:
+                continue
+
+            parent = parent_elem.get('link')
+            child = child_elem.get('link')
+            if parent is None or child is None:
+                continue
+
+            origin = j.find('origin')
             if origin is not None:
-                xyz_str = origin.get("xyz", "0 0 0")
-                rpy_str = origin.get("rpy", "0 0 0")
+                xyz = _parse_vec3(origin.get('xyz', '0 0 0'))
+                rpy = _parse_vec3(origin.get('rpy', '0 0 0'))
             else:
-                xyz_str = "0 0 0"
-                rpy_str = "0 0 0"
+                xyz = np.zeros(3, dtype=float)
+                rpy = np.zeros(3, dtype=float)
 
-            xyz = [float(x) for x in xyz_str.split()]
-            rpy = [float(x) for x in rpy_str.split()]
-
-            axis_elem = j.find("axis")
+            axis_elem = j.find('axis')
             if axis_elem is not None:
-                axis = [float(x) for x in axis_elem.get("xyz", "0 0 1").split()]
+                axis = _parse_vec3(axis_elem.get('xyz', '0 0 1'))
             else:
-                axis = [0.0, 0.0, 1.0]
+                axis = np.array([0.0, 0.0, 1.0], dtype=float)
 
-            limit_elem = j.find("limit")
-            if limit_elem is not None:
-                lower = float(limit_elem.get("lower", "nan"))
-                upper = float(limit_elem.get("upper", "nan"))
-            else:
-                lower = float("nan")
-                upper = float("nan")
+            joint_map[name] = {
+                'name': name,
+                'type': jtype,
+                'parent': parent,
+                'child': child,
+                'xyz': xyz,
+                'rpy': rpy,
+                'axis': axis,
+            }
+            child_to_joint[child] = name
 
-            self.joint_map[name] = dict(
-                name=name,
-                type=jtype,
-                parent=parent,
-                child=child,
-                xyz=np.array(xyz, dtype=float),
-                rpy=np.array(rpy, dtype=float),
-                axis=np.array(axis, dtype=float),
-                lower=lower,
-                upper=upper,
-            )
+        chain_joint_names: List[str] = []
+        cur = ee_link
+        guard = 0
+        while cur != base_link:
+            guard += 1
+            if guard > 256:
+                raise ValueError('URDF chain search exceeded limit (cycle?)')
 
-        # Build joint chain: follow active_joints order given by caller
-        self.chain: List[dict] = []
-        for jn in self.active_joints:
-            if jn not in self.joint_map:
-                raise ValueError(f"Joint '{jn}' not found in URDF")
-            self.chain.append(self.joint_map[jn])
+            if cur not in child_to_joint:
+                raise ValueError(f'Cannot find parent joint for link: {cur}')
+            jname = child_to_joint[cur]
+            chain_joint_names.append(jname)
+            cur = str(joint_map[jname]['parent'])
 
-        # Optional EE fixed joint (tool transform)
-        self.ee_fixed: Optional[dict] = None
-        if self.ee_fixed_joint:
-            if self.ee_fixed_joint not in self.joint_map:
-                raise ValueError(f"EE fixed joint '{self.ee_fixed_joint}' not found in URDF")
-            self.ee_fixed = self.joint_map[self.ee_fixed_joint]
+        chain_joint_names.reverse()
 
-    def fk(self, q: Dict[str, float]) -> Tuple[np.ndarray, np.ndarray]:
-        R = np.eye(3, dtype=float)
-        p = np.zeros(3, dtype=float)
+        self._segments: List[Dict[str, object]] = [joint_map[jn] for jn in chain_joint_names]
 
-        for j in self.chain:
-            # origin
-            p = p + R @ j["xyz"]
-            R = R @ rpy_to_rot(float(j["rpy"][0]), float(j["rpy"][1]), float(j["rpy"][2]))
+        self.joint_names: List[str] = [
+            str(seg['name']) for seg in self._segments if _is_active_joint(str(seg['type']))
+        ]
 
-            axis = j["axis"].astype(float)
-            jtype = j["type"]
-            val = float(q.get(j["name"], 0.0))
+        self._ee_fixed: Optional[Dict[str, object]] = None
+        if ee_fixed_joint:
+            if ee_fixed_joint not in joint_map:
+                raise ValueError(f'EE fixed joint not found in URDF: {ee_fixed_joint}')
+            self._ee_fixed = joint_map[ee_fixed_joint]
 
-            if jtype in ("revolute", "continuous"):
-                # Rodrigues
-                a = axis / (np.linalg.norm(axis) + 1e-12)
-                K = skew(a)
-                Rot = np.eye(3) + math.sin(val) * K + (1 - math.cos(val)) * (K @ K)
-                R = R @ Rot
-            elif jtype == "prismatic":
-                a = axis / (np.linalg.norm(axis) + 1e-12)
-                p = p + R @ (a * val)
-            else:
-                # fixed etc.
-                pass
+    def forward(self, q_active: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        q_map = self._qvec_to_map(q_active)
+        R, p, _, _, _ = self._fk_and_jac_cache(q_map)
+        return p, R
 
-        # EE fixed joint transform
-        if self.ee_fixed is not None:
-            p = p + R @ self.ee_fixed["xyz"]
-            R = R @ rpy_to_rot(
-                float(self.ee_fixed["rpy"][0]),
-                float(self.ee_fixed["rpy"][1]),
-                float(self.ee_fixed["rpy"][2]),
-            )
+    def jacobian(self, q_active: np.ndarray) -> np.ndarray:
+        q_map = self._qvec_to_map(q_active)
+        _, _, joint_origins, joint_axes_world, joint_types = self._fk_and_jac_cache(q_map)
 
-        return R, p
-
-    def jacobian(self, q: Dict[str, float]) -> np.ndarray:
-        # geometric Jacobian (6 x n): [v; w]
-        n = len(self.chain)
+        n = len(self.joint_names)
         J = np.zeros((6, n), dtype=float)
 
+        R_ee, p_ee, _, _, _ = self._fk_and_jac_cache(q_map)
+        _ = R_ee
+
+        for i in range(n):
+            o = joint_origins[i]
+            a = joint_axes_world[i]
+            t = joint_types[i]
+
+            if t in ('revolute', 'continuous'):
+                J[0:3, i] = np.cross(a, (p_ee - o))
+                J[3:6, i] = a
+            else:
+                J[0:3, i] = a
+                J[3:6, i] = 0.0
+
+        return J
+
+    def _qvec_to_map(self, q_active: np.ndarray) -> Dict[str, float]:
+        q = np.asarray(q_active, dtype=float).reshape(-1)
+        if q.shape[0] != len(self.joint_names):
+            raise ValueError('q size mismatch with joint_names')
+        return {jn: float(q[i]) for i, jn in enumerate(self.joint_names)}
+
+    def _fk_and_jac_cache(
+        self,
+        q: Dict[str, float],
+    ) -> Tuple[np.ndarray, np.ndarray, List[np.ndarray], List[np.ndarray], List[str]]:
         R = np.eye(3, dtype=float)
         p = np.zeros(3, dtype=float)
 
@@ -236,107 +251,100 @@ class SimpleURDFChain:
         joint_axes_world: List[np.ndarray] = []
         joint_types: List[str] = []
 
-        for j in self.chain:
-            # origin
-            p = p + R @ j["xyz"]
-            R = R @ rpy_to_rot(float(j["rpy"][0]), float(j["rpy"][1]), float(j["rpy"][2]))
+        for seg in self._segments:
+            p = p + R @ np.asarray(seg['xyz'], dtype=float)
+            rpy = np.asarray(seg['rpy'], dtype=float)
+            R = R @ rpy_to_rot(float(rpy[0]), float(rpy[1]), float(rpy[2]))
 
-            axis = j["axis"].astype(float)
-            a = axis / (np.linalg.norm(axis) + 1e-12)
-            a_world = R @ a
+            jtype = str(seg['type'])
+            jname = str(seg['name'])
+            if not _is_active_joint(jtype):
+                continue
+
+            axis = np.asarray(seg['axis'], dtype=float)
+            axis = axis / (np.linalg.norm(axis) + 1e-12)
+            a_world = R @ axis
 
             joint_origins.append(p.copy())
             joint_axes_world.append(a_world)
-            joint_types.append(j["type"])
+            joint_types.append(jtype)
 
-            val = float(q.get(j["name"], 0.0))
-            if j["type"] in ("revolute", "continuous"):
-                K = skew(a)
-                Rot = np.eye(3) + math.sin(val) * K + (1 - math.cos(val)) * (K @ K)
+            val = float(q.get(jname, 0.0))
+            if jtype in ('revolute', 'continuous'):
+                K = skew(axis)
+                Rot = np.eye(3) + math.sin(val) * K + (1.0 - math.cos(val)) * (K @ K)
                 R = R @ Rot
-            elif j["type"] == "prismatic":
-                p = p + R @ (a * val)
             else:
-                pass
+                p = p + R @ (axis * val)
 
-        # EE position
-        if self.ee_fixed is not None:
-            p_ee = p + R @ self.ee_fixed["xyz"]
-        else:
-            p_ee = p
+        if self._ee_fixed is not None:
+            p = p + R @ np.asarray(self._ee_fixed['xyz'], dtype=float)
+            rpy = np.asarray(self._ee_fixed['rpy'], dtype=float)
+            R = R @ rpy_to_rot(float(rpy[0]), float(rpy[1]), float(rpy[2]))
 
-        for i in range(n):
-            o = joint_origins[i]
-            a = joint_axes_world[i]
-            t = joint_types[i]
-
-            if t in ("revolute", "continuous"):
-                J[0:3, i] = np.cross(a, (p_ee - o))
-                J[3:6, i] = a
-            elif t == "prismatic":
-                J[0:3, i] = a
-                J[3:6, i] = 0.0
-            else:
-                J[:, i] = 0.0
-
-        return J
+        return R, p, joint_origins, joint_axes_world, joint_types
 
 
-# =========================
-# IK (DLS) solver
-# =========================
 @dataclass(frozen=True)
 class IKConfig:
     position_only: bool = True
-    max_iters: int = 200
-    damping: float = 0.10
-    step_scale: float = 0.40
-    tol_pos_m: float = 0.008
-    tol_rot_rad: float = 0.15
+    max_iters: int = 120
+    damping: float = 0.05
+    step_scale: float = 0.8
+    tol_pos_m: float = 1e-3
+    tol_rot_rad: float = 1e-2
     w_pos: float = 1.0
-    w_rot: float = 0.05
+    w_rot: float = 0.2
 
 
 def solve_ik_dls(
     chain: SimpleURDFChain,
-    joint_names: List[str],
-    q_init: Dict[str, float],
-    target_xyz: List[float],
+    target_xyz: np.ndarray,
     target_quat: List[float],
+    seed_q: Optional[np.ndarray],
     cfg: IKConfig,
-) -> Tuple[Optional[Dict[str, float]], Tuple[float, float]]:
-    # Defensive: target quaternion
+) -> Tuple[Optional[np.ndarray], float, float]:
+    tgt_p = np.asarray(target_xyz, dtype=float).reshape(3)
     tq = target_quat if len(target_quat) == 4 else [0.0, 0.0, 0.0, 1.0]
-    target_R = quat_to_rot(float(tq[0]), float(tq[1]), float(tq[2]), float(tq[3]))
-    target_p = np.array(target_xyz, dtype=float)
+    tgt_R = quat_to_rot(float(tq[0]), float(tq[1]), float(tq[2]), float(tq[3]))
 
-    q: Dict[str, float] = {jn: float(q_init.get(jn, 0.0)) for jn in joint_names}
-    last_err = (math.inf, math.inf)
+    n = len(chain.joint_names)
+    if seed_q is None:
+        q = np.zeros(n, dtype=float)
+    else:
+        q = np.asarray(seed_q, dtype=float).reshape(-1)
+        if q.shape[0] != n:
+            q = np.zeros(n, dtype=float)
+
+    err_pos = float('inf')
+    err_rot = float('inf')
 
     for _ in range(int(cfg.max_iters)):
-        R, p = chain.fk(q)
-        e_p = target_p - p
+        p_cur, R_cur = chain.forward(q)
+        e_p = tgt_p - p_cur
+        err_pos = float(np.linalg.norm(e_p))
 
         if cfg.position_only:
             e_r = np.zeros(3, dtype=float)
             err_rot = 0.0
         else:
-            R_err = R.T @ target_R
+            R_err = R_cur.T @ tgt_R
             e_r = rot_log(R_err)
             err_rot = float(np.linalg.norm(e_r))
 
-        err_pos = float(np.linalg.norm(e_p))
-        last_err = (err_pos, err_rot)
-
-        if err_pos < float(cfg.tol_pos_m) and (cfg.position_only or err_rot < float(cfg.tol_rot_rad)):
-            return q, last_err
+        if err_pos < float(cfg.tol_pos_m):
+            if cfg.position_only or err_rot < float(cfg.tol_rot_rad):
+                return q, err_pos, err_rot
 
         J = chain.jacobian(q)
 
         if cfg.position_only:
             e = np.concatenate([float(cfg.w_pos) * e_p, np.zeros(3, dtype=float)], axis=0)
         else:
-            e = np.concatenate([float(cfg.w_pos) * e_p, float(cfg.w_rot) * e_r], axis=0)
+            e = np.concatenate(
+                [float(cfg.w_pos) * e_p, float(cfg.w_rot) * e_r],
+                axis=0,
+            )
 
         lam = float(cfg.damping)
         H = (J @ J.T) + (lam * lam) * np.eye(6, dtype=float)
@@ -347,9 +355,6 @@ def solve_ik_dls(
             y = np.linalg.pinv(H) @ e
 
         dq = J.T @ y
+        q = q + float(cfg.step_scale) * dq
 
-        step = float(cfg.step_scale)
-        for i, jn in enumerate(joint_names):
-            q[jn] = float(q[jn]) + step * float(dq[i])
-
-    return None, last_err
+    return None, err_pos, err_rot
