@@ -3,21 +3,27 @@
 <package format="3">
   <name>om_spring_actuator_controller</name>
   <version>4.0.9</version>
-  <description>
-    Spring Actuator Controller ROS 2 package.
-  </description>
+  <description>Spring Actuator Controller ROS 2 package.</description>
+
   <maintainer email="pyo@robotis.com">Pyo</maintainer>
   <license>Apache 2.0</license>
   <author email="wwj@robotis.com">Woojin Wie</author>
+
   <buildtool_depend>ament_cmake</buildtool_depend>
+
   <depend>controller_interface</depend>
   <depend>generate_parameter_library</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
+  <depend>realtime_tools</depend>
   <depend>urdf</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
+    <!-- Optional if you want plugin discovery metadata here too:
+    <pluginlib plugin_manifest="spring_actuator_plugin.xml"/>
+    -->
   </export>
 </package>

@@ -31,7 +31,7 @@
 #include "gravity_compensation_controller/visibility_control.h"
 
 #include "std_msgs/msg/bool.hpp"
-#include "controller_interface/controller_interface.hpp"
+#include <controller_interface/controller_interface.hpp>
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"

@@ -16,6 +16,7 @@
           </xacro:if>
           <xacro:unless value="${use_mock_hardware}">
             <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
+            <param name="port_name">${port_name}</paramport_name:=^|/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FTAK89CW-if00-port0>
             <param name="port_name">${port_name}</param>
             <param name="baud_rate">4000000</param>
             <param name="error_timeout_ms">500</param>
