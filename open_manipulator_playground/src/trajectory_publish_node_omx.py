@@ -44,6 +44,7 @@ except ImportError:
 
 
 class TrajectoryPublishNodeOMX(Node):
+
     def __init__(self) -> None:
         super().__init__('trajectory_publish_node_omx')
 
