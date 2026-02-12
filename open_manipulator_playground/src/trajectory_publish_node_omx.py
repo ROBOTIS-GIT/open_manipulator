@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright 2024 ROBOTIS CO., LTD.
 # SPDX-FileCopyrightText: 2024 ROBOTIS CO., LTD.
 # SPDX-License-Identifier: Apache-2.0
 # Author: Minseo Choi
