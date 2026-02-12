@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
-from __future__ import annotations
+# SPDX-FileCopyrightText: 2024 ROBOTIS CO., LTD.
+# SPDX-License-Identifier: Apache-2.0
+# Author: Minseo Choi
 
+from __future__ import annotations
 import math
 from typing import Dict, List, Optional, Tuple
+import os
+import sys
 
 import numpy as np
 import rclpy
@@ -13,9 +18,14 @@ from rclpy.parameter_client import AsyncParameterClient
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
-from traj_kinematics import SimpleURDFChain, rot_to_quat
-from traj_ik import IKConfig, solve_ik_dls
-from traj_traj import circle_point, heart_point, rectangle_point
+sys.path.insert(0, os.path.dirname(__file__))
+from inverse_kinematics_omx import (
+    SimpleURDFChain,
+    rot_to_quat,
+    IKConfig,
+    solve_ik_dls,
+)
+from shape_trajectories_omx import circle_point, heart_point, rectangle_point
 
 
 class TrajPubWithIK(Node):
@@ -24,16 +34,10 @@ class TrajPubWithIK(Node):
     def __init__(self):
         super().__init__("traj_pub")
 
-        # ----------------------------
-        # Default end-effector goal
-        # ---------------------------
         self.declare_parameter("interactive", False)
         self.declare_parameter("ee_xyz", [0.18, 0.00, 0.12])
         self.declare_parameter("ee_quat", [0.0, 0.0, 0.0, 1.0])
 
-        # ----------------------------
-        # IK options (DLS)
-        # ----------------------------
         self.declare_parameter("ik_position_only", True)
         self.declare_parameter("ik_max_iters", 200)
         self.declare_parameter("ik_damping", 0.10)
@@ -44,47 +48,32 @@ class TrajPubWithIK(Node):
         self.declare_parameter("ik_w_pos", 1.0)
         self.declare_parameter("ik_w_rot", 0.05)
 
-        # ----------------------------
-        # Where to fetch robot_description (URDF)
-        # ----------------------------
         self.declare_parameter("robot_description_node", "/robot_state_publisher")
         self.declare_parameter("robot_description_param", "robot_description")
 
-        # ----------------------------
-        # Trajectory publishing settings
-        # ----------------------------
         self.declare_parameter("traj_topic", "/arm_controller/joint_trajectory")
         self.declare_parameter("joint_names", ["joint1", "joint2", "joint3", "joint4", "joint5"])
         self.declare_parameter("duration_sec", 0.05)
         self.declare_parameter("publish_hz", 50.0)
         self.declare_parameter("repeat", True)
 
-        # ----------------------------
-        # Debug topics
-        # ----------------------------
         self.declare_parameter("ee_feedback_topic", "/omx_ik/ee_feedback")
         self.declare_parameter("ee_target_topic", "/omx_ik/ee_target")
 
-        # ----------------------------
-        # Trajectory mode selection
-        # ----------------------------
         self.declare_parameter("traj_mode", "heart")
 
-        # Circle params
         self.declare_parameter("circle_center", [0.18, 0.00, 0.12])
         self.declare_parameter("circle_radius", 0.05)
         self.declare_parameter("circle_hz", 0.05)
         self.declare_parameter("circle_plane", "xy")
         self.declare_parameter("circle_phase_deg", 0.0)
 
-        # Heart params
         self.declare_parameter("heart_center", [0.18, 0.00, 0.12])
         self.declare_parameter("heart_scale", 0.07)
         self.declare_parameter("heart_hz", 0.05)
         self.declare_parameter("heart_plane", "xy")
         self.declare_parameter("heart_phase_deg", 0.0)
 
-        # Rectangle params
         self.declare_parameter("rect_center", [0.18, 0.00, 0.12])
         self.declare_parameter("rect_width", 0.17)
         self.declare_parameter("rect_height", 0.15)
@@ -93,24 +82,18 @@ class TrajPubWithIK(Node):
         self.declare_parameter("rect_phase_deg", 0.0)
         self.declare_parameter("rect_corner_radius", 0.01)
 
-        # Publishers/subscribers
         self.joint_names = list(self.get_parameter("joint_names").value)
         self.pub = self.create_publisher(JointTrajectory, str(self.get_parameter("traj_topic").value), 10)
         self.ee_pub = self.create_publisher(PoseStamped, str(self.get_parameter("ee_feedback_topic").value), 10)
         self.target_pub = self.create_publisher(PointStamped, str(self.get_parameter("ee_target_topic").value), 10)
         self.create_subscription(JointState, "/joint_states", self._on_joint_states, 10)
 
-        # Cache latest joint states
         self.latest_js: Dict[str, float] = {}
-
-        # Kinematic chain (from URDF)
         self.urdf_chain: Optional[SimpleURDFChain] = None
 
-        # Async client to retrieve robot_description
         self.param_client = AsyncParameterClient(self, str(self.get_parameter("robot_description_node").value))
         self._urdf_future = None
 
-        # Timing and internal flags
         self._t0 = self.get_clock().now()
         self._tick = 0
         self._sent_once = False
@@ -236,9 +219,6 @@ class TrajPubWithIK(Node):
 
         return list(self.get_parameter("ee_xyz").value)
 
-    # ----------------------------
-    # Interactive helpers (same as original)
-    # ----------------------------
     @staticmethod
     def _ask_mode(default_mode: str) -> str:
         while True:
@@ -410,22 +390,24 @@ class TrajPubWithIK(Node):
 
         self._t0 = self.get_clock().now()
 
-    def _ik_pose(self, target_xyz: List[float], target_quat: List[float]) -> Tuple[Optional[Dict[str, float]], Tuple[float, float]]:
+    def _ik_pose(
+        self, target_xyz: List[float], target_quat: List[float]
+    ) -> Tuple[Optional[Dict[str, float]], Tuple[float, float]]:
         if self.urdf_chain is None:
             return None, (math.inf, math.inf)
 
         cfg = IKConfig(
-            position_only=bool(self.get_parameter("ik_position_only").value),
-            max_iters=int(self.get_parameter("ik_max_iters").value),
-            damping=float(self.get_parameter("ik_damping").value),
-            step_scale=float(self.get_parameter("ik_step_scale").value),
-            tol_pos_m=float(self.get_parameter("ik_tol_pos_m").value),
-            tol_rot_rad=float(self.get_parameter("ik_tol_rot_rad").value),
-            w_pos=float(self.get_parameter("ik_w_pos").value),
-            w_rot=float(self.get_parameter("ik_w_rot").value),
+            position_only=self.get_parameter("ik_position_only").value,
+            max_iters=self.get_parameter("ik_max_iters").value,
+            damping=self.get_parameter("ik_damping").value,
+            step_scale=self.get_parameter("ik_step_scale").value,
+            tol_pos_m=self.get_parameter("ik_tol_pos_m").value,
+            tol_rot_rad=self.get_parameter("ik_tol_rot_rad").value,
+            w_pos=self.get_parameter("ik_w_pos").value,
+            w_rot=self.get_parameter("ik_w_rot").value,
         )
 
-        use_js = bool(self.get_parameter("ik_use_joint_states").value)
+        use_js = self.get_parameter("ik_use_joint_states").value
         q_init = self._current_q() if use_js else {jn: 0.0 for jn in self.joint_names}
 
         return solve_ik_dls(
@@ -438,10 +420,10 @@ class TrajPubWithIK(Node):
         )
 
     def _tick_cb(self) -> None:
-        if self._sent_once and (not bool(self.get_parameter("repeat").value)):
+        if self._sent_once and (not self.get_parameter("repeat").value):
             return
 
-        if bool(self.get_parameter("interactive").value) and (not self._interactive_done):
+        if self.get_parameter("interactive").value and (not self._interactive_done):
             self._interactive_config()
             self._interactive_done = True
 
@@ -458,7 +440,7 @@ class TrajPubWithIK(Node):
 
         q_sol, (err_pos, err_rot) = self._ik_pose(target_xyz, target_quat)
         if q_sol is None:
-            iters = int(self.get_parameter("ik_max_iters").value)
+            iters = self.get_parameter("ik_max_iters").value
             self.get_logger().error(
                 f"IK failed. target_xyz={list(np.round(target_xyz, 4))} "
                 f"err_pos={err_pos:.4f}m err_rot={err_rot:.4f}rad iters={iters}"

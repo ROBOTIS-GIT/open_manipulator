@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.3 (2026-02-11)
+------------------
+* Add drawing shape algorithm for omx
+* Contributors: Minseo Choi
+
 4.1.2 (2026-01-09)
 ------------------
 * Add urdf for every model
