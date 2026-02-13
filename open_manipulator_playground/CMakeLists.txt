@@ -73,20 +73,11 @@ install(TARGETS open_manipulator_x_hello_moveit omy_f3m_hello_moveit omy_3m_hell
 # Macro for ament package
 ################################################################################
 ament_export_include_directories(include)
-ament_export_targets(export_${PROJECT_NAME})
-# -------------------------
-# Install Python nodes
-# -------------------------
-install(PROGRAMS
-  src/trajectory_publish_node_omx.py
-  DESTINATION lib/${PROJECT_NAME}
-  RENAME trajectory_publish_node_omx
-)
 
-install(FILES
-  src/inverse_kinematics_omx.py
-  src/shape_trajectories_omx.py
+install(PROGRAMS
+  src/drawing_shape_omx.py
   DESTINATION lib/${PROJECT_NAME}
+  RENAME drawing_shape_omx
 )
 
 ament_package()
