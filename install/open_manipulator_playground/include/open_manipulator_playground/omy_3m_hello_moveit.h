@@ -1,1 +1,0 @@
-/home/robotis/open_manipulator/open_manipulator_playground/include/open_manipulator_playground/omy_3m_hello_moveit.h

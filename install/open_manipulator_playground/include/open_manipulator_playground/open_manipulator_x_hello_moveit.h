@@ -1,1 +1,0 @@
-/home/robotis/open_manipulator/open_manipulator_playground/include/open_manipulator_playground/open_manipulator_x_hello_moveit.h
