@@ -249,6 +249,8 @@ class SimpleURDFChain:
             cur = str(joint_map[jname]['parent'])
 
         chain_joint_names.reverse()
+        if ee_fixed_joint and chain_joint_names and chain_joint_names[-1] == ee_fixed_joint:
+            chain_joint_names = chain_joint_names[:-1]
         self._segments: List[Dict[str, object]] = [joint_map[jn] for jn in chain_joint_names]
 
         self.joint_names: List[str] = [
