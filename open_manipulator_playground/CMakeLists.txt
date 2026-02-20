@@ -75,9 +75,9 @@ install(TARGETS open_manipulator_x_hello_moveit omy_f3m_hello_moveit omy_3m_hell
 ament_export_include_directories(include)
 ament_export_targets(export_${PROJECT_NAME})
 install(PROGRAMS
-  src/drawing_shape_omx.py
+  src/omx_drawing_shape.py
   DESTINATION lib/${PROJECT_NAME}
-  RENAME drawing_shape_omx
+  RENAME omx_drawing_shape
 )
 
 ament_package()
