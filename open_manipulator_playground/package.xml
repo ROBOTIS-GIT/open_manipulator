@@ -14,9 +14,15 @@
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/open_manipulator/issues</url>
   <author email="wsh@robotis.com">Sungho Woo</author>
   <author email="ywh@robotis.com">Wonho Yun</author>
+  <author email="csharon@naver.com">Minseo Choi</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>rclcpp</depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>trajectory_msgs</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
