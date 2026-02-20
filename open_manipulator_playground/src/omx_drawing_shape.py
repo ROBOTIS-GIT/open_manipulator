@@ -686,7 +686,7 @@ class TrajectoryPublishNodeOMX(Node):
             ('ik_max_iters', 120),
             ('ik_damping', 0.05),
             ('ik_step_scale', 0.8),
-            ('ik_tol_pos_m', 1e-3),
+            ('ik_tol_pos_m', 0.01),
             ('ik_tol_rot_rad', 1e-2),
             ('ik_w_pos', 1.0),
             ('ik_w_rot', 0.2),
