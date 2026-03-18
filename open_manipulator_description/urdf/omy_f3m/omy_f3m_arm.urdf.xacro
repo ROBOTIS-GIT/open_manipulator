@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
    <xacro:macro name="omy_f3m" params="prefix">
+
+      <xacro:include filename="$(find realsense2_description)/urdf/_d405.urdf.xacro" />
       <xacro:property name="meshes_file_direction" value="package://open_manipulator_description/meshes/omy_f3m" />
+
       <link name="${prefix}link0">
          <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -204,6 +207,9 @@
             <inertia ixx="5.674127600e-04" ixy="2.007333900e-07" ixz="-1.234534700e-06" iyy="6.296670600e-04" iyz="-5.631880500e-05" izz="1.989051500e-04" />
          </inertial>
       </link>
+      <xacro:sensor_d405 parent="${prefix}link6" use_nominal_extrinsics="false" name="${prefix}camera">
+         <origin xyz="-0.021 -0.07385 0.0803" rpy="-1.57079632679 0 -1.57079632679"/>
+      </xacro:sensor_d405>
       <joint name="${prefix}end_effector_flange_joint" type="fixed">
          <parent link="${prefix}link6" />
          <child link="${prefix}end_effector_flange_link" />
