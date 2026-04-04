@@ -31,20 +31,27 @@
         - position
         - velocity
       kinetic_friction_scalars:
-        - 0.8
-        - 0.8
-        - 0.8
+        - 0.1
+        - 0.1
+        - 0.1
+        # - 0.8
+        # - 0.8
+        # - 0.8
         - 0.1
         - 0.1
         - 0.1
       torque_scaling_factors:
-        - 1.0
-        - 1.0
-        - 1.0
+        # - 1.0
+        # - 1.0
+        # - 1.0
+        - 0.7
+        - 0.7
+        - 0.7
         - 0.8
         - 0.8
         - 1.0
       enable_spring_effect: true
+      # enable_spring_effect: false
 
 /**:
   spring_actuator_controller:
