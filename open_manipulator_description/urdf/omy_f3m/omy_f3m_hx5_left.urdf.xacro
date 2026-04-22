@@ -1,36 +1,50 @@
 <?xml version="1.0"?>
-<robot name="omy_f3m_hx5_left" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:arg name="prefix" default="" />
-  <xacro:arg name="use_sim" default="false" />
-  <xacro:arg name="use_mock_hardware" default="false" />
-  <xacro:arg name="mock_sensor_commands" default="false" />
-  <xacro:arg name="config_type" default="omy_f3m_follower_ai_hx5_left" />
-  <xacro:arg name="ros2_control_type" default="omy_f3m_position" />
+<!--
+  omy_f3m_hx5_left.urdf.xacro
 
+  OMY F3M arm + HX5 left hand (mounted in place of the rh_p12_rn gripper).
+
+  Two ros2_control hardware systems are declared:
+    * OMYF3MSystem                   (F3M arm joints,        own port)
+    * OMYF3MEndUnitHX5LeftSystem     (HX5 hand via OMY END,  own port)
+
+  Mount geometry mirrors omy_3m_hands.urdf.xacro:
+    parent: end_effector_link
+    origin: xyz=0 0 0  rpy=pi/2 0 0
+  This is the same convention used for the HX5 right hand on the OMY 3M.
+-->
+<robot name="omy_f3m_hx5_left" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix"               default="" />
+  <xacro:arg name="use_sim"              default="false" />
+  <xacro:arg name="use_mock_hardware"    default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
+  <xacro:arg name="config_type"          default="omy_f3m_hx5_left" />
+  <xacro:arg name="ros2_control_type"    default="omy_f3m_position" />
+
+  <!-- ── F3M arm geometry / gazebo ─────────────────────────────────── -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/omy_f3m_arm.urdf.xacro" />
   <xacro:include filename="$(find open_manipulator_description)/gazebo/omy_f3m.gazebo.xacro" />
+
+  <!-- ── HX5 left hand geometry (from standalone) ──────────────────── -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/hx5_d20_rev2/hx5_d20_left.urdf.xacro" />
+
+  <!-- ── ros2_control: arm + OMY END unit (HX5 variant) ────────────── -->
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/$(arg ros2_control_type).ros2_control.xacro" />
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m_end_unit_hx5_left.ros2_control.xacro" />
 
+  <!-- ── World root + base ─────────────────────────────────────────── -->
   <link name="world"/>
 
   <joint name="$(arg prefix)world_fixed" type="fixed">
     <parent link="world"/>
-    <child link="$(arg prefix)link0"/>
+    <child  link="$(arg prefix)link0"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
-  <joint name="$(arg prefix)gripper_fixed" type="fixed">
-    <origin xyz="0 -0.006 0" rpy="1.57 -1.57 0"/>
-    <parent link="$(arg prefix)end_effector_flange_link"/>
-    <axis xyz="0 0 0"/>
-    <child link="$(arg prefix)hx5_d20_left_base"/>
-  </joint>
-
+  <!-- ── End-effector frame at the tool flange ─────────────────────── -->
   <joint name="$(arg prefix)end_effector_joint" type="fixed">
     <parent link="$(arg prefix)end_effector_flange_link"/>
-    <child link="$(arg prefix)end_effector_link"/>
+    <child  link="$(arg prefix)end_effector_link"/>
     <origin xyz="0 -0.141 0" rpy="0 0 0"/>
   </joint>
 
@@ -46,20 +60,38 @@
     </visual>
   </link>
 
-  <xacro:omy_f3m prefix="$(arg prefix)" />
-  <xacro:omy_f3m_gazebo prefix="$(arg prefix)" />
-  <xacro:hx5_d20_left prefix="$(arg prefix)" />
+  <!-- ── HX5 left hand mount (omy_3m_hands convention) ─────────────── -->
+  <!-- Mirrors omy_3m_hands.urdf.xacro:                                -->
+  <!--   parent = end_effector_link                                    -->
+  <!--   origin = xyz="0 0 0" rpy="${pi/2} 0 0"                        -->
+  <joint name="$(arg prefix)hx5_d20_left_mount_joint" type="fixed">
+    <parent link="$(arg prefix)end_effector_link"/>
+    <child  link="$(arg prefix)hx5_d20_left_base"/>
+    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+  </joint>
 
+  <!-- ── Instantiate macros ────────────────────────────────────────── -->
+  <xacro:omy_f3m         prefix="$(arg prefix)" />
+  <xacro:omy_f3m_gazebo  prefix="$(arg prefix)" />
+  <xacro:hx5_d20_left    prefix="$(arg prefix)" />
+
+  <!-- ── F3M arm hardware system ───────────────────────────────────── -->
   <xacro:omy_f3m_system
-    name="OMYF3MSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    name="OMYF3MSystem"
+    prefix="$(arg prefix)"
+    use_sim="$(arg use_sim)"
     use_mock_hardware="$(arg use_mock_hardware)"
     mock_sensor_commands="$(arg mock_sensor_commands)"/>
 
+  <!-- ── HX5 left hand hardware system (OMY END SyncTable relay) ──── -->
   <xacro:omy_f3m_end_unit_hx5_left_system
-    name="OMYF3MEndUnitHX5LeftSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    name="OMYF3MEndUnitHX5LeftSystem"
+    prefix="$(arg prefix)"
+    use_sim="$(arg use_sim)"
     use_mock_hardware="$(arg use_mock_hardware)"
     mock_sensor_commands="$(arg mock_sensor_commands)"/>
 
+  <!-- ── Gazebo ros2_control plugin ────────────────────────────────── -->
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(find open_manipulator_bringup)/config/$(arg config_type)/hardware_controller_manager.yaml</parameters>
