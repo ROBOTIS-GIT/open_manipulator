@@ -1,0 +1,22 @@
+# Arm-only: matches OMY F3M follower AI / L100 leader-alignment poses from
+# config/omy_f3m_follower_ai/initial_positions.yaml (6-DOF ready, no hand joints).
+
+joint_trajectory_executor:
+  ros__parameters:
+    joint_names:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+
+    step_names: [home, ready]
+
+    home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    ready: [0.0, -1.5708, 2.6529, -1.0821, 1.5708, 0.0]
+
+    duration: 10.0
+    epsilon: 0.01
+    action_topic: '/arm_controller/follow_joint_trajectory'
+    joint_states_topic: '/joint_states'

@@ -1,0 +1,44 @@
+# MoveIt uses this configuration for controller management
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - arm_controller
+    - hx5_right_hand_controller
+
+  arm_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+
+  hx5_right_hand_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    joints:
+      - finger_r_joint1
+      - finger_r_joint2
+      - finger_r_joint3
+      - finger_r_joint4
+      - finger_r_joint5
+      - finger_r_joint6
+      - finger_r_joint7
+      - finger_r_joint8
+      - finger_r_joint9
+      - finger_r_joint10
+      - finger_r_joint11
+      - finger_r_joint12
+      - finger_r_joint13
+      - finger_r_joint14
+      - finger_r_joint15
+      - finger_r_joint16
+      - finger_r_joint17
+      - finger_r_joint18
+      - finger_r_joint19
+      - finger_r_joint20

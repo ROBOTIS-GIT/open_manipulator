@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SRDF for OMY-3M with HX5-D20 right hand (matches URDF robot name omy_3m). -->
+<robot name="omy_3m">
+    <group name="arm">
+        <joint name="joint1"/>
+        <joint name="joint2"/>
+        <joint name="joint3"/>
+        <joint name="joint4"/>
+        <joint name="joint5"/>
+        <joint name="joint6"/>
+        <joint name="end_effector_joint"/>
+    </group>
+    <group name="right_hand">
+        <joint name="finger_r_joint1"/>
+        <joint name="finger_r_joint2"/>
+        <joint name="finger_r_joint3"/>
+        <joint name="finger_r_joint4"/>
+        <joint name="finger_r_joint5"/>
+        <joint name="finger_r_joint6"/>
+        <joint name="finger_r_joint7"/>
+        <joint name="finger_r_joint8"/>
+        <joint name="finger_r_joint9"/>
+        <joint name="finger_r_joint10"/>
+        <joint name="finger_r_joint11"/>
+        <joint name="finger_r_joint12"/>
+        <joint name="finger_r_joint13"/>
+        <joint name="finger_r_joint14"/>
+        <joint name="finger_r_joint15"/>
+        <joint name="finger_r_joint16"/>
+        <joint name="finger_r_joint17"/>
+        <joint name="finger_r_joint18"/>
+        <joint name="finger_r_joint19"/>
+        <joint name="finger_r_joint20"/>
+    </group>
+    <group_state name="init" group="arm">
+        <joint name="joint1" value="0"/>
+        <joint name="joint2" value="0"/>
+        <joint name="joint3" value="0"/>
+        <joint name="joint4" value="0"/>
+        <joint name="joint5" value="0"/>
+        <joint name="joint6" value="0"/>
+    </group_state>
+    <group_state name="home" group="arm">
+        <joint name="joint1" value="0"/>
+        <joint name="joint2" value="0"/>
+        <joint name="joint3" value="1.5707963267948966"/>
+        <joint name="joint4" value="-1.5707963267948966"/>
+        <joint name="joint5" value="1.5707963267948966"/>
+        <joint name="joint6" value="0"/>
+    </group_state>
+    <group_state name="hand_relaxed" group="right_hand">
+        <joint name="finger_r_joint1" value="0"/>
+        <joint name="finger_r_joint2" value="0"/>
+        <joint name="finger_r_joint3" value="0"/>
+        <joint name="finger_r_joint4" value="0"/>
+        <joint name="finger_r_joint5" value="0"/>
+        <joint name="finger_r_joint6" value="0"/>
+        <joint name="finger_r_joint7" value="0"/>
+        <joint name="finger_r_joint8" value="0"/>
+        <joint name="finger_r_joint9" value="0"/>
+        <joint name="finger_r_joint10" value="0"/>
+        <joint name="finger_r_joint11" value="0"/>
+        <joint name="finger_r_joint12" value="0"/>
+        <joint name="finger_r_joint13" value="0"/>
+        <joint name="finger_r_joint14" value="0"/>
+        <joint name="finger_r_joint15" value="0"/>
+        <joint name="finger_r_joint16" value="0"/>
+        <joint name="finger_r_joint17" value="0"/>
+        <joint name="finger_r_joint18" value="0"/>
+        <joint name="finger_r_joint19" value="0"/>
+        <joint name="finger_r_joint20" value="0"/>
+    </group_state>
+    <end_effector name="end_effector" parent_link="end_effector_link" group="arm"/>
+    <!-- Arm (same as OMY-3M) -->
+    <disable_collisions link1="link0" link2="link1" reason="Adjacent"/>
+    <disable_collisions link1="link1" link2="link2" reason="Adjacent"/>
+    <disable_collisions link1="link2" link2="link3" reason="Adjacent"/>
+    <disable_collisions link1="link3" link2="link4" reason="Adjacent"/>
+    <disable_collisions link1="link3" link2="link5" reason="Never"/>
+    <disable_collisions link1="link4" link2="link5" reason="Adjacent"/>
+    <disable_collisions link1="link4" link2="link6" reason="Never"/>
+    <disable_collisions link1="link5" link2="link6" reason="Adjacent"/>
+    <!-- Hand mount: flange, wrist vs palm -->
+    <disable_collisions link1="end_effector_link" link2="hx5_d20_right_base" reason="Adjacent"/>
+    <disable_collisions link1="link6" link2="hx5_d20_right_base" reason="Never"/>
+    <disable_collisions link1="link5" link2="hx5_d20_right_base" reason="Never"/>
+    <disable_collisions link1="link4" link2="hx5_d20_right_base" reason="Never"/>
+    <!-- Palm vs all finger geometry (STL overlap at neutral / closed meshes) -->
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link1" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link2" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link3" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link4" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link5" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link6" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link7" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link8" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link9" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link10" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link11" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link12" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link13" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link14" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link15" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link16" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link17" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link18" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link19" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_r_link20" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_end_r_link1" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_end_r_link2" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_end_r_link3" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_end_r_link4" reason="Never"/>
+    <disable_collisions link1="hx5_d20_right_base" link2="finger_end_r_link5" reason="Never"/>
+    <!-- Wrist vs entire hand (large arm collision envelope vs hand at ee) -->
+    <disable_collisions link1="link6" link2="finger_r_link1" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link2" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link3" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link4" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link5" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link6" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link7" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link8" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link9" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link10" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link11" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link12" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link13" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link14" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link15" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link16" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link17" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link18" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link19" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_r_link20" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_end_r_link1" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_end_r_link2" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_end_r_link3" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_end_r_link4" reason="Never"/>
+    <disable_collisions link1="link6" link2="finger_end_r_link5" reason="Never"/>
+    <!-- Adjacent hand links (kinematic chain) -->
+    <disable_collisions link1="finger_r_link1" link2="finger_r_link2" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link2" link2="finger_r_link3" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link3" link2="finger_r_link4" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link4" link2="finger_end_r_link1" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link5" link2="finger_r_link6" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link6" link2="finger_r_link7" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link7" link2="finger_r_link8" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link8" link2="finger_end_r_link2" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link9" link2="finger_r_link10" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link10" link2="finger_r_link11" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link11" link2="finger_r_link12" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link12" link2="finger_end_r_link3" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link13" link2="finger_r_link14" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link14" link2="finger_r_link15" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link15" link2="finger_r_link16" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link16" link2="finger_end_r_link4" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link17" link2="finger_r_link18" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link18" link2="finger_r_link19" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link19" link2="finger_r_link20" reason="Adjacent"/>
+    <disable_collisions link1="finger_r_link20" link2="finger_end_r_link5" reason="Adjacent"/>
+</robot>

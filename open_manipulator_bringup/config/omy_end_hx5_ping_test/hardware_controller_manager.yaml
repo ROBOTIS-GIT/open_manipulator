@@ -1,0 +1,8 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 5  # Hz (generous for SyncTable relay latency)
+      thread_priority: 40
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster

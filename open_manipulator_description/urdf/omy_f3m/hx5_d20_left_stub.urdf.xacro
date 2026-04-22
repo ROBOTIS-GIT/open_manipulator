@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Minimal visual stub to avoid robotis_hand dependency -->
+  <xacro:macro name="hx5_d20_left_stub" params="prefix">
+    <link name="${prefix}hx5_d20_left_base">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.03 0.03 0.06"/>
+        </geometry>
+        <material name="dark_grey">
+          <color rgba="0.2 0.2 0.2 1"/>
+        </material>
+      </visual>
+    </link>
+  </xacro:macro>
+</robot>

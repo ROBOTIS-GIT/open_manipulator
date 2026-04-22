@@ -85,7 +85,7 @@
         <param name="Drive Mode">0</param>
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Baud Rate">6</param>
+        <!-- <param name="Baud Rate">6</param> -->
       </gpio>
       <gpio name="dxl2">
         <param name="type">dxl</param>
@@ -97,7 +97,7 @@
         <param name="Drive Mode">1</param>
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Baud Rate">6</param>
+        <!-- <param name="Baud Rate">6</param> -->
       </gpio>
       <gpio name="dxl3">
         <param name="type">dxl</param>
@@ -109,7 +109,7 @@
         <param name="Drive Mode">0</param>
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Baud Rate">6</param>
+        <!-- <param name="Baud Rate">6</param> -->
       </gpio>
       <gpio name="dxl4">
         <param name="type">dxl</param>
@@ -121,7 +121,7 @@
         <param name="Drive Mode">1</param>
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Baud Rate">6</param>
+        <!-- <param name="Baud Rate">6</param> -->
       </gpio>
       <gpio name="dxl5">
         <param name="type">dxl</param>
@@ -133,7 +133,7 @@
         <param name="Drive Mode">0</param>
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Baud Rate">6</param>
+        <!-- <param name="Baud Rate">6</param> -->
       </gpio>
       <gpio name="dxl6">
         <param name="type">dxl</param>
@@ -145,7 +145,7 @@
         <param name="Drive Mode">1</param>
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Baud Rate">6</param>
+        <!-- <param name="Baud Rate">6</param> -->
       </gpio>
       <gpio name="dxl7">
         <param name="type">dxl</param>
@@ -157,7 +157,7 @@
         <param name="Drive Mode">0</param>
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
-        <param name="Baud Rate">6</param>
+        <!-- <param name="Baud Rate">6</param> -->
       </gpio>
 
     </ros2_control>

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="omy_end_hx5_ping_test_system" params="name prefix port_name:=^|/dev/ttyUSB0 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
+    <ros2_control name="${name}" type="system" is_async="true">
+      <xacro:unless value="$(arg use_sim)">
+        <hardware>
+          <xacro:if value="${use_mock_hardware}">
+            <plugin>mock_components/GenericSystem</plugin>
+            <param name="mock_sensor_commands">${mock_sensor_commands}</param>
+            <param name="state_following_offset">0.0</param>
+          </xacro:if>
+          <xacro:unless value="${use_mock_hardware}">
+            <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
+            <param name="port_name">${port_name}</param>
+            <param name="baud_rate">4000000</param>
+            <param name="error_timeout_ms">5000</param>
+            <param name="dynamixel_model_folder">/param/dxl_model</param>
+            <param name="number_of_joints">0</param>
+            <param name="number_of_transmissions">0</param>
+            <param name="disable_torque_at_init">true</param>
+            <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
+            <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
+            <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
+            <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
+            <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
+          </xacro:unless>
+        </hardware>
+      </xacro:unless>
+
+      <!-- OMY END (ID 210): configure tool bus for HX5 controller (ID 140)
+           and SyncTable to read 6 bytes from HX5's Indirect Data Read (addr 634).
+           6 bytes = 1 actuator worth of data (Present Current 2B + Present Velocity 2B + Present Position 2B). -->
+      <!-- Step 1: configure OMY END SyncTable addresses/sizes, keeps enables at 0 -->
+      <gpio name="omy_end">
+        <state_interface name="Button Status"/>
+        <state_interface name="HX5 Present Position 1"/>
+        <state_interface name="HX5 Present Velocity 1"/>
+        <state_interface name="HX5 Present Current 1"/>
+        <param name="type">controller</param>
+        <param name="ID">210</param>
+        <param name="Baud Rate (Bus)">6</param>
+        <param name="Tool Analog Enable">0</param>
+        <param name="Tool Baud Rate">8</param>
+        <param name="Tool ID">140</param>
+        <param name="Tool Protocol">0</param>
+        <param name="SyncTable Read Address">634</param>
+        <param name="SyncTable Read Size">6</param>
+        <param name="Table Sync Write Address 1">799</param>
+        <param name="Table Sync Write Size 1">4</param>
+        <param name="Table Sync Write Address 2">70</param>
+        <param name="Table Sync Write Size 2">1</param>
+        <param name="SyncTable Enable">0</param>
+        <param name="SyncTable Enable HX5">1</param>
+      </gpio>
+
+      <!-- SyncTable Enable is activated post-init via service call in the launch file. -->
+
+    </ros2_control>
+  </xacro:macro>
+</robot>

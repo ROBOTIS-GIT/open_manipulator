@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot name="hx5_d20_left" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
+
+  <xacro:include filename="$(find open_manipulator_description)/urdf/hx5_d20_rev2/hx5_d20_left.urdf.xacro" />
+
+  <xacro:include filename="$(find robotis_hand_description)/gazebo/hx5_d20_left.gazebo.xacro" />
+
+  <xacro:include filename="$(find robotis_hand_description)/ros2_control/hx5_d20_rev2/hx5_d20_left.ros2_control.xacro" />
+
+  <link name="world"/>
+
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="$(arg prefix)hx5_d20_left_base"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:hx5_d20_left prefix="$(arg prefix)" />
+  <xacro:robotis_hand_gazebo prefix="$(arg prefix)" />
+
+  <xacro:robotis_hand_system
+    name="RobotisHandSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find robotis_hand_bringup)/config/robotis_hand_hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

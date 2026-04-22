@@ -1,0 +1,8 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 20  # Hz (conservative for SyncTable relay with 125 bytes)
+      thread_priority: 40
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster

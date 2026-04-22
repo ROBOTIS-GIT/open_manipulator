@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<robot name="omy_f3m_hx5_left" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
+  <xacro:arg name="config_type" default="omy_f3m_follower_ai_hx5_left" />
+  <xacro:arg name="ros2_control_type" default="omy_f3m_position" />
+
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/omy_f3m_arm.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/omy_f3m.gazebo.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/hx5_d20_rev2/hx5_d20_left.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/$(arg ros2_control_type).ros2_control.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m_end_unit_hx5_left.ros2_control.xacro" />
+
+  <link name="world"/>
+
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="$(arg prefix)link0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="$(arg prefix)gripper_fixed" type="fixed">
+    <origin xyz="0 -0.006 0" rpy="1.57 -1.57 0"/>
+    <parent link="$(arg prefix)end_effector_flange_link"/>
+    <axis xyz="0 0 0"/>
+    <child link="$(arg prefix)hx5_d20_left_base"/>
+  </joint>
+
+  <joint name="$(arg prefix)end_effector_joint" type="fixed">
+    <parent link="$(arg prefix)end_effector_flange_link"/>
+    <child link="$(arg prefix)end_effector_link"/>
+    <origin xyz="0 -0.141 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="$(arg prefix)end_effector_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01" />
+      </geometry>
+      <material name="red">
+        <color rgba="1.0 0.0 0.0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <xacro:omy_f3m prefix="$(arg prefix)" />
+  <xacro:omy_f3m_gazebo prefix="$(arg prefix)" />
+  <xacro:hx5_d20_left prefix="$(arg prefix)" />
+
+  <xacro:omy_f3m_system
+    name="OMYF3MSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
+
+  <xacro:omy_f3m_end_unit_hx5_left_system
+    name="OMYF3MEndUnitHX5LeftSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/$(arg config_type)/hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+</robot>

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="hx5_d20_right_omy_3m_gazebo" params="prefix">
+
+  <xacro:macro name="Hx5SimpleTransmission" params="trans joint actuator">
+    <transmission name="${trans}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${joint}">
+        <hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${actuator}">
+        <mechanicalReduction>1</mechanicalReduction>
+        <hardwareInterface>PositionJointInterface</hardwareInterface>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <xacro:macro name="Hx5Link" params="reference">
+    <gazebo reference="${reference}">
+      <kp>1000000.0</kp>
+      <kd>100.0</kd>
+      <mu1>30.0</mu1>
+      <mu2>30.0</mu2>
+      <maxVel>1.0</maxVel>
+      <minDepth>0.001</minDepth>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:Hx5Link reference="${prefix}hx5_d20_right_base"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link1"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link2"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link3"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link4"/>
+  <xacro:Hx5Link reference="${prefix}finger_end_r_link1"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link5"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link6"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link7"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link8"/>
+  <xacro:Hx5Link reference="${prefix}finger_end_r_link2"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link9"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link10"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link11"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link12"/>
+  <xacro:Hx5Link reference="${prefix}finger_end_r_link3"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link13"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link14"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link15"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link16"/>
+  <xacro:Hx5Link reference="${prefix}finger_end_r_link4"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link17"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link18"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link19"/>
+  <xacro:Hx5Link reference="${prefix}finger_r_link20"/>
+  <xacro:Hx5Link reference="${prefix}finger_end_r_link5"/>
+
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r1" joint="${prefix}finger_r_joint1" actuator="${prefix}hx5_actuator_r1"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r2" joint="${prefix}finger_r_joint2" actuator="${prefix}hx5_actuator_r2"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r3" joint="${prefix}finger_r_joint3" actuator="${prefix}hx5_actuator_r3"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r4" joint="${prefix}finger_r_joint4" actuator="${prefix}hx5_actuator_r4"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r5" joint="${prefix}finger_r_joint5" actuator="${prefix}hx5_actuator_r5"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r6" joint="${prefix}finger_r_joint6" actuator="${prefix}hx5_actuator_r6"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r7" joint="${prefix}finger_r_joint7" actuator="${prefix}hx5_actuator_r7"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r8" joint="${prefix}finger_r_joint8" actuator="${prefix}hx5_actuator_r8"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r9" joint="${prefix}finger_r_joint9" actuator="${prefix}hx5_actuator_r9"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r10" joint="${prefix}finger_r_joint10" actuator="${prefix}hx5_actuator_r10"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r11" joint="${prefix}finger_r_joint11" actuator="${prefix}hx5_actuator_r11"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r12" joint="${prefix}finger_r_joint12" actuator="${prefix}hx5_actuator_r12"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r13" joint="${prefix}finger_r_joint13" actuator="${prefix}hx5_actuator_r13"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r14" joint="${prefix}finger_r_joint14" actuator="${prefix}hx5_actuator_r14"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r15" joint="${prefix}finger_r_joint15" actuator="${prefix}hx5_actuator_r15"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r16" joint="${prefix}finger_r_joint16" actuator="${prefix}hx5_actuator_r16"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r17" joint="${prefix}finger_r_joint17" actuator="${prefix}hx5_actuator_r17"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r18" joint="${prefix}finger_r_joint18" actuator="${prefix}hx5_actuator_r18"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r19" joint="${prefix}finger_r_joint19" actuator="${prefix}hx5_actuator_r19"/>
+  <xacro:Hx5SimpleTransmission trans="${prefix}hx5_trans_r20" joint="${prefix}finger_r_joint20" actuator="${prefix}hx5_actuator_r20"/>
+
+  </xacro:macro>
+
+</robot>

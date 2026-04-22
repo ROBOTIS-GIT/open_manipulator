@@ -1,0 +1,33 @@
+joint_trajectory_executor:
+  ros__parameters:
+    joint_names:
+      - finger_l_joint1
+      - finger_l_joint2
+      - finger_l_joint3
+      - finger_l_joint4
+      - finger_l_joint5
+      - finger_l_joint6
+      - finger_l_joint7
+      - finger_l_joint8
+      - finger_l_joint9
+      - finger_l_joint10
+      - finger_l_joint11
+      - finger_l_joint12
+      - finger_l_joint13
+      - finger_l_joint14
+      - finger_l_joint15
+      - finger_l_joint16
+      - finger_l_joint17
+      - finger_l_joint18
+      - finger_l_joint19
+      - finger_l_joint20
+    step_names: [step1]
+    step1: [0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0]
+    duration: 2.0
+    epsilon: 0.2
+    action_topic: '/hand_l_controller/follow_joint_trajectory'
+    joint_states_topic: '/hand/joint_states'

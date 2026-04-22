@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="omy_f3m_end_unit_hx5_left_readonly_system" params="name prefix port_name:=^|/dev/ttyAMA4 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
+    <ros2_control name="${name}" type="system" is_async="true">
+      <xacro:unless value="$(arg use_sim)">
+        <hardware>
+          <xacro:if value="${use_mock_hardware}">
+            <plugin>mock_components/GenericSystem</plugin>
+            <param name="mock_sensor_commands">${mock_sensor_commands}</param>
+            <param name="state_following_offset">0.0</param>
+          </xacro:if>
+          <xacro:unless value="${use_mock_hardware}">
+            <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
+            <param name="port_name">${port_name}</param>
+            <param name="baud_rate">4000000</param>
+            <param name="error_timeout_ms">5000</param>
+            <param name="dynamixel_model_folder">/param/dxl_model</param>
+            <param name="number_of_joints">20</param>
+            <param name="number_of_transmissions">20</param>
+            <param name="disable_torque_at_init">true</param>
+            <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
+            <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
+            <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
+            <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
+            <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
+          </xacro:unless>
+        </hardware>
+      </xacro:unless>
+
+      <!-- READ-ONLY: joints have state_interfaces only (no command_interface).
+           This prevents Indirect Address Write setup, avoiding the OMY END
+           Indirect Address overlap between Write (addr 378+) and Read (addr 402+). -->
+
+      <!-- Finger 1 -->
+      <joint name="${prefix}finger_l_joint1"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint2"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint3"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint4"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <sensor name="${prefix}finger_l_sensor1"><state_interface name="Present Pressure 5"/></sensor>
+
+      <!-- Finger 2 -->
+      <joint name="${prefix}finger_l_joint5"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint6"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint7"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint8"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <sensor name="${prefix}finger_l_sensor2"><state_interface name="Present Pressure 5"/></sensor>
+
+      <!-- Finger 3 -->
+      <joint name="${prefix}finger_l_joint9"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint10"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint11"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint12"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <sensor name="${prefix}finger_l_sensor3"><state_interface name="Present Pressure 5"/></sensor>
+
+      <!-- Finger 4 -->
+      <joint name="${prefix}finger_l_joint13"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint14"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint15"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint16"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <sensor name="${prefix}finger_l_sensor4"><state_interface name="Present Pressure 5"/></sensor>
+
+      <!-- Finger 5 -->
+      <joint name="${prefix}finger_l_joint17"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint18"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint19"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <joint name="${prefix}finger_l_joint20"><state_interface name="position"/><state_interface name="velocity"/><state_interface name="effort"/></joint>
+      <sensor name="${prefix}finger_l_sensor5"><state_interface name="Present Pressure 5"/></sensor>
+
+      <!-- OMY END controller (ID 210) - Step 1: configure, keep Enable=0 -->
+      <gpio name="omy_end">
+        <state_interface name="Button Status"/>
+        <param name="type">controller</param>
+        <param name="ID">210</param>
+        <param name="Baud Rate (Bus)">6</param>
+        <param name="Tool Analog Enable">0</param>
+        <param name="Tool Baud Rate">8</param>
+        <param name="Tool ID">140</param>
+        <param name="Tool Protocol">0</param>
+        <param name="R LED">200</param>
+        <param name="G LED">200</param>
+        <param name="B LED">120</param>
+        <param name="SyncTable Read Address">634</param>
+        <param name="SyncTable Read Size">125</param>
+        <param name="Table Sync Write Address 1">799</param>
+        <param name="Table Sync Write Address 2">70</param>
+        <param name="Table Sync Write Size 1">80</param>
+        <param name="Table Sync Write Size 2">1</param>
+        <param name="SyncTable Enable HX5">0</param>
+        <param name="SyncTable Enable">0</param>
+      </gpio>
+
+      <!-- Virtual DXL: READ-ONLY (no command_interface → no Indirect Address Write) -->
+      <gpio name="dxl141"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">141</param><param name="comm_id">210</param><param name="model_num">7001</param></gpio>
+      <gpio name="dxl142"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">142</param><param name="comm_id">210</param><param name="model_num">7002</param></gpio>
+      <gpio name="dxl143"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">143</param><param name="comm_id">210</param><param name="model_num">7003</param></gpio>
+      <gpio name="dxl144"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">144</param><param name="comm_id">210</param><param name="model_num">7004</param></gpio>
+      <gpio name="finger_l_sensor1"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">145</param><param name="comm_id">210</param><param name="model_num">7005</param></gpio>
+
+      <gpio name="dxl146"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">146</param><param name="comm_id">210</param><param name="model_num">7006</param></gpio>
+      <gpio name="dxl147"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">147</param><param name="comm_id">210</param><param name="model_num">7007</param></gpio>
+      <gpio name="dxl148"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">148</param><param name="comm_id">210</param><param name="model_num">7008</param></gpio>
+      <gpio name="dxl149"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">149</param><param name="comm_id">210</param><param name="model_num">7009</param></gpio>
+      <gpio name="finger_l_sensor2"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">150</param><param name="comm_id">210</param><param name="model_num">7010</param></gpio>
+
+      <gpio name="dxl151"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">151</param><param name="comm_id">210</param><param name="model_num">7011</param></gpio>
+      <gpio name="dxl152"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">152</param><param name="comm_id">210</param><param name="model_num">7012</param></gpio>
+      <gpio name="dxl153"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">153</param><param name="comm_id">210</param><param name="model_num">7013</param></gpio>
+      <gpio name="dxl154"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">154</param><param name="comm_id">210</param><param name="model_num">7014</param></gpio>
+      <gpio name="finger_l_sensor3"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">155</param><param name="comm_id">210</param><param name="model_num">7015</param></gpio>
+
+      <gpio name="dxl156"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">156</param><param name="comm_id">210</param><param name="model_num">7016</param></gpio>
+      <gpio name="dxl157"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">157</param><param name="comm_id">210</param><param name="model_num">7017</param></gpio>
+      <gpio name="dxl158"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">158</param><param name="comm_id">210</param><param name="model_num">7018</param></gpio>
+      <gpio name="dxl159"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">159</param><param name="comm_id">210</param><param name="model_num">7019</param></gpio>
+      <gpio name="finger_l_sensor4"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">160</param><param name="comm_id">210</param><param name="model_num">7020</param></gpio>
+
+      <gpio name="dxl161"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">161</param><param name="comm_id">210</param><param name="model_num">7021</param></gpio>
+      <gpio name="dxl162"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">162</param><param name="comm_id">210</param><param name="model_num">7022</param></gpio>
+      <gpio name="dxl163"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">163</param><param name="comm_id">210</param><param name="model_num">7023</param></gpio>
+      <gpio name="dxl164"><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">164</param><param name="comm_id">210</param><param name="model_num">7024</param></gpio>
+      <gpio name="finger_l_sensor5"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">165</param><param name="comm_id">210</param><param name="model_num">7025</param></gpio>
+
+      <!-- Step 2: enable OMY END SyncTable -->
+      <gpio name="omy_end_enable">
+        <param name="type">controller</param>
+        <param name="ID">210</param>
+        <param name="SyncTable Enable">1</param>
+      </gpio>
+
+      <!-- Step 3: enable HX5 Table Sync -->
+      <gpio name="omy_end_hx5_enable">
+        <param name="type">controller</param>
+        <param name="ID">210</param>
+        <param name="SyncTable Enable HX5">1</param>
+      </gpio>
+
+    </ros2_control>
+  </xacro:macro>
+</robot>
