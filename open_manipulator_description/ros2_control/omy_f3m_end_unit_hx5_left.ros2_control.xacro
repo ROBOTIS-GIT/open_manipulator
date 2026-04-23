@@ -225,9 +225,14 @@
       </sensor>
 
       <!-- ════════════════════════════════════════════════════════════════════
-           [Step 1] OMY END (ID 210) — disable SyncTable, reboot
-                    Tool Bus packet forwarding requires SyncTable to be OFF
-                    so that motor init packets to ID 141-164 reach the bus.
+           [Step 1] OMY END (ID 210) — disable SyncTable, configure Tool Bus,
+                    reboot.
+                    Tool Bus packet forwarding (Tool Analog Enable=0, Tool
+                    Baud Rate=8 (4 Mbps), Tool Protocol=0, Tool ID=1) is
+                    REQUIRED so that motor init packets to ID 140-164 are
+                    forwarded reliably while SyncTable is OFF. Without these
+                    the pass-through mode is intermittent and InitItem writes
+                    to ID:140 randomly time out after 10-15 packets.
            ════════════════════════════════════════════════════════════════════ -->
       <gpio name="omy_end_pre">
         <param name="type">controller</param>
@@ -235,6 +240,10 @@
         <param name="Reboot">1</param>
         <param name="SyncTable Enable">0</param>
         <param name="SyncTable Enable HX5">0</param>
+        <param name="Tool Analog Enable">0</param>
+        <param name="Tool Baud Rate">8</param>
+        <param name="Tool Protocol">0</param>
+        <param name="Tool ID">1</param>
       </gpio>
 
       <!-- ════════════════════════════════════════════════════════════════════
