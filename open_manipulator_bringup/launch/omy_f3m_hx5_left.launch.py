@@ -64,6 +64,7 @@ from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.actions import SetRemap
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -168,10 +169,12 @@ def _launch_setup(context):
         'config', 'omy_end_hx5_left_l100',
         'hardware_controller_manager.yaml')
 
+    hand_robot_description_param = ParameterValue(hand_urdf_str, value_type=str)
+
     hand_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': hand_urdf_str}],
+        parameters=[{'robot_description': hand_robot_description_param}],
         remappings=[
             ('robot_description', '/hand_robot_description'),
             ('joint_states', '/hand/joint_states'),
@@ -184,7 +187,7 @@ def _launch_setup(context):
         executable='ros2_control_node',
         namespace='hand',
         parameters=[
-            {'robot_description': hand_urdf_str},
+            {'robot_description': hand_robot_description_param},
             hand_controller_manager_config,
         ],
         remappings=[('robot_description', '/hand_robot_description')],
@@ -289,17 +292,21 @@ def _launch_setup(context):
         'rviz', 'open_manipulator.rviz',
     ])
 
+    arm_robot_description_param = ParameterValue(arm_urdf_file, value_type=str)
+
     arm_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': arm_urdf_file, 'use_sim_time': use_sim}],
+        parameters=[{'robot_description': arm_robot_description_param,
+                     'use_sim_time': use_sim}],
         output='both',
     )
 
     arm_control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
-        parameters=[{'robot_description': arm_urdf_file}, arm_controller_manager_config],
+        parameters=[{'robot_description': arm_robot_description_param},
+                    arm_controller_manager_config],
         remappings=[('/arm_controller/joint_trajectory', '/leader/joint_trajectory')],
         output='both',
         condition=UnlessCondition(use_sim),
@@ -313,7 +320,7 @@ def _launch_setup(context):
             'joint_state_broadcaster',
         ],
         output='both',
-        parameters=[{'robot_description': arm_urdf_file}],
+        parameters=[{'robot_description': arm_robot_description_param}],
     )
 
     arm_init_position_executor = Node(

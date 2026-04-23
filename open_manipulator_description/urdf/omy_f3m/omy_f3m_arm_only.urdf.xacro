@@ -4,14 +4,13 @@
 
   F3M follower arm WITHOUT the OMY END / RH-P12-RN gripper.
 
-  Why this exists
-  ───────────────
-  The standard omy_f3m.urdf.xacro always declares the OMYF3MEndUnitSystem
-  (the OMY END + P12 gripper combo on /dev/ttyAMA4, ID 210). When the
+  Why this exists:
+  The standard omy_f3m.urdf.xacro always declares OMYF3MEndUnitSystem
+  (OMY END + P12 gripper combo on /dev/ttyAMA4, ID 210). When the
   F3M arm is run together with a separately-loaded HX5 hand (which owns
   OMY END through OMYF3MEndUnitHX5LeftSystem in its own controller_manager),
   two ros2_control hardware components fight for the same OMY END device.
-  This causes endless `[ID:210] COMM_ERROR : There is no status packet!`
+  This causes endless [ID:210] COMM_ERROR : There is no status packet!
   and BulkRead/BulkWrite RX timeouts.
 
   This trimmed URDF declares ONLY the F3M arm hardware system, leaves the
@@ -26,7 +25,6 @@
   <xacro:arg name="config_type"          default="omy_f3m" />
   <xacro:arg name="ros2_control_type"    default="omy_f3m_position" />
 
-  <!-- Arm geometry + gazebo only. No gripper geometry, no end-unit ros2_control. -->
   <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/omy_f3m_arm.urdf.xacro" />
   <xacro:include filename="$(find open_manipulator_description)/gazebo/omy_f3m.gazebo.xacro" />
 
