@@ -245,16 +245,26 @@ def _launch_setup(context):
     )
 
     # ─── F3M follower arm subsystem ─────────────────────────────────────
-    # Mirrors omy_f3m.launch.py but: (a) remaps /arm_controller/joint_trajectory
-    # to /leader/joint_trajectory so the follower tracks the leader, and
-    # (b) does NOT spawn gripper_controller (the leader trigger drives HX5
-    # via the bridge instead).
+    # Mirrors omy_f3m.launch.py but:
+    #   (a) remaps /arm_controller/joint_trajectory → /leader/joint_trajectory
+    #       so the follower tracks the leader,
+    #   (b) does NOT spawn gripper_controller (the leader trigger drives HX5
+    #       via the bridge instead),
+    #   (c) uses omy_f3m_arm_only.urdf.xacro instead of omy_f3m.urdf.xacro.
+    #
+    # Why (c): the standard omy_f3m.urdf.xacro always declares the legacy
+    # OMYF3MEndUnitSystem (P12 gripper, OMY END on /dev/ttyAMA4 ID 210). The
+    # HX5 hand controller_manager (in /hand) already owns OMY END through
+    # OMYF3MEndUnitHX5LeftSystem, so loading the legacy end-unit here would
+    # make two ros2_control hardware components fight for the same physical
+    # OMY END device, producing endless [ID:210] COMM_ERROR / BulkRead Rx
+    # Fail timeouts on both sides.
     arm_urdf_file = Command([
         PathJoinSubstitution([FindExecutable(name='xacro')]),
         ' ',
         PathJoinSubstitution([
             FindPackageShare('open_manipulator_description'),
-            'urdf', 'omy_f3m', 'omy_f3m.urdf.xacro',
+            'urdf', 'omy_f3m', 'omy_f3m_arm_only.urdf.xacro',
         ]),
         ' ',
         'prefix:=', prefix, ' ',

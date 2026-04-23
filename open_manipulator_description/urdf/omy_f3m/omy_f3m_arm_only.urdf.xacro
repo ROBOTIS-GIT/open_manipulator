@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+  omy_f3m_arm_only.urdf.xacro
+
+  F3M follower arm WITHOUT the OMY END / RH-P12-RN gripper.
+
+  Why this exists
+  ───────────────
+  The standard omy_f3m.urdf.xacro always declares the OMYF3MEndUnitSystem
+  (the OMY END + P12 gripper combo on /dev/ttyAMA4, ID 210). When the
+  F3M arm is run together with a separately-loaded HX5 hand (which owns
+  OMY END through OMYF3MEndUnitHX5LeftSystem in its own controller_manager),
+  two ros2_control hardware components fight for the same OMY END device.
+  This causes endless `[ID:210] COMM_ERROR : There is no status packet!`
+  and BulkRead/BulkWrite RX timeouts.
+
+  This trimmed URDF declares ONLY the F3M arm hardware system, leaves the
+  end_effector_link as an empty placeholder, and lets the HX5 hand launch
+  own OMY END exclusively.
+-->
+<robot name="omy_f3m_arm_only" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix"               default="" />
+  <xacro:arg name="use_sim"              default="false" />
+  <xacro:arg name="use_mock_hardware"    default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
+  <xacro:arg name="config_type"          default="omy_f3m" />
+  <xacro:arg name="ros2_control_type"    default="omy_f3m_position" />
+
+  <!-- Arm geometry + gazebo only. No gripper geometry, no end-unit ros2_control. -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/omy_f3m_arm.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/omy_f3m.gazebo.xacro" />
+
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/$(arg ros2_control_type).ros2_control.xacro" />
+
+  <link name="world"/>
+
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="$(arg prefix)link0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="$(arg prefix)end_effector_joint" type="fixed">
+    <parent link="$(arg prefix)end_effector_flange_link"/>
+    <child link="$(arg prefix)end_effector_link"/>
+    <origin xyz="0 -0.141 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="$(arg prefix)end_effector_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01" />
+      </geometry>
+      <material name="red">
+        <color rgba="1.0 0.0 0.0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <xacro:omy_f3m         prefix="$(arg prefix)" />
+  <xacro:omy_f3m_gazebo  prefix="$(arg prefix)" />
+
+  <xacro:omy_f3m_system
+    name="OMYF3MSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/$(arg config_type)/hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
