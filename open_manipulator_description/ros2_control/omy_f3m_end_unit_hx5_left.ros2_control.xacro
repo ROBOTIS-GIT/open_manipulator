@@ -247,14 +247,32 @@
       </gpio>
 
       <!-- ════════════════════════════════════════════════════════════════════
-           [Step 2] HX5 hub (ID 140) — Reboot + Table Sync Enable=0
-                    Mirrors hx5_d20_left.ros2_control.xacro hand_l_controller.
+           [Step 2a] HX5 hub (ID 140) — Reboot + Table Sync Enable=0 ONLY
+                    Critical: dynamixel_hardware_interface processes params
+                    inside one gpio block in unordered_map iteration order,
+                    so when Table Sync Enable=0 is mixed with the bulk
+                    SyncTable config in a single block, the bulk writes can
+                    happen while SyncTable is still active. That triggers a
+                    bus collision and the 14th write deterministically dies
+                    with "Incorrect status packet". By splitting the disable
+                    into its own gpio block (processed first), we guarantee
+                    SyncTable is OFF before configuring it.
            ════════════════════════════════════════════════════════════════════ -->
-      <gpio name="hand_l_controller">
+      <gpio name="hand_l_controller_pre">
         <param name="type">controller</param>
         <param name="ID">140</param>
         <param name="Reboot">1</param>
         <param name="Table Sync Enable">0</param>
+      </gpio>
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           [Step 2b] HX5 hub (ID 140) — bulk SyncTable configuration
+                    Mirrors hx5_d20_left.ros2_control.xacro hand_l_controller.
+                    Reboot/Table Sync Enable already done in Step 2a above.
+           ════════════════════════════════════════════════════════════════════ -->
+      <gpio name="hand_l_controller">
+        <param name="type">controller</param>
+        <param name="ID">140</param>
         <param name="Bus Watchdog">100</param>
         <param name="SyncTable 1 ID 1">141</param>
         <param name="SyncTable 1 ID 2">142</param>
