@@ -13,26 +13,27 @@ Topology
   F3M follower arm uses the port hard-coded inside its own xacro / udev rule
   (matches the standalone omy_f3m.launch.py behavior).
 
-Sequencing (HX5 first, follower after — mirrors omy_end_hx5_left_l100.launch.py)
+Sequencing (HX5 first, follower after)
   1. control nodes for HX5 (in /hand namespace) and follower arm spin up
+     During hardware on_init the xacro InitItem chain runs automatically:
+       Step 1: omy_end_pre        (SyncTable Enable=0, Reboot=1)
+       Step 2: hand_l_controller  (Reboot, Table Sync Enable=0, SyncTable cfg)
+       Step 3: dxl141…dxl164_init (per-motor Operating Mode, gains, …)
+       Step 4: hand_l_controller_dummy (Table Sync Enable=1)
+       Step 5: virtual_dxl + virtual_sensor mapping (no init)
+       Step 6: omy_end_init       (placeholder)
+       Step 7: omy_end_post       (SyncTable Enable=1, SyncTable Enable HX5=1)
+     → SyncTable is already armed by the time the controller_manager goes
+       active. No external set_dxl_data service call is required.
   2. T = 5 s : spawn HX5 controllers
-  3. HX5 spawner exits  → start hand current command (Goal Current = 300)
-                       → enable SyncTable / SyncTable HX5 via set_dxl_data
-                         (3 s internal sleep so BulkWrite already carries
-                         Goal Current = 300 before the relay starts)
-  4. SyncTable enable exits → 2 s delay → send HX5 initial pose
-  5. HX5 initial pose exits → spawn follower controllers (arm only,
+  3. HX5 spawner exits → start hand current command (Goal Current = 300)
+                       → 2 s later send HX5 initial pose
+  4. HX5 initial pose exits → spawn follower arm controllers (arm only,
                               gripper_controller intentionally NOT spawned —
                               the leader trigger drives HX5 instead)
-  6. follower spawner exits → joint_trajectory_executor (init pose) +
+  5. follower spawner exits → joint_trajectory_executor (init pose) +
                               leader_trajectory_bridge (HX5 trigger ready) +
                               rviz (optional)
-
-SyncTable activation
-  Same as omy_end_hx5_left_l100.launch.py: this launch DOES auto-call
-  set_dxl_data for SyncTable Enable and SyncTable Enable HX5 (id 210). If
-  you have already pre-enabled them in Dynamixel Wizard the calls are
-  idempotent (just re-write 1).
 
 Usage
   ros2 launch open_manipulator_bringup omy_f3m_hx5_left.launch.py \
@@ -218,28 +219,6 @@ def _launch_setup(context):
         ],
     )
 
-    # Goal Current=300 must be in BulkWrite data BEFORE SyncTable relay starts.
-    # Otherwise HX5 receives Goal Current=0 → torque drops immediately.
-    enable_synctable_process = ExecuteProcess(
-        name='enable_synctable',
-        cmd=[
-            'bash', '-c',
-            'echo "[enable_synctable] Waiting for Goal Current to propagate..." && '
-            'sleep 3 && '
-            'echo "[enable_synctable] Activating SyncTable Enable..." && '
-            'ros2 service call /hand/dynamixel_hardware_interface/set_dxl_data '
-            'dynamixel_interfaces/srv/SetDataToDxl '
-            '"{id: 210, item_name: \'SyncTable Enable\', item_data: 1}" && '
-            'sleep 1 && '
-            'echo "[enable_synctable] Activating SyncTable Enable HX5..." && '
-            'ros2 service call /hand/dynamixel_hardware_interface/set_dxl_data '
-            'dynamixel_interfaces/srv/SetDataToDxl '
-            '"{id: 210, item_name: \'SyncTable Enable HX5\', item_data: 1}" && '
-            'echo "[enable_synctable] Done."',
-        ],
-        output='both',
-    )
-
     hand_initial_pose_process = ExecuteProcess(
         name='hand_l_initial_pose',
         cmd=[
@@ -377,7 +356,10 @@ def _launch_setup(context):
         output='both',
     )
 
-    # ─── Sequencing (mirrors omy_end_hx5_left_l100.launch.py) ───────────
+    # ─── Sequencing ─────────────────────────────────────────────────────
+    # SyncTable activation is done by the xacro InitItem chain (Step 1-7)
+    # during hardware on_init, so no external service call is needed here.
+
     # Step 1: 5 s after launch → spawn HX5 controllers.
     delayed_hand_spawner = TimerAction(
         period=5.0,
@@ -385,8 +367,7 @@ def _launch_setup(context):
     )
 
     # Step 2a: HX5 spawner done → start the constant Goal Current=300
-    # publisher so the BulkWrite buffer carries non-zero current before
-    # SyncTable relay starts.
+    # publisher so the BulkWrite buffer carries non-zero current.
     start_hand_current_after_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=hand_controller_spawner,
@@ -394,29 +375,19 @@ def _launch_setup(context):
         )
     )
 
-    # Step 2b: HX5 spawner done → enable SyncTable + SyncTable HX5
-    # (3 s internal delay so BulkWrite already contains Goal Current=300
-    # before relay starts).
-    start_synctable_after_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=hand_controller_spawner,
-            on_exit=[enable_synctable_process],
-        )
-    )
-
-    # Step 3: SyncTable enabled → 2 s later send HX5 initial pose.
+    # Step 2b: HX5 spawner done → 2 s later send HX5 initial pose.
     delayed_hand_initial_pose = TimerAction(
         period=2.0,
         actions=[hand_initial_pose_process],
     )
-    start_hand_initial_after_synctable = RegisterEventHandler(
+    start_hand_initial_after_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=enable_synctable_process,
+            target_action=hand_controller_spawner,
             on_exit=[delayed_hand_initial_pose],
         )
     )
 
-    # Step 4: HX5 initial pose done → spawn follower arm controllers.
+    # Step 3: HX5 initial pose done → spawn follower arm controllers.
     # This guarantees the hand is already torqued and at home before the
     # arm starts moving.
     start_arm_after_hand_initial = RegisterEventHandler(
@@ -426,11 +397,10 @@ def _launch_setup(context):
         )
     )
 
-    # Step 5: arm spawner done → init pose executor + leader bridge + rviz.
+    # Step 4: arm spawner done → init pose executor + leader bridge + rviz.
     # The bridge is started after the arm spawner (not after init pose) so
     # that the HX5 hand starts following the leader trigger immediately
-    # while the arm is still moving to home. Keep the leader still until
-    # the arm has finished homing.
+    # while the arm is still moving to home.
     start_arm_followups_after_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=arm_controller_spawner,
@@ -448,8 +418,7 @@ def _launch_setup(context):
         # Sequenced actions
         delayed_hand_spawner,
         start_hand_current_after_spawner,
-        start_synctable_after_spawner,
-        start_hand_initial_after_synctable,
+        start_hand_initial_after_spawner,
         start_arm_after_hand_initial,
         start_arm_followups_after_spawner,
     ]
