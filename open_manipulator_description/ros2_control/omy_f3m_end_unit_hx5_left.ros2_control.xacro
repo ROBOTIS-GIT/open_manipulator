@@ -23,7 +23,7 @@
     [7] omy_end_post  (ID 210): SyncTable Enable=1, SyncTable Enable HX5=1
 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="omy_f3m_end_unit_hx5_left_system" params="name prefix port_name:=^|/dev/ttyAMA4 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
+  <xacro:macro name="omy_f3m_end_unit_hx5_left_system" params="name prefix port_name:=^|/dev/rp1ctrluart4 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
     <ros2_control name="${name}" type="system" is_async="true">
       <xacro:if value="$(arg use_sim)">
         <hardware>

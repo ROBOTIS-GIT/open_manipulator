@@ -7,11 +7,10 @@ Combined teleoperation launch:
   * HX5 left hand via OMY END SyncTable     ← driven by leader_trajectory_bridge
   * L100 leader (publishes /leader/...)
 
-Topology
-  /dev/ttyUSB0 (default) : OMY END (HX5 hand, hub ID 210)
-  /dev/ttyUSB1 (default) : L100 leader
-  F3M follower arm uses the port hard-coded inside its own xacro / udev rule
-  (matches the standalone omy_f3m.launch.py behavior).
+Topology (defaults match omy-SNPR44B9041 baseboard)
+  /dev/rp1ctrluart2 : F3M follower arm (built-in default in omy_f3m_position xacro)
+  /dev/rp1ctrluart4 : OMY END (HX5 hand, hub ID 210, Tool Bus to HX5 motors 141..164)
+  /dev/ttyUSB0      : L100 leader (USB-RS485 adapter)
 
 Sequencing (HX5 first, follower after)
   1. control nodes for HX5 (in /hand namespace) and follower arm spin up
@@ -37,9 +36,9 @@ Sequencing (HX5 first, follower after)
 
 Usage
   ros2 launch open_manipulator_bringup omy_f3m_hx5_left.launch.py \
-      hand_port_name:=/dev/ttyUSB0 \
-      leader_port_name:=/dev/ttyUSB1 \
       use_self_collision_avoidance:=false
+  # Override only when a port differs from the baseboard defaults:
+  #   hand_port_name:=/dev/rp1ctrluart4   leader_port_name:=/dev/ttyUSB0
 """
 
 import os
@@ -72,13 +71,14 @@ def generate_launch_description():
     declared_arguments = [
         DeclareLaunchArgument(
             'hand_port_name',
-            default_value='/dev/ttyUSB0',
-            description='Serial port for OMY END (HX5 hand, hub ID 210).',
+            default_value='/dev/rp1ctrluart4',
+            description='Serial port for OMY END (HX5 hand, hub ID 210). '
+                        'Defaults to /dev/rp1ctrluart4 (RP1 UART4 on omy-SNPR44B9041 baseboard).',
         ),
         DeclareLaunchArgument(
             'leader_port_name',
-            default_value='/dev/ttyUSB1',
-            description='Serial port for OMY L100 leader.',
+            default_value='/dev/ttyUSB0',
+            description='Serial port for OMY L100 leader (USB-RS485 adapter).',
         ),
         DeclareLaunchArgument(
             'use_mock_hardware',
