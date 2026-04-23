@@ -376,10 +376,29 @@ def _launch_setup(context):
     # ─── Sequencing ─────────────────────────────────────────────────────
     # SyncTable activation is done by the xacro InitItem chain (Step 1-7)
     # during hardware on_init, so no external service call is needed here.
+    #
+    # CRITICAL: hand_control_node MUST be allowed to finish its full InitItem
+    # chain (OMY END pre-init + HX5 hub SyncTable config + 24 motor inits +
+    # OMY END post-init) BEFORE arm_control_node and leader_launch start
+    # spawning their controllers. Otherwise the leader/arm spawner CPU load
+    # contends with the hand's serial reads through OMY END's Tool Bus, and
+    # the 14th InitItem packet on ID:140 deterministically times out.
+    # Empirically, the full hand init chain takes ~5-8 s, so we delay the
+    # arm_control_node and leader_launch by 10 s.
 
-    # Step 1: 5 s after launch → spawn HX5 controllers.
+    delayed_arm_control_node = TimerAction(
+        period=10.0,
+        actions=[arm_control_node],
+    )
+    delayed_leader_launch = TimerAction(
+        period=10.0,
+        actions=[leader_launch],
+    )
+
+    # Step 1: 12 s after launch → spawn HX5 controllers (after the 10 s
+    # arm/leader delay + 2 s settle margin).
     delayed_hand_spawner = TimerAction(
-        period=5.0,
+        period=12.0,
         actions=[hand_controller_spawner],
     )
 
@@ -426,13 +445,13 @@ def _launch_setup(context):
     )
 
     return [
-        # Always-on nodes
+        # Always-on nodes - hand starts immediately, arm/leader delayed
         hand_robot_state_publisher,
         hand_control_node,
         arm_robot_state_publisher,
-        arm_control_node,
-        leader_launch,
         # Sequenced actions
+        delayed_arm_control_node,
+        delayed_leader_launch,
         delayed_hand_spawner,
         start_hand_current_after_spawner,
         start_hand_initial_after_spawner,
