@@ -278,13 +278,17 @@
       <gpio name="hand_l_controller">
         <param name="type">controller</param>
         <param name="ID">140</param>
-        <!-- Reboot=1 OMITTED — same SDK stack overflow risk as ID 210.
-             ID 140 reboot would be the second transaction through OMY END
-             Tool Bus; the line is still settling at this point and
-             self-echo would again be the first bytes in RX FIFO. Per-motor
-             reboots (ID 141..164 below) are kept because by then the line
-             has been driven through ~10+ successful transactions and is
-             settled. -->
+        <!-- Reboot=1 RESTORED, following the hx5_d20_left.ros2_control.xacro
+             pattern (which works on /dev/ttyUSB0). On RP1 UART direct
+             (/dev/rp1ctrluart4) this is still risky due to the SDK
+             rxpacket[11] stack buffer + self-echo, but ID 140 reboot
+             goes through OMY END Tool Bus (not direct), so OMY END's
+             internal buffering may absorb baudrate-transition noise that
+             would otherwise reach the SDK readPort.
+             ALSO: rebooting the hub (ID 140) cascade-resets all 24 HX5
+             motors below it, so per-motor Reboot=1 entries (ID 141..164)
+             are now redundant safety, executing on a settled line. -->
+        <param name="Reboot">1</param>
         <param name="Table Sync Enable">0</param>
         <param name="Bus Watchdog">100</param>
         <param name="SyncTable 1 ID 1">141</param>
