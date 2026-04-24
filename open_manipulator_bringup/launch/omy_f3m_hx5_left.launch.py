@@ -12,27 +12,37 @@ Topology (defaults match omy-SNPR44B9041 baseboard)
   /dev/rp1ctrluart4 : OMY END (HX5 hand, hub ID 210, Tool Bus to HX5 motors 141..164)
   /dev/ttyUSB0      : L100 leader (USB-RS485 adapter)
 
-Sequencing (HX5 first, follower after)
-  1. control nodes for HX5 (in /hand namespace) and follower arm spin up
-     During hardware on_init the xacro InitItem chain runs automatically:
-       Step 1: omy_end_pre        (SyncTable Enable=0, Reboot=1)
-       Step 2: hand_l_controller  (Reboot, Table Sync Enable=0, SyncTable cfg)
-       Step 3: dxl141…dxl164_init (per-motor Operating Mode, gains, …)
-       Step 4: hand_l_controller_dummy (Table Sync Enable=1)
-       Step 5: virtual_dxl + virtual_sensor mapping (no init)
-       Step 6: omy_end_init       (placeholder)
-       Step 7: omy_end_post       (SyncTable Enable=1, SyncTable Enable HX5=1)
-     → SyncTable is already armed by the time the controller_manager goes
-       active. No external set_dxl_data service call is required.
-  2. T = 5 s : spawn HX5 controllers
-  3. HX5 spawner exits → start hand current command (Goal Current = 300)
-                       → 2 s later send HX5 initial pose
-  4. HX5 initial pose exits → spawn follower arm controllers (arm only,
-                              gripper_controller intentionally NOT spawned —
-                              the leader trigger drives HX5 instead)
-  5. follower spawner exits → joint_trajectory_executor (init pose) +
-                              leader_trajectory_bridge (HX5 trigger ready) +
-                              rviz (optional)
+Sequencing (mirror omy_f3m.launch.py: omy_f3m_position → omy_f3m_end_unit)
+  In the upstream omy_f3m.urdf.xacro both hardware systems live in the same
+  controller_manager process and are initialised in xacro order:
+      omy_f3m_position (arm, /dev/rp1ctrluart2 @ 6.25 Mbps) FIRST
+      omy_f3m_end_unit  (P12 + OMY END, /dev/rp1ctrluart4 @ 4 Mbps) SECOND
+  By the time the second hardware system opens its UART, the kernel /
+  RP1 driver / process scheduler is already warm from the first system's
+  ping+InitItem traffic. We mirror that by:
+
+      t = 0      arm_robot_state_publisher
+                 hand_robot_state_publisher  (passive — just /tf)
+                 arm_control_node            ← omy_f3m_position equivalent
+                 leader_launch               ← starts on its own port
+      t = 10 s   hand_control_node           ← omy_f3m_end_unit equivalent
+                 (cold-port ping to ID 210 happens AFTER the arm has
+                  finished InitDxlComm to IDs 1-6 + omy_hat, so the
+                  RP1 UART subsystem is no longer in a fresh-boot state)
+
+  During hand_control_node on_init the xacro InitItem chain runs:
+      Step 1: omy_end_pre        (SyncTable Enable=0 + Tool Bus cfg)
+      Step 2: hand_l_controller  (Table Sync Enable=0 + SyncTable cfg)
+      Step 3: dxl141…dxl164_init (per-motor Operating Mode, gains, …)
+      Step 4: hand_l_controller_dummy (Table Sync Enable=1)
+      Step 5: virtual_dxl + virtual_sensor mapping (no init)
+      Step 6: omy_end_init       (placeholder)
+      Step 7: omy_end_post       (SyncTable Enable=1, SyncTable Enable HX5=1)
+
+      t = 18 s   hand_controller_spawner     (≈8 s into hand init = safe)
+      hand spawner exits → hand current cmd + (2 s later) hand initial pose
+      hand initial pose exits → arm_controller_spawner
+      arm spawner exits → joint_trajectory_executor + leader bridge + rviz
 
 Usage
   ros2 launch open_manipulator_bringup omy_f3m_hx5_left.launch.py \
@@ -374,31 +384,39 @@ def _launch_setup(context):
     )
 
     # ─── Sequencing ─────────────────────────────────────────────────────
-    # SyncTable activation is done by the xacro InitItem chain (Step 1-7)
-    # during hardware on_init, so no external service call is needed here.
+    # ORDER REVERSAL (vs previous revision):
+    #   Mirror omy_f3m.launch.py where omy_f3m_position is initialised
+    #   BEFORE omy_f3m_end_unit. Empirically the cold-port ping to OMY END
+    #   (ID 210) at 4 Mbps right after openPort + setBaudRate hits a
+    #   stack-buffer overflow in dynamixel_sdk Protocol2PacketHandler::
+    #   rxPacket() when residual / self-echo bytes form a "fake header"
+    #   that bumps wait_length past the 11/14-byte rxpacket buffer.
     #
-    # CRITICAL: hand_control_node MUST be allowed to finish its full InitItem
-    # chain (OMY END pre-init + HX5 hub SyncTable config + 24 motor inits +
-    # OMY END post-init) BEFORE arm_control_node and leader_launch start
-    # spawning their controllers. Otherwise the leader/arm spawner CPU load
-    # contends with the hand's serial reads through OMY END's Tool Bus, and
-    # the 14th InitItem packet on ID:140 deterministically times out.
-    # Empirically, the full hand init chain takes ~5-8 s, so we delay the
-    # arm_control_node and leader_launch by 10 s.
+    #   Letting the F3M arm finish its own InitDxlComm sweep on
+    #   /dev/rp1ctrluart2 first gives the RP1 UART subsystem ~10 s of
+    #   warm-up time (kernel scheduler, RP1 firmware DMA primed,
+    #   ros2_control library code paths JIT-loaded) before the hand
+    #   process opens /dev/rp1ctrluart4 and pings ID 210.
+    #
+    # SyncTable activation itself is still done by the xacro InitItem chain
+    # (Steps 1-7) inside the hand controller_manager, so no external
+    # set_dxl_data service call is required.
 
-    delayed_arm_control_node = TimerAction(
+    # Step 1: t = 10 s → hand_control_node (cold-port ping happens here).
+    # The arm + leader have been running for 10 s on their own ports
+    # (rp1ctrluart2, ttyUSB0) so the RP1 UART driver is warm and DDS
+    # discovery has settled before we trigger the OMY END ping.
+    delayed_hand_control_node = TimerAction(
         period=10.0,
-        actions=[arm_control_node],
-    )
-    delayed_leader_launch = TimerAction(
-        period=10.0,
-        actions=[leader_launch],
+        actions=[hand_control_node],
     )
 
-    # Step 1: 12 s after launch → spawn HX5 controllers (after the 10 s
-    # arm/leader delay + 2 s settle margin).
+    # Step 2: t = 18 s → spawn HX5 controllers. The hand's full InitItem
+    # chain (OMY END pre + HX5 hub SyncTable cfg + 24 motor inits + OMY
+    # END post) takes ~5-8 s, so 8 s after hand_control_node start is the
+    # safe spawn window.
     delayed_hand_spawner = TimerAction(
-        period=12.0,
+        period=18.0,
         actions=[hand_controller_spawner],
     )
 
@@ -445,13 +463,16 @@ def _launch_setup(context):
     )
 
     return [
-        # Always-on nodes - hand starts immediately, arm/leader delayed
+        # Always-on passive nodes (just /tf, no hardware traffic)
         hand_robot_state_publisher,
-        hand_control_node,
         arm_robot_state_publisher,
-        # Sequenced actions
-        delayed_arm_control_node,
-        delayed_leader_launch,
+        # t = 0 : arm + leader hardware come up first (omy_f3m_position
+        #         equivalent). Their UART traffic warms the RP1 driver.
+        arm_control_node,
+        leader_launch,
+        # t = 10 s : hand hardware comes up (omy_f3m_end_unit equivalent).
+        delayed_hand_control_node,
+        # t = 18 s : spawn HX5 controllers, then chain the rest.
         delayed_hand_spawner,
         start_hand_current_after_spawner,
         start_hand_initial_after_spawner,

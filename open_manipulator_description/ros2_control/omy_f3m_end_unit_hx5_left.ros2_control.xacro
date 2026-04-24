@@ -41,7 +41,11 @@
             <plugin>dynamixel_hardware_interface/DynamixelHardware</plugin>
             <param name="port_name">${port_name}</param>
             <param name="baud_rate">4000000</param>
-            <param name="error_timeout_ms">5000</param>
+            <!-- Match omy_f3m_end_unit.ros2_control.xacro (500 ms) so initial
+                 ping/InitItem failures fall through quickly and the 10-retry
+                 loop in InitDxlComm can recover, instead of stalling for 5 s
+                 per attempt. -->
+            <param name="error_timeout_ms">500</param>
             <param name="dynamixel_model_folder">/param/dxl_model</param>
             <param name="number_of_joints">20</param>
             <param name="number_of_transmissions">20</param>
