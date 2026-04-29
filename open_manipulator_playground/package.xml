@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>open_manipulator_playground</name>
-  <version>4.1.3</version>
+  <version>4.1.4</version>
   <description>
     This package provides an example for utilizing the MoveIt API with the OpenMANIPULATOR,
     allowing users to practice and experiment freely.
@@ -17,6 +17,15 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>rclcpp</depend>
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>robotis_interfaces</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>

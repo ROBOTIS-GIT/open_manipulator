@@ -69,6 +69,16 @@ install(TARGETS open_manipulator_x_hello_moveit omy_f3m_hello_moveit omy_3m_hell
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  scripts/shape_detector_node.py
+  scripts/omx_trajectory_controller_node.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY launch images
+  DESTINATION share/${PROJECT_NAME}
+)
+
 ################################################################################
 # Macro for ament package
 ################################################################################

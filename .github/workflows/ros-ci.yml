@@ -57,9 +57,9 @@ jobs:
           echo "--- Updating rosdep definitions ---"
           rosdep update
           echo "--- Installing system dependencies for ROS 2 ${{ matrix.ros_distribution }} ---"
-          rosdep install --from-paths ros_ws/src --ignore-src -y -r --rosdistro ${{ matrix.ros_distribution }} --skip-keys dynamixel_hardware_interface
+          rosdep install --from-paths ros_ws/src --ignore-src -y -r --rosdistro ${{ matrix.ros_distribution }} --skip-keys "dynamixel_hardware_interface robotis_interfaces"
           echo "--- Performing rosdep check for ROS 2 ${{ matrix.ros_distribution }} ---"
-          if rosdep check --from-paths ros_ws/src --ignore-src --rosdistro ${{ matrix.ros_distribution }} --skip-keys dynamixel_hardware_interface; then
+          if rosdep check --from-paths ros_ws/src --ignore-src --rosdistro ${{ matrix.ros_distribution }} --skip-keys "dynamixel_hardware_interface robotis_interfaces"; then
             echo "--- rosdep check passed ---"
           else
             echo "--- rosdep check failed: Missing system dependencies or unresolvable keys. ---"
