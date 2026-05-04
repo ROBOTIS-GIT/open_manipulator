@@ -1,0 +1,481 @@
+#!/usr/bin/env python3
+"""
+omy_f3m_hx5_right.launch.py
+
+Combined teleoperation launch:
+  * F3M follower arm (joint1-6)             ← driven by /leader/joint_trajectory
+  * HX5 right hand via OMY END SyncTable    ← driven by leader_trajectory_bridge
+  * L100 leader (publishes /leader/...)
+
+Topology (defaults match omy-SNPR44B9041 baseboard)
+  /dev/rp1ctrluart2 : F3M follower arm (built-in default in omy_f3m_position xacro)
+  /dev/rp1ctrluart4 : OMY END (HX5 hand, hub ID 210, Tool Bus to HX5 motors 141..164)
+  /dev/ttyUSB0      : L100 leader (USB-RS485 adapter)
+
+Sequencing (mirror omy_f3m.launch.py: omy_f3m_position → omy_f3m_end_unit)
+  In the upstream omy_f3m.urdf.xacro both hardware systems live in the same
+  controller_manager process and are initialised in xacro order:
+      omy_f3m_position (arm, /dev/rp1ctrluart2 @ 6.25 Mbps) FIRST
+      omy_f3m_end_unit  (P12 + OMY END, /dev/rp1ctrluart4 @ 4 Mbps) SECOND
+  By the time the second hardware system opens its UART, the kernel /
+  RP1 driver / process scheduler is already warm from the first system's
+  ping+InitItem traffic. We mirror that by:
+
+      t = 0      arm_robot_state_publisher
+                 hand_robot_state_publisher  (passive — just /tf)
+                 arm_control_node            ← omy_f3m_position equivalent
+                 leader_launch               ← starts on its own port
+      t = 10 s   hand_control_node           ← omy_f3m_end_unit equivalent
+                 (cold-port ping to ID 210 happens AFTER the arm has
+                  finished InitDxlComm to IDs 1-6 + omy_hat, so the
+                  RP1 UART subsystem is no longer in a fresh-boot state)
+
+  During hand_control_node on_init the xacro InitItem chain runs:
+      Step 1: omy_end_pre        (SyncTable Enable=0 + Tool Bus cfg)
+      Step 2: hand_r_controller  (Table Sync Enable=0 + SyncTable cfg)
+      Step 3: dxl141…dxl164_init (per-motor Operating Mode, gains, …)
+      Step 4: hand_r_controller_dummy (Table Sync Enable=1)
+      Step 5: virtual_dxl + virtual_sensor mapping (no init)
+      Step 6: omy_end_init       (placeholder)
+      Step 7: omy_end_post       (SyncTable Enable=1, SyncTable Enable HX5=1)
+
+      t = 18 s   hand_controller_spawner     (≈8 s into hand init = safe)
+      hand spawner exits → hand current cmd + (2 s later) hand initial pose
+      hand initial pose exits → arm_controller_spawner
+      arm spawner exits → joint_trajectory_executor + leader bridge + rviz
+
+Usage
+  ros2 launch open_manipulator_bringup omy_f3m_hx5_right.launch.py \
+      use_self_collision_avoidance:=false
+  # Override only when a port differs from the baseboard defaults:
+  #   hand_port_name:=/dev/rp1ctrluart4   leader_port_name:=/dev/ttyUSB0
+"""
+
+import os
+import subprocess
+
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.actions import ExecuteProcess
+from launch.actions import GroupAction
+from launch.actions import IncludeLaunchDescription
+from launch.actions import OpaqueFunction
+from launch.actions import RegisterEventHandler
+from launch.actions import TimerAction
+from launch.conditions import IfCondition
+from launch.conditions import UnlessCondition
+from launch.event_handlers import OnProcessExit
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import Command
+from launch.substitutions import FindExecutable
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.actions import SetRemap
+from launch_ros.parameter_descriptions import ParameterValue
+from launch_ros.substitutions import FindPackageShare
+
+
+def generate_launch_description():
+    declared_arguments = [
+        DeclareLaunchArgument(
+            'hand_port_name',
+            default_value='/dev/rp1ctrluart4',
+            description='Serial port for OMY END (HX5 hand, hub ID 210). '
+                        'Defaults to /dev/rp1ctrluart4 (RP1 UART4 on omy-SNPR44B9041 baseboard).',
+        ),
+        DeclareLaunchArgument(
+            'leader_port_name',
+            default_value='/dev/ttyUSB0',
+            description='Serial port for OMY L100 leader (USB-RS485 adapter).',
+        ),
+        DeclareLaunchArgument(
+            'use_mock_hardware',
+            default_value='false',
+            description='Use mock hardware for both HX5 and follower arm.',
+        ),
+        DeclareLaunchArgument(
+            'mock_sensor_commands',
+            default_value='false',
+            description='Enable mock sensor commands for the follower arm.',
+        ),
+        DeclareLaunchArgument(
+            'use_self_collision_avoidance',
+            default_value='true',
+            description='Enable self-collision detection on the leader.',
+        ),
+        DeclareLaunchArgument(
+            'leader_use_sim',
+            default_value='false',
+            description='If true, pass use_sim:=true to the leader launch.',
+        ),
+        DeclareLaunchArgument(
+            'use_sim',
+            default_value='false',
+            description='Run the follower arm in Gazebo simulation.',
+        ),
+        DeclareLaunchArgument(
+            'init_position',
+            default_value='true',
+            description='Move the follower arm to its initial pose after spawn.',
+        ),
+        DeclareLaunchArgument(
+            'init_position_file',
+            default_value='init_position_hx5.yaml',
+            description='Initial pose YAML under config/omy_f3m/.',
+        ),
+        DeclareLaunchArgument(
+            'ros2_control_type',
+            default_value='omy_f3m_position',
+            description='Type of ros2_control for the follower arm.',
+        ),
+        DeclareLaunchArgument(
+            'prefix',
+            default_value='""',
+            description='Prefix for the follower arm joint and link names.',
+        ),
+        DeclareLaunchArgument(
+            'start_rviz',
+            default_value='false',
+            description='Whether to start rviz2.',
+        ),
+    ]
+    return LaunchDescription(declared_arguments + [
+        OpaqueFunction(function=_launch_setup),
+    ])
+
+
+def _launch_setup(context):
+    hand_port_name = LaunchConfiguration('hand_port_name').perform(context)
+    leader_port_name = LaunchConfiguration('leader_port_name')
+    use_mock_hardware_str = LaunchConfiguration('use_mock_hardware').perform(context)
+    use_mock_hardware = LaunchConfiguration('use_mock_hardware')
+    mock_sensor_commands = LaunchConfiguration('mock_sensor_commands')
+    use_self_collision_avoidance = LaunchConfiguration('use_self_collision_avoidance')
+    leader_use_sim = LaunchConfiguration('leader_use_sim')
+    use_sim = LaunchConfiguration('use_sim')
+    init_position = LaunchConfiguration('init_position')
+    init_position_file = LaunchConfiguration('init_position_file')
+    ros2_control_type = LaunchConfiguration('ros2_control_type')
+    prefix = LaunchConfiguration('prefix')
+    start_rviz = LaunchConfiguration('start_rviz')
+
+    # ─── HX5 hand subsystem (namespace /hand) ───────────────────────────
+    # URDF is materialized at launch time so the controller_manager gets
+    # robot_description as a concrete string parameter (avoids DDS races
+    # against stale topic publishers from previous runs).
+    hand_xacro = os.path.join(
+        get_package_share_directory('open_manipulator_description'),
+        'urdf', 'omy_f3m', 'omy_end_hx5_right_standalone.urdf.xacro')
+    hand_urdf_str = subprocess.check_output([
+        'xacro', hand_xacro,
+        f'port_name:={hand_port_name}',
+        f'use_mock_hardware:={use_mock_hardware_str}',
+    ]).decode('utf-8')
+
+    hand_controller_manager_config = os.path.join(
+        get_package_share_directory('open_manipulator_bringup'),
+        'config', 'omy_end_hx5_right_l100',
+        'hardware_controller_manager.yaml')
+
+    hand_robot_description_param = ParameterValue(hand_urdf_str, value_type=str)
+
+    hand_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[{'robot_description': hand_robot_description_param}],
+        remappings=[
+            ('robot_description', '/hand_robot_description'),
+            ('joint_states', '/hand/joint_states'),
+        ],
+        output='both',
+    )
+
+    hand_control_node = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        namespace='hand',
+        parameters=[
+            {'robot_description': hand_robot_description_param},
+            hand_controller_manager_config,
+        ],
+        remappings=[('robot_description', '/hand_robot_description')],
+        output='both',
+        condition=UnlessCondition(leader_use_sim),
+    )
+
+    hand_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'joint_state_broadcaster',
+            'hand_r_controller',
+            'effort_r_controller',
+            '-c', '/hand/controller_manager',
+        ],
+        output='both',
+    )
+
+    hand_current_command_process = ExecuteProcess(
+        name='hand_r_current_command',
+        cmd=[
+            'ros2', 'topic', 'pub',
+            '-r', '10',
+            '/hand/effort_r_controller/commands',
+            'std_msgs/msg/Float64MultiArray',
+            'data: [300.0, 300.0, 300.0, 300.0,'
+                    '300.0, 300.0, 300.0, 300.0,'
+                    '300.0, 300.0, 300.0, 300.0,'
+                    '300.0, 300.0, 300.0, 300.0,'
+                    '300.0, 300.0, 300.0, 300.0]',
+        ],
+    )
+
+    hand_initial_pose_process = ExecuteProcess(
+        name='hand_r_initial_pose',
+        cmd=[
+            'ros2', 'topic', 'pub', '--once',
+            '/hand/hand_r_controller/joint_trajectory',
+            'trajectory_msgs/msg/JointTrajectory',
+            '{'
+            'joint_names: ['
+            'finger_r_joint1, finger_r_joint2, finger_r_joint3, finger_r_joint4, '
+            'finger_r_joint5, finger_r_joint6, finger_r_joint7, finger_r_joint8, '
+            'finger_r_joint9, finger_r_joint10, finger_r_joint11, finger_r_joint12, '
+            'finger_r_joint13, finger_r_joint14, finger_r_joint15, finger_r_joint16, '
+            'finger_r_joint17, finger_r_joint18, finger_r_joint19, finger_r_joint20], '
+            'points: [{positions: ['
+            '0.0, 0.0, 0.0, 0.0, '
+            '0.0, 0.0, 0.0, 0.0, '
+            '0.0, 0.0, 0.0, 0.0, '
+            '0.0, 0.0, 0.0, 0.0, '
+            '0.0, 0.0, 0.0, 0.0], '
+            'time_from_start: {sec: 3, nanosec: 0}}]'
+            '}',
+        ],
+        output='both',
+    )
+
+    # ─── F3M follower arm subsystem ─────────────────────────────────────
+    # Mirrors omy_f3m.launch.py but:
+    #   (a) remaps /arm_controller/joint_trajectory → /leader/joint_trajectory
+    #       so the follower tracks the leader,
+    #   (b) does NOT spawn gripper_controller (the leader trigger drives HX5
+    #       via the bridge instead),
+    #   (c) uses omy_f3m_arm_only.urdf.xacro instead of omy_f3m.urdf.xacro.
+    #
+    # Why (c): the standard omy_f3m.urdf.xacro always declares the legacy
+    # OMYF3MEndUnitSystem (P12 gripper, OMY END on /dev/ttyAMA4 ID 210). The
+    # HX5 hand controller_manager (in /hand) already owns OMY END through
+    # OMYF3MEndUnitHX5RightSystem, so loading the legacy end-unit here would
+    # make two ros2_control hardware components fight for the same physical
+    # OMY END device, producing endless [ID:210] COMM_ERROR / BulkRead Rx
+    # Fail timeouts on both sides.
+    arm_urdf_file = Command([
+        PathJoinSubstitution([FindExecutable(name='xacro')]),
+        ' ',
+        PathJoinSubstitution([
+            FindPackageShare('open_manipulator_description'),
+            'urdf', 'omy_f3m', 'omy_f3m_arm_only.urdf.xacro',
+        ]),
+        ' ',
+        'prefix:=', prefix, ' ',
+        'use_sim:=', use_sim, ' ',
+        'use_mock_hardware:=', use_mock_hardware, ' ',
+        'mock_sensor_commands:=', mock_sensor_commands, ' ',
+        'ros2_control_type:=', ros2_control_type,
+    ])
+
+    arm_controller_manager_config = PathJoinSubstitution([
+        FindPackageShare('open_manipulator_bringup'),
+        'config', 'omy_f3m', 'hardware_controller_manager.yaml',
+    ])
+
+    arm_trajectory_params_file = PathJoinSubstitution([
+        FindPackageShare('open_manipulator_bringup'),
+        'config', 'omy_f3m', init_position_file,
+    ])
+
+    rviz_config_file = PathJoinSubstitution([
+        FindPackageShare('open_manipulator_description'),
+        'rviz', 'open_manipulator.rviz',
+    ])
+
+    arm_robot_description_param = ParameterValue(arm_urdf_file, value_type=str)
+
+    arm_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[{'robot_description': arm_robot_description_param,
+                     'use_sim_time': use_sim}],
+        output='both',
+    )
+
+    arm_control_node = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[{'robot_description': arm_robot_description_param},
+                    arm_controller_manager_config],
+        remappings=[('/arm_controller/joint_trajectory', '/leader/joint_trajectory')],
+        output='both',
+        condition=UnlessCondition(use_sim),
+    )
+
+    arm_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'arm_controller',
+            'joint_state_broadcaster',
+        ],
+        output='both',
+        parameters=[{'robot_description': arm_robot_description_param}],
+    )
+
+    arm_init_position_executor = Node(
+        package='open_manipulator_bringup',
+        executable='joint_trajectory_executor',
+        parameters=[arm_trajectory_params_file],
+        output='both',
+        condition=IfCondition(init_position),
+    )
+
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', rviz_config_file],
+        output='both',
+        condition=IfCondition(start_rviz),
+    )
+
+    # ─── L100 leader ────────────────────────────────────────────────────
+    # GroupAction + SetRemap shields the leader's controller_manager from
+    # any stale /robot_description topic left over from prior runs.
+    leader_launch = GroupAction([
+        SetRemap('robot_description', 'leader_robot_description_internal'),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(
+                get_package_share_directory('open_manipulator_bringup'),
+                'launch', 'omy_l100_leader_ai.launch.py',
+            )),
+            launch_arguments=[
+                ('port_name', leader_port_name),
+                ('use_self_collision_avoidance', use_self_collision_avoidance),
+                ('use_sim', leader_use_sim),
+                # Override the parent launch's ros2_control_type
+                # (which is omy_f3m_position for the follower arm) so the
+                # leader xacro picks up its own omy_l100_current variant
+                # and finds xacro:omy_l100_system.
+                ('ros2_control_type', 'omy_l100_current'),
+            ],
+        ),
+    ])
+
+    # ─── Bridge: leader rh_r1_joint → HX5 finger presets ────────────────
+    leader_traj_bridge = Node(
+        package='open_manipulator_bringup',
+        executable='omy_f3m_hx5_right_leader_trajectory_bridge',
+        parameters=[
+            {'leader_trajectory_topic': '/leader/joint_trajectory'},
+            {'hand_command_topic': '/hand/hand_r_controller/joint_trajectory'},
+        ],
+        output='both',
+    )
+
+    # ─── Sequencing ─────────────────────────────────────────────────────
+    # ORDER REVERSAL (vs previous revision):
+    #   Mirror omy_f3m.launch.py where omy_f3m_position is initialised
+    #   BEFORE omy_f3m_end_unit. Empirically the cold-port ping to OMY END
+    #   (ID 210) at 4 Mbps right after openPort + setBaudRate hits a
+    #   stack-buffer overflow in dynamixel_sdk Protocol2PacketHandler::
+    #   rxPacket() when residual / self-echo bytes form a "fake header"
+    #   that bumps wait_length past the 11/14-byte rxpacket buffer.
+    #
+    #   Letting the F3M arm finish its own InitDxlComm sweep on
+    #   /dev/rp1ctrluart2 first gives the RP1 UART subsystem ~10 s of
+    #   warm-up time (kernel scheduler, RP1 firmware DMA primed,
+    #   ros2_control library code paths JIT-loaded) before the hand
+    #   process opens /dev/rp1ctrluart4 and pings ID 210.
+    #
+    # SyncTable activation itself is still done by the xacro InitItem chain
+    # (Steps 1-7) inside the hand controller_manager, so no external
+    # set_dxl_data service call is required.
+
+    # Step 1: t = 10 s → hand_control_node (cold-port ping happens here).
+    # The arm + leader have been running for 10 s on their own ports
+    # (rp1ctrluart2, ttyUSB0) so the RP1 UART driver is warm and DDS
+    # discovery has settled before we trigger the OMY END ping.
+    delayed_hand_control_node = TimerAction(
+        period=10.0,
+        actions=[hand_control_node],
+    )
+
+    # Step 2: t = 18 s → spawn HX5 controllers. The hand's full InitItem
+    # chain (OMY END pre + HX5 hub SyncTable cfg + 24 motor inits + OMY
+    # END post) takes ~5-8 s, so 8 s after hand_control_node start is the
+    # safe spawn window.
+    delayed_hand_spawner = TimerAction(
+        period=18.0,
+        actions=[hand_controller_spawner],
+    )
+
+    # Step 2a: HX5 spawner done → start the constant Goal Current=300
+    # publisher so the BulkWrite buffer carries non-zero current.
+    start_hand_current_after_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=hand_controller_spawner,
+            on_exit=[hand_current_command_process],
+        )
+    )
+
+    # Step 2b: HX5 spawner done → 2 s later send HX5 initial pose.
+    delayed_hand_initial_pose = TimerAction(
+        period=2.0,
+        actions=[hand_initial_pose_process],
+    )
+    start_hand_initial_after_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=hand_controller_spawner,
+            on_exit=[delayed_hand_initial_pose],
+        )
+    )
+
+    # Step 3: HX5 initial pose done → spawn follower arm controllers.
+    # This guarantees the hand is already torqued and at home before the
+    # arm starts moving.
+    start_arm_after_hand_initial = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=hand_initial_pose_process,
+            on_exit=[arm_controller_spawner],
+        )
+    )
+
+    # Step 4: arm spawner done → init pose executor + leader bridge + rviz.
+    # The bridge is started after the arm spawner (not after init pose) so
+    # that the HX5 hand starts following the leader trigger immediately
+    # while the arm is still moving to home.
+    start_arm_followups_after_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=arm_controller_spawner,
+            on_exit=[arm_init_position_executor, leader_traj_bridge, rviz_node],
+        )
+    )
+
+    return [
+        # Always-on passive nodes (just /tf, no hardware traffic)
+        hand_robot_state_publisher,
+        arm_robot_state_publisher,
+        # t = 0 : arm + leader hardware come up first (omy_f3m_position
+        #         equivalent). Their UART traffic warms the RP1 driver.
+        arm_control_node,
+        leader_launch,
+        # t = 10 s : hand hardware comes up (omy_f3m_end_unit equivalent).
+        delayed_hand_control_node,
+        # t = 18 s : spawn HX5 controllers, then chain the rest.
+        delayed_hand_spawner,
+        start_hand_current_after_spawner,
+        start_hand_initial_after_spawner,
+        start_arm_after_hand_initial,
+        start_arm_followups_after_spawner,
+    ]

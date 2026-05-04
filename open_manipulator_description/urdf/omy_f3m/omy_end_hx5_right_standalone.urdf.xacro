@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+  Standalone URDF for HX5-right end hardware test.
+  Includes ONLY the HX5-D20 right hand links and the omy_f3m end-unit ros2_control system.
+  The OMY F3M arm hardware is intentionally excluded so this can be used without the arm bus.
+-->
+<robot name="omy_end_hx5_right" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="prefix"               default="" />
+  <xacro:arg name="use_sim"              default="false" />
+  <xacro:arg name="use_mock_hardware"    default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
+  <xacro:arg name="port_name"            default="/dev/ttyAMA4" />
+
+  <!-- HX5 D20 right hand visual/collision links -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/hx5_d20_rev2/hx5_d20_right.urdf.xacro" />
+
+  <!-- HX5 end-unit ros2_control system (real hardware on port_name) -->
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m_end_unit_hx5_right.ros2_control.xacro" />
+
+  <!-- Fixed world root so robot_state_publisher has a complete TF tree -->
+  <link name="world"/>
+
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <parent link="world"/>
+    <child  link="$(arg prefix)hx5_d20_right_base"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Instantiate hand links -->
+  <xacro:hx5_d20_right prefix="$(arg prefix)" />
+
+  <!-- Instantiate hand hardware interface -->
+  <xacro:omy_f3m_end_unit_hx5_right_system
+    name="OMYF3MEndUnitHX5RightSystem"
+    prefix="$(arg prefix)"
+    port_name="$(arg port_name)"
+    use_sim="$(arg use_sim)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"/>
+
+</robot>
