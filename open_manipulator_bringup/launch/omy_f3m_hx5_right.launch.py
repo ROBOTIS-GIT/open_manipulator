@@ -363,6 +363,7 @@ def _launch_setup(context):
                 ('port_name', leader_port_name),
                 ('use_self_collision_avoidance', use_self_collision_avoidance),
                 ('use_sim', leader_use_sim),
+                ('use_mock_hardware', use_mock_hardware),
                 # Override the parent launch's ros2_control_type
                 # (which is omy_f3m_position for the follower arm) so the
                 # leader xacro picks up its own omy_l100_current variant

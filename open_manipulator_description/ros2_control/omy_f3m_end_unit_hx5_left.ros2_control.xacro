@@ -92,10 +92,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_l_sensor1">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 2 joints -->
       <joint name="${prefix}finger_l_joint5">
         <command_interface name="position"/>
@@ -125,10 +121,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_l_sensor2">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 3 joints -->
       <joint name="${prefix}finger_l_joint9">
         <command_interface name="position"/>
@@ -158,10 +150,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_l_sensor3">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 4 joints -->
       <joint name="${prefix}finger_l_joint13">
         <command_interface name="position"/>
@@ -191,10 +179,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_l_sensor4">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 5 joints -->
       <joint name="${prefix}finger_l_joint17">
         <command_interface name="position"/>
@@ -224,10 +208,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_l_sensor5">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- ════════════════════════════════════════════════════════════════════
            [Step 1] OMY END (ID 210) — disable SyncTable, configure Tool Bus,
                     reboot.

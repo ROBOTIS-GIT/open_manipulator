@@ -75,10 +75,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_r_sensor1">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 2 joints -->
       <joint name="${prefix}finger_r_joint5">
         <command_interface name="position"/>
@@ -108,10 +104,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_r_sensor2">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 3 joints -->
       <joint name="${prefix}finger_r_joint9">
         <command_interface name="position"/>
@@ -141,10 +133,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_r_sensor3">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 4 joints -->
       <joint name="${prefix}finger_r_joint13">
         <command_interface name="position"/>
@@ -174,10 +162,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_r_sensor4">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- Finger 5 joints -->
       <joint name="${prefix}finger_r_joint17">
         <command_interface name="position"/>
@@ -207,10 +191,6 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-      <sensor name="${prefix}finger_r_sensor5">
-        <state_interface name="Present Pressure 5"/>
-      </sensor>
-
       <!-- OMY END pre-init (disable SyncTable) -->
       <gpio name="omy_end_pre">
         <param name="type">controller</param>
@@ -223,37 +203,37 @@
         <param name="Tool ID">1</param>
       </gpio>
 
-      <!-- HX5 hub (ID 140) init + SyncTable config -->
+      <!-- HX5 hub (ID 110) init + SyncTable config -->
       <gpio name="hand_r_controller">
         <param name="type">controller</param>
-        <param name="ID">140</param>
+        <param name="ID">110</param>
         <param name="Table Sync Enable">0</param>
         <param name="Bus Watchdog">100</param>
-        <param name="SyncTable 1 ID 1">141</param>
-        <param name="SyncTable 1 ID 2">142</param>
-        <param name="SyncTable 1 ID 3">143</param>
-        <param name="SyncTable 1 ID 4">144</param>
-        <param name="SyncTable 1 ID 5">145</param>
-        <param name="SyncTable 2 ID 1">146</param>
-        <param name="SyncTable 2 ID 2">147</param>
-        <param name="SyncTable 2 ID 3">148</param>
-        <param name="SyncTable 2 ID 4">149</param>
-        <param name="SyncTable 2 ID 5">150</param>
-        <param name="SyncTable 3 ID 1">151</param>
-        <param name="SyncTable 3 ID 2">152</param>
-        <param name="SyncTable 3 ID 3">153</param>
-        <param name="SyncTable 3 ID 4">154</param>
-        <param name="SyncTable 3 ID 5">155</param>
-        <param name="SyncTable 4 ID 1">156</param>
-        <param name="SyncTable 4 ID 2">157</param>
-        <param name="SyncTable 4 ID 3">158</param>
-        <param name="SyncTable 4 ID 4">159</param>
-        <param name="SyncTable 4 ID 5">160</param>
-        <param name="SyncTable 5 ID 1">161</param>
-        <param name="SyncTable 5 ID 2">162</param>
-        <param name="SyncTable 5 ID 3">163</param>
-        <param name="SyncTable 5 ID 4">164</param>
-        <param name="SyncTable 5 ID 5">165</param>
+        <param name="SyncTable 1 ID 1">111</param>
+        <param name="SyncTable 1 ID 2">112</param>
+        <param name="SyncTable 1 ID 3">113</param>
+        <param name="SyncTable 1 ID 4">114</param>
+        <param name="SyncTable 1 ID 5">115</param>
+        <param name="SyncTable 2 ID 1">116</param>
+        <param name="SyncTable 2 ID 2">117</param>
+        <param name="SyncTable 2 ID 3">118</param>
+        <param name="SyncTable 2 ID 4">119</param>
+        <param name="SyncTable 2 ID 5">120</param>
+        <param name="SyncTable 3 ID 1">121</param>
+        <param name="SyncTable 3 ID 2">122</param>
+        <param name="SyncTable 3 ID 3">123</param>
+        <param name="SyncTable 3 ID 4">124</param>
+        <param name="SyncTable 3 ID 5">125</param>
+        <param name="SyncTable 4 ID 1">126</param>
+        <param name="SyncTable 4 ID 2">127</param>
+        <param name="SyncTable 4 ID 3">128</param>
+        <param name="SyncTable 4 ID 4">129</param>
+        <param name="SyncTable 4 ID 5">130</param>
+        <param name="SyncTable 5 ID 1">131</param>
+        <param name="SyncTable 5 ID 2">132</param>
+        <param name="SyncTable 5 ID 3">133</param>
+        <param name="SyncTable 5 ID 4">134</param>
+        <param name="SyncTable 5 ID 5">135</param>
         <param name="SyncTable 1 Read Address 1">224</param>
         <param name="SyncTable 1 Read Address 2">224</param>
         <param name="SyncTable 1 Read Address 3">224</param>
@@ -358,9 +338,9 @@
 
       <!-- Motor init: simplified - only essential params for grasp/release -->
       <!-- Finger 1 motors -->
-      <gpio name="dxl141_init">
+      <gpio name="dxl111_init">
         <param name="type">controller</param>
-        <param name="ID">141</param>
+        <param name="ID">111</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">13</param>
@@ -381,9 +361,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl142_init">
+      <gpio name="dxl112_init">
         <param name="type">controller</param>
-        <param name="ID">142</param>
+        <param name="ID">112</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -404,9 +384,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl143_init">
+      <gpio name="dxl113_init">
         <param name="type">controller</param>
-        <param name="ID">143</param>
+        <param name="ID">113</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">13</param>
@@ -426,9 +406,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl144_init">
+      <gpio name="dxl114_init">
         <param name="type">controller</param>
-        <param name="ID">144</param>
+        <param name="ID">114</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">13</param>
@@ -449,10 +429,10 @@
         <param name="Indirect Address 10">117</param>
       </gpio>
 
-      <!-- Finger 2 motors (simplified - only IDs 146-149) -->
-      <gpio name="dxl146_init">
+      <!-- Finger 2 motors (simplified - only IDs 116-119) -->
+      <gpio name="dxl116_init">
         <param name="type">controller</param>
-        <param name="ID">146</param>
+        <param name="ID">116</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -472,9 +452,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl147_init">
+      <gpio name="dxl117_init">
         <param name="type">controller</param>
-        <param name="ID">147</param>
+        <param name="ID">117</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -495,9 +475,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl148_init">
+      <gpio name="dxl118_init">
         <param name="type">controller</param>
-        <param name="ID">148</param>
+        <param name="ID">118</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -517,9 +497,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl149_init">
+      <gpio name="dxl119_init">
         <param name="type">controller</param>
-        <param name="ID">149</param>
+        <param name="ID">119</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -541,9 +521,9 @@
       </gpio>
 
       <!-- Finger 3 motors -->
-      <gpio name="dxl151_init">
+      <gpio name="dxl121_init">
         <param name="type">controller</param>
-        <param name="ID">151</param>
+        <param name="ID">121</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -564,9 +544,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl152_init">
+      <gpio name="dxl122_init">
         <param name="type">controller</param>
-        <param name="ID">152</param>
+        <param name="ID">122</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -587,9 +567,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl153_init">
+      <gpio name="dxl123_init">
         <param name="type">controller</param>
-        <param name="ID">153</param>
+        <param name="ID">123</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -609,9 +589,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl154_init">
+      <gpio name="dxl124_init">
         <param name="type">controller</param>
-        <param name="ID">154</param>
+        <param name="ID">124</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -633,9 +613,9 @@
       </gpio>
 
       <!-- Finger 4 motors -->
-      <gpio name="dxl156_init">
+      <gpio name="dxl126_init">
         <param name="type">controller</param>
-        <param name="ID">156</param>
+        <param name="ID">126</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -656,9 +636,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl157_init">
+      <gpio name="dxl127_init">
         <param name="type">controller</param>
-        <param name="ID">157</param>
+        <param name="ID">127</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -679,9 +659,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl158_init">
+      <gpio name="dxl128_init">
         <param name="type">controller</param>
-        <param name="ID">158</param>
+        <param name="ID">128</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -701,9 +681,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl159_init">
+      <gpio name="dxl129_init">
         <param name="type">controller</param>
-        <param name="ID">159</param>
+        <param name="ID">129</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -725,9 +705,9 @@
       </gpio>
 
       <!-- Finger 5 motors -->
-      <gpio name="dxl161_init">
+      <gpio name="dxl131_init">
         <param name="type">controller</param>
-        <param name="ID">161</param>
+        <param name="ID">131</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -748,9 +728,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl162_init">
+      <gpio name="dxl132_init">
         <param name="type">controller</param>
-        <param name="ID">162</param>
+        <param name="ID">132</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -771,9 +751,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl163_init">
+      <gpio name="dxl133_init">
         <param name="type">controller</param>
-        <param name="ID">163</param>
+        <param name="ID">133</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -793,9 +773,9 @@
         <param name="Indirect Address 9">116</param>
         <param name="Indirect Address 10">117</param>
       </gpio>
-      <gpio name="dxl164_init">
+      <gpio name="dxl134_init">
         <param name="type">controller</param>
-        <param name="ID">164</param>
+        <param name="ID">134</param>
         <param name="Startup Configuration">2</param>
         <param name="Operating Mode">5</param>
         <param name="Drive Mode">12</param>
@@ -819,36 +799,290 @@
       <!-- HX5 hub - enable SyncTable -->
       <gpio name="hand_r_controller_dummy">
         <param name="type">controller</param>
-        <param name="ID">140</param>
+        <param name="ID">110</param>
         <param name="Table Sync Enable">1</param>
       </gpio>
 
       <!-- Virtual DXL/Sensor mapping via OMY END (comm_id=210) -->
-      <gpio name="dxl141"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">141</param><param name="comm_id">210</param><param name="model_num">7001</param></gpio>
-      <gpio name="dxl142"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">142</param><param name="comm_id">210</param><param name="model_num">7002</param></gpio>
-      <gpio name="dxl143"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">143</param><param name="comm_id">210</param><param name="model_num">7003</param></gpio>
-      <gpio name="dxl144"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">144</param><param name="comm_id">210</param><param name="model_num">7004</param></gpio>
-      <gpio name="finger_r_sensor1"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">145</param><param name="comm_id">210</param><param name="model_num">7005</param></gpio>
-      <gpio name="dxl146"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">146</param><param name="comm_id">210</param><param name="model_num">7006</param></gpio>
-      <gpio name="dxl147"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">147</param><param name="comm_id">210</param><param name="model_num">7007</param></gpio>
-      <gpio name="dxl148"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">148</param><param name="comm_id">210</param><param name="model_num">7008</param></gpio>
-      <gpio name="dxl149"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">149</param><param name="comm_id">210</param><param name="model_num">7009</param></gpio>
-      <gpio name="finger_r_sensor2"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">150</param><param name="comm_id">210</param><param name="model_num">7010</param></gpio>
-      <gpio name="dxl151"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">151</param><param name="comm_id">210</param><param name="model_num">7011</param></gpio>
-      <gpio name="dxl152"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">152</param><param name="comm_id">210</param><param name="model_num">7012</param></gpio>
-      <gpio name="dxl153"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">153</param><param name="comm_id">210</param><param name="model_num">7013</param></gpio>
-      <gpio name="dxl154"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">154</param><param name="comm_id">210</param><param name="model_num">7014</param></gpio>
-      <gpio name="finger_r_sensor3"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">155</param><param name="comm_id">210</param><param name="model_num">7015</param></gpio>
-      <gpio name="dxl156"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">156</param><param name="comm_id">210</param><param name="model_num">7016</param></gpio>
-      <gpio name="dxl157"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">157</param><param name="comm_id">210</param><param name="model_num">7017</param></gpio>
-      <gpio name="dxl158"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">158</param><param name="comm_id">210</param><param name="model_num">7018</param></gpio>
-      <gpio name="dxl159"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">159</param><param name="comm_id">210</param><param name="model_num">7019</param></gpio>
-      <gpio name="finger_r_sensor4"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">160</param><param name="comm_id">210</param><param name="model_num">7020</param></gpio>
-      <gpio name="dxl161"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">161</param><param name="comm_id">210</param><param name="model_num">7021</param></gpio>
-      <gpio name="dxl162"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">162</param><param name="comm_id">210</param><param name="model_num">7022</param></gpio>
-      <gpio name="dxl163"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">163</param><param name="comm_id">210</param><param name="model_num">7023</param></gpio>
-      <gpio name="dxl164"><command_interface name="Goal Position"/><command_interface name="Goal Current"/><state_interface name="Present Position"/><state_interface name="Present Velocity"/><state_interface name="Present Current"/><param name="type">virtual_dxl</param><param name="ID">164</param><param name="comm_id">210</param><param name="model_num">7024</param></gpio>
-      <gpio name="finger_r_sensor5"><state_interface name="Present Pressure 5"/><param name="type">virtual_sensor</param><param name="ID">165</param><param name="comm_id">210</param><param name="model_num">7025</param></gpio>
+      <gpio name="dxl111">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">111</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6001</param>
+      </gpio>
+
+      <gpio name="dxl112">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">112</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6002</param>
+      </gpio>
+
+      <gpio name="dxl113">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">113</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6003</param>
+      </gpio>
+
+      <gpio name="dxl114">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">114</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6004</param>
+      </gpio>
+
+      <gpio name="finger_r_sensor1">
+        <state_interface name="Present Pressure 5"/>
+        <param name="type">virtual_sensor</param>
+        <param name="ID">115</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6005</param>
+      </gpio>
+
+      <gpio name="dxl116">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">116</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6006</param>
+      </gpio>
+
+      <gpio name="dxl117">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">117</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6007</param>
+      </gpio>
+
+      <gpio name="dxl118">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">118</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6008</param>
+      </gpio>
+
+      <gpio name="dxl119">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">119</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6009</param>
+      </gpio>
+
+      <gpio name="finger_r_sensor2">
+        <state_interface name="Present Pressure 5"/>
+        <param name="type">virtual_sensor</param>
+        <param name="ID">120</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6010</param>
+      </gpio>
+
+      <gpio name="dxl121">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">121</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6011</param>
+      </gpio>
+
+      <gpio name="dxl122">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">122</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6012</param>
+      </gpio>
+
+      <gpio name="dxl123">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">123</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6013</param>
+      </gpio>
+
+      <gpio name="dxl124">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">124</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6014</param>
+      </gpio>
+
+      <gpio name="finger_r_sensor3">
+        <state_interface name="Present Pressure 5"/>
+        <param name="type">virtual_sensor</param>
+        <param name="ID">125</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6015</param>
+      </gpio>
+
+      <gpio name="dxl126">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">126</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6016</param>
+      </gpio>
+
+      <gpio name="dxl127">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">127</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6017</param>
+      </gpio>
+
+      <gpio name="dxl128">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">128</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6018</param>
+      </gpio>
+
+      <gpio name="dxl129">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">129</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6019</param>
+      </gpio>
+
+      <gpio name="finger_r_sensor4">
+        <state_interface name="Present Pressure 5"/>
+        <param name="type">virtual_sensor</param>
+        <param name="ID">130</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6020</param>
+      </gpio>
+
+      <gpio name="dxl131">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">131</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6021</param>
+      </gpio>
+
+      <gpio name="dxl132">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">132</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6022</param>
+      </gpio>
+
+      <gpio name="dxl133">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">133</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6023</param>
+      </gpio>
+
+      <gpio name="dxl134">
+        <command_interface name="Goal Position"/>
+        <command_interface name="Goal Current"/>
+        <state_interface name="Present Position"/>
+        <state_interface name="Present Velocity"/>
+        <state_interface name="Present Current"/>
+        <param name="type">virtual_dxl</param>
+        <param name="ID">134</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6024</param>
+      </gpio>
+
+      <gpio name="finger_r_sensor5">
+        <state_interface name="Present Pressure 5"/>
+        <param name="type">virtual_sensor</param>
+        <param name="ID">135</param>
+        <param name="comm_id">210</param>
+        <param name="model_num">6025</param>
+      </gpio>
 
       <!-- OMY END init placeholder -->
       <gpio name="omy_end_init">
