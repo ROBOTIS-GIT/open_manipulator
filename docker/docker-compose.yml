@@ -25,7 +25,8 @@ services:
       - /dev/shm:/dev/shm
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - /var/run/docker.sock:/var/run/docker.sock
       - ./workspace:/workspace
       - ../:/root/ros2_ws/src/open_manipulator/
     privileged: true
-    command: bash
+    command: bash -lc "source /opt/ros/jazzy/setup.bash && cd /root/ros2_ws && colcon build --symlink-install --packages-select open_manipulator_bringup --cmake-args -DCMAKE_BUILD_TYPE=Release && source /root/ros2_ws/install/setup.bash && ros2 launch open_manipulator_bringup omx_ai.launch.py"

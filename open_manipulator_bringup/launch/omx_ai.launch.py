@@ -57,6 +57,12 @@ def generate_launch_description():
         output='screen',
     )
 
+    hardware_error_watchdog = Node(
+        package='open_manipulator_bringup',
+        executable='hardware_error_watchdog',
+        output='screen',
+    )
+
     # Step 3: Start leader launch file
     start_leader = ExecuteProcess(
         cmd=[
@@ -71,6 +77,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         LogInfo(msg='Starting omx_f_follower_ai.launch.py...'),
+        hardware_error_watchdog,
         start_follower,
         # Step 2: Ensure joint_trajectory_executor starts after start_follower
         RegisterEventHandler(

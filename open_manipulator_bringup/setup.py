@@ -47,6 +47,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'hardware_error_watchdog = open_manipulator_bringup.hardware_error_watchdog:main',
             'joint_trajectory_executor = open_manipulator_bringup.joint_trajectory_executor:main',
             'om_create_udev_rules = open_manipulator_bringup.om_create_udev_rules:main',
         ],
