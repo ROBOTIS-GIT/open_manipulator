@@ -1,0 +1,23 @@
+[unit info]
+Data Name	value	unit	Sign Type	Offset
+Present Pressure 1	1.0	raw	unsigned	0.0
+Present Pressure 2	1.0	raw	unsigned	0.0
+Present Pressure 3	1.0	raw	unsigned	0.0
+Present Pressure 4	1.0	raw	unsigned	0.0
+Present Pressure 5	1.0	raw	unsigned	0.0
+Present Pressure 6	1.0	raw	unsigned	0.0
+Present Pressure 7	1.0	raw	unsigned	0.0
+Present Pressure 8	1.0	raw	unsigned	0.0
+Present Pressure 9	1.0	raw	unsigned	0.0
+
+[control table]
+Address	Size	Data Name
+1696	1	Present Pressure 1
+1697	1	Present Pressure 2
+1698	1	Present Pressure 3
+1699	1	Present Pressure 4
+1700	1	Present Pressure 5
+1701	1	Present Pressure 6
+1702	1	Present Pressure 7
+1703	1	Present Pressure 8
+1704	1	Present Pressure 9

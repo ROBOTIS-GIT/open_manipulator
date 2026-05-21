@@ -5,13 +5,15 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 #
-# Subscribes to L100 leader combined arm+gripper joint trajectories and
-# maps leader rh_r1_joint to HX5 right finger presets (mirrored from left).
+# Subscribes to L100 leader combined arm+gripper joint trajectories and:
+# 1) Republishes arm joints only (joint1..6) for the F3M arm_controller.
+# 2) Maps leader rh_r1_joint to HX5 right finger presets (mirrored from left).
 
 import math
-from typing import List
+from typing import List, Optional
 
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
@@ -60,25 +62,65 @@ def blend_presets(
     return out
 
 
+def filter_arm_trajectory(msg: JointTrajectory, arm_joints: List[str]) -> Optional[JointTrajectory]:
+    indices: List[int] = []
+    for joint_name in arm_joints:
+        if joint_name not in msg.joint_names:
+            return None
+        indices.append(msg.joint_names.index(joint_name))
+
+    out = JointTrajectory()
+    out.header = msg.header
+    out.joint_names = list(arm_joints)
+
+    max_index = max(indices)
+    for point in msg.points:
+        new_point = JointTrajectoryPoint()
+        if len(point.positions) <= max_index:
+            return None
+        new_point.positions = [float(point.positions[i]) for i in indices]
+        if point.velocities and len(point.velocities) > max_index:
+            new_point.velocities = [float(point.velocities[i]) for i in indices]
+        if point.accelerations and len(point.accelerations) > max_index:
+            new_point.accelerations = [float(point.accelerations[i]) for i in indices]
+        new_point.time_from_start = point.time_from_start
+        new_point.effort = []
+        out.points.append(new_point)
+
+    return out
+
+
 class OmyF3mHx5RightLeaderTrajectoryBridge(Node):
     def __init__(self) -> None:
         super().__init__('omy_f3m_hx5_right_leader_trajectory_bridge')
 
         self.declare_parameter('leader_trajectory_topic', '/leader/joint_trajectory')
+        self.declare_parameter('arm_command_topic', '/arm_controller/joint_trajectory')
         self.declare_parameter('hand_command_topic', '/hand/hand_r_controller/joint_trajectory')
+        self.declare_parameter(
+            'arm_joint_names',
+            ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6'],
+        )
         self.declare_parameter('leader_gripper_joint_name', 'rh_r1_joint')
         self.declare_parameter('thumb_preset_threshold', 0.0)
         self.declare_parameter('rh_normalize_min', -0.1)
         self.declare_parameter('rh_normalize_max', 1.1)
 
+        self._arm_joints = list(
+            self.get_parameter('arm_joint_names').get_parameter_value().string_array_value
+        )
         self._grip_name = self.get_parameter('leader_gripper_joint_name').value
         self._thumb_thr = self.get_parameter('thumb_preset_threshold').value
         self._rh_min = float(self.get_parameter('rh_normalize_min').value)
         self._rh_max = float(self.get_parameter('rh_normalize_max').value)
 
         in_topic = self.get_parameter('leader_trajectory_topic').value
+        arm_topic = self.get_parameter('arm_command_topic').value
         hand_topic = self.get_parameter('hand_command_topic').value
 
+        self._arm_pub = self.create_publisher(
+            JointTrajectory, arm_topic, qos_profile_sensor_data
+        )
         self._hand_pub = self.create_publisher(
             JointTrajectory, hand_topic, qos_profile_sensor_data
         )
@@ -86,12 +128,16 @@ class OmyF3mHx5RightLeaderTrajectoryBridge(Node):
         self.create_subscription(JointTrajectory, in_topic, self._on_leader_traj, 10)
 
         self.get_logger().info(
-            f'Bridge: sub={in_topic} hand_pub={hand_topic}'
+            f'Bridge: sub={in_topic} arm_pub={arm_topic} hand_pub={hand_topic}'
         )
 
     def _on_leader_traj(self, msg: JointTrajectory) -> None:
         if not msg.points:
             return
+
+        arm_msg = filter_arm_trajectory(msg, self._arm_joints)
+        if arm_msg is not None:
+            self._arm_pub.publish(arm_msg)
 
         if self._grip_name not in msg.joint_names:
             return
@@ -124,10 +170,11 @@ def main(args=None) -> None:
     node = OmyF3mHx5RightLeaderTrajectoryBridge()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     node.destroy_node()
-    rclpy.shutdown()
+    if rclpy.ok():
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':

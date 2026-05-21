@@ -1,0 +1,9 @@
+source;share/open_manipulator_bringup/hook/pythonpath.ps1
+source;share/open_manipulator_bringup/hook/pythonpath.dsv
+source;share/open_manipulator_bringup/hook/pythonpath.sh
+source;share/open_manipulator_bringup/hook/ament_prefix_path.ps1
+source;share/open_manipulator_bringup/hook/ament_prefix_path.dsv
+source;share/open_manipulator_bringup/hook/ament_prefix_path.sh
+source;../../build/open_manipulator_bringup/share/open_manipulator_bringup/hook/pythonpath_develop.ps1
+source;../../build/open_manipulator_bringup/share/open_manipulator_bringup/hook/pythonpath_develop.dsv
+source;../../build/open_manipulator_bringup/share/open_manipulator_bringup/hook/pythonpath_develop.sh

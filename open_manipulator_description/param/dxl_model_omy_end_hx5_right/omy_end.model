@@ -1,0 +1,38 @@
+[unit info]
+Data Name	value	unit	Sign Type	Offset
+Present Current	1.0	raw	signed	0.0
+Present Velocity	0.0239691227	rad/s	signed	0.0
+Present Position	0.0015339807878856412	rad	signed	-3.14159265359
+Goal Current	1.0	raw	signed	0.0
+Goal Position	0.0015339807878856412	rad	signed	-3.14159265359
+
+[control table]
+Address	Size	Data Name
+0	2	Model Number
+2	4	Model Information
+6	1	Firmware Version
+7	1	ID
+8	1	Baud Rate (Bus)
+10	1	Tool Analog Enable
+11	1	Tool Baud Rate
+12	1	Tool Protocol
+13	1	Tool ID
+14	1	Tool Status
+30	1	Button Status
+32	1	R LED
+33	1	G LED
+34	1	B LED
+36	2	Realtime Tick
+40	1	Digital Input
+41	1	Digital Output
+42	2	Analog Input1
+44	2	Analog Input2
+46	1	SyncTable Enable
+48	2	SyncTable Read Address
+52	2	SyncTable Read Size
+56	2	SyncTable Write Address
+60	2	SyncTable Write Size
+378	2	Indirect Address
+634	1	Indirect Data
+378	2	Indirect Address 1
+634	1	Indirect Data 1

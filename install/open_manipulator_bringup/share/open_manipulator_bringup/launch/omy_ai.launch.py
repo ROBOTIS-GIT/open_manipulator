@@ -1,0 +1,1 @@
+/home/robotis/omy_remote/build/open_manipulator_bringup/launch/omy_ai.launch.py

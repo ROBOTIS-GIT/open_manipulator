@@ -1,0 +1,1 @@
+/home/robotis/omy_remote/build/open_manipulator_bringup/launch/omy_3m_hands_gazebo_l100_leader_ai.launch.py

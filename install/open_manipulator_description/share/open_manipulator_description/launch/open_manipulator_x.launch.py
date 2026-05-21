@@ -1,0 +1,1 @@
+/home/robotis/omy_remote/open_manipulator_description/launch/open_manipulator_x.launch.py

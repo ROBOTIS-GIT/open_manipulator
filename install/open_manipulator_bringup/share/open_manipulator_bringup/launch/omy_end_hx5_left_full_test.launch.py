@@ -1,0 +1,1 @@
+/home/robotis/omy_remote/build/open_manipulator_bringup/launch/omy_end_hx5_left_full_test.launch.py

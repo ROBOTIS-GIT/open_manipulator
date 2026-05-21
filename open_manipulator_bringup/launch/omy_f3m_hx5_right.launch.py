@@ -3,20 +3,20 @@
 omy_f3m_hx5_right.launch.py
 
 Combined teleoperation launch:
-  * F3M follower arm (joint1-6)             ← driven by /leader/joint_trajectory
+  * F3M follower arm (joint1-6)             ← driven by filtered leader trajectory
   * HX5 right hand via OMY END SyncTable    ← driven by leader_trajectory_bridge
   * L100 leader (publishes /leader/...)
 
 Topology (defaults match omy-SNPR44B9041 baseboard)
-  /dev/rp1ctrluart2 : F3M follower arm (built-in default in omy_f3m_position xacro)
-  /dev/rp1ctrluart4 : OMY END (HX5 hand, hub ID 210, Tool Bus to HX5 motors 141..164)
+  /dev/ttyAMA2 : F3M follower arm (built-in default in omy_f3m_position xacro)
+  /dev/ttyAMA4 : OMY END (HX5 hand, hub ID 210, Tool Bus to HX5 motors 111..135)
   /dev/ttyUSB0      : L100 leader (USB-RS485 adapter)
 
 Sequencing (mirror omy_f3m.launch.py: omy_f3m_position → omy_f3m_end_unit)
   In the upstream omy_f3m.urdf.xacro both hardware systems live in the same
   controller_manager process and are initialised in xacro order:
-      omy_f3m_position (arm, /dev/rp1ctrluart2 @ 6.25 Mbps) FIRST
-      omy_f3m_end_unit  (P12 + OMY END, /dev/rp1ctrluart4 @ 4 Mbps) SECOND
+      omy_f3m_position (arm, /dev/ttyAMA2 @ 6.25 Mbps) FIRST
+      omy_f3m_end_unit  (P12 + OMY END, /dev/ttyAMA4 @ 4 Mbps) SECOND
   By the time the second hardware system opens its UART, the kernel /
   RP1 driver / process scheduler is already warm from the first system's
   ping+InitItem traffic. We mirror that by:
@@ -24,31 +24,34 @@ Sequencing (mirror omy_f3m.launch.py: omy_f3m_position → omy_f3m_end_unit)
       t = 0      arm_robot_state_publisher
                  hand_robot_state_publisher  (passive — just /tf)
                  arm_control_node            ← omy_f3m_position equivalent
-                 leader_launch               ← starts on its own port
       t = 10 s   hand_control_node           ← omy_f3m_end_unit equivalent
                  (cold-port ping to ID 210 happens AFTER the arm has
                   finished InitDxlComm to IDs 1-6 + omy_hat, so the
                   RP1 UART subsystem is no longer in a fresh-boot state)
 
-  During hand_control_node on_init the xacro InitItem chain runs:
-      Step 1: omy_end_pre        (SyncTable Enable=0 + Tool Bus cfg)
-      Step 2: hand_r_controller  (Table Sync Enable=0 + SyncTable cfg)
-      Step 3: dxl141…dxl164_init (per-motor Operating Mode, gains, …)
-      Step 4: hand_r_controller_dummy (Table Sync Enable=1)
-      Step 5: virtual_dxl + virtual_sensor mapping (no init)
-      Step 6: omy_end_init       (placeholder)
-      Step 7: omy_end_post       (SyncTable Enable=1, SyncTable Enable HX5=1)
+  During hand_control_node on_init the normal xacro InitItem chain runs:
+      Step 1: omy_end_disable_synctable + omy_end_pre
+                              (SyncTable Enable=0, then Tool Bus cfg)
+      Step 2: virtual_dxl + virtual_sensor mapping (no ID110/ID111 direct init)
+      Step 3: omy_end_init       (placeholder)
+      Step 4: omy_end_post       (SyncTable Enable=1)
+
+  configure_hx5_synctable:=true adds the persistent HX5 ID110 SyncTable
+  EEPROM setup and per-motor init writes. Use it only for one-time setup,
+  not for normal launches.
 
       t = 18 s   hand_controller_spawner     (≈8 s into hand init = safe)
       hand spawner exits → hand current cmd + (2 s later) hand initial pose
       hand initial pose exits → arm_controller_spawner
-      arm spawner exits → joint_trajectory_executor + leader bridge + rviz
+      arm spawner exits → joint_trajectory_executor + rviz
+      follower home pose exits → leader_launch
+      leader start + 2 s → leader bridge
 
 Usage
   ros2 launch open_manipulator_bringup omy_f3m_hx5_right.launch.py \
       use_self_collision_avoidance:=false
   # Override only when a port differs from the baseboard defaults:
-  #   hand_port_name:=/dev/rp1ctrluart4   leader_port_name:=/dev/ttyUSB0
+  #   hand_port_name:=/dev/ttyAMA4   leader_port_name:=/dev/ttyUSB0
 """
 
 import os
@@ -60,6 +63,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.actions import ExecuteProcess
 from launch.actions import GroupAction
 from launch.actions import IncludeLaunchDescription
+from launch.actions import LogInfo
 from launch.actions import OpaqueFunction
 from launch.actions import RegisterEventHandler
 from launch.actions import TimerAction
@@ -81,9 +85,9 @@ def generate_launch_description():
     declared_arguments = [
         DeclareLaunchArgument(
             'hand_port_name',
-            default_value='/dev/rp1ctrluart4',
+            default_value='auto',
             description='Serial port for OMY END (HX5 hand, hub ID 210). '
-                        'Defaults to /dev/rp1ctrluart4 (RP1 UART4 on omy-SNPR44B9041 baseboard).',
+                        'Use "auto" to prefer /dev/ttyAMA4, then /dev/rp1ctrluart4.',
         ),
         DeclareLaunchArgument(
             'leader_port_name',
@@ -94,6 +98,12 @@ def generate_launch_description():
             'use_mock_hardware',
             default_value='false',
             description='Use mock hardware for both HX5 and follower arm.',
+        ),
+        DeclareLaunchArgument(
+            'configure_hx5_synctable',
+            default_value='false',
+            description='Write persistent HX5 ID110 SyncTable EEPROM setup during hand init. '
+                        'Use only for one-time configuration/debugging; normal launches skip it.',
         ),
         DeclareLaunchArgument(
             'mock_sensor_commands',
@@ -146,10 +156,32 @@ def generate_launch_description():
     ])
 
 
+def _resolve_hand_port(requested_port: str) -> str:
+    if requested_port and requested_port != 'auto':
+        if not os.path.exists(requested_port):
+            raise RuntimeError(
+                f'OMY END hand_port_name "{requested_port}" does not exist. '
+                'Use hand_port_name:=/dev/ttyAMA4, or check ls -l /dev/ttyAMA* /dev/rp1ctrluart*.'
+            )
+        return requested_port
+
+    for candidate in ('/dev/ttyAMA4', '/dev/rp1ctrluart4'):
+        if os.path.exists(candidate):
+            return candidate
+
+    raise RuntimeError(
+        'Could not find an OMY END serial port. Expected /dev/ttyAMA4 or '
+        '/dev/rp1ctrluart4. Check device names with: ls -l /dev/ttyAMA* /dev/rp1ctrluart*'
+    )
+
+
 def _launch_setup(context):
-    hand_port_name = LaunchConfiguration('hand_port_name').perform(context)
+    hand_port_name = _resolve_hand_port(
+        LaunchConfiguration('hand_port_name').perform(context)
+    )
     leader_port_name = LaunchConfiguration('leader_port_name')
     use_mock_hardware_str = LaunchConfiguration('use_mock_hardware').perform(context)
+    configure_hx5_synctable_str = LaunchConfiguration('configure_hx5_synctable').perform(context)
     use_mock_hardware = LaunchConfiguration('use_mock_hardware')
     mock_sensor_commands = LaunchConfiguration('mock_sensor_commands')
     use_self_collision_avoidance = LaunchConfiguration('use_self_collision_avoidance')
@@ -168,10 +200,18 @@ def _launch_setup(context):
     hand_xacro = os.path.join(
         get_package_share_directory('open_manipulator_description'),
         'urdf', 'omy_f3m', 'omy_end_hx5_right_standalone.urdf.xacro')
+    # dynamixel_hardware_interface prepends its own package share directory to
+    # this parameter, so use a path relative to that package inside the install
+    # prefix instead of an absolute package share path.
+    hand_dynamixel_model_folder = (
+        '/../../../open_manipulator_description/share/open_manipulator_description/'
+        'param/dxl_model_omy_end_hx5_right')
     hand_urdf_str = subprocess.check_output([
         'xacro', hand_xacro,
         f'port_name:={hand_port_name}',
+        f'dynamixel_model_folder:={hand_dynamixel_model_folder}',
         f'use_mock_hardware:={use_mock_hardware_str}',
+        f'configure_hx5_synctable:={configure_hx5_synctable_str}',
     ]).decode('utf-8')
 
     hand_controller_manager_config = os.path.join(
@@ -259,8 +299,8 @@ def _launch_setup(context):
 
     # ─── F3M follower arm subsystem ─────────────────────────────────────
     # Mirrors omy_f3m.launch.py but:
-    #   (a) remaps /arm_controller/joint_trajectory → /leader/joint_trajectory
-    #       so the follower tracks the leader,
+    #   (a) leaves /arm_controller/joint_trajectory on its normal topic; the
+    #       leader bridge filters /leader/joint_trajectory down to joint1..6,
     #   (b) does NOT spawn gripper_controller (the leader trigger drives HX5
     #       via the bridge instead),
     #   (c) uses omy_f3m_arm_only.urdf.xacro instead of omy_f3m.urdf.xacro.
@@ -317,7 +357,6 @@ def _launch_setup(context):
         executable='ros2_control_node',
         parameters=[{'robot_description': arm_robot_description_param},
                     arm_controller_manager_config],
-        remappings=[('/arm_controller/joint_trajectory', '/leader/joint_trajectory')],
         output='both',
         condition=UnlessCondition(use_sim),
     )
@@ -373,12 +412,13 @@ def _launch_setup(context):
         ),
     ])
 
-    # ─── Bridge: leader rh_r1_joint → HX5 finger presets ────────────────
+    # ─── Bridge: leader arm joints → F3M, rh_r1_joint → HX5 presets ─────
     leader_traj_bridge = Node(
         package='open_manipulator_bringup',
         executable='omy_f3m_hx5_right_leader_trajectory_bridge',
         parameters=[
             {'leader_trajectory_topic': '/leader/joint_trajectory'},
+            {'arm_command_topic': '/arm_controller/joint_trajectory'},
             {'hand_command_topic': '/hand/hand_r_controller/joint_trajectory'},
         ],
         output='both',
@@ -394,10 +434,10 @@ def _launch_setup(context):
     #   that bumps wait_length past the 11/14-byte rxpacket buffer.
     #
     #   Letting the F3M arm finish its own InitDxlComm sweep on
-    #   /dev/rp1ctrluart2 first gives the RP1 UART subsystem ~10 s of
+    #   /dev/ttyAMA2 first gives the RP1 UART subsystem ~10 s of
     #   warm-up time (kernel scheduler, RP1 firmware DMA primed,
     #   ros2_control library code paths JIT-loaded) before the hand
-    #   process opens /dev/rp1ctrluart4 and pings ID 210.
+    #   process opens the OMY END port and pings ID 210.
     #
     # SyncTable activation itself is still done by the xacro InitItem chain
     # (Steps 1-7) inside the hand controller_manager, so no external
@@ -405,7 +445,7 @@ def _launch_setup(context):
 
     # Step 1: t = 10 s → hand_control_node (cold-port ping happens here).
     # The arm + leader have been running for 10 s on their own ports
-    # (rp1ctrluart2, ttyUSB0) so the RP1 UART driver is warm and DDS
+    # (/dev/ttyAMA2) so the RP1 UART driver is warm and DDS
     # discovery has settled before we trigger the OMY END ping.
     delayed_hand_control_node = TimerAction(
         period=10.0,
@@ -453,24 +493,49 @@ def _launch_setup(context):
     )
 
     # Step 4: arm spawner done → init pose executor + leader bridge + rviz.
-    # The bridge is started after the arm spawner (not after init pose) so
-    # that the HX5 hand starts following the leader trigger immediately
-    # while the arm is still moving to home.
+    # Keep the leader and bridge stopped here so the follower reaches its
+    # configured home pose before any leader trajectory can command motion.
     start_arm_followups_after_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=arm_controller_spawner,
-            on_exit=[arm_init_position_executor, leader_traj_bridge, rviz_node],
+            on_exit=[arm_init_position_executor, rviz_node],
         )
     )
 
+    # Step 5: follower home pose done → start leader, then let it publish an
+    # initial position before enabling the leader-to-HX5/arm bridge.
+    delayed_leader_traj_bridge = TimerAction(
+        period=2.0,
+        actions=[leader_traj_bridge],
+    )
+    start_leader_after_home = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=arm_init_position_executor,
+            on_exit=[leader_launch, delayed_leader_traj_bridge],
+        ),
+        condition=IfCondition(init_position),
+    )
+
+    delayed_leader_traj_bridge_without_home = TimerAction(
+        period=2.0,
+        actions=[leader_traj_bridge],
+    )
+    start_leader_without_home = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=arm_controller_spawner,
+            on_exit=[leader_launch, delayed_leader_traj_bridge_without_home],
+        ),
+        condition=UnlessCondition(init_position),
+    )
+
     return [
+        LogInfo(msg=f'Using OMY END hand port: {hand_port_name}'),
         # Always-on passive nodes (just /tf, no hardware traffic)
         hand_robot_state_publisher,
         arm_robot_state_publisher,
-        # t = 0 : arm + leader hardware come up first (omy_f3m_position
-        #         equivalent). Their UART traffic warms the RP1 driver.
+        # t = 0 : arm hardware comes up first (omy_f3m_position equivalent).
+        #         Its UART traffic warms the RP1 driver before OMY END opens.
         arm_control_node,
-        leader_launch,
         # t = 10 s : hand hardware comes up (omy_f3m_end_unit equivalent).
         delayed_hand_control_node,
         # t = 18 s : spawn HX5 controllers, then chain the rest.
@@ -479,4 +544,6 @@ def _launch_setup(context):
         start_hand_initial_after_spawner,
         start_arm_after_hand_initial,
         start_arm_followups_after_spawner,
+        start_leader_after_home,
+        start_leader_without_home,
     ]

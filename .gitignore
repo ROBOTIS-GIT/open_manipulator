@@ -52,6 +52,7 @@
 
 ## Kernel Module Compile Results
 *.mod*
+!open_manipulator_description/param/**/*.model
 *.cmd
 .tmp_versions/
 modules.order

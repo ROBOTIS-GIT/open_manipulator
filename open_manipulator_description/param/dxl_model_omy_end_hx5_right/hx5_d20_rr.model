@@ -1,0 +1,22 @@
+[unit info]
+Data Name	value	unit	Sign Type	Offset
+Present Current	1.0	raw	signed	0.0
+Present Velocity	0.0239691227	rad/s	signed	0.0
+Present Position	0.0015339807878856412	rad	signed	-3.14159265359
+Goal Current	1.0	raw	signed	0.0
+Goal Position	0.0015339807878856412	rad	signed	-3.14159265359
+
+[control table]
+Address	Size	Data Name
+0	2	Model Number
+6	1	Firmware Version
+7	1	ID
+8	1	Baud Rate
+11	1	Operating Mode
+64	1	Torque Enable
+224	4	Present Position
+228	4	Present Velocity
+232	4	Present Current
+230	4	Goal Position
+118	4	Goal Current
+1000	1	Table Sync Enable
