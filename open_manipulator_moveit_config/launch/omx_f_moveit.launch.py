@@ -77,16 +77,19 @@ def generate_launch_description():
         'warehouse_host': warehouse_sqlite_path,
     }
 
+    moveit_params = moveit_config.to_dict()
+    moveit_params['publish_robot_description'] = False
     move_group_node = Node(
         package='moveit_ros_move_group',
         executable='move_group',
         output='screen',
         parameters=[
-            moveit_config.to_dict(),
+            moveit_params,
             warehouse_ros_config,
             {
                 'use_sim_time': use_sim,
                 'publish_robot_description_semantic': publish_robot_description_semantic,
+                'publish_robot_description': False,  # bringup handles this
             },
         ],
     )
@@ -102,7 +105,6 @@ def generate_launch_description():
         output='log',
         arguments=['-d', rviz_config_file],
         parameters=[
-            moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             moveit_config.planning_pipelines,
