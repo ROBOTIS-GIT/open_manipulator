@@ -1,6 +1,7 @@
 Number	Name
 230	omy_end.model
 260	hx5_d20_rr.model
+261	hx5_finger_motor.model
 6001	hx5_d20_r_synctable_1_device_1.model
 6002	hx5_d20_r_synctable_1_device_2.model
 6003	hx5_d20_r_synctable_1_device_3.model

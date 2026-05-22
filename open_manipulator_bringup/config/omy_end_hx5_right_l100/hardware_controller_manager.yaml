@@ -1,7 +1,7 @@
 /**:
   controller_manager:
     ros__parameters:
-      update_rate: 5
+      update_rate: 5  # Hz; OMY END SyncTable relay can exceed a 50 ms cycle.
       thread_priority: 40
       cpu_affinity: [1, 2, 3]
 

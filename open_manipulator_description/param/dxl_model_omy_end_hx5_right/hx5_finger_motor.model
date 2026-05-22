@@ -1,0 +1,25 @@
+[control table]
+Address	Size	Data Name
+10	1	Drive Mode
+11	1	Operating Mode
+20	4	Homing Offset
+64	1	Torque Enable
+80	2	Position D Gain
+84	2	Position P Gain
+102	2	Goal Current
+108	4	Profile Acceleration
+112	4	Profile Velocity
+116	4	Goal Position
+126	2	Present Current
+128	4	Present Velocity
+132	4	Present Position
+168	2	Indirect Address 1
+170	2	Indirect Address 2
+172	2	Indirect Address 3
+174	2	Indirect Address 4
+176	2	Indirect Address 5
+178	2	Indirect Address 6
+180	2	Indirect Address 7
+182	2	Indirect Address 8
+184	2	Indirect Address 9
+186	2	Indirect Address 10

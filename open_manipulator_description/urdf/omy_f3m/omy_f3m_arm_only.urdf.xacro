@@ -8,7 +8,7 @@
   The standard omy_f3m.urdf.xacro always declares OMYF3MEndUnitSystem
   (OMY END + P12 gripper combo on /dev/ttyAMA4, ID 210). When the
   F3M arm is run together with a separately-loaded HX5 hand (which owns
-  OMY END through OMYF3MEndUnitHX5LeftSystem in its own controller_manager),
+  OMY END through an HX5 end-unit system in its own controller_manager),
   two ros2_control hardware components fight for the same OMY END device.
   This causes endless [ID:210] COMM_ERROR : There is no status packet!
   and BulkRead/BulkWrite RX timeouts.

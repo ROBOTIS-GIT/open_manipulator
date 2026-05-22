@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /home/robotis/omy_remote log --oneline --stat HEAD~5..HEAD)",
+      "Bash(colcon build *)",
+      "Bash(pip install *)",
+      "Bash(pip3 --version)",
+      "Bash(chmod +x /home/robotis/omy_remote/install/open_manipulator_bringup/lib/open_manipulator_bringup/synctable_watchdog)",
+      "Bash(python3 -c \"import sys; print\\(sys.path\\)\")",
+      "Read(//opt/ros/jazzy/**)",
+      "Read(//usr/**)",
+      "Bash(/usr/bin/python3 -c \"from open_manipulator_bringup.synctable_watchdog import main; print\\('OK'\\)\")",
+      "Bash(/usr/bin/python3 --version)",
+      "Bash(grep -E \"\\(hand_synctable_watchdog|SyncTable Enable|spawner|ERROR|WARN|controller.*active|hand_r_controller|arm_controller|init_pose|leader|bridge|process started|process has died\\)\" /root/.ros/log/2026-05-21-10-16-45-522137-omy-SNPR44B9041-41617/launch.log 2>/dev/null | tail -100)",
+      "Read(//root/.ros/log/2026-05-21-10-16-45-522137-omy-SNPR44B9041-41617/**)",
+      "Bash(ls /root/.ros/log/ 2>/dev/null | tail -5)",
+      "Read(//root/.ros/**)",
+      "Bash(fuser /dev/ttyAMA2 /dev/ttyAMA4)",
+      "Bash(ls /dev/ttyUSB* /dev/ttyACM* 2>/dev/null || echo \"No USB serial devices found\")",
+      "Read(//dev/**)",
+      "Read(//proc/**)",
+      "Bash(lsusb)",
+      "Read(//sys/class/tty/**)",
+      "Bash(find /home/robotis/ros2_ws/src /home/robotis/ros2_ws/install -name \"*.cpp\" -o -name \"*.hpp\" 2>/dev/null | xargs grep -l \"model_num\\\\|model_number\\\\|InitItem\\\\|WriteItem\" 2>/dev/null | head -10)",
+      "Read(//home/robotis/ros2_ws/src/**)",
+      "Bash(# 다른 패키지의 hx5 model 파일 찾기 *)",
+      "Read(//home/robotis/ros2_ws/**)",
+      "Bash(xargs ls)",
+      "Bash(grep -v \"^$\")",
+      "Bash(ls /home/robotis/ros2_ws/install/ 2>/dev/null | head -20 *)",
+      "Read(//root/ros2_ws/**)",
+      "Bash(cat ~/.bashrc | grep -E \"source|setup.bash\" | grep -v \"^#\" | tail -10)",
+      "Read(//home/robotis/**)",
+      "Bash(python3 -c \"import catkin_pkg\")",
+      "Bash(/usr/bin/python3 -c \"import catkin_pkg\")",
+      "Bash(/usr/bin/python3.12 -c \"import catkin_pkg; print\\('OK'\\)\")",
+      "Bash(rm -rf ~/ros2_ws/build/dynamixel_hardware_interface ~/ros2_ws/install/dynamixel_hardware_interface && echo \"Cleared\")",
+      "Bash(python3 -m pip install catkin-pkg)",
+      "Bash(python3 -m pip install catkin-pkg --break-system-packages)"
+    ],
+    "additionalDirectories": [
+      "/home/robotis/ros2_ws/build/dynamixel_hardware_interface"
+    ]
+  }
+}

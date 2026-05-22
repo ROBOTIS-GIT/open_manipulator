@@ -66,6 +66,7 @@ setup(
             'omy_f3m_hx5_left_leader_trajectory_bridge = open_manipulator_bringup.omy_f3m_hx5_left_leader_trajectory_bridge:main',
             'omy_f3m_hx5_right_leader_trajectory_bridge = open_manipulator_bringup.omy_f3m_hx5_right_leader_trajectory_bridge:main',
             'om_create_udev_rules = open_manipulator_bringup.om_create_udev_rules:main',
+            'synctable_watchdog = open_manipulator_bringup.synctable_watchdog:main',
         ],
     },
 )

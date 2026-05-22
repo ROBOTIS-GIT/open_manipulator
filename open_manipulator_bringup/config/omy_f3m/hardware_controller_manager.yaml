@@ -1,7 +1,7 @@
 /**:
   controller_manager:
     ros__parameters:
-      update_rate: 50  # Hz; keeps the 6-DXL sync read below deadline during hand/leader startup.
+      update_rate: 30  # Hz; leaves margin for 20 ms arm sync read/write during hand startup.
       thread_priority: 40
       cpu_affinity: [1, 2, 3]
 

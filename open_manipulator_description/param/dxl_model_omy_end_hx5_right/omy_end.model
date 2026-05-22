@@ -28,6 +28,7 @@ Address	Size	Data Name
 42	2	Analog Input1
 44	2	Analog Input2
 46	1	SyncTable Enable
+47	1	SyncTable Enable HX5
 48	2	SyncTable Read Address
 52	2	SyncTable Read Size
 56	2	SyncTable Write Address

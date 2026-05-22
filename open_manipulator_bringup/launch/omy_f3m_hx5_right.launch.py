@@ -32,9 +32,16 @@ Sequencing (mirror omy_f3m.launch.py: omy_f3m_position → omy_f3m_end_unit)
   During hand_control_node on_init the normal xacro InitItem chain runs:
       Step 1: omy_end_disable_synctable + omy_end_pre
                               (SyncTable Enable=0, then Tool Bus cfg)
-      Step 2: virtual_dxl + virtual_sensor mapping (no ID110/ID111 direct init)
-      Step 3: omy_end_init       (placeholder)
-      Step 4: omy_end_post       (SyncTable Enable=1)
+      Step 2: hand_r_controller
+                              (ID110 Table Sync config, Table Sync Enable=0)
+      Step 3: dxl111..dxl134 motor init
+                              (Operating Mode, gains, indirect addresses)
+      Step 4: hand_r_controller_dummy
+                              (ID110 Table Sync Enable=1)
+      Step 5: virtual_dxl mapping through OMY END ID210
+      Step 6: omy_end_init       (placeholder)
+      Step 7: launch-time service calls
+                              (SyncTable Enable=1, SyncTable Enable HX5=1)
 
   configure_hx5_synctable:=true adds the persistent HX5 ID110 SyncTable
   EEPROM setup and per-motor init writes. Use it only for one-time setup,
@@ -106,6 +113,12 @@ def generate_launch_description():
                         'Use only for one-time configuration/debugging; normal launches skip it.',
         ),
         DeclareLaunchArgument(
+            'enable_hx5_motor_torque',
+            default_value='false',
+            description='Deprecated debug path for direct HX5 motor InitItem writes. '
+                        'Keep false for OMY END SyncTable operation.',
+        ),
+        DeclareLaunchArgument(
             'mock_sensor_commands',
             default_value='false',
             description='Enable mock sensor commands for the follower arm.',
@@ -150,6 +163,12 @@ def generate_launch_description():
             default_value='false',
             description='Whether to start rviz2.',
         ),
+        DeclareLaunchArgument(
+            'enable_synctable_watchdog',
+            default_value='false',
+            description='Read back and re-enable OMY END SyncTable periodically. '
+                        'Keep false while validating the HX5 relay because service reads can stall the hand bus.',
+        ),
     ]
     return LaunchDescription(declared_arguments + [
         OpaqueFunction(function=_launch_setup),
@@ -182,6 +201,7 @@ def _launch_setup(context):
     leader_port_name = LaunchConfiguration('leader_port_name')
     use_mock_hardware_str = LaunchConfiguration('use_mock_hardware').perform(context)
     configure_hx5_synctable_str = LaunchConfiguration('configure_hx5_synctable').perform(context)
+    enable_hx5_motor_torque_str = LaunchConfiguration('enable_hx5_motor_torque').perform(context)
     use_mock_hardware = LaunchConfiguration('use_mock_hardware')
     mock_sensor_commands = LaunchConfiguration('mock_sensor_commands')
     use_self_collision_avoidance = LaunchConfiguration('use_self_collision_avoidance')
@@ -192,6 +212,7 @@ def _launch_setup(context):
     ros2_control_type = LaunchConfiguration('ros2_control_type')
     prefix = LaunchConfiguration('prefix')
     start_rviz = LaunchConfiguration('start_rviz')
+    enable_synctable_watchdog = LaunchConfiguration('enable_synctable_watchdog')
 
     # ─── HX5 hand subsystem (namespace /hand) ───────────────────────────
     # URDF is materialized at launch time so the controller_manager gets
@@ -201,17 +222,22 @@ def _launch_setup(context):
         get_package_share_directory('open_manipulator_description'),
         'urdf', 'omy_f3m', 'omy_end_hx5_right_standalone.urdf.xacro')
     # dynamixel_hardware_interface prepends its own package share directory to
-    # this parameter, so use a path relative to that package inside the install
-    # prefix instead of an absolute package share path.
-    hand_dynamixel_model_folder = (
-        '/../../../open_manipulator_description/share/open_manipulator_description/'
-        'param/dxl_model_omy_end_hx5_right')
+    # this parameter at runtime (see dynamixel_hardware_interface.cpp line ~144).
+    # Compute the relative path from that share dir to the actual model folder
+    # so the concatenation resolves correctly regardless of install prefix.
+    import os as _os
+    _dxl_share = get_package_share_directory('dynamixel_hardware_interface')
+    _model_abs = _os.path.join(
+        get_package_share_directory('open_manipulator_description'),
+        'param', 'dxl_model_omy_end_hx5_right')
+    hand_dynamixel_model_folder = '/' + _os.path.relpath(_model_abs, _dxl_share)
     hand_urdf_str = subprocess.check_output([
         'xacro', hand_xacro,
         f'port_name:={hand_port_name}',
         f'dynamixel_model_folder:={hand_dynamixel_model_folder}',
         f'use_mock_hardware:={use_mock_hardware_str}',
         f'configure_hx5_synctable:={configure_hx5_synctable_str}',
+        f'enable_hx5_motor_torque:={enable_hx5_motor_torque_str}',
     ]).decode('utf-8')
 
     hand_controller_manager_config = os.path.join(
@@ -220,13 +246,14 @@ def _launch_setup(context):
         'hardware_controller_manager.yaml')
 
     hand_robot_description_param = ParameterValue(hand_urdf_str, value_type=str)
+    hand_robot_description_topic = '/hand_robot_description_hx5_right'
 
     hand_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'robot_description': hand_robot_description_param}],
         remappings=[
-            ('robot_description', '/hand_robot_description'),
+            ('robot_description', hand_robot_description_topic),
             ('joint_states', '/hand/joint_states'),
         ],
         output='both',
@@ -240,7 +267,7 @@ def _launch_setup(context):
             {'robot_description': hand_robot_description_param},
             hand_controller_manager_config,
         ],
-        remappings=[('robot_description', '/hand_robot_description')],
+        remappings=[('robot_description', hand_robot_description_topic)],
         output='both',
         condition=UnlessCondition(leader_use_sim),
     )
@@ -412,6 +439,25 @@ def _launch_setup(context):
         ),
     ])
 
+    # ─── SyncTable watchdog ──────────────────────────────────────────────
+    # OMY END firmware can spontaneously drop SyncTable Enable / SyncTable
+    # Enable HX5 to 0 under heavy bus contention. Without this watchdog
+    # the HX5 hand stops responding any time after launch.
+    hand_synctable_watchdog = Node(
+        package='open_manipulator_bringup',
+        executable='synctable_watchdog',
+        name='hand_synctable_watchdog',
+        parameters=[
+            {'hub_id': 210},
+            {'items': ['SyncTable Enable', 'SyncTable Enable HX5']},
+            {'check_period_sec': 1.0},
+            {'set_service': '/hand/dynamixel_hardware_interface/set_dxl_data'},
+            {'get_service': '/hand/dynamixel_hardware_interface/get_dxl_data'},
+        ],
+        output='both',
+        condition=IfCondition(enable_synctable_watchdog),
+    )
+
     # ─── Bridge: leader arm joints → F3M, rh_r1_joint → HX5 presets ─────
     leader_traj_bridge = Node(
         package='open_manipulator_bringup',
@@ -482,13 +528,45 @@ def _launch_setup(context):
         )
     )
 
-    # Step 3: HX5 initial pose done → spawn follower arm controllers.
-    # This guarantees the hand is already torqued and at home before the
-    # arm starts moving.
-    start_arm_after_hand_initial = RegisterEventHandler(
+    # Step 2c: Enable OMY END SyncTable only after Goal Current and the
+    # initial pose have been written into the BulkWrite buffer. HX5 hub
+    # Table Sync is configured during xacro hardware init; do not call ID 110
+    # directly here because it is behind the OMY END tool bus.
+    hand_enable_omy_sync = ExecuteProcess(
+        name='hand_enable_omy_sync',
+        cmd=[
+            'ros2', 'service', 'call', '/hand/dynamixel_hardware_interface/set_dxl_data',
+            'dynamixel_interfaces/srv/SetDataToDxl', '{id: 210, item_name: "SyncTable Enable", item_data: 1}'
+        ],
+        output='both',
+    )
+
+    hand_enable_omy_hx5_sync = ExecuteProcess(
+        name='hand_enable_omy_hx5_sync',
+        cmd=[
+            'ros2', 'service', 'call', '/hand/dynamixel_hardware_interface/set_dxl_data',
+            'dynamixel_interfaces/srv/SetDataToDxl', '{id: 210, item_name: "SyncTable Enable HX5", item_data: 1}'
+        ],
+        output='both',
+    )
+
+    start_hand_services_after_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=hand_initial_pose_process,
-            on_exit=[arm_controller_spawner],
+            target_action=hand_controller_spawner,
+            on_exit=[
+                TimerAction(period=3.0, actions=[hand_enable_omy_sync]),
+                TimerAction(period=4.0, actions=[hand_enable_omy_hx5_sync]),
+            ],
+        )
+    )
+
+    # Step 3: OMY END SyncTable enabled → spawn follower arm controllers.
+    # The watchdog is optional because its service reads share the same DXL
+    # port and can stall a slow OMY END SyncTable read/write cycle.
+    start_arm_after_hand_sync = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=hand_enable_omy_hx5_sync,
+            on_exit=[hand_synctable_watchdog, arm_controller_spawner],
         )
     )
 
@@ -542,7 +620,8 @@ def _launch_setup(context):
         delayed_hand_spawner,
         start_hand_current_after_spawner,
         start_hand_initial_after_spawner,
-        start_arm_after_hand_initial,
+        start_hand_services_after_spawner,
+        start_arm_after_hand_sync,
         start_arm_followups_after_spawner,
         start_leader_after_home,
         start_leader_without_home,
