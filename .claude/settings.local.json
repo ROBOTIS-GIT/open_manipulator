@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f /tmp/demo_all.py /tmp/demo_env.py /tmp/demo_out.txt /tmp/demo_exec.log /tmp/cap_ready.txt)",
+      "Bash(pkill -f demo_all)",
+      "Bash(pkill -f demo_env)",
+      "Bash(exit 0)"
+    ]
+  }
+}

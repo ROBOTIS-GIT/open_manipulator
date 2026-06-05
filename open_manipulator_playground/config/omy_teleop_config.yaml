@@ -1,0 +1,57 @@
+teleop:
+  # --- delta -> joint mapping ---
+  # Reachy sends Cartesian deltas in METERS (its side clamps to ±0.02 m).
+  meters_to_rad: 1.0                 # strict verification mode: small response
+  max_joint_delta_per_command: 0.01  # strict per-command joint contribution
+
+  # --- trajectory publishing / timing ---
+  trajectory_duration: 0.2
+  command_timeout_sec: 1.0           # auto-hold + disarm if no delta for this long
+  gripper_debounce_sec: 0.8
+
+  # --- anti-jerk slew (the core safety: nothing jumps) ---
+  # hard speed cap wins over max_joint_step_per_tick:
+  # per-tick step <= min(max_joint_step_per_tick, max_joint_speed_rad_s / slew_rate_hz)
+  slew_rate_hz: 20.0
+  max_joint_speed_rad_s: 0.03        # strict hard teleop max speed (rad/s)
+  max_joint_step_per_tick: 0.002     # secondary cap; speed cap limits this further
+  max_target_offset: 0.08            # target may lead actual by at most this (rad)
+
+  # --- soft-start after teleop_start ---
+  # Starts at 2% of max speed/offset, then eases to 100% over ramp_up_sec.
+  ramp_up_sec: 4.0
+  ramp_up_min_factor: 0.02
+
+  # --- named poses (home/ready) glide instead of snapping ---
+  named_pose_speed: 0.03             # rad/s; hard-capped by max_joint_speed_rad_s
+  named_pose_min_duration: 2.0
+  named_pose_max_duration: 30.0
+
+  # Reachy sends teleop_start explicitly, so keep deltas-before-start rejected.
+  auto_arm_on_delta: false
+
+joint_names:
+  - joint1
+  - joint2
+  - joint3
+  - joint4
+  - joint5
+  - joint6
+
+# omy_f3m joint position limits (rad). Tighten to the real reachable range.
+joint_limits:
+  joint1: [-2.8, 2.8]
+  joint2: [-1.8, 1.8]
+  joint3: [-1.8, 1.8]
+  joint4: [-2.8, 2.8]
+  joint5: [-1.8, 1.8]
+  joint6: [-2.8, 2.8]
+
+predefined_poses:
+  home:  [0.0, -0.8,  0.8, 0.0,  0.6, 0.0]
+  ready: [0.0, -0.5,  0.9, 0.0,  0.8, 0.0]
+
+gripper:
+  open_position: 0.0
+  close_position: 1.14               # omy_f3m rh_r1_joint fully closed
+  max_effort: 10.0

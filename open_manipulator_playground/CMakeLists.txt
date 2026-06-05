@@ -12,8 +12,10 @@ endif()
 # Find ament packages and libraries for ament and system dependencies
 ################################################################################
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 
 ################################################################################
 # Build
@@ -75,7 +77,23 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch images
+# --- OMY teleoperation (Reachy Mini) receiver nodes ---
+install(PROGRAMS
+  open_manipulator_playground/omy_teleop_executor.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME omy_teleop_executor
+)
+
+install(PROGRAMS
+  open_manipulator_playground/omy_http_bridge.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME omy_http_bridge
+)
+
+# Install the python package (omy_task_protocol, omy_motion_library, ...)
+ament_python_install_package(${PROJECT_NAME})
+
+install(DIRECTORY launch images config
   DESTINATION share/${PROJECT_NAME}
 )
 
