@@ -1,0 +1,1 @@
+/home/robotis/open_manipulator/open_manipulator_description/launch/open_manipulator_x.launch.py

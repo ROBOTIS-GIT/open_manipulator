@@ -1,0 +1,1 @@
+/home/robotis/open_manipulator/open_manipulator_playground/scripts/shape_detector_node.py

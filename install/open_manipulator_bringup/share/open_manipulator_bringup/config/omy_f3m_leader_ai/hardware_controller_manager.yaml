@@ -1,0 +1,72 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 400  # Hz
+      thread_priority: 40
+      cpu_affinity: [1, 2, 3]
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      gravity_compensation_controller:
+        type: gravity_compensation_controller/GravityCompensationController
+
+      joint_trajectory_command_broadcaster:
+        type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
+
+/**:
+  gravity_compensation_controller:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
+      command_interfaces:
+        - effort
+      state_interfaces:
+        - position
+        - velocity
+      kinetic_friction_scalars:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+      input_velocity_scaling_factors:
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+      input_acceleration_scaling_factors:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+
+/**:
+  joint_trajectory_command_broadcaster:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
+      interfaces:
+        - position
+      offsets:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0

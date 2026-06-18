@@ -1,0 +1,42 @@
+joint_trajectory_executor:
+  ros__parameters:
+    joint_names:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+
+    step_names: [home_1, joint6_1, joint6_home, joint6_2, home_2, joint5_1, joint5_home, joint5_2, home_3, joint4_1, joint4_home, joint4_2, home_4, joint3_1, joint3_home, joint3_2, home_5, joint2_1, joint2_home, joint2_2, home_6, joint1_1, joint1_home, joint1_2, home_7]  # Names of the steps
+
+    home_1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint6_1: [0.0, 0.0, 0.0, 0.0, 0.0, -3.14]
+    joint6_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint6_2: [0.0, 0.0, 0.0, 0.0, 0.0, 3.14]
+    home_2: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint5_1: [0.0, 0.0, 0.0, 0.0, -3.14, 0.0]
+    joint5_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint5_2: [0.0, 0.0, 0.0, 0.0, 3.14, 0.0]
+    home_3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint4_1: [0.0, 0.0, 0.0, -1.57, 0.0, 0.0]
+    joint4_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint4_2: [0.0, 0.0, 0.0, 1.57, 0.0, 0.0]
+    home_4: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint3_1: [0.0, 0.0, -1.57, 0.0, 0.0, 0.0]
+    joint3_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint3_2: [0.0, 0.0, 1.57, 0.0, 0.0, 0.0]
+    home_5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint2_1: [0.0, -1.57, 0.0, 0.0, 0.0, 0.0]
+    joint2_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint2_2: [0.0, 1.57, 0.0, 0.0, 0.0, 0.0]
+    home_6: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint1_1: [-3.14, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint1_home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    joint1_2: [3.14, 0.0, 0.0, 0.0, 0.0, 0.0]
+    home_7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    duration: 2.0
+    epsilon: 0.01
+    action_topic: '/arm_controller/follow_joint_trajectory'
+    joint_states_topic: '/joint_states'

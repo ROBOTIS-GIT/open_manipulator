@@ -1,0 +1,91 @@
+# Pose book + timings for omx_movel_bridge high-level skills.
+#
+# Use it with:
+#   ros2 run open_manipulator_playground omx_movel_bridge.py \
+#     --ros-args -p skill_pose_config:=<path>/omx_skill_poses.yaml
+#
+# Values are deep-merged over the in-code defaults, so you only need to list the
+# entries you want to change. Positions are meters in base_frame (link0).
+# Poses without an explicit quaternion (qx/qy/qz/qw) inherit the end-effector
+# orientation captured when the skill starts, which keeps the target reachable.
+#
+# IMPORTANT: tune these on the real OMX-F. The defaults are conservative
+# placeholders, not calibrated values.
+
+poses:
+  ready:
+    x: 0.20
+    y: 0.00
+    z: 0.18
+    qx: 0.0
+    qy: 0.0
+    qz: 0.0
+    qw: 1.0
+    duration: 1.0
+
+  approach_pick:
+    x: 0.20
+    y: 0.00
+    z: 0.16
+    duration: 1.0
+
+  lower_pick:
+    x: 0.20
+    y: 0.00
+    z: 0.09
+    duration: 1.0
+
+  lift:
+    x: 0.20
+    y: 0.00
+    z: 0.20
+    duration: 1.0
+
+  handover:
+    x: 0.18
+    y: -0.12
+    z: 0.18
+    duration: 1.2
+
+  above_marked_zone:
+    x: 0.18
+    y: 0.12
+    z: 0.18
+    duration: 1.0
+
+  marked_zone:
+    x: 0.18
+    y: 0.12
+    z: 0.10
+    duration: 1.0
+
+  push_start:
+    x: 0.20
+    y: 0.00
+    z: 0.08
+    duration: 1.0
+
+# Skill timings / offsets (seconds and meters).
+skill:
+  default_duration: 1.0    # MoveL duration when a pose omits "duration"
+  min_duration: 0.3        # floor so MoveL is never commanded too fast
+  settle_margin: 0.3       # extra wait after each move before the next step
+  gripper_settle: 0.6      # wait after an open/close command
+  handover_wait: 0.8       # pause holding at the handover pose
+  approach_offset: 0.04    # z lift used for approach / retreat poses
+  lift_offset: 0.06        # z lift applied after a pointed-object grasp
+  pick_table_z: 0.09       # fixed table height for pointed-object picks
+  push_max_distance: 0.10  # safety clamp on push distance
+
+# Gripper joint targets (rad). closed = aperture 0.0, open = aperture 1.0.
+gripper:
+  closed: 0.0
+  open: 1.1
+  max_effort: 10.0
+
+# Informational only: the bridge clamps skill poses to the ROS workspace
+# parameters (x_min/x_max/...). Keep this in sync if you tune those.
+workspace:
+  x: [0.12, 0.28]
+  y: [-0.16, 0.16]
+  z: [0.06, 0.28]

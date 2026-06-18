@@ -1,0 +1,26 @@
+omx_movel_controller:
+  ros__parameters:
+    control_frequency: 50.0
+    time_step: 0.02
+    trajectory_time: 0.04
+
+    kp_position: 8.0
+    kp_orientation: 3.0
+
+    weight_task_position: 6.0
+    weight_task_orientation: 0.5
+    weight_damping: 0.02
+
+    slack_penalty: 1000.0
+    cbf_alpha: 5.0
+    collision_buffer: 0.01
+    collision_safe_distance: 0.005
+
+    base_frame: "link0"
+    controlled_link: "end_effector_link"
+
+    joint_states_topic: "/joint_states"
+    joint_command_topic: "/leader/joint_trajectory"
+    movel_topic: "~/movel"
+    ee_pose_topic: "~/current_pose"
+    controller_error_topic: "~/controller_error"

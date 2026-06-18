@@ -1,0 +1,1 @@
+/home/robotis/open_manipulator/build/open_manipulator_moveit_config/ament_cmake_environment_hooks/local_setup.bash

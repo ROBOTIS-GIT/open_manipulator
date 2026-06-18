@@ -1,0 +1,8 @@
+source;share/open_manipulator_moveit_config/hook/cmake_prefix_path.ps1
+source;share/open_manipulator_moveit_config/hook/cmake_prefix_path.dsv
+source;share/open_manipulator_moveit_config/hook/cmake_prefix_path.sh
+source;share/open_manipulator_moveit_config/local_setup.bash
+source;share/open_manipulator_moveit_config/local_setup.dsv
+source;share/open_manipulator_moveit_config/local_setup.ps1
+source;share/open_manipulator_moveit_config/local_setup.sh
+source;share/open_manipulator_moveit_config/local_setup.zsh

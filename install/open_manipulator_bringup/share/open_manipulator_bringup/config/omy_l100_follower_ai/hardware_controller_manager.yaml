@@ -1,0 +1,35 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 300  # Hz
+      thread_priority: 20
+      cpu_affinity: [1, 2, 3]
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      arm_controller:
+        type: joint_trajectory_controller/JointTrajectoryController
+
+/**:
+  arm_controller:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
+        - rh_r1_joint
+
+      interface_name: position
+
+      command_interfaces:
+        - position
+
+      state_interfaces:
+        - position
+        - velocity
+
+      allow_partial_joints_goal: true

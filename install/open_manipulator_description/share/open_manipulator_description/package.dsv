@@ -1,0 +1,8 @@
+source;share/open_manipulator_description/hook/cmake_prefix_path.ps1
+source;share/open_manipulator_description/hook/cmake_prefix_path.dsv
+source;share/open_manipulator_description/hook/cmake_prefix_path.sh
+source;share/open_manipulator_description/local_setup.bash
+source;share/open_manipulator_description/local_setup.dsv
+source;share/open_manipulator_description/local_setup.ps1
+source;share/open_manipulator_description/local_setup.sh
+source;share/open_manipulator_description/local_setup.zsh

@@ -22,6 +22,8 @@
   <depend>trajectory_msgs</depend>
   <depend>robotis_interfaces</depend>
   <depend>std_msgs</depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>launch</exec_depend>

@@ -1,0 +1,1 @@
+/home/robotis/open_manipulator/open_manipulator_playground/scripts/omx_joint_trajectory_relay.py

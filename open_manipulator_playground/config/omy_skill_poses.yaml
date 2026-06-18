@@ -1,0 +1,102 @@
+# Pose book + timings for omx_movel_bridge high-level skills on OMY-F3M.
+#
+# Use it with:
+#   ros2 run open_manipulator_playground main.py \
+#     --ros-args -p skill_pose_config:=<path>/omy_skill_poses.yaml
+# (omy_hand_teleop.launch.py points skill_pose_config here by default.)
+#
+# DIFFERENCES vs omx_skill_poses.yaml:
+#   - Gripper is INVERTED on OMY-F3M (rh_r1_joint, RH-P12-RN, limit 0.0..1.135):
+#     open = 0.0 rad, closed = 1.1 rad. (On OMX it is the opposite.)
+#   - No fixed orientation: every pose omits qx/qy/qz/qw, so each skill commands
+#     the EE orientation captured when the skill starts -> always reachable on
+#     the 6-DOF arm. Add explicit quaternions only if you need a fixed tool pose.
+#
+# IMPORTANT: OMY-F3M is 6-DOF while OMX-F is 5-DOF. These positions do not make
+# the robots kinematically identical; they align the perceived speed / reach /
+# trajectory tendency while keeping more wrist and gripper clearance for OMY.
+# They are safe starting values, NOT calibrated. Tune on the real OMY-F3M:
+#   ros2 topic echo /omy_movel_controller/current_pose
+# jog the arm to each spot, read x/y/z, and paste it here.
+
+# NOTE: OMY-F3M's natural forward reach is the -y axis (its link0 frame is
+# rotated 90 deg from OMX). So here x is the LATERAL axis and -y is reach/depth,
+# the opposite layout from omx_skill_poses.yaml. Keep in sync with the launch
+# workspace box (x -0.18..0.18, y -0.44..-0.32, z 0.15..0.46).
+poses:
+  ready:
+    x: 0.00
+    y: -0.38
+    z: 0.34
+    duration: 1.2
+
+  approach_pick:
+    x: 0.00
+    y: -0.38
+    z: 0.28
+    duration: 1.2
+
+  lower_pick:
+    x: 0.00
+    y: -0.38
+    z: 0.20
+    duration: 1.2
+
+  lift:
+    x: 0.00
+    y: -0.38
+    z: 0.42
+    duration: 1.2
+
+  handover:
+    x: -0.16
+    y: -0.36
+    z: 0.34
+    duration: 1.4
+
+  above_marked_zone:
+    x: 0.16
+    y: -0.36
+    z: 0.33
+    duration: 1.2
+
+  marked_zone:
+    x: 0.16
+    y: -0.36
+    z: 0.21
+    duration: 1.2
+
+  push_start:
+    x: 0.00
+    y: -0.38
+    z: 0.20
+    duration: 1.2
+
+# Skill timings / offsets (seconds and meters).
+skill:
+  default_duration: 1.2
+  min_duration: 0.3
+  settle_margin: 0.3
+  gripper_settle: 0.6
+  handover_wait: 0.8
+  approach_offset: 0.06
+  lift_offset: 0.10
+  pick_table_z: 0.20        # fixed table height for pointed-object picks
+  push_max_distance: 0.12
+
+# OMY-F3M gripper joint targets (rad). closed = aperture 0.0, open = aperture 1.0.
+# NOTE: the bridge takes the ACTIVE gripper values from ROS params
+# (gripper_open_position / gripper_closed_position), which the OMY launch sets
+# to 0.0 / 1.1. This block is documentation/override-reference only.
+gripper:
+  closed: 1.1
+  open: 0.0
+  max_effort: 10.0
+
+# Informational: skill poses are clamped to the ROS workspace parameters
+# (x_min/x_max/...). Keep this in sync with the launch defaults. OMY's forward
+# is -y (x is lateral), so the box sits along -y -- not +x like OMX.
+workspace:
+  x: [-0.18, 0.18]
+  y: [-0.44, -0.32]
+  z: [0.15, 0.46]

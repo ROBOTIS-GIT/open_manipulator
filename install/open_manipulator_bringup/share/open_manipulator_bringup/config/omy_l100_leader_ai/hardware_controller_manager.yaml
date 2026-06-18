@@ -1,0 +1,84 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 300  # Hz
+      thread_priority: 20
+      cpu_affinity: [1, 2, 3]
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      gravity_compensation_controller:
+        type: gravity_compensation_controller/GravityCompensationController
+
+      spring_actuator_controller:
+        type: spring_actuator_controller/SpringActuatorController
+
+      joint_trajectory_command_broadcaster:
+        type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
+
+/**:
+  gravity_compensation_controller:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
+      command_interfaces:
+        - effort
+      state_interfaces:
+        - position
+        - velocity
+      kinetic_friction_scalars:
+        - 0.8
+        - 0.8
+        - 0.8
+        - 0.1
+        - 0.1
+        - 0.1
+      torque_scaling_factors:
+        - 1.0
+        - 1.0
+        - 1.0
+        - 0.8
+        - 0.8
+        - 1.0
+      enable_spring_effect: true
+
+/**:
+  spring_actuator_controller:
+    ros__parameters:
+      joints:
+        - rh_r1_joint
+      command_interfaces:
+        - effort
+      state_interfaces:
+        - position
+        - velocity
+
+/**:
+  joint_trajectory_command_broadcaster:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
+        - rh_r1_joint
+      interfaces:
+        - position
+      reverse_joints:
+        - rh_r1_joint
+      offsets:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.2

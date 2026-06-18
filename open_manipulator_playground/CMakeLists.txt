@@ -72,10 +72,14 @@ install(TARGETS open_manipulator_x_hello_moveit omy_f3m_hello_moveit omy_3m_hell
 install(PROGRAMS
   scripts/shape_detector_node.py
   scripts/omx_trajectory_controller_node.py
+  scripts/main.py
+  scripts/omx_movel_bridge.py
+  scripts/omx_joint_trajectory_relay.py
+  scripts/pose_capture.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch images
+install(DIRECTORY launch images config
   DESTINATION share/${PROJECT_NAME}
 )
 

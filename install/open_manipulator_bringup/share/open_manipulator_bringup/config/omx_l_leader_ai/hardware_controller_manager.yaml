@@ -1,0 +1,90 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 100  # Hz
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      gravity_compensation_controller:
+        type: gravity_compensation_controller/GravityCompensationController
+
+      trigger_position_controller:
+        type: position_controllers/JointGroupPositionController
+
+      joint_trajectory_command_broadcaster:
+        type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
+
+/**:
+  gravity_compensation_controller:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+      command_interfaces:
+        - effort
+      state_interfaces:
+        - position
+        - velocity
+      kinetic_friction_scalars:
+        - 0.0005
+        - 0.15
+        - 0.15
+        - 0.15
+        - 0.15
+      torque_scaling_factors:
+        - 200.0
+        - 350.0
+        - 300.0
+        - 300.0
+        - 300.0
+      input_velocity_scaling_factors:
+        - 1.0
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+      input_acceleration_scaling_factors:
+        - 0.2
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+      friction_compensation_velocity_thresholds:
+        - 100.0
+        - 3.5
+        - 3.5
+        - 3.5
+        - 3.5
+        - 3.5
+
+/**:
+  trigger_position_controller:
+    ros__parameters:
+      joints:
+        - gripper_joint_1
+
+/**:
+  joint_trajectory_command_broadcaster:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - gripper_joint_1
+      interfaces:
+        - position
+      reverse_joints:
+        - gripper_joint_1
+      offsets:
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+        - 0.0

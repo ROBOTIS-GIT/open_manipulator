@@ -1,0 +1,16 @@
+joint_trajectory_executor:
+  ros__parameters:
+    joint_names:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+
+    step_names: [home]  # Names of the steps
+
+    home: [0.0, -1.0, 1.0, 0.0]  # Home position
+
+    duration: 3.0
+    epsilon: 0.01
+    action_topic: '/arm_controller/follow_joint_trajectory'
+    joint_states_topic: '/joint_states'
