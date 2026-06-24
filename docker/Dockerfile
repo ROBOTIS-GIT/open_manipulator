@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     libglfw3-dev \
     ros-${ROS_DISTRO}-image-transport-plugins \
     ros-${ROS_DISTRO}-usb-cam \
+    ros-${ROS_DISTRO}-rmw-zenoh-cpp \
     vim \
     nano \
     && rm -rf /var/lib/apt/lists/*
@@ -31,14 +32,14 @@ RUN mkdir -p ${COLCON_WS}/src && \
     git clone -b jazzy https://github.com/ROBOTIS-GIT/dynamixel_interfaces.git && \
     git clone -b jazzy https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
     git clone -b jazzy https://github.com/ROBOTIS-GIT/open_manipulator.git && \
-    git clone -b jazzy https://github.com/ros2/rmw_zenoh.git && \
+    git clone -b jazzy https://github.com/ROBOTIS-GIT/robotis_interfaces.git && \
     git clone -b r/4.56.4 https://github.com/IntelRealSense/realsense-ros.git && \
     cd realsense-ros && git checkout cbd8b8487d4c0126bb590822db9469414496e62a
 
 RUN cd ${COLCON_WS} && \
     apt-get update && \
     rosdep update && \
-    rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys="librealsense2" -y && \
+    rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys="librealsense2 robotis_interfaces" -y && \
     rm -rf /var/lib/apt/lists/*
 
 RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
@@ -48,6 +49,10 @@ RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc  && \
     echo "source ${COLCON_WS}/install/setup.bash" >> ~/.bashrc  && \
     echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc && \
-    echo "export ROS_DOMAIN_ID=30" >> ~/.bashrc
+    echo "alias omy_ai='ros2 launch open_manipulator_bringup omy_ai.launch.py'" >> ~/.bashrc && \
+    echo "alias omx_ai='ros2 launch open_manipulator_bringup omx_ai.launch.py'" >> ~/.bashrc && \
+    echo "alias zenohd='ros2 run rmw_zenoh_cpp rmw_zenohd'" >> ~/.bashrc && \
+    echo "export ROS_DOMAIN_ID=30" >> ~/.bashrc && \
+    echo "export RMW_IMPLEMENTATION=rmw_zenoh_cpp" >> ~/.bashrc
 
 CMD ["bash"]
