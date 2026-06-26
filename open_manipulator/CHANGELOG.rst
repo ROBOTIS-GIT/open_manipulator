@@ -2,6 +2,12 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.0.0 (2026-06-24)
+------------------
+* Updated dockerfile to use zenoh-cpp
+* Updated SRDF for OMY-F3M
+* Contributors: Sungho Woo
+
 4.1.4 (2026-04-27)
 ------------------
 * Added nodes for drawing mission: shape_detector_node and omx_trajectory_controller_node

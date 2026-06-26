@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.0.0 (2026-06-24)
+------------------
+* Updated SRDF for OMY-F3M
+* Contributors: Sungho Woo
+
 4.1.4 (2026-04-27)
 ------------------
 * None

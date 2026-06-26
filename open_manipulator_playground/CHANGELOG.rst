@@ -2,6 +2,10 @@
 Changelog for package open_manipulator_playground
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.0.0 (2026-06-24)
+------------------
+* None
+
 4.1.4 (2026-04-27)
 ------------------
 * Added nodes for drawing mission: shape_detector_node and omx_trajectory_controller_node
