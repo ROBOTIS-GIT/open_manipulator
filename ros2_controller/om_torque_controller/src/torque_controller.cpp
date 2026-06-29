@@ -101,12 +101,6 @@ controller_interface::return_type TorqueController::update(
     }
   }
 
-  if (params_.enable_spring_effect && n_joints_ > 2) {
-    if (q(2) < 0.5) {
-      torques(2) += std::abs(q(2) - 0.5) * 2.5;
-    }
-  }
-
   for (size_t i = 0; i < tree_.getNrOfJoints(); ++i) {
     if (i >= joint_names_.size()) {
       continue;
