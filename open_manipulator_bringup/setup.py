@@ -24,6 +24,8 @@ setup(
             glob('config/omy_f3m_leader_ai/*')),
         (os.path.join('share', package_name, 'config/omy_l100_follower_ai'),
             glob('config/omy_l100_follower_ai/*')),
+        (os.path.join('share', package_name, 'config/omy_l100_follower_torque'),
+            glob('config/omy_l100_follower_torque/*')),
         (os.path.join('share', package_name, 'config/omy_l100_leader_ai'),
             glob('config/omy_l100_leader_ai/*')),
         (os.path.join('share', package_name, 'config/open_manipulator_x'),
