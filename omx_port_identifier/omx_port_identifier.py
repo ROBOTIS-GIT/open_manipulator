@@ -99,8 +99,13 @@ def camera_info(video_path):
 
 def safe_usb_cameras():
     try:
-        all_video = sorted(glob.glob("/dev/video*"),
-            key=lambda p: int(re.search(r'video(\d+)$', p).group(1)))
+        video_paths = []
+        for p in glob.glob("/dev/video*"):
+            m = re.search(r'video(\d+)$', p)
+            if m:
+                video_paths.append((int(m.group(1)), p))
+        video_paths.sort()
+        all_video = [p for _, p in video_paths]
     except Exception: return []
     seen, result = set(), []
     for path in all_video:
@@ -1038,10 +1043,13 @@ class App:
     # ── Camera preview ────────────────────────────────────────────────────────
 
     def _show_camera_preview(self, opencv_idx, cam_name, dev_path):
-        script = f"""
+        # Script receives dev_path, idx, cam_name as CLI args —
+        # avoids f-string injection if cam_name contains quotes.
+        script = """
 import cv2, time, sys
-dev_path = "{dev_path}"
-idx = {opencv_idx}
+dev_path = sys.argv[1]
+idx      = int(sys.argv[2])
+cam_name = sys.argv[3]
 cap = None
 for attempt in [
     lambda: cv2.VideoCapture(idx, cv2.CAP_V4L2),
@@ -1065,7 +1073,7 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH,  640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 time.sleep(0.8)
 for _ in range(10): cap.read()
-title = "{cam_name} (index {opencv_idx}) - press Q to close"
+title = f"{cam_name} (index {idx}) - press Q to close"
 while True:
     ret, frame = cap.read()
     if not ret or frame is None:
@@ -1090,7 +1098,8 @@ cv2.destroyAllWindows()
             return
 
         try:
-            subprocess.Popen([sys.executable, "-c", script])
+            subprocess.Popen([sys.executable, "-c", script,
+                              dev_path, str(opencv_idx), cam_name])
         except Exception as e:
             messagebox.showerror("Preview error", str(e))
 
