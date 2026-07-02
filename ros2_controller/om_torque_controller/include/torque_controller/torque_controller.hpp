@@ -98,6 +98,8 @@ protected:
   std::vector<double> previous_velocities_;
 
   realtime_tools::RealtimeBuffer<std::vector<double>> command_torque_buffer_;
+  realtime_tools::RealtimeBuffer<bool> command_received_buffer_;
+  realtime_tools::RealtimeBuffer<rclcpp::Time> last_command_time_buffer_;
   rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr torque_command_sub_;
 
   std::atomic<bool> compensate_gravity_{true};

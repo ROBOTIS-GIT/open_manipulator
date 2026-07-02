@@ -48,7 +48,7 @@ controller_interface::InterfaceConfiguration TorqueController::state_interface_c
 }
 
 controller_interface::return_type TorqueController::update(
-  [[maybe_unused]] const rclcpp::Time & time, const rclcpp::Duration & period)
+  const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   auto assign_point_from_interface =
     [&](std::vector<double> & trajectory_point_interface, const auto & joint_interface) {
@@ -77,6 +77,16 @@ controller_interface::return_type TorqueController::update(
     }
   }
 
+  auto command_received_ptr = command_received_buffer_.readFromRT();
+  auto last_command_time_ptr = last_command_time_buffer_.readFromRT();
+  const bool command_received = command_received_ptr && *command_received_ptr;
+  const bool command_is_fresh =
+    command_received &&
+    last_command_time_ptr &&
+    (
+    params_.command_timeout <= 0.0 ||
+    (time - *last_command_time_ptr).seconds() <= params_.command_timeout);
+
   KDL::JntArray q(tree_.getNrOfJoints());
   KDL::JntArray q_dot(tree_.getNrOfJoints());
   KDL::JntArray q_ddot(tree_.getNrOfJoints());
@@ -84,8 +94,8 @@ controller_interface::return_type TorqueController::update(
 
   for (size_t i = 0; i < joint_names_.size(); ++i) {
     q(i) = joint_positions_[i];
-    q_dot(i) = joint_velocities_[i];
-    q_ddot(i) = joint_accelerations[i];
+    q_dot(i) = command_is_fresh ? joint_velocities_[i] : 0.0;
+    q_ddot(i) = command_is_fresh ? joint_accelerations[i] : 0.0;
     torques(i) = 0.0;
   }
 
@@ -95,7 +105,7 @@ controller_interface::return_type TorqueController::update(
   }
 
   auto command_torques_ptr = command_torque_buffer_.readFromRT();
-  if (command_torques_ptr) {
+  if (command_is_fresh && command_torques_ptr) {
     for (size_t i = 0; i < n_joints_; ++i) {
       torques(i) += (*command_torques_ptr)[i];
     }
@@ -106,35 +116,39 @@ controller_interface::return_type TorqueController::update(
       continue;
     }
 
+    const double friction_velocity = joint_velocities_[i];
     double kinetic_friction_scalar = params_.kinetic_friction_scalars[i] *
       (1.0 + std::abs(torques(i) * params_.kinetic_friction_torque_scalars[i]));
 
     double kinetic_friction_rate = 1.0 -
-      (std::abs(q_dot(i)) * 10.0 - params_.friction_compensation_velocity_thresholds[i]);
+      (std::abs(friction_velocity) * 10.0 - params_.friction_compensation_velocity_thresholds[i]);
     if (kinetic_friction_rate < 0.0) {
       kinetic_friction_rate = 0.0;
     }
     kinetic_friction_scalar *= kinetic_friction_rate;
 
-    if (q_dot(i) > 0.0) {
-      torques(i) += kinetic_friction_scalar * std::abs(q_dot(i));
+    if (friction_velocity > 0.0) {
+      torques(i) += kinetic_friction_scalar * std::abs(friction_velocity);
 
       if (std::abs(torques(i)) < params_.unloaded_effort_thresholds[i]) {
         torques(i) += params_.unloaded_effort_offsets[i];
       }
-    } else if (q_dot(i) < 0.0) {
-      torques(i) -= kinetic_friction_scalar * std::abs(q_dot(i));
+    } else if (friction_velocity < 0.0) {
+      torques(i) -= kinetic_friction_scalar * std::abs(friction_velocity);
 
       if (std::abs(torques(i)) < params_.unloaded_effort_thresholds[i]) {
         torques(i) -= params_.unloaded_effort_offsets[i];
       }
     }
 
-    if (std::abs(q_dot(i)) < params_.static_friction_velocity_thresholds[i]) {
+    if (std::abs(friction_velocity) < params_.static_friction_velocity_thresholds[i]) {
+      const double static_dither_torque =
+        params_.static_friction_offsets[i] +
+        params_.static_friction_scalars[i] * std::abs(torques(i));
       if (dither_switch_) {
-        torques(i) += params_.static_friction_scalars[i] * std::abs(torques(i));
+        torques(i) += static_dither_torque;
       } else {
-        torques(i) -= params_.static_friction_scalars[i] * std::abs(torques(i));
+        torques(i) -= static_dither_torque;
       }
     }
 
@@ -196,6 +210,8 @@ void TorqueController::configure_subscribers()
         }
         command_torques = effort;
         command_torque_buffer_.writeFromNonRT(command_torques);
+        command_received_buffer_.writeFromNonRT(true);
+        last_command_time_buffer_.writeFromNonRT(get_node()->now());
         return;
       }
 
@@ -220,6 +236,8 @@ void TorqueController::configure_subscribers()
       }
 
       command_torque_buffer_.writeFromNonRT(command_torques);
+      command_received_buffer_.writeFromNonRT(true);
+      last_command_time_buffer_.writeFromNonRT(get_node()->now());
     });
 }
 
@@ -243,6 +261,8 @@ controller_interface::CallbackReturn TorqueController::on_configure(
   joint_velocities_.resize(n_joints_);
   previous_velocities_.resize(n_joints_);
   command_torque_buffer_.writeFromNonRT(std::vector<double>(n_joints_, 0.0));
+  command_received_buffer_.writeFromNonRT(false);
+  last_command_time_buffer_.writeFromNonRT(get_node()->now());
 
   if (params_.joints.empty()) {
     RCLCPP_WARN(logger, "'joints' parameter is empty.");
@@ -345,6 +365,8 @@ controller_interface::CallbackReturn TorqueController::on_cleanup(
   tree_ = KDL::Tree();
   f_ext_.clear();
   command_torque_buffer_.writeFromNonRT(std::vector<double>());
+  command_received_buffer_.writeFromNonRT(false);
+  last_command_time_buffer_.writeFromNonRT(get_node()->now());
   torque_command_sub_.reset();
 
   RCLCPP_INFO(get_node()->get_logger(), "TorqueController cleaned up successfully.");

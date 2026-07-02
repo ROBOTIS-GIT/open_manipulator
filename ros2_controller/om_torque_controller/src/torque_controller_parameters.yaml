@@ -34,6 +34,11 @@ torque_controller:
     default_value: true,
     description: "Add model-based gravity/inverse-dynamics torque to incoming torque commands"
   }
+  command_timeout: {
+    type: double,
+    default_value: 0.1,
+    description: "Seconds before the last torque command is considered stale. Set <= 0.0 to hold the last command indefinitely."
+  }
   unloaded_effort_offsets: {
     type: double_array,
     default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -52,7 +57,12 @@ torque_controller:
   static_friction_scalars: {
     type: double_array,
     default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-    description: "Scaling factors for static friction compensation (dithering)"
+    description: "Torque-proportional scaling factors for static friction compensation dithering"
+  }
+  static_friction_offsets: {
+    type: double_array,
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    description: "Absolute torque offsets added with alternating sign for static friction compensation dithering"
   }
   static_friction_velocity_thresholds: {
     type: double_array,

@@ -27,17 +27,39 @@
         - position
         - velocity
       compensate_gravity: true
+      command_timeout: 0.1
       kinetic_friction_scalars:
-        - 0.8
-        - 0.8
-        - 0.8
+        - 1.0
+        - 1.0
+        - 1.0
+        - 0.03
+        - 0.03
+        - 0.03
+      static_friction_scalars:
+        - 0.5
+        - 0.5
+        - 0.5
+        - 0.0
+        - 0.0
+        - 0.0
+      static_friction_offsets:
         - 0.1
         - 0.1
         - 0.1
+        - 0.0
+        - 0.0
+        - 0.0
+      static_friction_velocity_thresholds:
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.0
+        - 0.0
+        - 0.0
       torque_scaling_factors:
         - 1.0
         - 1.0
         - 1.0
-        - 0.8
-        - 0.8
+        - 1.0
+        - 1.0
         - 1.0

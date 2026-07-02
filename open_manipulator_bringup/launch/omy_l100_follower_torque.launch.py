@@ -58,7 +58,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'use_self_collision_avoidance',
-            default_value='true',
+            default_value='false',
             description='Whether to launch the self-collision detection node',
         ),
         DeclareLaunchArgument(
@@ -126,6 +126,7 @@ def generate_launch_description():
         arguments=[
             'torque_controller',
             'joint_state_broadcaster',
+            '--service-call-timeout', '30',
         ],
         parameters=[{'robot_description': urdf_file}],
         output='both',
@@ -136,7 +137,8 @@ def generate_launch_description():
         executable='robot_state_publisher',
         parameters=[{'robot_description': urdf_file,
                      'use_sim_time': use_sim,
-                     'frame_prefix': 'leader_'}],
+                    #  'frame_prefix': 'leader_',
+                     }],
         output='both',
     )
 
