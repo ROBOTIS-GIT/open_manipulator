@@ -170,6 +170,15 @@ class App:
         self._lerobot_expanded = False
         self._pulse_job  = None
 
+        # Launch file paths
+        _ws = os.path.expanduser(
+            '~/robot_ws/open_manipulator/open_manipulator_bringup/launch')
+        self._leader_launch   = tk.StringVar(
+            value=os.path.join(_ws, 'omx_l_leader_ai.launch.py'))
+        self._follower_launch = tk.StringVar(
+            value=os.path.join(_ws, 'omx_f_follower_ai.launch.py'))
+        self._apply_result = tk.StringVar(value='')
+
         self._hf_user_var  = tk.StringVar(value="")
         self._dataset_var  = tk.StringVar(value="omx-test")
         self._cam_idx_var  = tk.StringVar(value="2")
@@ -314,6 +323,9 @@ class App:
                  padx=16, pady=4,
                  anchor="w", justify="left").pack(fill="x")
         tk.Frame(self._ready_card, height=10, bg="#d1fae5").pack()
+
+        # Launch file panel
+        self._build_launch_panel(right)
 
         # lerobot panel
         self._build_lerobot_panel()
@@ -857,6 +869,135 @@ class App:
 
     # ── lerobot command panel ─────────────────────────────────────────────────
 
+
+    def _build_launch_panel(self, parent):
+        """Apply stable by-id ports to launch files — replaces manual nano editing."""
+        lp = tk.Frame(parent, bg=SURFACE,
+                      highlightbackground=BORDER, highlightthickness=1)
+        lp.grid(row=2, column=0, sticky="ew", pady=(12, 0))
+        lp.columnconfigure(0, weight=1)
+
+        tk.Label(lp, text="Apply to Launch Files",
+                 bg=SURFACE, fg=TEXT, font=self.F["h2"],
+                 padx=16, pady=10, anchor="w").pack(fill="x")
+
+        fields = tk.Frame(lp, bg=SURFACE, padx=16)
+        fields.pack(fill="x")
+        fields.columnconfigure(1, weight=1)
+
+        for i, (label, var) in enumerate([
+            ("Leader",   self._leader_launch),
+            ("Follower", self._follower_launch),
+        ]):
+            tk.Label(fields, text=label,
+                     bg=SURFACE, fg=ROLE_FG[label],
+                     font=self.F["btn"], width=8,
+                     anchor="w").grid(row=i, column=0, sticky="w", pady=3)
+            tk.Entry(fields, textvariable=var,
+                     bg=BG, fg=MUTED, font=self.F["small"],
+                     relief="flat",
+                     highlightbackground=BORDER,
+                     highlightthickness=1,
+                     insertbackground=TEXT).grid(
+                         row=i, column=1, sticky="ew",
+                         padx=(8, 0), ipady=4)
+
+        br = tk.Frame(lp, bg=SURFACE, padx=16, pady=8)
+        br.pack(fill="x")
+
+        tk.Button(br, text="Apply",
+                  command=self._apply_to_launch_files,
+                  bg=TEXT, fg="#ffffff", font=self.F["small"],
+                  relief="flat", padx=16, pady=7,
+                  cursor="hand2").pack(side="left")
+
+        self._apply_result_lbl = tk.Label(br, textvariable=self._apply_result,
+                                          bg=SURFACE, fg=SUCCESS,
+                                          font=self.F["small"])
+        self._apply_result_lbl.pack(side="left", padx=12)
+        tk.Frame(lp, height=6, bg=SURFACE).pack()
+
+    def _apply_to_launch_files(self):
+        import re as _re
+        leader   = next((p for p, r in self.assignments.items()
+                         if r == "Leader"), None)
+        follower = next((p for p, r in self.assignments.items()
+                         if r == "Follower"), None)
+
+        def stable(port):
+            if not port: return None
+            if "/dev/serial/by-id/" in port: return port
+            m = [p for p in glob.glob("/dev/serial/by-id/*")
+                 if os.path.realpath(p) == os.path.realpath(port)]
+            return m[0] if m else port
+
+        def rewrite(launch_file, new_port):
+            launch_file = os.path.expanduser(launch_file)
+            if not os.path.exists(launch_file):
+                return "notfound"
+            with open(launch_file) as f:
+                lines = f.readlines()
+            new_lines = []
+            found = False
+            i = 0
+            while i < len(lines):
+                line = lines[i]
+                # Match DeclareLaunchArgument port_name block:
+                # looks for a line that is ONLY the port_name string
+                # e.g. "            'port_name',"
+                stripped = line.strip()
+                if stripped in ("'port_name',", '"port_name",') and i + 1 < len(lines):
+                    next_line = lines[i + 1]
+                    if "default_value=" in next_line:
+                        indent = len(next_line) - len(next_line.lstrip())
+                        spaces = next_line[:indent]
+                        new_next = f"{spaces}default_value='{new_port}',\n"
+                        new_lines.append(line)
+                        new_lines.append(new_next)
+                        found = True
+                        i += 2
+                        continue
+                new_lines.append(line)
+                i += 1
+            if not found:
+                return "nomatch"
+            with open(launch_file, 'w') as f:
+                f.writelines(new_lines)
+            return "ok"
+        errors, results = [], []
+        for port, path, label in [
+            (leader,   self._leader_launch.get().strip(),   "Leader"),
+            (follower, self._follower_launch.get().strip(), "Follower"),
+        ]:
+            path = os.path.expanduser(path)
+            sp = stable(port)
+            if not sp:
+                errors.append(f"{label} not assigned")
+                continue
+            result = rewrite(path, sp)
+            if result == "ok":
+                results.append(label)
+            elif result == "notfound":
+                errors.append(f"{label}: file not found at {path}")
+            else:
+                errors.append(f"{label}: port_name declaration not found in file")
+
+        # Also update omx_f.launch.py for MoveIt2 bringup
+        sp_f = stable(follower)
+        if sp_f:
+            bringup = os.path.expanduser(
+                self._follower_launch.get().strip().replace(
+                "omx_f_follower_ai.launch.py", "omx_f.launch.py"))
+            rewrite(bringup, sp_f)
+
+        if errors:
+            self._apply_result.set("Error: " + ", ".join(errors))
+            self._apply_result_lbl.configure(fg=DANGER)
+        else:
+            self._apply_result.set("Applied: " + " + ".join(results))
+            self._apply_result_lbl.configure(fg=SUCCESS)
+            self.root.after(3000, lambda: self._apply_result.set(""))
+
     def _build_lerobot_panel(self):
         self._lr_panel = tk.Frame(self.root, bg=SURFACE,
                                   highlightbackground=BORDER,
@@ -869,7 +1010,36 @@ class App:
             padx=16, pady=10, anchor="w", cursor="hand2")
         self._lr_toggle.pack(fill="x")
         self._lr_toggle.bind("<Button-1>", self._toggle_lerobot)
-        self._lr_body = tk.Frame(self._lr_panel, bg=SURFACE)
+        # Fixed-height scrollable container for lerobot body
+        self._lr_scroll_frame = tk.Frame(self._lr_panel, bg=SURFACE,
+                                         height=320)
+        self._lr_scroll_frame.pack_propagate(False)
+
+        lr_canvas = tk.Canvas(self._lr_scroll_frame, bg=SURFACE,
+                              highlightthickness=0, height=320)
+        lr_vsb = tk.Scrollbar(self._lr_scroll_frame, orient="vertical",
+                              command=lr_canvas.yview)
+        lr_canvas.configure(yscrollcommand=lr_vsb.set)
+        lr_vsb.pack(side="right", fill="y")
+        lr_canvas.pack(side="left", fill="both", expand=True)
+
+        self._lr_body = tk.Frame(lr_canvas, bg=SURFACE)
+        lr_canvas.create_window((0, 0), window=self._lr_body, anchor="nw")
+        self._lr_body.bind("<Configure>",
+            lambda e: lr_canvas.configure(
+                scrollregion=lr_canvas.bbox("all")))
+        lr_canvas.bind("<Configure>",
+            lambda e: lr_canvas.itemconfigure(
+                lr_canvas.find_all()[0], width=e.width))
+
+        # Mouse wheel scrolling
+        def _on_mousewheel(e):
+            lr_canvas.yview_scroll(int(-1*(e.delta/120)), "units")
+        lr_canvas.bind("<MouseWheel>", _on_mousewheel)
+        lr_canvas.bind("<Button-4>",
+            lambda e: lr_canvas.yview_scroll(-1, "units"))
+        lr_canvas.bind("<Button-5>",
+            lambda e: lr_canvas.yview_scroll(1, "units"))
 
         tk.Label(self._lr_body,
                  text="Note: use your HF account username "
@@ -883,28 +1053,31 @@ class App:
         fields.columnconfigure(1, weight=1)
         fields.columnconfigure(3, weight=1)
 
+        _fs = tkfont.Font(font=self.F["small"], size=11)
+        _fm = tkfont.Font(font=self.F["mono"],  size=11)
+
         def row(label, var, r, c=0, width=None, choices=None):
             tk.Label(fields, text=label, bg=SURFACE, fg=MUTED,
-                     font=self.F["small"]).grid(
-                         row=r, column=c, sticky="w", pady=4)
+                     font=_fs).grid(
+                         row=r, column=c, sticky="w", pady=2)
             if choices:
                 om = tk.OptionMenu(fields, var, *choices)
-                om.configure(bg=BG, fg=TEXT, font=self.F["small"],
+                om.configure(bg=BG, fg=TEXT, font=_fs,
                              relief="flat",
                              highlightbackground=BORDER,
                              highlightthickness=1)
                 om.grid(row=r, column=c+1, sticky="ew",
-                        padx=(8, 18 if c == 0 else 0), ipady=3)
+                        padx=(6, 14 if c == 0 else 0), ipady=1)
             else:
                 kw = {"width": width} if width else {}
                 tk.Entry(fields, textvariable=var,
-                         bg=BG, fg=TEXT, font=self.F["mono"],
+                         bg=BG, fg=TEXT, font=_fm,
                          relief="flat",
                          highlightbackground=BORDER,
                          highlightthickness=1,
                          insertbackground=TEXT, **kw).grid(
                              row=r, column=c+1, sticky="ew",
-                             padx=(8, 18 if c == 0 else 0), ipady=5)
+                             padx=(6, 14 if c == 0 else 0), ipady=3)
 
         row("HF User",    self._hf_user_var,  0, c=0)
         row("Dataset",    self._dataset_var,   0, c=2)
@@ -960,12 +1133,12 @@ class App:
 
     def _toggle_lerobot(self, event=None):
         if self._lerobot_expanded:
-            self._lr_body.pack_forget()
+            self._lr_scroll_frame.pack_forget()
             self._lr_toggle.configure(
                 text="[+]  lerobot-record Command  (click to expand)")
             self._lerobot_expanded = False
         else:
-            self._lr_body.pack(fill="x")
+            self._lr_scroll_frame.pack(fill="x")
             self._lr_toggle.configure(
                 text="[-]  lerobot-record Command  (click to collapse)")
             self._lerobot_expanded = True
@@ -1137,7 +1310,7 @@ cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("1060x780")
+    root.geometry("1200x820")
 
     # Enable Xft antialiasing for tkinter text rendering.
     # Xft is the X FreeType font renderer — enabling it gives
