@@ -192,7 +192,7 @@ bool QNode::isMotionComplete()
   
   // some changes below to allow GUI to move sequentially to the next pose , as threshold was too tight. Dawit Chun
 
-  const double tolerance = 0.03; //+- 0.03 rad to move to the next pose.
+  const double tolerance = 0.05; //+- 0.05 rad to move to the next pose.
   static auto motion_start_time = std::chrono::steady_clock::now();
   static std::vector<double> last_target;
 
