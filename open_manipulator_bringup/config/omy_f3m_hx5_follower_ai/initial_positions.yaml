@@ -1,5 +1,5 @@
 /**:
-  joint_trajectory_executor:
+  arm_joint_trajectory_executor:
     ros__parameters:
       joint_names:
         - joint1

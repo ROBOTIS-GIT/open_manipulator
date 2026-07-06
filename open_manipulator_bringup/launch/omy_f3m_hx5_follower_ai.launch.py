@@ -163,10 +163,10 @@ def generate_launch_description():
         output='both',
     )
 
-    joint_trajectory_executor = Node(
+    joint_trajectory_executor_arm = Node(
         package='open_manipulator_bringup',
         executable='joint_trajectory_executor',
-        name='joint_trajectory_executor',
+        name='arm_joint_trajectory_executor',
         parameters=[trajectory_params_file],
         output='screen',
     )
@@ -183,8 +183,8 @@ def generate_launch_description():
         event_handler=OnProcessExit(
             target_action=robot_controller_spawner,
             on_exit=[
-                joint_trajectory_executor,
-                joint_trajectory_executor_left_hand,
+                joint_trajectory_executor_arm,
+                joint_trajectory_executor_left_hand
             ]
         ),
         condition=IfCondition(init_position)
@@ -221,11 +221,11 @@ def generate_launch_description():
             '-p', '50',
             '/effort_l_controller/commands',
             'std_msgs/msg/Float64MultiArray',
-            'data: [300.0, 300.0, 300.0, 300.0,'
-                    '300.0, 300.0, 300.0, 300.0,'
-                    '300.0, 300.0, 300.0, 300.0,'
-                    '300.0, 300.0, 300.0, 300.0,'
-                    '300.0, 300.0, 300.0, 300.0]',
+            'data: [200.0, 200.0, 200.0, 200.0,'
+                    '200.0, 200.0, 200.0, 200.0,'
+                    '200.0, 200.0, 200.0, 200.0,'
+                    '200.0, 200.0, 200.0, 200.0,'
+                    '200.0, 200.0, 200.0, 200.0]',
         ],
     )
 
