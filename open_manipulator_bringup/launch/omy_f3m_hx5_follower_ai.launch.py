@@ -166,6 +166,7 @@ def generate_launch_description():
     joint_trajectory_executor = Node(
         package='open_manipulator_bringup',
         executable='joint_trajectory_executor',
+        name='joint_trajectory_executor',
         parameters=[trajectory_params_file],
         output='screen',
     )
