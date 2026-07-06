@@ -183,8 +183,8 @@ def generate_launch_description():
         event_handler=OnProcessExit(
             target_action=robot_controller_spawner,
             on_exit=[
-                joint_trajectory_executor_arm,
-                joint_trajectory_executor_left_hand
+                joint_trajectory_executor_left_hand,
+                joint_trajectory_executor_arm
             ]
         ),
         condition=IfCondition(init_position)
