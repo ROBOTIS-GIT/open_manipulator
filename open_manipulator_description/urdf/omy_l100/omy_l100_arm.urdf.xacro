@@ -198,7 +198,7 @@
             <inertia ixx="2.456516600e-04" ixy="1.956697100e-05" ixz="-6.407940700e-06" iyy="1.258115200e-04" iyz="-1.691115400e-06" izz="1.459343600e-04" />
          </inertial>
       </link>
-      <joint name="rh_r1_joint" type="revolute">
+      <joint name="rh_r1_joint" type="fixed">
          <parent link="${prefix}link6" />
          <child link="${prefix}link7" />
          <origin xyz="0 -0.125 -0.0255" rpy="0 0 0" />
