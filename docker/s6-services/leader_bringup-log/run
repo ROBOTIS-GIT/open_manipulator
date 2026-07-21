@@ -1,0 +1,4 @@
+#!/command/with-contenv sh
+# Logging service for leader_bringup.
+
+exec logutil-service /var/log/leader_bringup

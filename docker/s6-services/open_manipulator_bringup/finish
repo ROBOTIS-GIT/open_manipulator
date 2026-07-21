@@ -1,0 +1,14 @@
+#!/command/with-contenv sh
+# Open Manipulator AI bringup service finish script.
+
+set -e
+
+SERVICE_NAME="open_manipulator_bringup"
+COMMON_SCRIPT="/usr/local/lib/s6-services/ros2_service_finish.sh"
+
+if [ -f "${COMMON_SCRIPT}" ]; then
+  exec /command/with-contenv env SERVICE_NAME="${SERVICE_NAME}" sh "${COMMON_SCRIPT}" "$@"
+else
+  echo "Error: Common script not found at ${COMMON_SCRIPT}" >&2
+  exit 1
+fi
