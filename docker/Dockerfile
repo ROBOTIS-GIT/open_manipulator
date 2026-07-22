@@ -86,7 +86,7 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc  && \
 RUN mkdir -p /var/run/agent && \
     chmod 777 /var/run/agent
 
-RUN git clone -b feature-0.4.0 https://github.com/ROBOTIS-GIT/cyclo_manager.git /opt/cyclo_manager
+RUN git clone https://github.com/ROBOTIS-GIT/cyclo_manager.git /opt/cyclo_manager
 
 ENV PYTHONPATH=/opt/cyclo_manager:${PYTHONPATH}
 
