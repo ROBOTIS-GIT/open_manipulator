@@ -14,9 +14,6 @@
       spring_actuator_controller:
         type: spring_actuator_controller/SpringActuatorController
 
-      joint_trajectory_command_broadcaster:
-        type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
-
 /**:
   gravity_compensation_controller:
     ros__parameters:
@@ -59,27 +56,3 @@
         - position
         - velocity
       trigger_spring_stiffness: [0.1]
-
-/**:
-  joint_trajectory_command_broadcaster:
-    ros__parameters:
-      joints:
-        - joint1
-        - joint2
-        - joint3
-        - joint4
-        - joint5
-        - joint6
-        - rh_r1_joint
-      interfaces:
-        - position
-      reverse_joints:
-        - rh_r1_joint
-      offsets:
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.2
