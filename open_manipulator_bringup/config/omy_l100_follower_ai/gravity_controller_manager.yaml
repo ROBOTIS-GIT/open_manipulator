@@ -44,6 +44,14 @@
         - 0.8
         - 1.0
       enable_spring_effect: true
+      # This yaml is used only by the standalone multi-unit bringups
+      # (custom_inverted_omy_l100_gravity / custom_omy_l100_gravity), where
+      # each unit is independent — there is no leader/follower relationship.
+      # Disable both topics to avoid subscribing to the global (un-namespaced)
+      # /joint_states and /collision_flag, which would silently cross-talk
+      # between namespaced units.
+      follower_joint_state_topic: ""
+      collision_flag_topic: ""
 
 /**:
   spring_actuator_controller:

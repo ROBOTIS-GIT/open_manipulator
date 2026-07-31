@@ -38,6 +38,16 @@ def generate_launch_description():
             'start_rviz', default_value='true', description='Whether to execute rviz2'
         ),
         DeclareLaunchArgument(
+            'robot_ns',
+            default_value='unit1',
+            description=(
+                'ROS namespace this unit runs under (controller_manager, '
+                'joint_state_broadcaster, /robot_description, rviz2, etc.). '
+                'Must be unique per unit when running multiple OMY-L100s at '
+                'the same time, or their nodes/topics/services collide.'
+            ),
+        ),
+        DeclareLaunchArgument(
             'prefix',
             default_value='""',
             description='Prefix of the joint and link names',
@@ -70,6 +80,7 @@ def generate_launch_description():
     ]
 
     start_rviz = LaunchConfiguration('start_rviz')
+    robot_ns = LaunchConfiguration('robot_ns')
     prefix = LaunchConfiguration('prefix')
     use_sim = LaunchConfiguration('use_sim')
     use_mock_hardware = LaunchConfiguration('use_mock_hardware')
@@ -124,6 +135,7 @@ def generate_launch_description():
     control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
+        namespace=robot_ns,
         parameters=[{'robot_description': urdf_file}, controller_manager_config],
         output='both',
         condition=UnlessCondition(use_sim),
@@ -132,6 +144,7 @@ def generate_launch_description():
     robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
+        namespace=robot_ns,
         arguments=[
             'gravity_compensation_controller',
             'spring_actuator_controller',
@@ -144,14 +157,31 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
+        namespace=robot_ns,
         parameters=[{'robot_description': urdf_file, 'use_sim_time': use_sim}],
+        # tf2_ros::TransformBroadcaster publishes to the absolute "/tf" and
+        # "/tf_static" topics regardless of node namespace, so multiple units
+        # sharing identical frame_ids (no xacro prefix) would otherwise
+        # collide on one global TF tree. Remap explicitly, same pattern as
+        # /robot_description below.
+        remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
         output='both',
     )
 
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
+        namespace=robot_ns,
         arguments=['-d', rviz_config_file],
+        # open_manipulator.rviz hardcodes absolute "/robot_description", "/tf",
+        # and "/tf_static" topics (leading slash), so pushing a namespace alone
+        # won't redirect them — they must be remapped explicitly to land on
+        # this unit's own publishers.
+        remappings=[
+            ('/robot_description', 'robot_description'),
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static'),
+        ],
         output='both',
         condition=IfCondition(start_rviz),
     )
