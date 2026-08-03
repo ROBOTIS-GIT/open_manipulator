@@ -194,6 +194,15 @@ def generate_launch_description():
         executable='joint_trajectory_executor',
         namespace=robot_ns,
         parameters=[trajectory_params_file],
+        # initial_positions*.yaml hardcodes action_topic/joint_states_topic as
+        # absolute ("/arm_controller/...", "/joint_states"), which node
+        # namespacing alone can't fix (the parameter *value* is a plain
+        # string, unaffected by namespace). Remap the exact absolute names
+        # the node ends up using, same technique as the /tf remaps above.
+        remappings=[
+            ('/arm_controller/follow_joint_trajectory', 'arm_controller/follow_joint_trajectory'),
+            ('/joint_states', 'joint_states'),
+        ],
         output='both',
         condition=IfCondition(init_position),
     )
