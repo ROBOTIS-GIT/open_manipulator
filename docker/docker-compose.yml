@@ -2,8 +2,8 @@ services:
   open_manipulator:
     container_name: open_manipulator
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     image: robotis/open-manipulator:5.1.0
     tty: true
     restart: always
