@@ -94,11 +94,11 @@ RUN pip config set global.break-system-packages true && \
     pip install --no-cache-dir --ignore-installed -r /opt/cyclo_manager/requirements-agent.txt
 
 # New-style s6-rc services
-COPY s6-agent /etc/s6-overlay/s6-rc.d/s6-agent
+COPY docker/s6-agent /etc/s6-overlay/s6-rc.d/s6-agent
 
 ARG ROS2_SERVICES="open_manipulator_bringup leader_bringup"
 
-COPY s6-services/ /etc/s6-overlay/s6-rc.d/
+COPY docker/s6-services/ /etc/s6-overlay/s6-rc.d/
 
 RUN chmod +x /etc/s6-overlay/s6-rc.d/s6-agent/run /etc/s6-overlay/s6-rc.d/s6-agent/finish && \
     for service in ${ROS2_SERVICES}; do \
@@ -111,8 +111,8 @@ RUN chmod +x /etc/s6-overlay/s6-rc.d/s6-agent/run /etc/s6-overlay/s6-rc.d/s6-age
     rm -rf /etc/s6-overlay/s6-rc.d/common
 
 RUN mkdir -p /usr/local/lib/s6-services
-COPY s6-services/common/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_run.sh
-COPY s6-services/common/ros2_service_finish.sh /usr/local/lib/s6-services/ros2_service_finish.sh
+COPY docker/s6-services/common/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_run.sh
+COPY docker/s6-services/common/ros2_service_finish.sh /usr/local/lib/s6-services/ros2_service_finish.sh
 RUN chmod +x /usr/local/lib/s6-services/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_finish.sh
 
 # Start only the agent by default. ROS2 services can be managed through s6.

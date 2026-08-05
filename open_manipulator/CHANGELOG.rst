@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.1 (2026-08-05)
+------------------
+* Changed Docker build context to use the repository root instead of the docker directory.
+* Contributors: Hyungyu Kim
+
 5.1.0 (2026-08-03)
 ------------------
 * Added s6-overlay and s6-agent for cyclo-manager
