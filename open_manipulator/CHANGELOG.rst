@@ -2,6 +2,12 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.0 (2026-08-03)
+------------------
+* Added s6-overlay and s6-agent for cyclo-manager
+* Added pack positions for OMY-F3M follower AI
+* Contributors: Hyungyu Kim
+
 5.0.0 (2026-06-24)
 ------------------
 * Updated dockerfile to use zenoh-cpp

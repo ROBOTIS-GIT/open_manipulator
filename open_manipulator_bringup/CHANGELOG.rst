@@ -2,6 +2,11 @@
 Changelog for package open_manipulator_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.0 (2026-08-03)
+------------------
+* Added pack positions for OMY-F3M follower AI
+* Contributors: Hyungyu Kim
+
 5.0.0 (2026-06-24)
 ------------------
 * None
