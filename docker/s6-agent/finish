@@ -1,0 +1,6 @@
+#!/command/with-contenv sh
+# Agent service finish script
+
+[ -S /var/run/agent/s6_agent.sock ] && rm -f /var/run/agent/s6_agent.sock
+
+exit 0

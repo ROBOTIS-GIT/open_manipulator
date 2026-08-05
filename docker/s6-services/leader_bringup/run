@@ -1,0 +1,32 @@
+#!/command/with-contenv bash
+# Open Manipulator leader bringup service.
+
+set -e
+
+SERVICE_NAME="leader_bringup"
+COMMON_SCRIPT="/usr/local/lib/s6-services/ros2_service_run.sh"
+ROBOT_TYPE_FILE="/run/leader_type"
+
+if [ ! -f "${ROBOT_TYPE_FILE}" ]; then
+  echo "[${SERVICE_NAME}] Error: ${ROBOT_TYPE_FILE} not found. Set robot type (omy or omx) before starting." >&2
+  exit 1
+fi
+
+ROBOT_TYPE=$(cat "${ROBOT_TYPE_FILE}" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+if [ "${ROBOT_TYPE}" = "omy" ]; then
+  ROS2_COMMAND="ros2 launch open_manipulator_bringup omy_l100_leader_ai.launch.py"
+elif [ "${ROBOT_TYPE}" = "omx" ]; then
+  ROS2_COMMAND="ros2 launch open_manipulator_bringup omx_l_leader_ai.launch.py"
+else
+  echo "[${SERVICE_NAME}] Error: ${ROBOT_TYPE_FILE} must be 'omy' or 'omx', got: ${ROBOT_TYPE}" >&2
+  exit 1
+fi
+
+if [ -f "${COMMON_SCRIPT}" ]; then
+  export SERVICE_NAME="${SERVICE_NAME}"
+  export ROS2_COMMAND="${ROS2_COMMAND}"
+  exec /command/with-contenv env SERVICE_NAME="${SERVICE_NAME}" ROS2_COMMAND="${ROS2_COMMAND}" bash -i -c "${COMMON_SCRIPT}"
+else
+  echo "Error: Common script not found at ${COMMON_SCRIPT}" >&2
+  exit 1
+fi

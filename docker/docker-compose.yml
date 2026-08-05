@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: robotis/open-manipulator:5.0.0
+    image: robotis/open-manipulator:5.1.0
     tty: true
     restart: always
     cap_add:
@@ -15,7 +15,6 @@ services:
       memlock: 8428281856
     network_mode: host
     ipc: host
-    pid: host
     environment:
      - DISPLAY=${DISPLAY}
      - QT_X11_NO_MITSHM=1
@@ -26,5 +25,5 @@ services:
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ./workspace:/workspace
       - ../:/root/ros2_ws/src/open_manipulator/
+      - /var/run/robotis/agent_sockets/open_manipulator:/var/run/agent
     privileged: true
-    command: bash
