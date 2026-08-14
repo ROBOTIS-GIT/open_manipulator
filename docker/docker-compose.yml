@@ -4,7 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: robotis/open-manipulator:5.0.0
+    # Distinct tag (not :5.0.0) so this custom build never gets confused with
+    # or overwritten by the official pulled image of the same name.
+    image: robotis/open-manipulator:graspnet
     tty: true
     restart: always
     cap_add:
@@ -19,6 +21,8 @@ services:
     environment:
      - DISPLAY=${DISPLAY}
      - QT_X11_NO_MITSHM=1
+     - NVIDIA_VISIBLE_DEVICES=all
+     - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:
       - /dev:/dev
       - /dev/shm:/dev/shm
@@ -27,4 +31,11 @@ services:
       - ./workspace:/workspace
       - ../:/root/ros2_ws/src/open_manipulator/
     privileged: true
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
     command: bash

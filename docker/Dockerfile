@@ -42,17 +42,67 @@ RUN cd ${COLCON_WS} && \
     rosdep install -i --from-path src --rosdistro $ROS_DISTRO --skip-keys="librealsense2 robotis_interfaces" -y && \
     rm -rf /var/lib/apt/lists/*
 
+# --parallel-workers/MAKEFLAGS capped: this host has 20 cores but only 15GB
+# RAM, and colcon's default (one job per core) OOM-kills the build on the
+# heavier MoveIt/RViz packages here.
 RUN bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && \
     cd ${COLCON_WS} && \
-    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release"
+    MAKEFLAGS='-j2' colcon build --symlink-install --parallel-workers 2 --cmake-args -DCMAKE_BUILD_TYPE=Release"
 
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc  && \
     echo "source ${COLCON_WS}/install/setup.bash" >> ~/.bashrc  && \
-    echo "alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc && \
+    echo "alias cb='MAKEFLAGS=-j2 colcon build --symlink-install --parallel-workers 2 --cmake-args -DCMAKE_BUILD_TYPE=Release'" >> ~/.bashrc && \
     echo "alias omy_ai='ros2 launch open_manipulator_bringup omy_ai.launch.py'" >> ~/.bashrc && \
     echo "alias omx_ai='ros2 launch open_manipulator_bringup omx_ai.launch.py'" >> ~/.bashrc && \
     echo "alias zenohd='ros2 run rmw_zenoh_cpp rmw_zenohd'" >> ~/.bashrc && \
     echo "export ROS_DOMAIN_ID=30" >> ~/.bashrc && \
     echo "export RMW_IMPLEMENTATION=rmw_zenoh_cpp" >> ~/.bashrc
+
+# ---------------------------------------------------------------------------
+# graspnet-baseline (grasp pose inference). CUDA toolkit version matches the
+# driver-verified working config already used by cyclo_intelligence (12.8).
+# Host GPU is an RTX 3070 (compute capability 8.6); the build stage itself has
+# no GPU visible, so pointnet2/knn are compiled for that arch explicitly
+# instead of relying on runtime auto-detection.
+# ---------------------------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        wget gnupg python3-pip wmctrl python3-tk \
+    && wget -qO /tmp/cuda-keyring.deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb \
+    && dpkg -i /tmp/cuda-keyring.deb && rm /tmp/cuda-keyring.deb \
+    && apt-get update && apt-get install -y --no-install-recommends cuda-toolkit-12-8 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH=/usr/local/cuda-12.8/bin:${PATH}
+ENV LD_LIBRARY_PATH=/usr/local/cuda-12.8/lib64:${LD_LIBRARY_PATH}
+ENV TORCH_CUDA_ARCH_LIST="8.6"
+
+# Pinned to the exact build already verified working against this host's
+# CUDA 12.8 toolkit/driver in cyclo_intelligence. Leaving these unpinned
+# resolves the latest torch on the cu128 index, which turned out to report
+# torch.version.cuda=13.0 and fail cpp_extension's version-match check.
+RUN pip3 install --break-system-packages --no-cache-dir --ignore-installed ninja
+RUN pip3 install --break-system-packages --no-cache-dir --ignore-installed \
+        torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+
+# --ignore-installed: psutil (and possibly others) come from apt as debian
+# packages with no pip RECORD file, so a normal pip upgrade can't uninstall
+# them first and aborts. --ignore-installed just shadows them instead.
+# requirements.txt lists a bare, unpinned "torch" -- combined with
+# --ignore-installed that re-resolves it from plain PyPI (not the cu128
+# index) and clobbers the pinned cu128 build above with a cu13 one. Strip
+# that line since torch is already installed correctly.
+RUN git clone https://github.com/graspnet/graspnet-baseline.git /opt/graspnet-baseline && \
+    cd /opt/graspnet-baseline && \
+    sed -i '/^torch/d' requirements.txt && \
+    pip3 install --break-system-packages --no-cache-dir --ignore-installed -r requirements.txt && \
+    sed -i 's/from torch._six import container_abcs/import collections.abc as container_abcs/' dataset/graspnet_dataset.py && \
+    cd pointnet2 && python3 setup.py install && \
+    cd ../knn && python3 setup.py install
+
+RUN git clone https://github.com/graspnet/graspnetAPI.git /opt/graspnetAPI && \
+    pip3 install --break-system-packages --no-cache-dir --ignore-installed /opt/graspnetAPI
+
+# 선택된 grasp 지점의 물체 이름을 물어보는 용도 (GEMINI_API_KEY 환경변수 필요, 없으면 자동으로 꺼짐)
+RUN pip3 install --break-system-packages --no-cache-dir google-genai
 
 CMD ["bash"]

@@ -72,10 +72,14 @@ install(TARGETS open_manipulator_x_hello_moveit omy_f3m_hello_moveit omy_3m_hell
 install(PROGRAMS
   scripts/shape_detector_node.py
   scripts/omx_trajectory_controller_node.py
+  scripts/omy_graspnet_node.py
+  scripts/omy_graspnet_grid_node.py
+  scripts/omy_ai_graspnet_node.py
+  scripts/graspnet_initial.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch images
+install(DIRECTORY launch images config
   DESTINATION share/${PROJECT_NAME}
 )
 
