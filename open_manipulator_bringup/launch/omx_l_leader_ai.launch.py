@@ -57,7 +57,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'port_name',
-            default_value='/dev/ttyACM2',
+            default_value='/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_0E21D4E150323952582E3120FF071609-if00',
             description='Port name for hardware connection.',
         ),
         DeclareLaunchArgument(
@@ -169,7 +169,8 @@ def generate_launch_description():
             control_node,
             robot_controller_spawner,
             robot_state_publisher_node,
-            delay_position_command_after_controllers,
+            # Keep trigger controller active, but do not auto-open gripper on startup.
+            # delay_position_command_after_controllers,
         ]
     )
 

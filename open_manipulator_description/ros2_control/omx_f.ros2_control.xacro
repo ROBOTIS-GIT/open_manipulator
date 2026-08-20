@@ -164,6 +164,7 @@
         <param name="Drive Mode">4</param>
         <param name="Operating Mode">5</param>
         <param name="Return Delay Time">0</param>
+        <param name="Max Position Limit">3150</param>
         <param name="Position P Gain">1000</param>
         <param name="Position I Gain">0</param>
         <param name="Position D Gain">1000</param>
