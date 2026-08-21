@@ -85,6 +85,9 @@ RUN git clone https://github.com/graspnet/graspnet-baseline.git /opt/graspnet-ba
 RUN git clone https://github.com/graspnet/graspnetAPI.git /opt/graspnetAPI && \
     pip3 install --break-system-packages --no-cache-dir --ignore-installed /opt/graspnetAPI
 
+# Pretrained checkpoint (RealSense model), from graspnet-baseline's release
+COPY assets/checkpoint-rs.tar /opt/graspnet-baseline/logs/log_rs/checkpoint-rs.tar
+
 # For classifying/locating grasped objects
 RUN pip3 install --break-system-packages --no-cache-dir google-genai
 
