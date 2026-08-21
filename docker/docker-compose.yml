@@ -4,8 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # Distinct tag (not :5.0.0) so this custom build never gets confused with
-    # or overwritten by the official pulled image of the same name.
+    # Distinct tag so this doesn't overwrite the official image
     image: robotis/open-manipulator:graspnet
     tty: true
     restart: always
