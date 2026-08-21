@@ -93,4 +93,8 @@ COPY assets/checkpoint-rs.tar /opt/graspnet-baseline/logs/log_rs/checkpoint-rs.t
 # For classifying/locating grasped objects
 RUN pip3 install --break-system-packages --no-cache-dir google-genai
 
+COPY assets/rebuild_bind_mounted_packages.sh /usr/local/bin/rebuild_bind_mounted_packages.sh
+RUN chmod +x /usr/local/bin/rebuild_bind_mounted_packages.sh
+
+ENTRYPOINT ["/usr/local/bin/rebuild_bind_mounted_packages.sh"]
 CMD ["bash"]
