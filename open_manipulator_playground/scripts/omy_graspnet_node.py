@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# graspnet-baseline 캡처+추론을 감싸는 ROS2 서비스 노드.
+# Author: SeongjinJeong
+#
+# ROS2 service node wrapping graspnet-baseline capture + inference.
 
 from dataclasses import dataclass
 import math
@@ -49,23 +51,21 @@ from PIL import Image
 from visualization_msgs.msg import Marker
 import yaml
 
+# Paths
 GRASPNET_ROOT = '/opt/graspnet-baseline'
-# __file__은 install space의 심볼릭 링크 경로라, realpath로 실제(소스) 경로를 따라가야
-# scripts/ 형제 디렉터리인 config/를 정확히 찾음 (abspath는 심볼릭 링크를 안 풂)
 PLAYGROUND_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(GRASPNET_ROOT)
 sys.path.append(os.path.join(GRASPNET_ROOT, 'models'))
 sys.path.append(os.path.join(GRASPNET_ROOT, 'dataset'))
 sys.path.append(os.path.join(GRASPNET_ROOT, 'utils'))
 
-# demo.py가 import 시점에 sys.argv에서 --checkpoint_path를 읽어가므로,
-# rclpy.init()에 넘길 진짜 argv를 먼저 백업해둔다.
+# Import demo.py (back up argv first, then inject the checkpoint path it expects)
 _original_argv = sys.argv[:]
 sys.argv = ['demo.py', '--checkpoint_path',
             os.path.join(GRASPNET_ROOT, 'logs/log_rs/checkpoint-rs.tar')]
 import demo  # noqa: E402
 
-WIDTH, HEIGHT = 1280, 720  # demo.py가 CameraInfo에 하드코딩한 해상도
+WIDTH, HEIGHT = 1280, 720
 
 
 @dataclass
@@ -74,59 +74,57 @@ class CameraConfig:
     depth_max: float = 0.8
     edge_margin_px: int = 40
     depth_margin_m: float = 0.02
-    frame_id: str = 'camera_link'  # optical 좌표계(X-right/Y-down/Z-forward) 기준
-    point_cloud_publish_max_points: int = 50000  # Open3D 창은 항상 원본 해상도
-    capture_settle_sec: float = 0.3  # 캡처 직전 대기 -- 직전 팔 움직임의 잔떨림이 가라앉을 시간
+    frame_id: str = 'camera_link'
+    point_cloud_publish_max_points: int = 50000
+    capture_settle_sec: float = 0.3
 
 
 @dataclass
 class GraspFilterConfig:
-    table_plane_fit_thresh_m: float = 0.003  # 테이블 평면 참고용 RANSAC 허용치 (포인트 제거는 안 함)
-    min_grasp_height_above_table_m: float = 0.01  # 이보다 테이블에 가까운 grasp 후보는 탈락
-    outlier_removal_neighbors: int = 20  # 통계적 이상치 제거 (반사면 노이즈 대응), 0이면 끔
+    table_plane_fit_thresh_m: float = 0.003
+    min_grasp_height_above_table_m: float = 0.01
+    outlier_removal_neighbors: int = 20
     outlier_removal_std_ratio: float = 2.0
-    min_grasp_z_m: float = -0.05  # 선택된 grasp의 base_frame Z 범위 (말이 안 되는 후보 거르기)
+    min_grasp_z_m: float = -0.05
     max_grasp_z_m: float = 1.0
-    max_grasp_width_m: float = None  # 이보다 넓게 측정된 후보는 탈락 (None이면 제한 없음)
-    min_base_distance_m: float = 0.20  # 안전장치: base_frame 원점(로봇 베이스)에서 이보다 가까운 후보는 탈락
-    max_base_distance_m: float = 0.58  # 안전장치: base_frame 원점에서 이보다 먼 후보는 탈락 (팔이 안 닿는 범위)
-    min_grasp_x_m: float = 0.0  # 안전장치: base_frame X가 이보다 작으면(로봇 뒤쪽) 탈락
-    max_approach_tilt_deg: float = 45.0  # 접근축이 수직에서 이 각도(도)보다 누우면 탈락
-    tilt_score_penalty: float = 0.3  # score에서 (기울기/90도)*이값 감점, 수직 접근 우대
-    width_score_penalty: float = 0.3  # score에서 (폭/최대개방폭)*이값 감점, 좁게 잡는 것 우대
+    max_grasp_width_m: float = None
+    min_base_distance_m: float = 0.20
+    max_base_distance_m: float = 0.58
+    min_grasp_x_m: float = 0.0
+    max_approach_tilt_deg: float = 45.0
+    tilt_score_penalty: float = 0.3
+    width_score_penalty: float = 0.3
 
 
 @dataclass
 class GripperConfig:
-    # RH-P12-RN: rh_r1_joint 0.0(열림) ~ 1.12(닫힘). 폭->joint 매핑은 대략적인 추정치
     open_width_m: float = 0.10
     open_joint: float = 0.0
     closed_joint: float = 1.12
-    close_bias: float = 0.6  # ROS 파라미터(gripper_close_bias)로 덮어씀
+    close_bias: float = 0.6
     wait_sec: float = 1.5
-    resend_period_sec: float = 0.2  # 액션 goal 한 번만 보내면 잘 안 먹어서 재전송 (Zenoh 큐 깊이 10 이하로)
-    yaw_offset_rad: float = math.pi / 2  # 실측으로 잡은 eef 프레임 잔여 보정값, _eef_rotation_for 참고
+    resend_period_sec: float = 0.2
+    yaw_offset_rad: float = math.pi / 2
 
 
 @dataclass
 class PickOffsetConfig:
     pregrasp_offset_m: float = 0.08
     grasp_depth_offset_m: float = 0.06
-    min_grasp_execution_z_m: float = 0.007  # grasp_depth_offset_m만큼 더 들어가도 바닥에 안 끌리게
+    min_grasp_execution_z_m: float = 0.007
     post_grasp_lift_m: float = 0.10
 
 
 def open_camera():
-    """RealSense 파이프라인 + depth 필터 체인을 열어서 유지. 종료 시 pipeline.stop()은 호출자 책임."""
+    """Open the RealSense pipeline and the depth filter chain."""
     pipeline = rs.pipeline()
     config = rs.config()
     config.enable_stream(rs.stream.depth, WIDTH, HEIGHT, rs.format.z16, 5)
-    config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.bgr8, 5)  # D405는 depth 5fps가 한계
+    config.enable_stream(rs.stream.color, WIDTH, HEIGHT, rs.format.bgr8, 5)
     pipeline.start(config)
     align = rs.align(rs.stream.color)
 
-    # RealSense Viewer 기본 post-processing 체인 (Intel 권장 순서):
-    # spatial=엣지 보존 스무딩, temporal=프레임간 블렌딩, hole_filling=구멍 메움
+    # Depth post-processing filter chain
     depth_to_disparity = rs.disparity_transform(True)
     spatial = rs.spatial_filter()
     temporal = rs.temporal_filter()
@@ -145,17 +143,15 @@ def open_camera():
 
 
 def grab_frame(pipeline, align, filter_depth, pc):
-    """열려 있는 파이프라인에서 프레임 한 장 캡처. (color RGB uint8, depth uint16 mm, vertices (H,W,3) float32 m)."""
+    """Capture a single frame. (color RGB uint8, depth uint16 mm, vertices (H,W,3) float32 m)."""
     frames = align.process(pipeline.wait_for_frames())
     depth_frame = filter_depth(frames.get_depth_frame())
     color_frame = frames.get_color_frame()
 
-    # rs.pointcloud() 네이티브 계산 (RealSense Viewer와 동일). align 처리돼 있어서
-    # vertices[i,j]가 color_image[i,j]랑 바로 대응됨
     points = pc.calculate(depth_frame)
     vertices = np.asanyarray(points.get_vertices()).view(np.float32).reshape(HEIGHT, WIDTH, 3)
     color_image = np.asanyarray(color_frame.get_data())[:, :, ::-1]  # BGR -> RGB
-    depth_image = np.asanyarray(depth_frame.get_data())  # uint16, mm, 참고용
+    depth_image = np.asanyarray(depth_frame.get_data())
     return color_image, depth_image, vertices
 
 
@@ -166,13 +162,9 @@ def save_capture(out_dir, color_image, depth_image, vertices,
     Image.fromarray(depth_image).save(os.path.join(out_dir, 'depth.png'))
     np.save(os.path.join(out_dir, 'points.npy'), vertices)
 
-    # depth_min~depth_max 밖(배경/근거리 노이즈) 제거. depth_margin_m만큼 여유를
-    # 둬서 컷오프 경계 자체도 지움 -- 안 그러면 그 경계면을 물체 모서리로 착각함
+    # Workspace mask (depth range + edge erosion)
     z = vertices[:, :, 2]
     mask = (z > depth_min + depth_margin_m) & (z < depth_max - depth_margin_m)
-
-    # 유효 영역 경계(FOV 끝, depth hole 등)도 실제 물체 모서리가 아니므로
-    # edge_margin_px만큼 안쪽으로 침식시켜 마스크 경계에서 오는 착각을 방지
     if edge_margin_px > 0:
         mask = ndimage.binary_erosion(mask, iterations=edge_margin_px)
     Image.fromarray(mask).save(os.path.join(out_dir, 'workspace_mask.png'))
@@ -186,41 +178,41 @@ class OmyGraspnetNode(Node):
     def __init__(self):
         super().__init__('omy_graspnet')
 
-        # 실행 중 CLI(-p)로 바꿀 일이 있는 값만 ROS 파라미터로 노출
-        self.declare_parameter('execute_motion', False)  # 명시적으로 켜야만 실제 동작함
-        self.declare_parameter('auto', False)  # true면 execute->대기->pick->execute... 자동 반복
+        # ROS parameters
+        self.declare_parameter('execute_motion', False)
+        self.declare_parameter('auto', False)
         self.declare_parameter('auto_pick_delay_sec', 0.0)
         self.declare_parameter('movel_duration_sec', 3.0)
         self.declare_parameter('gripper_close_bias', 0.6)
-        self.declare_parameter('top_k', 1)  # 디버깅용 (시각화에 보여줄 후보 수)
+        self.declare_parameter('top_k', 1)
         self.declare_parameter('place_enabled', True)
 
         self.execute_motion = self.get_parameter('execute_motion').value
         self.auto = self.get_parameter('auto').value
         self.auto_pick_delay_sec = self.get_parameter('auto_pick_delay_sec').value
         self.movel_duration_sec = self.get_parameter('movel_duration_sec').value
-        self.descent_duration_sec = max(0.5, self.movel_duration_sec - 2.0)  # 잡으러/버리러 내려갈 때, 들어올릴 때 더 빠르게
-        self.return_home_duration_sec = max(0.5, self.movel_duration_sec - 1.0)  # place 후 초기 자세로 복귀할 때 더 빠르게
+        self.descent_duration_sec = max(0.5, self.movel_duration_sec - 2.0)
+        self.return_home_duration_sec = max(0.5, self.movel_duration_sec - 1.0)
         self.top_k = self.get_parameter('top_k').value
         self.place_enabled = self.get_parameter('place_enabled').value
 
-        # 관련 설정끼리 묶음 -- 거의 안 바꾸는 값들, 필요하면 각 dataclass에서 직접 수정
+        # Grouped config values
         self.camera = CameraConfig()
         self.filters = GraspFilterConfig()
         self.gripper = GripperConfig(close_bias=self.get_parameter('gripper_close_bias').value)
         self.offsets = PickOffsetConfig()
 
         self.out_dir = os.path.join(GRASPNET_ROOT, 'doc/realsense_capture')
-        self.auto_retry_delay_sec = 0  # auto에서 후보를 못 찾으면 재시도 전 대기시간
+        self.auto_retry_delay_sec = 0
         self.base_frame = 'link0'
 
-        # 시작할 때, 그리고 놓고 나서 돌아가는 초기 자세는 config/에서 읽음
-        # (end_effector_link 타겟, 핸드조깅으로 실측 -- 변환 없이 그대로 사용)
+        # Load fixed poses
         with open(os.path.join(PLAYGROUND_DIR, 'config', 'omy_graspnet_poses.yaml')) as f:
             poses_config = yaml.safe_load(f)
         self.initial_translation = np.array(poses_config['initial']['position'])
         self.initial_quat = np.array(poses_config['initial']['orientation'])
 
+        # Load the graspnet-baseline model
         demo.cfgs.checkpoint_path = os.path.join(GRASPNET_ROOT, 'logs/log_rs/checkpoint-rs.tar')
         demo.cfgs.num_point = 20000
         demo.cfgs.num_view = 300
@@ -228,15 +220,13 @@ class OmyGraspnetNode(Node):
         demo.cfgs.voxel_size = 0.01
 
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
         self.net = demo.get_net()
 
-        # GLX 컨텍스트는 만든 스레드에서만 다룰 수 있어서, Open3D 관련 호출은
-        # 전부 _render_loop 전용 스레드 안에서만 실행
+        # Open3D visualization thread
         self._geom_lock = threading.Lock()
         self._pending_geoms = None
         self._stop_render = False
-        self._view_initialized = False  # 첫 캡처 때만 카메라 시점 세팅, 이후엔 사용자가 돌려놓은 시점 유지
+        self._view_initialized = False
         self.vis = None
         window_ready = threading.Event()
         self._render_thread = threading.Thread(
@@ -244,40 +234,35 @@ class OmyGraspnetNode(Node):
         self._render_thread.start()
         window_ready.wait(timeout=10.0)
 
+        # Publishers / TF / action clients
         self.pose_pub = self.create_publisher(PoseStamped, 'omy_graspnet/pose', 10)
         self.info_pub = self.create_publisher(Float32MultiArray, 'omy_graspnet/grasp_info', 10)
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
         self.movel_pub = self.create_publisher(MoveL, '/omy_movel_controller/movel', 10)
-        # 그리퍼 액션 응답을 다른 스레드가 처리할 수 있도록 별도 콜백 그룹 사용
-        # (main()의 MultiThreadedExecutor랑 세트)
         self._gripper_callback_group = ReentrantCallbackGroup()
         self.gripper_client = ActionClient(
             self, GripperCommand, '/gripper_controller/gripper_cmd',
             callback_group=self._gripper_callback_group)
         self.marker_pub = self.create_publisher(Marker, 'omy_graspnet/gripper_marker', 10)
-        # TRANSIENT_LOCAL: execute()가 한 번만 발행하므로, 나중에 구독 시작한
-        # RViz도 마지막 메시지를 바로 받을 수 있게 래치드로 설정
         cloud_qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
         self.cloud_pub = self.create_publisher(PointCloud2, 'omy_graspnet/point_cloud', cloud_qos)
 
-        # 카메라를 노드 수명 동안 계속 열어둠 (매 execute마다 새로 열면 워밍업 시간 소요).
-        # point_cloud는 실시간 스트리밍이 아니라 execute() 때만 발행 (와이파이 대역폭 문제로 제거)
+        # Camera pipeline
         self._camera_pipeline, self._camera_align, self._camera_filter_depth, self._camera_pc = open_camera()
         self._camera_lock = threading.Lock()
 
-        # on_execute가 채우고 on_pick이 사용
+        # Execute/pick state
         self._last_grasp = None
         self._last_translation_base = None
         self._last_quat_base = None
-        self._last_detection_duration = None  # 서브클래스/GUI에서 표시용으로 참조
+        self._last_detection_duration = None
 
+        # Services
         self._cancel_event = threading.Event()
         self.srv = self.create_service(Trigger, 'omy_graspnet/execute', self.on_execute)
         self.pick_srv = self.create_service(Trigger, 'omy_graspnet/pick', self.on_pick)
-        # cancel이 auto 루프를 실제로 끊을 수 있도록 별도 콜백 그룹 사용
-        # (기본 그룹이면 execute/pick이 도는 동안 cancel 요청이 대기열에 밀림)
         self._cancel_callback_group = ReentrantCallbackGroup()
         self.cancel_srv = self.create_service(
             Trigger, 'omy_graspnet/cancel', self.on_cancel, callback_group=self._cancel_callback_group)
@@ -289,7 +274,6 @@ class OmyGraspnetNode(Node):
     def _render_loop(self, window_ready):
         window_name = 'omy_graspnet'
         self.vis = o3d.visualization.Visualizer()
-        # width/height 안 주면 Open3D 기본값(1920x1080)이라 창이 커짐
         self.vis.create_window(window_name=window_name, width=600, height=540)
         window_ready.set()
         while not self._stop_render:
@@ -297,15 +281,10 @@ class OmyGraspnetNode(Node):
                 if self._pending_geoms is not None:
                     self.vis.clear_geometries()
                     for geom in self._pending_geoms:
-                        # 첫 캡처 이후로는 reset_bounding_box=False -- 사용자가 마우스로
-                        # 돌려놓은 시점을 유지한 채 point cloud 내용물만 교체됨
                         self.vis.add_geometry(geom, reset_bounding_box=not self._view_initialized)
                     if not self._view_initialized:
-                        # point cloud는 항상 첫 geometry -- 그 중심을 바라보게 해서
-                        # 카메라 광축(0,0)이 실제 작업영역 중심과 안 맞아도 화면 중앙에 오게 함.
-                        # 이건 최초 1회만: 이후 캡처부터는 사용자가 조작한 시점을 그대로 둠
+                        # Only set the camera viewpoint to the point cloud's center once
                         center = self._pending_geoms[0].get_center()
-                        # 포인트클라우드는 카메라 optical 좌표계 (+Z가 앞, +Y가 아래)
                         ctr = self.vis.get_view_control()
                         ctr.set_front([0, 0, -1])
                         ctr.set_up([0, -1, 0])
@@ -321,9 +300,9 @@ class OmyGraspnetNode(Node):
         self.vis.destroy_window()
 
     def _get_and_process_data(self, data_dir):
-        # points.npy는 rs.pointcloud()로 계산된 값 (RealSense Viewer와 동일 방식)
+        # Load the captured files
         color = np.array(Image.open(os.path.join(data_dir, 'color.png')), dtype=np.float32) / 255.0
-        vertices = np.load(os.path.join(data_dir, 'points.npy'))  # (H, W, 3) meters
+        vertices = np.load(os.path.join(data_dir, 'points.npy'))
         workspace_mask = np.array(Image.open(os.path.join(data_dir, 'workspace_mask.png')))
 
         mask = workspace_mask & (vertices[:, :, 2] > 0)
@@ -334,15 +313,14 @@ class OmyGraspnetNode(Node):
         cloud_o3d.points = o3d.utility.Vector3dVector(cloud_masked.astype(np.float32))
         cloud_o3d.colors = o3d.utility.Vector3dVector(color_masked.astype(np.float32))
 
-        # 반사면에서 튀는 노이즈 점 제거 (depth_min/max 범위 안이라 그냥은 안 걸러짐)
+        # Outlier removal
         if self.filters.outlier_removal_neighbors > 0 and len(cloud_masked) > self.filters.outlier_removal_neighbors:
             cloud_o3d, inlier_idx = cloud_o3d.remove_statistical_outlier(
                 nb_neighbors=self.filters.outlier_removal_neighbors, std_ratio=self.filters.outlier_removal_std_ratio)
             cloud_masked = cloud_masked[inlier_idx]
             color_masked = color_masked[inlier_idx]
 
-        # 테이블 평면 참고용 계산 -- 포인트는 안 지움 (on_execute의 사후 필터링용,
-        # min_grasp_height_above_table_m 참고). 미리 지우면 작은 물체 포인트도 같이 날아감
+        # Table plane estimation
         table_plane = None
         if len(cloud_masked) > 1000:
             try:
@@ -355,6 +333,7 @@ class OmyGraspnetNode(Node):
         points_for_sampling = cloud_masked
         colors_for_sampling = color_masked
 
+        # Sample down (or up) to the network's expected input point count
         num_point = demo.cfgs.num_point
         self.get_logger().info(f'{len(points_for_sampling)} points for grasp sampling (target {num_point})')
         if len(points_for_sampling) >= num_point:
@@ -366,8 +345,6 @@ class OmyGraspnetNode(Node):
             idxs2 = np.random.choice(len(points_for_sampling), num_point - len(points_for_sampling), replace=True)
             points_final = points_for_sampling[np.concatenate([idxs1, idxs2])].copy()
             colors_for_sampling = colors_for_sampling[np.concatenate([idxs1, idxs2])]
-            # 부족분 채울 때 완전히 같은 좌표로 복제하면 네트워크 입장에서 이상한
-            # 분포가 되므로 살짝 노이즈를 줌
             points_final[len(idxs1):] += np.random.normal(
                 0.0, 0.001, size=(len(idxs2), 3)).astype(np.float32)
         cloud_sampled = torch.from_numpy(
@@ -377,8 +354,7 @@ class OmyGraspnetNode(Node):
         return end_points, cloud_o3d, table_plane
 
     def _publish_point_cloud(self, points, colors, frame_id):
-        # points: (N,3) 미터 단위, 이미 frame_id 좌표계. colors: (N,3) 0~1
-        # RGB를 float32 하나에 패킹 (RViz PointCloud2의 RGB8 컬러 규약)
+        # Pack RGB into a single float32
         points = np.asarray(points, dtype=np.float32)
         colors = (np.asarray(colors) * 255.0).astype(np.uint32)
         rgb = (colors[:, 0] << 16) | (colors[:, 1] << 8) | colors[:, 2]
@@ -417,8 +393,7 @@ class OmyGraspnetNode(Node):
             f'published: width={grasp.width:.4f} depth={grasp.depth:.4f} score={grasp.score:.4f}')
 
     def _publish_gripper_marker(self, grasp, translation_base, quat_base):
-        # graspnetAPI는 translation/rotation을 메쉬 정점에 미리 구워넣으므로,
-        # marker.pose로 위치를 다시 줄 수 있게 로컬 좌표로 되돌림
+        # Move the mesh vertices back to local coordinates (marker.pose sets the position)
         mesh = grasp.to_open3d_geometry()
         verts_cam = np.asarray(mesh.vertices)
         verts_local = (grasp.rotation_matrix.T @ (verts_cam - grasp.translation).T).T
@@ -447,7 +422,6 @@ class OmyGraspnetNode(Node):
         self.marker_pub.publish(marker)
 
     def _clear_gripper_marker(self):
-        # 후보를 못 찾았을 때 이전에 그려진 마커가 화면에 계속 남아있지 않도록 지움
         marker = Marker()
         marker.header.frame_id = self.base_frame
         marker.header.stamp = self.get_clock().now().to_msg()
@@ -456,7 +430,7 @@ class OmyGraspnetNode(Node):
         marker.action = Marker.DELETE
         self.marker_pub.publish(marker)
 
-    # optical(X-right/Y-down/Z-forward) -> body(X-forward/Y-left/Z-up) 변환용 고정 행렬
+    # optical(X-right/Y-down/Z-forward) -> body(X-forward/Y-left/Z-up)
     _R_LINK_FROM_OPTICAL = np.array([
         [0.0, 0.0, 1.0],
         [-1.0, 0.0, 0.0],
@@ -485,9 +459,6 @@ class OmyGraspnetNode(Node):
         return translation_base, quat_base
 
     def _points_to_base_frame(self, points, source_frame):
-        # _to_base_frame과 같은 변환을 포인트 배열(N,3) 전체에 적용.
-        # RViz한테 변환을 맡기지 않고 캡처 직후 바로 여기서 처리 -- 팔이 움직이거나
-        # 이 노드 시계랑 TF 발행 쪽 시계가 안 맞을 때 문제되는 걸 피하려고
         try:
             tf = self.tf_buffer.lookup_transform(
                 self.base_frame, source_frame, rclpy.time.Time())
@@ -521,9 +492,7 @@ class OmyGraspnetNode(Node):
         return duration
 
     def _send_movel_and_gripper(self, translation, quat, joint_position, duration_sec=None):
-        # MoveL은 발행만 하면 컨트롤러가 알아서 실행하므로, 팔이 이동하는 동안 그리퍼도
-        # 같이 움직이게 함 -- 그리퍼 재전송(_send_gripper)이 끝난 뒤 movel에 필요한
-        # 나머지 시간만 마저 대기
+        # Move the arm and drive the gripper at the same time
         duration = self._send_movel(translation, quat, duration_sec=duration_sec, wait=False)
         started = time.monotonic()
         self._send_gripper(joint_position)
@@ -542,8 +511,8 @@ class OmyGraspnetNode(Node):
         return float(np.clip(joint, open_bound, closed_bound))
 
     def _send_gripper(self, joint_position):
-        # omy_f3m_teleop.py랑 같은 GripperCommand 액션. 한 번만 보내면 잘
-        # 안 먹어서 같은 목표값으로 계속 재전송함 (목표가 같아서 겹쳐 보내도 안전)
+        # Same GripperCommand action used elsewhere; a single goal often doesn't
+        # take, so keep resending the same target until wait_sec elapses
         if not self.gripper_client.wait_for_server(timeout_sec=2.0):
             self.get_logger().warn('gripper action server not available, skipping')
             return
@@ -559,8 +528,7 @@ class OmyGraspnetNode(Node):
                 break
             time.sleep(min(self.gripper.resend_period_sec, remaining))
 
-    # end_effector_link 축 != 실제 그리퍼 축. URDF의 gripper_fixed가
-    # rpy="1.5708 -1.5708 0", end_effector_joint는 rpy="0 0 0"이라 생기는 고정 오프셋
+    # end_effector_link -> actual gripper axis correction (fixed URDF offset)
     _R_EEF_FROM_GRIPPER = np.array([
         [0.0, 0.0, -1.0],
         [-1.0, 0.0, 0.0],
@@ -571,14 +539,15 @@ class OmyGraspnetNode(Node):
         rot_eef = rot_base @ self._R_EEF_FROM_GRIPPER.T
 
         if self.gripper.yaw_offset_rad != 0.0:
-            # 실측으로 잡은 잔여 보정 (~90도, eef 로컬 -Y축 기준)
             eef_yaw_correction = Rotation.from_rotvec(
                 np.array([0.0, -1.0, 0.0]) * self.gripper.yaw_offset_rad).as_matrix()
             rot_eef = rot_eef @ eef_yaw_correction
         return rot_eef
 
     def _canonicalize_grasp_rotation(self, rot_base):
-        # 평행 그리퍼는 접근축 기준 180도 대칭이라, 현재 자세에서 덜 도는 쪽을 선택
+        # The parallel gripper is symmetric under a 180-degree flip about its
+        # approach axis -- pick whichever equivalent needs less rotation from
+        # the current pose
         try:
             tf = self.tf_buffer.lookup_transform(
                 self.base_frame, 'end_effector_link', rclpy.time.Time())
@@ -617,10 +586,9 @@ class OmyGraspnetNode(Node):
         rot_base = Rotation.from_quat(quat_base).as_matrix()
         rot_base = self._canonicalize_grasp_rotation(rot_base)
 
-        approach_axis = rot_base[:, 0]  # grasp 프레임의 로컬 +X
+        approach_axis = rot_base[:, 0]
         pregrasp_translation = translation_base - approach_axis * self.offsets.pregrasp_offset_m
         grasp_translation = translation_base + approach_axis * self.offsets.grasp_depth_offset_m
-        # grasp_depth_offset_m만큼 더 들어가면서 바닥에 끌릴 수 있어서 최소 높이로 클램프
         if grasp_translation[2] < self.offsets.min_grasp_execution_z_m:
             grasp_translation[2] = self.offsets.min_grasp_execution_z_m
         lift_translation = grasp_translation.copy()
@@ -630,9 +598,7 @@ class OmyGraspnetNode(Node):
         quat_eef_command = Rotation.from_matrix(rot_eef_command).as_quat()
 
         self._send_gripper(self.gripper.open_joint)
-        # pregrasp(물체 위)로 이동하면서 동시에 오무림 -- 측정된 폭(grasp.width) 기준으로
-        # 소폭(0.2) 오무려서 내려감 (측정폭이 크게 나오는 경향 보정). 물체가 얇게 측정돼도
-        # 접근 중엔 절반(0.6) 이상 안 닫히게 클램프 -- 너무 일찍 좁아지는 것 방지
+        # Close the gripper slightly while approaching the pregrasp pose
         pregrasp_gripper_joint = min(self._width_to_gripper_joint(grasp.width, close_bias=0.2), 0.6)
         self._send_movel_and_gripper(pregrasp_translation, quat_eef_command, pregrasp_gripper_joint)
         self._send_movel(grasp_translation, quat_eef_command, duration_sec=self.descent_duration_sec)
@@ -640,8 +606,7 @@ class OmyGraspnetNode(Node):
         self._send_movel(lift_translation, quat_eef_command, duration_sec=self.descent_duration_sec)
 
     def _place_object(self):
-        # 이 클래스는 항상 서브클래스(omy_graspnet_grid_node, omy_ai_graspnet_node)로만
-        # 실행됨 -- 놓는 위치는 서브클래스마다 다르므로 여기서 반드시 오버라이드해야 함
+        # Overridden by subclasses (e.g. omy_ai_graspnet_node.py, omy_target_graspnet_node.py)
         raise NotImplementedError
 
     def on_cancel(self, request, response):
@@ -651,9 +616,7 @@ class OmyGraspnetNode(Node):
         return response
 
     def _cancelable_sleep(self, seconds):
-        # 도중에 취소되면 False 반환 (이벤트는 켜진 채로 두고 호출한 쪽에서 처리).
-        # seconds가 0이어도(auto_retry_delay_sec=0 등) 취소 여부는 최소 한 번은 체크해야 하므로
-        # while 조건보다 취소 체크를 먼저 함
+        # Returns False if cancelled during the sleep
         deadline = time.monotonic() + seconds
         while True:
             if self._cancel_event.is_set():
@@ -663,14 +626,15 @@ class OmyGraspnetNode(Node):
             time.sleep(min(0.05, deadline - time.monotonic()))
 
     def _detect_and_select(self):
-        """캡처 + 추론 + 제일 나은 후보 선정. 실패하면 (None, None, None, 사유메시지)."""
+        """Capture + inference + pick the best candidate. Returns (None, None, None, reason) on failure."""
         time.sleep(self.camera.capture_settle_sec)
         start_time = time.monotonic()
+
+        # Capture
         with self._camera_lock:
             color_image, depth_image, vertices = grab_frame(
                 self._camera_pipeline, self._camera_align,
                 self._camera_filter_depth, self._camera_pc)
-        # 서브클래스가 (예: 물체 분류 등으로) 재사용할 수 있게 마지막 캡처를 보관
         self._last_color_image = color_image
         self._last_vertices = vertices
         data_dir = save_capture(
@@ -683,7 +647,6 @@ class OmyGraspnetNode(Node):
         points_base = self._points_to_base_frame(np.asarray(cloud.points), self.camera.frame_id)
         if points_base is not None:
             colors_base = np.asarray(cloud.colors)
-            # 원본은 50만 점 이상이라 RViz엔 과함 -- 발행용만 줄임, Open3D 창은 원본 그대로
             if len(points_base) > self.camera.point_cloud_publish_max_points:
                 idxs = np.random.choice(
                     len(points_base), self.camera.point_cloud_publish_max_points, replace=False)
@@ -691,6 +654,7 @@ class OmyGraspnetNode(Node):
                 colors_base = colors_base[idxs]
             self._publish_point_cloud(points_base, colors_base, self.base_frame)
 
+        # Grasp inference
         gg = demo.get_grasps(self.net, end_points)
         if demo.cfgs.collision_thresh > 0:
             gg = demo.collision_detection(gg, np.array(cloud.points))
@@ -703,8 +667,7 @@ class OmyGraspnetNode(Node):
         gg.nms()
         gg.sort_by_score()
 
-        # 높이/테이블/기울기 검사를 통과한 후보만 모아서, score에 기울기+폭 페널티를
-        # 반영한 순위로 재정렬. 시각화도 이 리스트를 그대로 써서 화면=실제 선택 기준이 항상 일치
+        # Candidate filtering
         candidates = []
         tf_fail_count = 0
         table_reject_count = 0
@@ -736,7 +699,6 @@ class OmyGraspnetNode(Node):
                     f'rejecting grasp candidate (score={candidate.score:.3f}): '
                     f'z={t[2]:.3f} outside [{self.filters.min_grasp_z_m}, {self.filters.max_grasp_z_m}]')
                 continue
-            # 안전장치: 로봇 베이스에 너무 가깝거나(자기 몸통과 부딪힘) 너무 멀면(팔이 안 닿음) 탈락
             base_dist = np.linalg.norm(t)
             if base_dist < self.filters.min_base_distance_m or base_dist > self.filters.max_base_distance_m:
                 base_distance_reject_count += 1
@@ -744,7 +706,6 @@ class OmyGraspnetNode(Node):
                     f'rejecting grasp candidate (score={candidate.score:.3f}): '
                     f'{base_dist:.3f}m from base outside [{self.filters.min_base_distance_m}, {self.filters.max_base_distance_m}]')
                 continue
-            # 안전장치: 로봇 뒤쪽(X < min_grasp_x_m)에 있는 후보는 탈락
             if t[0] < self.filters.min_grasp_x_m:
                 behind_reject_count += 1
                 self.get_logger().warn(
@@ -777,6 +738,7 @@ class OmyGraspnetNode(Node):
             self.get_logger().info(f'detection took {self._last_detection_duration:.2f}s (no candidates)')
             return None, None, None, 'no grasp candidate passed the height/tilt sanity check'
 
+        # Final candidate selection
         candidates.sort(key=lambda c: c[0], reverse=True)
         _, selected, translation_base, quat_base, selected_tilt_deg = candidates[0]
 
@@ -798,7 +760,6 @@ class OmyGraspnetNode(Node):
         return selected, translation_base, quat_base, f'best sane score={selected.score:.4f}'
 
     def on_execute(self, request, response):
-        # 재귀 대신 반복문 -- auto가 오래 돌면 재귀는 언젠가 파이썬 재귀 한도에 걸림
         try:
             while True:
                 self._last_grasp = None
@@ -842,7 +803,6 @@ class OmyGraspnetNode(Node):
                     self._cancel_event.clear()
                     self.get_logger().info('auto loop stopped (cancelled)')
                     return response
-                # else: 다시 처음으로 돌아가서 다음 grasp 탐지
         except Exception:
             self.get_logger().error('execute failed:\n' + traceback.format_exc())
             response.success = False
@@ -896,7 +856,6 @@ def main():
     rclpy.init(args=_original_argv)
     node = OmyGraspnetNode()
     node.move_to_initial_pose()
-    # 그리퍼 액션 응답 처리용 스레드가 필요해서 MultiThreadedExecutor 사용
     executor = rclpy.executors.MultiThreadedExecutor()
     executor.add_node(node)
     try:

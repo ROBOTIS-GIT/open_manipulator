@@ -1,23 +1,17 @@
-# omy_ai_graspnet_node.py의 place/분류 규칙 초기값.
-# 노드 시작할 때 한 번만 읽고, 이후 명령창(GUI)에서 바꾼 내용은 메모리에만
-# 반영되고 이 파일에는 다시 저장되지 않음.
+# Initial place/sorting rules for omy_ai_graspnet_node.py.
+# Read once at node startup; changes made later from the command window (GUI)
+# only take effect in memory and are not written back to this file.
 places:
   1:
-    # 몸체가 크게 회전해서 가야 하는 자리라 접근/복귀를 더 천천히 함
-    position: [0.04589481922435505, 0.2779893021177601, 0.07850508157333291]
-    orientation: [0.020017911597205666, 0.7338251959582507, 0.6790273653444446, -0.004658551867665897]
+    # Requires a large body rotation to reach, so approach/return is slower
+    position: [0.012276360454590348, 0.3258223223750477, 0.05152131184540243]
+    orientation: [0.009841415447668936, 0.7377636612452978, 0.6747912653856563, -0.016268830540164925]
     slow: true
   2:
-    position: [0.270287897763567, 0.27792716803267375, 0.07270501066749221]
-    orientation: [0.02980930888351681, 0.7406542209441708, 0.6710746320530846, -0.014197475701248522]
+    position: [0.24944559389006088, 0.3295320438929455, 0.04159740063954717]
+    orientation: [0.018438913507137125, 0.7407764648905485, 0.6710503801915788, -0.0245279998710806]
   3:
-    # 박스 높이가 낮아서 z가 다른 place들보다 더 내려가 있음
-    position: [0.5026667064229693, 0.20358764390783501, 0.015118229860715982]
-    orientation: [0.027568330549443697, 0.7316913943620963, 0.6809717840093878, -0.0120465742117689]
+    position: [0.5169522325211225, 0.24790349587405178, 0.03637362901039379]
+    orientation: [0.3232793723350349, 0.640622169511599, 0.6115355012590491, 0.333343687584993]
 
-default_place: 2  # 어떤 카테고리에도 안 맞으면 여기로
-ai_off_place: 2  # AI mode 꺼졌을 때(분류 없이) 항상 여기로 놓음
-
-sort_categories:
-  - name: motor
-    place: 3
+default_place: 2  # anything that doesn't match a category goes here (also used with AI mode off)

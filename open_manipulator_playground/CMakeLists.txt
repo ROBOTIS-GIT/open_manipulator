@@ -73,9 +73,8 @@ install(PROGRAMS
   scripts/shape_detector_node.py
   scripts/omx_trajectory_controller_node.py
   scripts/omy_graspnet_node.py
-  scripts/omy_graspnet_grid_node.py
   scripts/omy_ai_graspnet_node.py
-  scripts/graspnet_initial.py
+  scripts/omy_target_graspnet_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

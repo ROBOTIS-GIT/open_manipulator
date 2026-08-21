@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# omy_graspnet_node.py에 Gemini 기반 물체 이름 분류를 추가한 버전.
-# 캡처/추론/후보선정/pick/place는 전부 그대로 상속해서 재사용함.
+# Author: SeongjinJeong
+#
+# Adds Gemini-based object classification on top of omy_graspnet_node.py.
 
 import os
 import sys
@@ -40,29 +41,23 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
     def __init__(self):
         super().__init__()
 
-        self.classify_crop_px = 220  # 선택된 grasp 지점 주변을 이 크기로 잘라서 물체 이름 분류에 씀
+        self.classify_crop_px = 220
         self.classify_model = 'gemini-flash-lite-latest'
-        # playground/images는 host에 bind-mount돼 있어서 컨테이너 밖에서 바로 확인 가능
         images_dir = os.path.join(PLAYGROUND_DIR, 'images')
         self._images_dir = images_dir
         self._classify_crop_save_path = os.path.join(images_dir, 'classify_crop.png')
-        # 이전 실행에서 남은 크롭이 시작하자마자 미리보기에 뜨지 않게 지움
         if os.path.exists(self._classify_crop_save_path):
             os.remove(self._classify_crop_save_path)
 
-        # place 위치/분류 규칙 초기값은 config/omy_ai_graspnet_places.yaml에서 읽음
-        # (GUI에서 바꾼 내용은 메모리에만 반영되고 이 파일에는 다시 저장 안 됨)
+        # Load place locations / sorting rules
         with open(os.path.join(PLAYGROUND_DIR, 'config', 'omy_ai_graspnet_places.yaml')) as f:
             places_config = yaml.safe_load(f)
         self._named_places = {
             place_id: (np.array(info['position']), np.array(info['orientation']))
             for place_id, info in places_config['places'].items()}
-        # 몸체가 크게 회전해서 가야 하는 place들 -- _place_object에서 접근/복귀를 더 천천히 함
         self._slow_places = {
             place_id for place_id, info in places_config['places'].items() if info.get('slow', False)}
-        self._default_place = places_config['default_place']  # 어떤 카테고리에도 안 맞으면 여기로
-        self._ai_off_place = places_config['ai_off_place']  # AI mode 꺼졌을 때 항상 여기로
-        # 참고사진 있으면 few-shot으로 같이 보내서 텍스트 설명보다 정확하게 판별함
+        self._default_place = places_config['default_place']
         self._sort_categories = [
             (cat['name'], f'{cat["name"]}_reference.png', cat['place'])
             for cat in places_config.get('sort_categories', [])]
@@ -74,16 +69,16 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         self._genai_client = genai.Client(api_key=gemini_api_key) if gemini_api_key else None
         if self._genai_client is None:
             self.get_logger().warn('GEMINI_API_KEY not set -- object classification disabled')
-        self._last_classification_duration = None  # 명령창 표시용
+        self._last_classification_duration = None
+        self._classifying = False  # for the command window's progress indicator
 
-        # 꺼지면 제미나이 분류 없이 항상 ai_off_place(위 places_config, 기본 place2)로 place
         self.ai_mode = True
 
-        self._last_label = None  # 마지막으로 분류된 라벨, _place_object에서 씀
+        self._last_label = None
         self._label_marker_pub = self.create_publisher(Marker, 'omy_ai_graspnet/label_marker', 10)
-        self._clear_label_marker()  # rviz에 이전 실행에서 남은 라벨 마커가 계속 떠있지 않게
+        self._clear_label_marker()
 
-        # 분류 규칙을 텍스트로 입력받는 창 -- GLX/tk는 자기 스레드에서만 다뤄야 해서 별도 스레드
+        # Command window GUI
         threading.Thread(target=self._run_command_window, daemon=True).start()
 
     @staticmethod
@@ -98,10 +93,10 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         status = tk.Label(root, text=self._sort_categories_summary(), fg='blue', wraplength=400, justify='left')
         status.pack(padx=10, pady=(10, 5))
 
-        # place별 박스 -- 각자 목록 보여주고 그 자리에서 추가/삭제
+        # Per-place category list
         places_frame = tk.Frame(root)
         places_frame.pack(padx=10, pady=(0, 10))
-        place_boxes = {}  # place_id -> (LabelFrame, Listbox)
+        place_boxes = {}
         default_var = tk.IntVar(value=self._default_place)
 
         def refresh():
@@ -162,8 +157,7 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
 
         tk.Button(root, text='Clear Rules', command=on_clear).pack(padx=10, pady=(0, 10))
 
-        # execute/pick은 오래 걸리고 auto면 계속 도니까, GUI가 안 멈추게 별도 스레드에서
-        # 돌리고 결과는 root.after로 안전하게 위젯에 반영 (tk는 다른 스레드에서 직접 못 건드림)
+        # Execute / pick / cancel
         control_frame = tk.Frame(root)
         control_frame.pack(padx=10, pady=(0, 10))
         exec_status = tk.Label(root, text='', fg='blue', wraplength=400, justify='left')
@@ -183,27 +177,32 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         tk.Button(control_frame, text='Cancel',
                   command=lambda: run_service('cancel', self.on_cancel)).pack(side=tk.LEFT, padx=5)
 
-        # on_execute는 auto면 계속 안 끝나서 리턴을 못 기다림 -- 1초마다 최신 값을
-        # 그냥 그대로 읽어서 보여줌 (auto 도는 중에도 실시간으로 갱신됨)
+        # Live status display
         timing_status = tk.Label(root, text='', fg='green', wraplength=400, justify='left')
         timing_status.pack(padx=10, pady=(0, 10))
+
+        dots_counter = [0]
 
         def poll_timing():
             det = (f'{self._last_detection_duration:.2f}s'
                    if self._last_detection_duration is not None else '-')
-            cls = (f'{self._last_classification_duration:.2f}s'
-                   if self._last_classification_duration is not None else '-')
+            if self._classifying:
+                dots_counter[0] += 1
+                cls = 'classifying' + '.' * (dots_counter[0] % 4)
+            else:
+                cls = (f'{self._last_classification_duration:.2f}s'
+                       if self._last_classification_duration is not None else '-')
             timing_status.config(
                 text=f'last label: {self._last_label or "-"}  |  detection: {det}  |  classification: {cls}')
-            root.after(1000, poll_timing)
+            root.after(300 if self._classifying else 1000, poll_timing)
 
         poll_timing()
 
-        # 제미나이한테 보낸 크롭 사진 미리보기 -- 파일이 바뀌었을 때만 다시 로드
+        # Crop image preview
         tk.Label(root, text='Crop image:').pack(padx=10, pady=(0, 0))
         crop_label = tk.Label(root)
         crop_label.pack(padx=10, pady=(0, 10))
-        last_crop_mtime = [None]  # poll_crop_image 클로저에서 갱신할 상태
+        last_crop_mtime = [None]
 
         def poll_crop_image():
             try:
@@ -217,21 +216,17 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
                     img.thumbnail((220, 220))
                     photo = ImageTk.PhotoImage(img)
                     crop_label.config(image=photo)
-                    crop_label.image = photo  # 참조 안 붙잡으면 tk가 가비지컬렉트해서 사라짐
+                    crop_label.image = photo
                 except Exception as exc:
                     self.get_logger().warn(f'failed to load crop preview: {exc}')
             root.after(500, poll_crop_image)
 
         poll_crop_image()
 
-        # self.auto는 on_execute가 매번 그대로 읽으니, 체크박스로 바로 바꾸면 다음
-        # execute부터 반영됨 (재시작 필요 없음)
         auto_var = tk.BooleanVar(value=self.auto)
         tk.Checkbutton(control_frame, text='Auto mode', variable=auto_var,
                        command=lambda: setattr(self, 'auto', auto_var.get())).pack(side=tk.LEFT, padx=5)
 
-        # 꺼지면 분류 없이 omy_graspnet_node 원래 동작(고정 위치 하나에 place)으로 감.
-        # _detect_and_select/_place_object가 매번 self.ai_mode를 그대로 읽으니 바로 반영됨
         ai_mode_var = tk.BooleanVar(value=self.ai_mode)
         tk.Checkbutton(control_frame, text='AI mode', variable=ai_mode_var,
                        command=lambda: setattr(self, 'ai_mode', ai_mode_var.get())).pack(side=tk.LEFT, padx=5)
@@ -243,7 +238,6 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         return f'Current rules: {rules} (else -> place{self._default_place})'
 
     def _set_category_place(self, name, place_id):
-        # 이미 있는 이름이면 place만 갱신, 없으면 새로 추가
         others = [(n, f, p) for n, f, p in self._sort_categories if n != name]
         self._sort_categories = others + [(name, f'{name}_reference.png', place_id)]
         self._category_refs = [
@@ -255,12 +249,10 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             (n, self._load_reference_image(self._images_dir, f), p) for n, f, p in self._sort_categories]
 
     def _classify_grasp_object(self, color_image, vertices, candidate):
-        # 위치는 이미 candidate.translation으로 알고 있으니 VLM한테는 "이게 뭔지"만 물어봄.
-        # vertices[i,j]가 color_image[i,j]랑 픽셀 단위로 대응되므로(캡처 시 align 처리됨),
-        # translation과 가장 가까운 점의 픽셀 좌표를 찾아 그 주변만 잘라서 보냄
         if self._genai_client is None:
             return None
         try:
+            # Crop around the grasp point
             dists = np.linalg.norm(vertices - candidate.translation, axis=2)
             row, col = np.unravel_index(np.argmin(dists), dists.shape)
             half = self.classify_crop_px // 2
@@ -268,10 +260,9 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             r0, r1 = max(0, row - half), min(h, row + half)
             c0, c1 = max(0, col - half), min(w, col + half)
             crop = Image.fromarray(color_image[r0:r1, c0:c1])
-            crop.save(self._classify_crop_save_path)  # 매번 덮어씀, host에서 바로 확인용
+            crop.save(self._classify_crop_save_path)
 
-            # _sort_categories 목록으로 프롬프트를 자동 생성 -- 참고사진 있는 카테고리는
-            # few-shot으로 같이 보내고, 없는 카테고리도 이름으로만 후보에 넣음
+            # Build the prompt (few-shot reference photos + the crop)
             contents = []
             for name, ref_image, _ in self._category_refs:
                 if ref_image is not None:
@@ -280,7 +271,10 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             contents.append(crop)
             category_names = ', '.join(f'"{name}"' for name, _, _ in self._category_refs)
             contents.append(
-                f'Which of these categories does the object in the last photo belong to: '
+                f'The last photo is cropped so the object being grasped is at the center of '
+                'the frame -- other objects may be partially visible near the edges due to '
+                'clutter/occlusion, but only classify the object at the center; ignore the '
+                'rest. Which of these categories does that centered object belong to: '
                 f'{category_names}? Interpret each category broadly/loosely -- e.g. any '
                 'stuffed animal (unicorn, teddy bear, etc.) counts as "doll", any small '
                 'actuator/servo counts as "motor". A category name may have multiple words '
@@ -295,8 +289,12 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
                 'one of the category names above written out in full, "background", or your '
                 'best single-word guess at what the object is.')
             start_time = time.monotonic()
-            resp = self._genai_client.models.generate_content(
-                model=self.classify_model, contents=contents)
+            self._classifying = True
+            try:
+                resp = self._genai_client.models.generate_content(
+                    model=self.classify_model, contents=contents)
+            finally:
+                self._classifying = False
             self._last_classification_duration = time.monotonic() - start_time
             self.get_logger().info(f'gemini classification took {self._last_classification_duration:.2f}s')
             return self._parse_classification_response(resp.text)
@@ -305,22 +303,17 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             return None
 
     def _parse_classification_response(self, text):
-        # "한 단어로만" 지시해도 가끔 설명을 먼저 붙이고 맨 끝에 진짜 답을 냄
-        # (예: "...partially obscured...). \n\ngreen doll") -- 카테고리 이름(여러 단어일 수
-        # 있음)이 응답 안에 통째로 들어있는지 먼저 확인. "doll"이 "green doll"보다 먼저
-        # 매칭되면 안 되니 긴 이름부터 검사
+        # Match longer category names first (e.g. prefer "green doll" over "doll")
         text_lower = text.strip().lower()
         for name in sorted((n for n, _, _ in self._category_refs), key=len, reverse=True):
             if name.lower() in text_lower:
                 return name
         if 'background' in text_lower.split():
             return 'background'
-        # 어떤 카테고리에도 안 맞으면 자유 답변 -- 마지막 단어만 정리해서 사용
         words = text.strip().split()
         return words[-1].strip('.,()!?"\'') if words else None
 
     def _clear_label_marker(self):
-        # 이전 실행에서 그려진 라벨 마커가 rviz에 계속 남아있지 않도록 지움
         marker = Marker()
         marker.header.frame_id = self.base_frame
         marker.header.stamp = self.get_clock().now().to_msg()
@@ -339,19 +332,17 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         marker.action = Marker.ADD
         (marker.pose.position.x, marker.pose.position.y,
          marker.pose.position.z) = translation_base.tolist()
-        marker.pose.position.z += 0.08  # 그리퍼 마커 위에 뜨게
+        marker.pose.position.z += 0.08
         marker.pose.orientation.w = 1.0
-        marker.scale.z = 0.03  # 텍스트 높이(m)
+        marker.scale.z = 0.03
         marker.color.r, marker.color.g, marker.color.b, marker.color.a = 1.0, 1.0, 1.0, 1.0
-        # rviz의 TEXT_VIEW_FACING 마커는 스페이스가 있으면 단어 사이 간격을 이상하게
-        # 크게 그림 -- "green doll" 같은 여러 단어 라벨은 줄바꿈으로 바꿔서 우회
+        # rviz's TEXT_VIEW_FACING marker renders spaces with an odd amount of
+        # extra width, so swap spaces for newlines to work around it
         marker.text = label.replace(' ', '\n')
         marker.lifetime.sec = 0
         self._label_marker_pub.publish(marker)
 
     def _detect_and_select(self):
-        # 새로 스캔할 때마다 이전 스캔의 라벨 마커가 남아있지 않게 먼저 지움 --
-        # 이번 스캔에서 라벨이 나오면 아래에서 다시 그림
         self._clear_label_marker()
         selected, translation_base, quat_base, message = super()._detect_and_select()
         self._last_label = None
@@ -362,7 +353,6 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             if label:
                 self.get_logger().info(f'object classified as: {label}')
                 if label.lower() == 'background':
-                    # 물체 없이 배경만 잡은 오탐 -- 집지 말고 실패 처리해서 재스캔 유도
                     self.get_logger().warn('classified as background -- rejecting, will rescan')
                     self._clear_gripper_marker()
                     return None, None, None, 'rejected background detection, rescanning'
@@ -372,30 +362,20 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         return selected, translation_base, quat_base, message
 
     def _place_object(self):
-        if not self.ai_mode:
-            # 분류 안 하니 그냥 정해둔 place로 (config의 ai_off_place)
-            place_id = self._ai_off_place
-        else:
-            # _sort_categories에서 라벨과 이름이 맞는 첫 카테고리의 place로. 못 받았거나
-            # 어떤 카테고리에도 안 맞으면(라벨이 "other" 등) _default_place로
-            place_id = self._default_place
-            if self._last_label:
-                label_lower = self._last_label.lower()
-                # 긴 이름부터 검사 -- "doll"과 "green doll"이 둘 다 등록돼 있으면
-                # 더 구체적인("green doll") 쪽을 우선해야 함
-                for name, _, place in sorted(self._sort_categories, key=lambda c: len(c[0]), reverse=True):
-                    if name.lower() in label_lower:
-                        place_id = place
-                        break
+        place_id = self._default_place
+        if self.ai_mode and self._last_label:
+            label_lower = self._last_label.lower()
+            for name, _, place in sorted(self._sort_categories, key=lambda c: len(c[0]), reverse=True):
+                if name.lower() in label_lower:
+                    place_id = place
+                    break
         translation, quat = self._named_places[place_id]
         self.get_logger().info(f'placing at place{place_id} (label={self._last_label})')
 
         approach_translation = translation.copy()
         approach_translation[2] += self.offsets.pregrasp_offset_m
 
-        # 놓는 곳 위로 이동하는 것만 0.5초 더 빠르게, 내려가는 것/복귀는 원래 속도.
-        # _slow_places(yaml의 slow: true)는 몸체가 크게 돌아가야 해서 접근은 1.5초,
-        # 홈 복귀는 2.0초 더 천천히 감
+        # slow_places approach/return more slowly
         is_slow = place_id in self._slow_places
         approach_duration = self.movel_duration_sec - 0.5 + (1.5 if is_slow else 0.0)
         return_duration = self.return_home_duration_sec + (2.0 if is_slow else 0.0)

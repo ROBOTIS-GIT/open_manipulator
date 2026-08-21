@@ -21,9 +21,6 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # AI mode, auto mode, and place rules are all toggled live from the
-    # command window, so this always launches omy_ai_graspnet_node.py with
-    # motion enabled -- auto/AI mode are just adjusted from that window
     execute_motion_arg = DeclareLaunchArgument('execute_motion', default_value='true')
     auto_arg = DeclareLaunchArgument('auto', default_value='true')
     auto_pick_delay_sec_arg = DeclareLaunchArgument('auto_pick_delay_sec', default_value='0.0')
@@ -32,9 +29,9 @@ def generate_launch_description():
     top_k_arg = DeclareLaunchArgument('top_k', default_value='50')
     place_enabled_arg = DeclareLaunchArgument('place_enabled', default_value='true')
 
-    omy_graspnet = Node(
+    omy_target_graspnet = Node(
         package='open_manipulator_playground',
-        executable='omy_ai_graspnet_node.py',
+        executable='omy_target_graspnet_node.py',
         name='omy_graspnet',
         output='screen',
         parameters=[{
@@ -56,5 +53,5 @@ def generate_launch_description():
         gripper_close_bias_arg,
         top_k_arg,
         place_enabled_arg,
-        omy_graspnet,
+        omy_target_graspnet,
     ])
