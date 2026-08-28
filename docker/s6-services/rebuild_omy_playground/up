@@ -15,4 +15,6 @@ for pkg in ${OM_PACKAGES}; do
     rm -rf "build/${pkg}" "install/${pkg}"
 done
 
-colcon build --symlink-install --packages-select ${OM_PACKAGES} --cmake-args -DCMAKE_BUILD_TYPE=Release
+# Cap parallelism -- unbounded colcon build OOMs on hosts with many cores
+# but limited RAM.
+MAKEFLAGS='-j4' colcon build --symlink-install --parallel-workers 4 --packages-select ${OM_PACKAGES} --cmake-args -DCMAKE_BUILD_TYPE=Release
