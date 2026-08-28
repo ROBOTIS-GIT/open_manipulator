@@ -1,0 +1,2 @@
+#!/command/with-contenv bash
+/usr/local/lib/s6-services/rebuild_omy_playground.sh

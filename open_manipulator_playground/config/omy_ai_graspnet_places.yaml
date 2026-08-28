@@ -1,0 +1,17 @@
+# Initial place/sorting rules for omy_ai_graspnet_node.py.
+# Read once at node startup; changes made later from the command window (GUI)
+# only take effect in memory and are not written back to this file.
+places:
+  1:
+    # Requires a large body rotation to reach, so approach/return is slower
+    position: [0.012276360454590348, 0.3258223223750477, 0.05152131184540243]
+    orientation: [0.009841415447668936, 0.7377636612452978, 0.6747912653856563, -0.016268830540164925]
+    slow: true
+  2:
+    position: [0.24944559389006088, 0.3295320438929455, 0.04159740063954717]
+    orientation: [0.018438913507137125, 0.7407764648905485, 0.6710503801915788, -0.0245279998710806]
+  3:
+    position: [0.5169522325211225, 0.24790349587405178, 0.03637362901039379]
+    orientation: [0.3232793723350349, 0.640622169511599, 0.6115355012590491, 0.333343687584993]
+
+default_place: 2  # anything that doesn't match a category goes here (also used with AI mode off)
