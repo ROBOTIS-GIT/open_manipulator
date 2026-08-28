@@ -95,35 +95,6 @@ ENV PYTHONPATH=/opt/cyclo_manager:${PYTHONPATH}
 RUN pip config set global.break-system-packages true && \
     pip install --no-cache-dir --ignore-installed -r /opt/cyclo_manager/requirements-agent.txt
 
-# New-style s6-rc services
-COPY docker/s6-agent /etc/s6-overlay/s6-rc.d/s6-agent
-
-ARG ROS2_SERVICES="open_manipulator_bringup leader_bringup"
-
-COPY docker/s6-services/ /etc/s6-overlay/s6-rc.d/
-
-RUN chmod +x /etc/s6-overlay/s6-rc.d/s6-agent/run /etc/s6-overlay/s6-rc.d/s6-agent/finish && \
-    for service in ${ROS2_SERVICES}; do \
-    chmod +x /etc/s6-overlay/s6-rc.d/${service}/run /etc/s6-overlay/s6-rc.d/${service}/finish && \
-    chmod +x /etc/s6-overlay/s6-rc.d/${service}-log/run && \
-    mkdir -p /var/log/${service} && \
-    chown nobody:nogroup /var/log/${service} && \
-    chmod 02755 /var/log/${service}; \
-    done && \
-    chmod +x /etc/s6-overlay/s6-rc.d/rebuild_omy_playground/up && \
-    rm -rf /etc/s6-overlay/s6-rc.d/common
-
-RUN mkdir -p /usr/local/lib/s6-services
-COPY docker/s6-services/common/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_run.sh
-COPY docker/s6-services/common/ros2_service_finish.sh /usr/local/lib/s6-services/ros2_service_finish.sh
-RUN chmod +x /usr/local/lib/s6-services/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_finish.sh
-
-# Start the agent and the playground rebuild (see rebuild_omy_playground/up)
-# by default. ROS2 services can be managed through s6.
-RUN mkdir -p /etc/s6-overlay/s6-rc.d/user/contents.d && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/s6-agent && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/rebuild_omy_playground
-
 # Install CUDA toolkit
 RUN apt-get update && apt-get install -y --no-install-recommends \
         wget gnupg python3-pip wmctrl python3-tk \
@@ -159,5 +130,36 @@ COPY docker/assets/checkpoint-rs.tar /opt/graspnet-baseline/logs/log_rs/checkpoi
 
 # For classifying/locating grasped objects
 RUN pip3 install --break-system-packages --no-cache-dir google-genai
+
+# New-style s6-rc services
+COPY docker/s6-agent /etc/s6-overlay/s6-rc.d/s6-agent
+
+ARG ROS2_SERVICES="open_manipulator_bringup leader_bringup"
+
+COPY docker/s6-services/ /etc/s6-overlay/s6-rc.d/
+
+RUN chmod +x /etc/s6-overlay/s6-rc.d/s6-agent/run /etc/s6-overlay/s6-rc.d/s6-agent/finish && \
+    for service in ${ROS2_SERVICES}; do \
+    chmod +x /etc/s6-overlay/s6-rc.d/${service}/run /etc/s6-overlay/s6-rc.d/${service}/finish && \
+    chmod +x /etc/s6-overlay/s6-rc.d/${service}-log/run && \
+    mkdir -p /var/log/${service} && \
+    chown nobody:nogroup /var/log/${service} && \
+    chmod 02755 /var/log/${service}; \
+    done && \
+    chmod +x /etc/s6-overlay/s6-rc.d/rebuild_omy_playground/up && \
+    rm -rf /etc/s6-overlay/s6-rc.d/common
+
+RUN mkdir -p /usr/local/lib/s6-services
+COPY docker/s6-services/common/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_run.sh
+COPY docker/s6-services/common/ros2_service_finish.sh /usr/local/lib/s6-services/ros2_service_finish.sh
+COPY docker/s6-services/common/rebuild_omy_playground.sh /usr/local/lib/s6-services/rebuild_omy_playground.sh
+RUN chmod +x /usr/local/lib/s6-services/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_finish.sh \
+    /usr/local/lib/s6-services/rebuild_omy_playground.sh
+
+# Start the agent and the playground rebuild (see rebuild_omy_playground/up)
+# by default. ROS2 services can be managed through s6.
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/user/contents.d && \
+    touch /etc/s6-overlay/s6-rc.d/user/contents.d/s6-agent && \
+    touch /etc/s6-overlay/s6-rc.d/user/contents.d/rebuild_omy_playground
 
 ENTRYPOINT ["/init"]
