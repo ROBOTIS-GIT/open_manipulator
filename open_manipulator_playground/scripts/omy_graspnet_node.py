@@ -32,6 +32,7 @@ from control_msgs.action import GripperCommand
 from geometry_msgs.msg import Point, PoseStamped
 import numpy as np
 import open3d as o3d
+from PIL import Image
 import pyrealsense2 as rs
 import rclpy
 from rclpy.action import ActionClient
@@ -47,7 +48,6 @@ from std_msgs.msg import Float32MultiArray, Header
 from std_srvs.srv import Trigger
 import tf2_ros
 import torch
-from PIL import Image
 from visualization_msgs.msg import Marker
 import yaml
 
@@ -63,7 +63,7 @@ sys.path.append(os.path.join(GRASPNET_ROOT, 'utils'))
 _original_argv = sys.argv[:]
 sys.argv = ['demo.py', '--checkpoint_path',
             os.path.join(GRASPNET_ROOT, 'logs/log_rs/checkpoint-rs.tar')]
-import demo  # noqa: E402
+import demo  # noqa: E402, I100
 
 WIDTH, HEIGHT = 1280, 720
 
@@ -156,7 +156,7 @@ def grab_frame(pipeline, align, filter_depth, pc):
 
 
 def save_capture(out_dir, color_image, depth_image, vertices,
-                  depth_min=0.14, depth_max=0.8, edge_margin_px=40, depth_margin_m=0.02):
+                 depth_min=0.14, depth_max=0.8, edge_margin_px=40, depth_margin_m=0.02):
     os.makedirs(out_dir, exist_ok=True)
     Image.fromarray(color_image).save(os.path.join(out_dir, 'color.png'))
     Image.fromarray(depth_image).save(os.path.join(out_dir, 'depth.png'))
@@ -250,7 +250,8 @@ class OmyGraspnetNode(Node):
         self.cloud_pub = self.create_publisher(PointCloud2, 'omy_graspnet/point_cloud', cloud_qos)
 
         # Camera pipeline
-        self._camera_pipeline, self._camera_align, self._camera_filter_depth, self._camera_pc = open_camera()
+        (self._camera_pipeline, self._camera_align, self._camera_filter_depth,
+         self._camera_pc) = open_camera()
         self._camera_lock = threading.Lock()
 
         # Execute/pick state
@@ -265,7 +266,8 @@ class OmyGraspnetNode(Node):
         self.pick_srv = self.create_service(Trigger, 'omy_graspnet/pick', self.on_pick)
         self._cancel_callback_group = ReentrantCallbackGroup()
         self.cancel_srv = self.create_service(
-            Trigger, 'omy_graspnet/cancel', self.on_cancel, callback_group=self._cancel_callback_group)
+            Trigger, 'omy_graspnet/cancel', self.on_cancel,
+            callback_group=self._cancel_callback_group)
         self.get_logger().info(
             'ready -- call: ros2 service call /omy_graspnet/execute std_srvs/srv/Trigger {}, '
             'then ros2 service call /omy_graspnet/pick std_srvs/srv/Trigger {} to act on it '
@@ -293,7 +295,7 @@ class OmyGraspnetNode(Node):
                         self._view_initialized = True
                     self._pending_geoms = None
                     subprocess.run(['wmctrl', '-a', window_name],
-                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             self.vis.poll_events()
             self.vis.update_renderer()
             time.sleep(0.03)
@@ -314,9 +316,11 @@ class OmyGraspnetNode(Node):
         cloud_o3d.colors = o3d.utility.Vector3dVector(color_masked.astype(np.float32))
 
         # Outlier removal
-        if self.filters.outlier_removal_neighbors > 0 and len(cloud_masked) > self.filters.outlier_removal_neighbors:
+        if (self.filters.outlier_removal_neighbors > 0
+                and len(cloud_masked) > self.filters.outlier_removal_neighbors):
             cloud_o3d, inlier_idx = cloud_o3d.remove_statistical_outlier(
-                nb_neighbors=self.filters.outlier_removal_neighbors, std_ratio=self.filters.outlier_removal_std_ratio)
+                nb_neighbors=self.filters.outlier_removal_neighbors,
+                std_ratio=self.filters.outlier_removal_std_ratio)
             cloud_masked = cloud_masked[inlier_idx]
             color_masked = color_masked[inlier_idx]
 
@@ -335,14 +339,16 @@ class OmyGraspnetNode(Node):
 
         # Sample down (or up) to the network's expected input point count
         num_point = demo.cfgs.num_point
-        self.get_logger().info(f'{len(points_for_sampling)} points for grasp sampling (target {num_point})')
+        self.get_logger().info(
+            f'{len(points_for_sampling)} points for grasp sampling (target {num_point})')
         if len(points_for_sampling) >= num_point:
             idxs = np.random.choice(len(points_for_sampling), num_point, replace=False)
             points_final = points_for_sampling[idxs]
             colors_for_sampling = colors_for_sampling[idxs]
         else:
             idxs1 = np.arange(len(points_for_sampling))
-            idxs2 = np.random.choice(len(points_for_sampling), num_point - len(points_for_sampling), replace=True)
+            idxs2 = np.random.choice(
+                len(points_for_sampling), num_point - len(points_for_sampling), replace=True)
             points_final = points_for_sampling[np.concatenate([idxs1, idxs2])].copy()
             colors_for_sampling = colors_for_sampling[np.concatenate([idxs1, idxs2])]
             points_final[len(idxs1):] += np.random.normal(
@@ -504,7 +510,8 @@ class OmyGraspnetNode(Node):
         if close_bias is None:
             close_bias = self.gripper.close_bias
         ratio = np.clip(width_m / self.gripper.open_width_m, 0.0, 1.0)
-        joint = self.gripper.closed_joint + ratio * (self.gripper.open_joint - self.gripper.closed_joint)
+        joint = self.gripper.closed_joint + ratio * (
+            self.gripper.open_joint - self.gripper.closed_joint)
         joint += math.copysign(close_bias, self.gripper.closed_joint - self.gripper.open_joint)
         closed_bound = max(self.gripper.open_joint, self.gripper.closed_joint)
         open_bound = min(self.gripper.open_joint, self.gripper.closed_joint)
@@ -599,11 +606,15 @@ class OmyGraspnetNode(Node):
 
         self._send_gripper(self.gripper.open_joint)
         # Close the gripper slightly while approaching the pregrasp pose
-        pregrasp_gripper_joint = min(self._width_to_gripper_joint(grasp.width, close_bias=0.2), 0.6)
-        self._send_movel_and_gripper(pregrasp_translation, quat_eef_command, pregrasp_gripper_joint)
-        self._send_movel(grasp_translation, quat_eef_command, duration_sec=self.descent_duration_sec)
+        pregrasp_gripper_joint = min(
+            self._width_to_gripper_joint(grasp.width, close_bias=0.2), 0.6)
+        self._send_movel_and_gripper(
+            pregrasp_translation, quat_eef_command, pregrasp_gripper_joint)
+        self._send_movel(
+            grasp_translation, quat_eef_command, duration_sec=self.descent_duration_sec)
         self._send_gripper(self._width_to_gripper_joint(grasp.width))
-        self._send_movel(lift_translation, quat_eef_command, duration_sec=self.descent_duration_sec)
+        self._send_movel(
+            lift_translation, quat_eef_command, duration_sec=self.descent_duration_sec)
 
     def _place_object(self):
         # Overridden by subclasses (e.g. omy_ai_graspnet_node.py, omy_target_graspnet_node.py)
@@ -626,7 +637,7 @@ class OmyGraspnetNode(Node):
             time.sleep(min(0.05, deadline - time.monotonic()))
 
     def _detect_and_select(self):
-        """Capture + inference + pick the best candidate. Returns (None, None, None, reason) on failure."""
+        """Capture, run inference, pick the best candidate (None x3 + reason on failure)."""
         time.sleep(self.camera.capture_settle_sec)
         start_time = time.monotonic()
 
@@ -661,7 +672,8 @@ class OmyGraspnetNode(Node):
         if len(gg) == 0:
             self._clear_gripper_marker()
             self._last_detection_duration = time.monotonic() - start_time
-            self.get_logger().info(f'detection took {self._last_detection_duration:.2f}s (no candidates)')
+            self.get_logger().info(
+                f'detection took {self._last_detection_duration:.2f}s (no candidates)')
             return None, None, None, 'no valid grasp candidate found'
 
         gg.nms()
@@ -677,7 +689,8 @@ class OmyGraspnetNode(Node):
         tilt_reject_count = 0
         width_reject_count = 0
         for candidate in gg[:100]:
-            if self.filters.max_grasp_width_m is not None and candidate.width > self.filters.max_grasp_width_m:
+            if (self.filters.max_grasp_width_m is not None
+                    and candidate.width > self.filters.max_grasp_width_m):
                 width_reject_count += 1
                 continue
             if table_plane is not None:
@@ -697,14 +710,17 @@ class OmyGraspnetNode(Node):
                 height_reject_count += 1
                 self.get_logger().warn(
                     f'rejecting grasp candidate (score={candidate.score:.3f}): '
-                    f'z={t[2]:.3f} outside [{self.filters.min_grasp_z_m}, {self.filters.max_grasp_z_m}]')
+                    f'z={t[2]:.3f} outside '
+                    f'[{self.filters.min_grasp_z_m}, {self.filters.max_grasp_z_m}]')
                 continue
             base_dist = np.linalg.norm(t)
-            if base_dist < self.filters.min_base_distance_m or base_dist > self.filters.max_base_distance_m:
+            if (base_dist < self.filters.min_base_distance_m
+                    or base_dist > self.filters.max_base_distance_m):
                 base_distance_reject_count += 1
                 self.get_logger().warn(
                     f'rejecting grasp candidate (score={candidate.score:.3f}): '
-                    f'{base_dist:.3f}m from base outside [{self.filters.min_base_distance_m}, {self.filters.max_base_distance_m}]')
+                    f'{base_dist:.3f}m from base outside '
+                    f'[{self.filters.min_base_distance_m}, {self.filters.max_base_distance_m}]')
                 continue
             if t[0] < self.filters.min_grasp_x_m:
                 behind_reject_count += 1
@@ -718,7 +734,8 @@ class OmyGraspnetNode(Node):
                 tilt_reject_count += 1
                 self.get_logger().warn(
                     f'rejecting grasp candidate (score={candidate.score:.3f}): '
-                    f'tilt={tilt_deg:.1f}deg > {self.filters.max_approach_tilt_deg}deg (too lying-down)')
+                    f'tilt={tilt_deg:.1f}deg > {self.filters.max_approach_tilt_deg}deg '
+                    '(too lying-down)')
                 continue
             width_ratio = np.clip(candidate.width / self.gripper.open_width_m, 0.0, 1.0)
             rank_score = (candidate.score
@@ -729,13 +746,16 @@ class OmyGraspnetNode(Node):
         if not candidates:
             self.get_logger().warn(
                 f'0 candidates survived out of {len(gg[:100])} checked: '
-                f'{width_reject_count} rejected by width, {table_reject_count} rejected as on-table, '
+                f'{width_reject_count} rejected by width, '
+                f'{table_reject_count} rejected as on-table, '
                 f'{tf_fail_count} TF lookup failed, {height_reject_count} rejected by height, '
                 f'{base_distance_reject_count} rejected by base distance, '
-                f'{behind_reject_count} rejected as behind robot, {tilt_reject_count} rejected by tilt')
+                f'{behind_reject_count} rejected as behind robot, '
+                f'{tilt_reject_count} rejected by tilt')
             self._clear_gripper_marker()
             self._last_detection_duration = time.monotonic() - start_time
-            self.get_logger().info(f'detection took {self._last_detection_duration:.2f}s (no candidates)')
+            self.get_logger().info(
+                f'detection took {self._last_detection_duration:.2f}s (no candidates)')
             return None, None, None, 'no grasp candidate passed the height/tilt sanity check'
 
         # Final candidate selection

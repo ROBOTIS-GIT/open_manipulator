@@ -26,14 +26,14 @@ import tkinter as tk
 
 from google import genai
 import numpy as np
-import rclpy
 from PIL import Image, ImageTk
+import rclpy
 from std_srvs.srv import Trigger
 from visualization_msgs.msg import Marker
 import yaml
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from omy_graspnet_node import OmyGraspnetNode, PLAYGROUND_DIR, _original_argv  # noqa: E402
+from omy_graspnet_node import _original_argv, OmyGraspnetNode, PLAYGROUND_DIR  # noqa: E402, I100
 
 
 class OmyAiGraspnetNode(OmyGraspnetNode):
@@ -56,7 +56,8 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             place_id: (np.array(info['position']), np.array(info['orientation']))
             for place_id, info in places_config['places'].items()}
         self._slow_places = {
-            place_id for place_id, info in places_config['places'].items() if info.get('slow', False)}
+            place_id for place_id, info in places_config['places'].items()
+            if info.get('slow', False)}
         self._default_place = places_config['default_place']
         self._sort_categories = [
             (cat['name'], f'{cat["name"]}_reference.png', cat['place'])
@@ -90,7 +91,8 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         root = tk.Tk()
         root.title('omy_ai_graspnet')
 
-        status = tk.Label(root, text=self._sort_categories_summary(), fg='blue', wraplength=400, justify='left')
+        status = tk.Label(root, text=self._sort_categories_summary(), fg='blue', wraplength=400,
+                          justify='left')
         status.pack(padx=10, pady=(10, 5))
 
         # Per-place category list
@@ -105,7 +107,9 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
                 for name, _, place in self._sort_categories:
                     if place == place_id:
                         listbox.insert(tk.END, name)
-                box.config(text=f'place{place_id}' + (' (else)' if place_id == self._default_place else ''))
+                box.config(
+                    text=f'place{place_id}'
+                    + (' (else)' if place_id == self._default_place else ''))
             status.config(text=self._sort_categories_summary())
 
         for place_id in sorted(self._named_places.keys()):
@@ -171,7 +175,8 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             threading.Thread(target=worker, daemon=True).start()
 
         tk.Button(control_frame, text='Execute',
-                  command=lambda: run_service('execute', self.on_execute)).pack(side=tk.LEFT, padx=5)
+                  command=lambda: run_service('execute', self.on_execute)
+                  ).pack(side=tk.LEFT, padx=5)
         tk.Button(control_frame, text='Pick',
                   command=lambda: run_service('pick', self.on_pick)).pack(side=tk.LEFT, padx=5)
         tk.Button(control_frame, text='Cancel',
@@ -193,7 +198,8 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
                 cls = (f'{self._last_classification_duration:.2f}s'
                        if self._last_classification_duration is not None else '-')
             timing_status.config(
-                text=f'last label: {self._last_label or "-"}  |  detection: {det}  |  classification: {cls}')
+                text=f'last label: {self._last_label or "-"}  |  detection: {det}  |  '
+                     f'classification: {cls}')
             root.after(300 if self._classifying else 1000, poll_timing)
 
         poll_timing()
@@ -225,11 +231,13 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
 
         auto_var = tk.BooleanVar(value=self.auto)
         tk.Checkbutton(control_frame, text='Auto mode', variable=auto_var,
-                       command=lambda: setattr(self, 'auto', auto_var.get())).pack(side=tk.LEFT, padx=5)
+                       command=lambda: setattr(self, 'auto', auto_var.get())
+                       ).pack(side=tk.LEFT, padx=5)
 
         ai_mode_var = tk.BooleanVar(value=self.ai_mode)
         tk.Checkbutton(control_frame, text='AI mode', variable=ai_mode_var,
-                       command=lambda: setattr(self, 'ai_mode', ai_mode_var.get())).pack(side=tk.LEFT, padx=5)
+                       command=lambda: setattr(self, 'ai_mode', ai_mode_var.get())
+                       ).pack(side=tk.LEFT, padx=5)
 
         root.mainloop()
 
@@ -241,12 +249,14 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         others = [(n, f, p) for n, f, p in self._sort_categories if n != name]
         self._sort_categories = others + [(name, f'{name}_reference.png', place_id)]
         self._category_refs = [
-            (n, self._load_reference_image(self._images_dir, f), p) for n, f, p in self._sort_categories]
+            (n, self._load_reference_image(self._images_dir, f), p)
+            for n, f, p in self._sort_categories]
 
     def _remove_category(self, name):
         self._sort_categories = [(n, f, p) for n, f, p in self._sort_categories if n != name]
         self._category_refs = [
-            (n, self._load_reference_image(self._images_dir, f), p) for n, f, p in self._sort_categories]
+            (n, self._load_reference_image(self._images_dir, f), p)
+            for n, f, p in self._sort_categories]
 
     def _classify_grasp_object(self, color_image, vertices, candidate):
         if self._genai_client is None:
@@ -296,7 +306,8 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
             finally:
                 self._classifying = False
             self._last_classification_duration = time.monotonic() - start_time
-            self.get_logger().info(f'gemini classification took {self._last_classification_duration:.2f}s')
+            self.get_logger().info(
+                f'gemini classification took {self._last_classification_duration:.2f}s')
             return self._parse_classification_response(resp.text)
         except Exception as exc:
             self.get_logger().warn(f'object classification failed: {exc}')
@@ -349,7 +360,8 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         if not self.ai_mode:
             return selected, translation_base, quat_base, message
         if selected is not None:
-            label = self._classify_grasp_object(self._last_color_image, self._last_vertices, selected)
+            label = self._classify_grasp_object(
+                self._last_color_image, self._last_vertices, selected)
             if label:
                 self.get_logger().info(f'object classified as: {label}')
                 if label.lower() == 'background':
@@ -365,7 +377,8 @@ class OmyAiGraspnetNode(OmyGraspnetNode):
         place_id = self._default_place
         if self.ai_mode and self._last_label:
             label_lower = self._last_label.lower()
-            for name, _, place in sorted(self._sort_categories, key=lambda c: len(c[0]), reverse=True):
+            for name, _, place in sorted(
+                    self._sort_categories, key=lambda c: len(c[0]), reverse=True):
                 if name.lower() in label_lower:
                     place_id = place
                     break

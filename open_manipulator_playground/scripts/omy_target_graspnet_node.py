@@ -32,15 +32,15 @@ import tkinter as tk
 
 from google import genai
 import numpy as np
-import rclpy
 from PIL import Image, ImageTk
+import rclpy
 from scipy.spatial.transform import Rotation
 from std_srvs.srv import Trigger
 import yaml
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from omy_graspnet_node import (  # noqa: E402
-    OmyGraspnetNode, PLAYGROUND_DIR, _original_argv, demo, grab_frame, save_capture)
+from omy_graspnet_node import (  # noqa: E402, I100
+    _original_argv, demo, grab_frame, OmyGraspnetNode, PLAYGROUND_DIR, save_capture)
 
 
 class OmyTargetGraspnetNode(OmyGraspnetNode):
@@ -50,10 +50,13 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
 
         self.classify_crop_px = 220
         self.classify_model = 'gemini-flash-lite-latest'
-        self.target_match_max_dist_m = 0.05  # candidates farther than this from the found location don't count as a match
-        self.target_object = None  # free text set from the command window; picks the best candidate if empty
+        # candidates farther than this from the found location don't count as a match
+        self.target_match_max_dist_m = 0.05
+        # free text set from the command window; picks the best candidate if empty
+        self.target_object = None
 
-        self._found_crop_save_path = os.path.join(PLAYGROUND_DIR, 'images', 'target_found_crop.png')
+        self._found_crop_save_path = os.path.join(
+            PLAYGROUND_DIR, 'images', 'target_found_crop.png')
         if os.path.exists(self._found_crop_save_path):
             os.remove(self._found_crop_save_path)
 
@@ -75,15 +78,19 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
 
     def _place_object(self):
         self._send_movel(self.place_approach_translation, self.place_approach_quat)
-        self._send_movel(self.place_translation, self.place_quat, duration_sec=self.descent_duration_sec)
+        self._send_movel(
+            self.place_translation, self.place_quat, duration_sec=self.descent_duration_sec)
         self._send_gripper(self.gripper.open_joint)
-        self._send_movel(self.initial_translation, self.initial_quat, duration_sec=self.return_home_duration_sec)
+        self._send_movel(
+            self.initial_translation, self.initial_quat,
+            duration_sec=self.return_home_duration_sec)
 
     def _run_command_window(self):
         root = tk.Tk()
         root.title('omy_target_graspnet')
 
-        tk.Label(root, text='Target object (leave empty for best candidate):').pack(padx=10, pady=(10, 0))
+        tk.Label(root, text='Target object (leave empty for best candidate):').pack(
+            padx=10, pady=(10, 0))
         target_entry = tk.Entry(root, width=30)
         target_entry.pack(padx=10, pady=(0, 5))
 
@@ -110,7 +117,8 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
             threading.Thread(target=worker, daemon=True).start()
 
         tk.Button(control_frame, text='Execute',
-                  command=lambda: run_service('execute', self.on_execute)).pack(side=tk.LEFT, padx=5)
+                  command=lambda: run_service('execute', self.on_execute)
+                  ).pack(side=tk.LEFT, padx=5)
         tk.Button(control_frame, text='Pick',
                   command=lambda: run_service('pick', self.on_pick)).pack(side=tk.LEFT, padx=5)
         tk.Button(control_frame, text='Cancel',
@@ -118,7 +126,8 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
 
         auto_var = tk.BooleanVar(value=self.auto)
         tk.Checkbutton(control_frame, text='Auto mode', variable=auto_var,
-                       command=lambda: setattr(self, 'auto', auto_var.get())).pack(side=tk.LEFT, padx=5)
+                       command=lambda: setattr(self, 'auto', auto_var.get())
+                       ).pack(side=tk.LEFT, padx=5)
 
         # Detection progress -- dots animate while running, then show elapsed time
         timing_status = tk.Label(root, text='', fg='green')
@@ -171,7 +180,8 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
         root.mainloop()
 
     def _locate_target_pixel(self, color_image):
-        # Get the target's approximate location (bounding box) from the full image, then convert to a center pixel
+        # Get the target's approximate location (bounding box) from the full
+        # image, then convert to a center pixel
         h, w = color_image.shape[:2]
         contents = [
             Image.fromarray(color_image),
@@ -222,9 +232,12 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
         Image.fromarray(color_image[r0:r1, c0:c1]).save(self._found_crop_save_path)
 
     def _select_candidate_near_target(self, candidates, target_point):
-        """Index into candidates of the one closest to target_point, or None if none are close
-        enough. Subclasses can override this to use a different criterion (e.g. prefer
-        near-vertical candidates)."""
+        """
+        Index into candidates of the one closest to target_point.
+
+        Returns None if none are close enough. Subclasses can override this
+        to use a different criterion (e.g. prefer near-vertical candidates).
+        """
         dists = [np.linalg.norm(c[1].translation - target_point) for c in candidates]
         nearest_idx = int(np.argmin(dists))
         if dists[nearest_idx] > self.target_match_max_dist_m:
@@ -239,7 +252,7 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
             self._detecting = False
 
     def _detect_and_select_impl(self):
-        """Capture + inference + target/best-candidate selection. Returns (None, None, None, reason) on failure."""
+        """Capture, run inference, select target/best candidate (None x3 + reason on fail)."""
         time.sleep(self.camera.capture_settle_sec)
         start_time = time.monotonic()
 
@@ -278,7 +291,8 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
         # Candidate filtering (safety checks only -- per-reason counts/logging are skipped here)
         candidates = []
         for candidate in gg[:100]:
-            if self.filters.max_grasp_width_m is not None and candidate.width > self.filters.max_grasp_width_m:
+            if (self.filters.max_grasp_width_m is not None
+                    and candidate.width > self.filters.max_grasp_width_m):
                 continue
             if table_plane is not None:
                 a, b, c, d = table_plane
@@ -293,7 +307,8 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
             if not (self.filters.min_grasp_z_m <= t[2] <= self.filters.max_grasp_z_m):
                 continue
             base_dist = np.linalg.norm(t)
-            if base_dist < self.filters.min_base_distance_m or base_dist > self.filters.max_base_distance_m:
+            if (base_dist < self.filters.min_base_distance_m
+                    or base_dist > self.filters.max_base_distance_m):
                 continue
             if t[0] < self.filters.min_grasp_x_m:
                 continue
@@ -316,7 +331,8 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
 
         # Show every detected candidate regardless of whether the target is found
         with self._geom_lock:
-            self._pending_geoms = [cloud] + [c[1].to_open3d_geometry() for c in candidates[:self.top_k]]
+            self._pending_geoms = [cloud] + [
+                c[1].to_open3d_geometry() for c in candidates[:self.top_k]]
 
         if self.target_object and self._genai_client is not None:
             pixel = self._locate_target_pixel(color_image)
@@ -339,7 +355,8 @@ class OmyTargetGraspnetNode(OmyGraspnetNode):
             if nearest_idx is None:
                 self._clear_gripper_marker()
                 self._last_detection_duration = time.monotonic() - start_time
-                return None, None, None, f'target "{self.target_object}" located, but no grasp candidate nearby'
+                return (None, None, None,
+                        f'target "{self.target_object}" located, but no grasp candidate nearby')
 
             _, selected, translation_base, quat_base, selected_tilt_deg = candidates[nearest_idx]
         else:
