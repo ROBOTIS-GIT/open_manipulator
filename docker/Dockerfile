@@ -108,6 +108,7 @@ RUN chmod +x /etc/s6-overlay/s6-rc.d/s6-agent/run /etc/s6-overlay/s6-rc.d/s6-age
     chown nobody:nogroup /var/log/${service} && \
     chmod 02755 /var/log/${service}; \
     done && \
+    chmod +x /etc/s6-overlay/s6-rc.d/rebuild_omy_playground/up && \
     rm -rf /etc/s6-overlay/s6-rc.d/common
 
 RUN mkdir -p /usr/local/lib/s6-services
@@ -115,8 +116,46 @@ COPY docker/s6-services/common/ros2_service_run.sh /usr/local/lib/s6-services/ro
 COPY docker/s6-services/common/ros2_service_finish.sh /usr/local/lib/s6-services/ros2_service_finish.sh
 RUN chmod +x /usr/local/lib/s6-services/ros2_service_run.sh /usr/local/lib/s6-services/ros2_service_finish.sh
 
-# Start only the agent by default. ROS2 services can be managed through s6.
+# Start the agent and the playground rebuild (see rebuild_omy_playground/up)
+# by default. ROS2 services can be managed through s6.
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/user/contents.d && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/s6-agent
+    touch /etc/s6-overlay/s6-rc.d/user/contents.d/s6-agent && \
+    touch /etc/s6-overlay/s6-rc.d/user/contents.d/rebuild_omy_playground
+
+# Install CUDA toolkit
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        wget gnupg python3-pip wmctrl python3-tk \
+    && wget -qO /tmp/cuda-keyring.deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb \
+    && dpkg -i /tmp/cuda-keyring.deb && rm /tmp/cuda-keyring.deb \
+    && apt-get update && apt-get install -y --no-install-recommends cuda-toolkit-12-8 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH=/usr/local/cuda-12.8/bin:${PATH}
+ENV LD_LIBRARY_PATH=/usr/local/cuda-12.8/lib64:${LD_LIBRARY_PATH}
+# Target GPU architectures for pointnet2/knn
+ENV TORCH_CUDA_ARCH_LIST="7.5;8.6;8.9"
+
+# Install torch (CUDA 12.8 build)
+RUN pip3 install --break-system-packages --no-cache-dir --ignore-installed ninja
+RUN pip3 install --break-system-packages --no-cache-dir --ignore-installed \
+        torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128
+
+# Install graspnet-baseline
+RUN git clone https://github.com/graspnet/graspnet-baseline.git /opt/graspnet-baseline && \
+    cd /opt/graspnet-baseline && \
+    sed -i '/^torch/d' requirements.txt && \
+    pip3 install --break-system-packages --no-cache-dir --ignore-installed -r requirements.txt && \
+    sed -i 's/from torch._six import container_abcs/import collections.abc as container_abcs/' dataset/graspnet_dataset.py && \
+    cd pointnet2 && python3 setup.py install && \
+    cd ../knn && python3 setup.py install
+
+RUN git clone https://github.com/graspnet/graspnetAPI.git /opt/graspnetAPI && \
+    pip3 install --break-system-packages --no-cache-dir --ignore-installed /opt/graspnetAPI
+
+# Pretrained checkpoint (RealSense model), from graspnet-baseline's release
+COPY docker/assets/checkpoint-rs.tar /opt/graspnet-baseline/logs/log_rs/checkpoint-rs.tar
+
+# For classifying/locating grasped objects
+RUN pip3 install --break-system-packages --no-cache-dir google-genai
 
 ENTRYPOINT ["/init"]
