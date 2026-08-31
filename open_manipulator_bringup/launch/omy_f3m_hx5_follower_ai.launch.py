@@ -59,7 +59,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'init_position',
-            default_value='true',
+            default_value='false',
             description='Whether to launch the init_position node',
         ),
         DeclareLaunchArgument(
@@ -149,8 +149,8 @@ def generate_launch_description():
             'arm_controller',
             'joint_state_broadcaster',
             # 'gpio_command_controller',
-            'hand_l_controller',
-            'effort_l_controller',
+            'hand_r_controller',
+            'effort_r_controller',
         ],
         output='both',
         parameters=[{'robot_description': urdf_file}],
@@ -171,10 +171,10 @@ def generate_launch_description():
         output='screen',
     )
 
-    joint_trajectory_executor_left_hand = Node(
+    joint_trajectory_executor_right_hand = Node(
         package='open_manipulator_bringup',
         executable='joint_trajectory_executor',
-        name='hand_l_joint_trajectory_executor',
+        name='hand_r_joint_trajectory_executor',
         parameters=[trajectory_params_file],
         output='screen',
     )
@@ -183,7 +183,7 @@ def generate_launch_description():
         event_handler=OnProcessExit(
             target_action=robot_controller_spawner,
             on_exit=[
-                joint_trajectory_executor_left_hand,
+                joint_trajectory_executor_right_hand,
                 joint_trajectory_executor_arm
             ]
         ),
@@ -212,14 +212,14 @@ def generate_launch_description():
         )
     )
 
-    left_current_command_process = ExecuteProcess(
+    right_current_command_process = ExecuteProcess(
         name='current_command_process',
         cmd=[
             'ros2', 'topic', 'pub',
             '-r', '50',
             '-t', '50',
             '-p', '50',
-            '/effort_l_controller/commands',
+            '/effort_r_controller/commands',
             'std_msgs/msg/Float64MultiArray',
             'data: [200.0, 200.0, 200.0, 200.0,'
                     '200.0, 200.0, 200.0, 200.0,'
@@ -229,10 +229,10 @@ def generate_launch_description():
         ],
     )
 
-    delay_left_hand_current_command_process_after_controllers = RegisterEventHandler(
+    delay_right_hand_current_command_process_after_controllers = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=robot_controller_spawner,
-            on_exit=[left_current_command_process],
+            on_exit=[right_current_command_process],
         )
     )
 
@@ -244,7 +244,7 @@ def generate_launch_description():
             robot_state_publisher_node,
             delay_rviz_after_joint_state_broadcaster_spawner,
             # delay_joint_trajectory_executor_after_controllers,
-            delay_left_hand_current_command_process_after_controllers,
+            delay_right_hand_current_command_process_after_controllers,
             init_position_event_handler,
         ]
     )

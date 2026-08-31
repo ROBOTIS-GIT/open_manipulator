@@ -2,7 +2,8 @@
   controller_manager:
     ros__parameters:
       use_sim_time: False
-      update_rate: 300  # Hz
+      # End Unit bypass + Hand Controller SyncTable needs margin above its ~3.3 ms cycle.
+      update_rate: 100  # Hz
       thread_priority: 40
       cpu_affinity: [1, 2, 3]
 
@@ -15,10 +16,10 @@
       gpio_command_controller:
         type: gpio_controllers/GpioCommandController
 
-      hand_l_controller:
+      hand_r_controller:
         type: joint_trajectory_controller/JointTrajectoryController
 
-      effort_l_controller:
+      effort_r_controller:
         type: effort_controllers/JointGroupEffortController
 
 /**:
@@ -61,29 +62,29 @@
             - Button Status
 
 /**:
-  hand_l_controller:
+  hand_r_controller:
     ros__parameters:
       joints:
-        - finger_l_joint1
-        - finger_l_joint2
-        - finger_l_joint3
-        - finger_l_joint4
-        - finger_l_joint5
-        - finger_l_joint6
-        - finger_l_joint7
-        - finger_l_joint8
-        - finger_l_joint9
-        - finger_l_joint10
-        - finger_l_joint11
-        - finger_l_joint12
-        - finger_l_joint13
-        - finger_l_joint14
-        - finger_l_joint15
-        - finger_l_joint16
-        - finger_l_joint17
-        - finger_l_joint18
-        - finger_l_joint19
-        - finger_l_joint20
+        - finger_r_joint1
+        - finger_r_joint2
+        - finger_r_joint3
+        - finger_r_joint4
+        - finger_r_joint5
+        - finger_r_joint6
+        - finger_r_joint7
+        - finger_r_joint8
+        - finger_r_joint9
+        - finger_r_joint10
+        - finger_r_joint11
+        - finger_r_joint12
+        - finger_r_joint13
+        - finger_r_joint14
+        - finger_r_joint15
+        - finger_r_joint16
+        - finger_r_joint17
+        - finger_r_joint18
+        - finger_r_joint19
+        - finger_r_joint20
       command_interfaces:
         - position
       state_interfaces:
@@ -93,26 +94,26 @@
       allow_partial_joints_goal: true
 
 /**:
-  effort_l_controller:
+  effort_r_controller:
     ros__parameters:
       joints:
-        - finger_l_joint1
-        - finger_l_joint2
-        - finger_l_joint3
-        - finger_l_joint4
-        - finger_l_joint5
-        - finger_l_joint6
-        - finger_l_joint7
-        - finger_l_joint8
-        - finger_l_joint9
-        - finger_l_joint10
-        - finger_l_joint11
-        - finger_l_joint12
-        - finger_l_joint13
-        - finger_l_joint14
-        - finger_l_joint15
-        - finger_l_joint16
-        - finger_l_joint17
-        - finger_l_joint18
-        - finger_l_joint19
-        - finger_l_joint20
+        - finger_r_joint1
+        - finger_r_joint2
+        - finger_r_joint3
+        - finger_r_joint4
+        - finger_r_joint5
+        - finger_r_joint6
+        - finger_r_joint7
+        - finger_r_joint8
+        - finger_r_joint9
+        - finger_r_joint10
+        - finger_r_joint11
+        - finger_r_joint12
+        - finger_r_joint13
+        - finger_r_joint14
+        - finger_r_joint15
+        - finger_r_joint16
+        - finger_r_joint17
+        - finger_r_joint18
+        - finger_r_joint19
+        - finger_r_joint20

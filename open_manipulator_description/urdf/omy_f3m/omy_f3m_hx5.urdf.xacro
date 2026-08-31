@@ -15,13 +15,12 @@
 
   <!-- <xacro:include filename="$(find open_manipulator_description)/gazebo/rh_p12_rn_a.gazebo.xacro" /> -->
 
-  <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/hx5_d20_left.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omy_f3m/hx5_d20_right.urdf.xacro" />
 
   <xacro:include filename="$(find open_manipulator_description)/ros2_control/$(arg ros2_control_type).ros2_control.xacro" />
 
-  <!-- <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m_end_unit.ros2_control.xacro" /> -->
-
-  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m_hx5.ros2_control.xacro" />
+  <!-- End Unit compatibility ID 210 and downstream right Hand ID 110 share ttyAMA4. -->
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omy_f3m_hx5_right_end.ros2_control.xacro" />
 
   <link name="world"/>
 
@@ -38,11 +37,15 @@
     <child link="$(arg prefix)rh_p12_rn_base"/>
   </joint> -->
 
-  <xacro:hx5_d20_left parent="$(arg prefix)end_effector_flange_link" prefix="$(arg prefix)">
+  <joint name="$(arg prefix)hx5_d20_right_fixed" type="fixed">
+    <parent link="$(arg prefix)end_effector_flange_link"/>
+    <child link="$(arg prefix)hx5_d20_right_base"/>
     <origin xyz="0 0 0" rpy="0 1.5708 -1.5708"/>
-  </xacro:hx5_d20_left>
+  </joint>
 
-  <!-- <joint name="$(arg prefix)end_effector_joint" type="fixed">
+  <xacro:hx5_d20_right prefix="$(arg prefix)"/>
+
+  <joint name="$(arg prefix)end_effector_joint" type="fixed">
     <parent link="$(arg prefix)end_effector_flange_link"/>
     <child link="$(arg prefix)end_effector_link"/>
     <origin xyz="0 -0.141 0" rpy="0 0 0"/>
@@ -58,7 +61,7 @@
         <color rgba="1.0 0.0 0.0 1"/>
       </material>
     </visual>
-  </link> -->
+  </link>
 
   <xacro:omy_f3m prefix="$(arg prefix)" />
   <xacro:omy_f3m_gazebo prefix="$(arg prefix)" />
@@ -70,8 +73,9 @@
     use_mock_hardware="$(arg use_mock_hardware)"
     mock_sensor_commands="$(arg mock_sensor_commands)"/>
 
-  <xacro:hx5_left_system
-    name="HX5LeftSystem" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+  <xacro:omy_f3m_hx5_right_end_system
+    name="OMYF3MEndHX5RightSystem" prefix="$(arg prefix)" port_name="/dev/ttyAMA4"
+    use_pressure_sensors="false" use_sim="$(arg use_sim)"
     use_mock_hardware="$(arg use_mock_hardware)"
     mock_sensor_commands="$(arg mock_sensor_commands)"/>
 
