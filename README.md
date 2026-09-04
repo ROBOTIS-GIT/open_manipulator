@@ -1,3 +1,6 @@
+# THIS IS A FORKED REPOSITROY FOR STUDY ABOUT ROBOTIS OpenMANIPULATOR 
+
+
 # ROBOTIS OpenMANIPULATOR ROS 2 Packages
 
 This repository contains the official ROS 2 packages for the ROBOTIS OpenMANIPULATOR platform. These packages provide the necessary interfaces and tools to control the robot, integrate with its sensors, and develop physical AI applications, including those utilizing frameworks like LeRobot. For detailed usage instructions, please refer to the documentation below.
