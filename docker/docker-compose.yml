@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: robotis/open-manipulator:5.1.2
+    image: robotis/open-manipulator:5.1.3
     tty: true
     restart: always
     cap_add:
