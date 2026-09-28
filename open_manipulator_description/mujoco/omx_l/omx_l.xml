@@ -161,4 +161,8 @@
       </body>
     </body>
   </worldbody>
+  <contact>
+    <!-- Adjacent base and first-joint mounts overlap in their convex collision envelopes. -->
+    <exclude body1="link0" body2="link1"/>
+  </contact>
 </mujoco>

@@ -6,8 +6,9 @@ Changelog for package open_manipulator_description
 ------------------
 * Updated cable-free OMX Leader and Follower visuals with per-link, multi-material DAE meshes for URDF and material-separated OBJ meshes for MuJoCo, sharing PCB textures.
 * Updated both Xacro and standalone URDF descriptions while preserving joint interfaces and inertial data.
-* Regenerated STL collision meshes from the updated cable-free link geometry, retaining existing filenames and millimetre scaling.
+* Regenerated and simplified STL collision meshes per connected component from the updated cable-free link geometry, retaining existing filenames and millimetre scaling.
 * Updated OMX Follower MuJoCo visuals and added a passive OMX Leader model and scene.
+* Excluded the adjacent Leader base and first-joint assembly pair from MuJoCo self-collision checks while retaining external collisions.
 * Contributors: Woojin Wie
 
 5.1.3 (2026-09-18)
