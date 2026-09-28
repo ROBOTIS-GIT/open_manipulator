@@ -20,7 +20,7 @@
     <mesh name="follower_06_pan_Revised" content_type="model/stl" file="meshes/omx_f/follower_06_pan_Revised.stl" scale="0.001 0.001 0.001"/>
     <mesh name="follower_07_gripper_motorized" content_type="model/stl" file="meshes/omx_f/follower_07_gripper_motorized.stl" scale="0.001 0.001 0.001"/>
     <mesh name="follower_08_gripper_gear" content_type="model/stl" file="meshes/omx_f/follower_08_gripper_gear.stl" scale="0.001 0.001 0.001"/>
-    <material name="omx_printed_charcoal" rgba="0.259833 0.269015 0.277847 1.000000" specular="0.2500" shininess="0.2280"/>
+    <material name="omx_printed_charcoal" rgba="0.123158 0.128354 0.133352 1.000000" specular="0.2500" shininess="0.3120"/>
     <material name="omx_ceramic" rgba="0.634878 0.538065 0.411645 1.000000" specular="0.2500" shininess="0.3240"/>
     <material name="omx_black_electronics" rgba="0.110702 0.131804 0.150005 1.000000" specular="0.2500" shininess="0.3480"/>
     <material name="omx_nickel_tin" rgba="0.749388 0.766765 0.790731 1.000000" specular="0.7000" shininess="0.4500"/>
@@ -34,7 +34,7 @@
     <material name="omx_openrb_bottom" rgba="1.000000 1.000000 1.000000 1.000000" specular="0.7000" shininess="0.0000" texture="omx_openrb_bottom"/>
     <material name="omx_blue_pcb" rgba="0.084945 0.302554 0.484529 1.000000" specular="0.2725" shininess="0.4140"/>
     <material name="omx_steel_hardware" rgba="0.736647 0.749388 0.766765 1.000000" specular="0.7000" shininess="0.4320"/>
-    <material name="omx_motor_housing" rgba="0.166186 0.166186 0.194353 1.000000" specular="0.2500" shininess="0.4080"/>
+    <material name="omx_motor_housing" rgba="0.142826 0.147333 0.151704 1.000000" specular="0.2500" shininess="0.3960"/>
     <material name="omx_white_led_diffuser" rgba="0.916080 0.916080 0.916080 1.000000" specular="0.2500" shininess="0.3000"/>
     <material name="omx_black_fasteners" rgba="0.131804 0.150005 0.166186 1.000000" specular="0.6100" shininess="0.4080"/>
     <material name="omx_bearing_races" rgba="0.853244 0.870034 0.890440 1.000000" specular="0.7000" shininess="0.4620"/>

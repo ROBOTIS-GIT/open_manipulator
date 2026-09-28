@@ -94,16 +94,16 @@
               <color>0.0 0.0 0.0 1.0</color>
             </emission>
             <ambient>
-              <color>0.166186 0.166186 0.194353 1.0</color>
+              <color>0.142826 0.147333 0.151704 1.0</color>
             </ambient>
             <diffuse>
-              <color>0.166186 0.166186 0.194353 1.0</color>
+              <color>0.142826 0.147333 0.151704 1.0</color>
             </diffuse>
             <specular>
               <color>0.25 0.25 0.25 1.0</color>
             </specular>
             <shininess>
-              <float>108.8</float>
+              <float>105.6</float>
             </shininess>
             <reflective>
               <color>0.0 0.0 0.0 1.0</color>
@@ -134,16 +134,16 @@
               <color>0.0 0.0 0.0 1.0</color>
             </emission>
             <ambient>
-              <color>0.259833 0.269015 0.277847 1.0</color>
+              <color>0.123158 0.128354 0.133352 1.0</color>
             </ambient>
             <diffuse>
-              <color>0.259833 0.269015 0.277847 1.0</color>
+              <color>0.123158 0.128354 0.133352 1.0</color>
             </diffuse>
             <specular>
               <color>0.25 0.25 0.25 1.0</color>
             </specular>
             <shininess>
-              <float>60.8</float>
+              <float>83.2</float>
             </shininess>
             <reflective>
               <color>0.0 0.0 0.0 1.0</color>
