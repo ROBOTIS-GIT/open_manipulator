@@ -2,6 +2,11 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.3 (2026-09-18)
+------------------
+* Added OMY, OMX, and OpenMANIPULATOR-X MuJoCo models to open_manipulator_description.
+* Contributors: Kiwoong Park
+
 5.1.2 (2026-09-14)
 ------------------
 * Updated Dynamixel SDK in Docker container environment
