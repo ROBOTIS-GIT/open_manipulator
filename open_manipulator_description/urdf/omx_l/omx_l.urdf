@@ -11,14 +11,9 @@
     <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
   </joint>
   <link name="link0">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/leader_01_base_roll.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link0_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link0.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -44,14 +39,9 @@
     <dynamics damping="0.05"/>
   </joint>
   <link name="link1">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/leader_02_base_tilt_revised.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link1_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link1.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -77,14 +67,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link2">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/leader_03_middle_vertical.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link2_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link2.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -110,14 +95,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link3">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/leader_04_middle_horizontal.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link3_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link3.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -143,14 +123,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link4">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/leader_05_tip_roll.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link4_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link4.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -176,14 +151,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link5">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/leader_06_tip_pan_revised.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link5_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link5.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -209,14 +179,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link6">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/leader_07_tip_grip.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link6_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link6.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
