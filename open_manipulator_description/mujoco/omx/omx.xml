@@ -1,0 +1,131 @@
+<mujoco model="omx_f">
+  <compiler angle="radian" meshdir="../../"/>
+  <option cone="elliptic" impratio="10"/>
+  <!-- Actuator gains and passive joint dynamics are approximate simulation parameters.
+       Hardware motion profiles are not modeled; force limits follow published specifications unless noted. -->
+  <default>
+    <default class="XL430-W250-T">
+      <position kp="50" forcerange="-1.5 1.5" dampratio="1.3"/>
+    </default>
+    <default class="XL330-M288-T">
+      <position kp="50" forcerange="-0.52 0.52" dampratio="1"/>
+    </default>
+  </default>
+  <asset>
+    <mesh name="follower_01_base" content_type="model/stl" file="meshes/omx_f/follower_01_base.stl"
+      scale="0.001 0.001 0.001"/>
+    <mesh name="follower_02_base_tilt_Revised" content_type="model/stl"
+      file="meshes/omx_f/follower_02_base_tilt_Revised.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="follower_03_middle_verticle" content_type="model/stl"
+      file="meshes/omx_f/follower_03_middle_verticle.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="follower_04_middle_horizontal" content_type="model/stl"
+      file="meshes/omx_f/follower_04_middle_horizontal.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="follower_05_tip" content_type="model/stl" file="meshes/omx_f/follower_05_tip.stl"
+      scale="0.001 0.001 0.001"/>
+    <mesh name="follower_06_pan_Revised" content_type="model/stl" file="meshes/omx_f/follower_06_pan_Revised.stl"
+      scale="0.001 0.001 0.001"/>
+    <mesh name="follower_07_gripper_motorized" content_type="model/stl"
+      file="meshes/omx_f/follower_07_gripper_motorized.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="follower_08_gripper_gear" content_type="model/stl" file="meshes/omx_f/follower_08_gripper_gear.stl"
+      scale="0.001 0.001 0.001"/>
+  </asset>
+  <worldbody>
+    <body name="link0">
+      <inertial pos="-0.0144125 -0.00314989 0.0192766" quat="0.551577 0.535903 -0.45697 0.446934" mass="0.223891"
+        diaginertia="0.000459312 0.000353346 0.000219325"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1" mesh="follower_01_base"/>
+      <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_01_base" group="3" density="0"/>
+      <body name="link1" pos="-0.01125 0 0.034">
+        <inertial pos="-6.22362e-06 0.000604923 0.0474188" quat="0.999751 -0.0195068 -0.000523577 -0.0108265"
+          mass="0.065987" diaginertia="2.17318e-05 2.13661e-05 1.16432e-05"/>
+        <joint name="joint1" pos="0 0 0" axis="0 0 1" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+          damping="0.2" armature="0.005" frictionloss="0.1"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+          mesh="follower_02_base_tilt_Revised"/>
+        <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_02_base_tilt_Revised" group="3" density="0"/>
+        <body name="link2" pos="0 0 0.0635">
+          <inertial pos="0.0180899 0.000297788 0.0990055" quat="0.687559 0.105106 0.119393 0.708492" mass="0.0872215"
+            diaginertia="0.000120923 0.000110522 3.4491e-05"/>
+          <joint name="joint2" pos="0 0 0" axis="0 1 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+            damping="0.2" armature="0.005" frictionloss="0.1"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+            mesh="follower_03_middle_verticle"/>
+          <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_03_middle_verticle" group="3" density="0"/>
+          <body name="link3" pos="0.0415 0 0.11315">
+            <inertial pos="0.0873986 0.000413101 -0.00358292" quat="0.0308724 0.692831 0.0315908 0.719746"
+              mass="0.0837591" diaginertia="0.000231019 0.000226024 1.48898e-05"/>
+            <joint name="joint3" pos="0 0 0" axis="0 1 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+              damping="0.2" armature="0.005" frictionloss="0.1"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+              mesh="follower_04_middle_horizontal"/>
+            <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_04_middle_horizontal" group="3" density="0"/>
+            <body name="link4" pos="0.162 0 0">
+              <inertial pos="0.023235 6.77354e-05 0.00597613" quat="0.608881 0.373182 0.376257 0.590279"
+                mass="0.0299751" diaginertia="7.09955e-06 6.69023e-06 4.72073e-06"/>
+              <joint name="joint4" pos="0 0 0" axis="0 1 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+                damping="0.05" armature="0.001" frictionloss="0.1"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                mesh="follower_05_tip"/>
+              <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_05_tip" group="3" density="0"/>
+              <body name="link5" pos="0.0287 0 0">
+                <inertial pos="0.0280724 2.41359e-05 0.0135289" quat="0.996143 0.000396881 0.0854137 -0.0200656"
+                  mass="0.0438109" diaginertia="2.42036e-05 2.32357e-05 6.67277e-06"/>
+                <joint name="joint5" pos="0 0 0" axis="1 0 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+                  damping="0.05" armature="0.001" frictionloss="0.1"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                  mesh="follower_06_pan_Revised"/>
+                <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_06_pan_Revised" group="3" density="0"/>
+                <body name="end_effector_link" pos="0.09193 -0.0016 0">
+                  <geom size="0.005 0.005 0.005" type="box" contype="0" conaffinity="0" group="2" density="0"
+                    rgba="1 0 0 1"/>
+                </body>
+                <body name="link6" pos="0.0295 0.0075 0">
+                  <inertial pos="0.0161646 0.0012731 0.000272916" quat="0.498852 0.517636 0.496678 0.486324"
+                    mass="0.0120907" diaginertia="6.87819e-06 4.69576e-06 2.70194e-06"/>
+                  <joint name="gripper_joint_1" pos="0 0 0" axis="0 0 1" range="0 1.745329"
+                    actuatorfrcrange="-1000 1000" damping="0.01" armature="0.0003"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                    mesh="follower_07_gripper_motorized"/>
+                  <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_07_gripper_motorized" group="3" density="0"/>
+                </body>
+                <body name="link7" pos="0.0295 -0.0108 0">
+                  <inertial pos="0.0161646 0.0012731 0.000272916" quat="0.498852 0.517636 0.496678 0.486324"
+                    mass="0.0120907" diaginertia="6.87819e-06 4.69576e-06 2.70194e-06"/>
+                  <joint name="gripper_joint_2" pos="0 0 0" axis="0 0 1" range="-1.745329 0"
+                    actuatorfrcrange="-1000 1000" damping="0.01" armature="0.0003"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                    mesh="follower_08_gripper_gear"/>
+                  <geom type="mesh" rgba="0.2 0.2 0.2 1" mesh="follower_08_gripper_gear" group="3" density="0"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="joint1" joint="joint1" class="XL430-W250-T" inheritrange="1"/>
+    <position name="joint2" joint="joint2" class="XL430-W250-T" inheritrange="1"/>
+    <position name="joint3" joint="joint3" class="XL430-W250-T" inheritrange="1"/>
+    <position name="joint4" joint="joint4" class="XL330-M288-T" inheritrange="1"/>
+    <position name="joint5" joint="joint5" class="XL330-M288-T" inheritrange="1"/>
+    <!-- Approximate torque at the configured current limit. -->
+    <position name="gripper_joint_1" joint="gripper_joint_1" class="XL330-M288-T" inheritrange="1" forcerange="-0.2 0.2"
+      dampratio="2"/>
+  </actuator>
+  <contact>
+    <!-- Adjacent or overlapping internal collision meshes -->
+    <exclude body1="link0" body2="link1"/>
+    <exclude body1="link5" body2="link6"/>
+    <exclude body1="link5" body2="link7"/>
+    <exclude body1="link6" body2="link7"/>
+  </contact>
+  <equality>
+    <!-- Mimic joint constraints. -->
+    <joint joint1="gripper_joint_2" joint2="gripper_joint_1" polycoef="0 -1 0 0 0"/>
+  </equality>
+  <keyframe>
+    <key name="home" qpos="0 0 0 0 0 0 0" ctrl="0 0 0 0 0 0"/>
+  </keyframe>
+</mujoco>

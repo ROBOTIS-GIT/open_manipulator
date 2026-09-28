@@ -1,0 +1,183 @@
+<mujoco model="omy_f3m">
+  <compiler angle="radian" meshdir="../../"/>
+  <option cone="elliptic" impratio="10"/>
+  <!-- Actuator gains and passive joint dynamics are approximate simulation parameters. Frictionloss for
+       geared DYNAMIXEL-Y joints uses published reducer back-drive torque, while joint damping approximates
+       torque-speed behavior. Armature tunes transients and is not measured reflected rotor inertia.
+       Hardware motion profiles are not modeled; force limits follow published specifications unless noted. -->
+  <default>
+    <default class="YM080-230-A099-RH">
+      <position kp="2800" forcerange="-61.4 61.4" dampratio="1.6"/>
+    </default>
+    <default class="YM070-210-A099-RH">
+      <position kp="1500" forcerange="-31.7 31.7" dampratio="2.1"/>
+    </default>
+    <default class="RH-P12-RN">
+      <!-- Approximate hinge torque at the configured current limit. -->
+      <position kp="50" forcerange="-3 3" dampratio="1.5"/>
+    </default>
+  </default>
+  <asset>
+    <mesh name="base_unit" content_type="model/stl" file="meshes/omy_f3m/base_unit.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link1" content_type="model/stl" file="meshes/omy_f3m/link1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link2" content_type="model/stl" file="meshes/omy_f3m/link2.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link3" content_type="model/stl" file="meshes/omy_f3m/link3.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link4" content_type="model/stl" file="meshes/omy_f3m/link4.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link5" content_type="model/stl" file="meshes/omy_f3m/link5.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link6" content_type="model/stl" file="meshes/omy_f3m/link6.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="flange" content_type="model/stl" file="meshes/omy_f3m/flange.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="base" content_type="model/stl" file="meshes/rh_p12_rn_a/base.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r1" content_type="model/stl" file="meshes/rh_p12_rn_a/r1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r2" content_type="model/stl" file="meshes/rh_p12_rn_a/r2.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l1" content_type="model/stl" file="meshes/rh_p12_rn_a/l1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l2" content_type="model/stl" file="meshes/rh_p12_rn_a/l2.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+  <worldbody>
+    <body name="link0">
+      <inertial pos="-0.00402158 0.0013084 0.0550735" quat="0.0485506 0.674996 -0.0441829 0.734895" mass="1.52875"
+        diaginertia="0.00642077 0.00497955 0.00462403"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1" mesh="base_unit"/>
+      <geom size="0.08 0.025" pos="0 0 0.03" type="cylinder" rgba="0.2 0.2 0.2 1" group="3" density="0"/>
+      <body name="link1" pos="0 0 0.1715">
+        <inertial pos="-0.000110636 -0.00547113 -0.0158977" quat="0.98558 0.168758 -0.00294757 0.0120358" mass="2.06488"
+          diaginertia="0.00303337 0.00279081 0.00221937"/>
+        <joint name="joint1" pos="0 0 0" axis="0 0 1" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+          damping="17" armature="0.3" frictionloss="5"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1" mesh="link1"/>
+        <geom size="0.055 0.05" pos="0 -0.01 -0.035" type="cylinder" rgba="0.2 0.2 0.2 1" group="3" density="0"/>
+        <body name="link2" pos="0 -0.1215 0">
+          <inertial pos="1.14054e-05 0.0161842 0.103606" quat="0.999988 -0.00477885 -0.000609836 0.00067321"
+            mass="3.67954" diaginertia="0.051732 0.0503576 0.00449718"/>
+          <joint name="joint2" pos="0 0 0" axis="0 1 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+            damping="17" armature="0.3" frictionloss="5"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1" mesh="link2"/>
+          <geom size="0.046 0.14" pos="-0.005 -0.02 0.13" type="cylinder" rgba="0.2 0.2 0.2 1" group="3" density="0"/>
+          <body name="link3" pos="0 0 0.247">
+            <inertial pos="7.81487e-05 0.107185 0.141173" quat="0.999987 0.00500823 0.000469041 -0.00072733"
+              mass="2.38659" diaginertia="0.0226944 0.021922 0.00277422"/>
+            <joint name="joint3" pos="0 0 0" axis="0 1 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+              damping="5" armature="0.1" frictionloss="3"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1" mesh="link3"/>
+            <geom size="0.042 0.085" pos="0 0.125 0.08" type="cylinder" rgba="0.2 0.2 0.2 1" group="3" density="0"/>
+            <body name="link4" pos="0 0.1215 0.2195">
+              <inertial pos="-0.000133183 -0.107467 0.0190907" quat="0.983636 0.179196 0.00338061 -0.0183488"
+                mass="1.40023" diaginertia="0.00175475 0.00162284 0.00115817"/>
+              <joint name="joint4" pos="0 0 0" axis="0 1 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+                damping="5" armature="0.1" frictionloss="3"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1" mesh="link4"/>
+              <geom size="0.045 0.05" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.2 0.2 0.2 1" group="3"
+                density="0"/>
+              <body name="link5" pos="0 -0.113 0">
+                <inertial pos="0.000133183 -0.0190907 0.109967" quat="0.822247 0.568825 0.0105841 -0.015365"
+                  mass="1.40023" diaginertia="0.00175475 0.00162284 0.00115817"/>
+                <joint name="joint5" pos="0 0 0" axis="0 0 1" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+                  damping="5" armature="0.1" frictionloss="3"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1" mesh="link5"/>
+                <geom size="0.043 0.025" pos="0 0.01 0.005" type="cylinder" rgba="0.2 0.2 0.2 1" group="3" density="0"/>
+                <body name="link6" pos="0 0 0.1155">
+                  <inertial pos="1.10801e-05 -0.0805941 0.00930293" quat="0.707541 -0.0441733 0.0461929 0.703776"
+                    mass="0.400155" diaginertia="0.00063691 0.000567415 0.00019166"/>
+                  <joint name="joint6" pos="0 0 0" axis="0 1 0" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000"
+                    damping="5" armature="0.1" frictionloss="3"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                    mesh="link6"/>
+                  <geom size="0.08 0.11" pos="0 -0.1 0" quat="0.707388 0.706825 0 0" type="cylinder"
+                    rgba="0.2 0.2 0.2 1" group="3" density="0"/>
+                  <body name="camera_bottom_screw_frame" pos="-0.021 -0.07385 0.0803" quat="0.5 -0.5 0.5 -0.5">
+                    <body name="camera_link" pos="0.01085 0.009 0.021">
+                      <inertial pos="0 0 0" quat="0.707107 0.707107 0 0" mass="0.072"
+                        diaginertia="0.00388124 0.00387926 0.00049894"/>
+                      <geom size="0.0115 0.021 0.021" pos="0.0038 -0.009 0" quat="0.5 0.5 0.5 0.5" type="box"
+                        contype="0" conaffinity="0" group="2" density="0"/>
+                      <geom size="0.0115 0.021 0.021" pos="-0.0078 -0.009 0" type="box" group="3" density="0"/>
+                    </body>
+                  </body>
+                  <body name="end_effector_flange_link" pos="0 -0.103 0">
+                    <inertial pos="0 -0.00319031 0" quat="0.5 0.5 0.5 0.5" mass="0.0166188"
+                      diaginertia="8.12543e-06 5.49262e-06 2.90758e-06"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                      mesh="flange"/>
+                    <geom size="0.035 0.06" pos="0 0.03 0.04" type="cylinder" rgba="0.2 0.2 0.2 1" group="3"
+                      density="0"/>
+                    <body name="rh_p12_rn_base" pos="0 -0.006 0" quat="0.500398 0.5 -0.5 0.499602">
+                      <inertial pos="0 0 0.032" mass="0.236" diaginertia="1e-06 1e-06 1e-06"/>
+                      <geom type="mesh" mesh="base" group="3" density="0"/>
+                      <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                        mesh="base"/>
+                      <body name="rh_p12_rn_r1" pos="0 0.008 0.048">
+                        <inertial pos="0 0.034 0.004" mass="0.068" diaginertia="1e-06 1e-06 1e-06"/>
+                        <joint name="rh_r1_joint" pos="0 0 0" axis="1 0 0" range="0 1.13515"
+                          actuatorfrcrange="-1000 1000" damping="0.7" armature="0.1" frictionloss="0.05"/>
+                        <geom type="mesh" mesh="r1" group="3" density="0"/>
+                        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                          mesh="r1"/>
+                        <body name="rh_p12_rn_r2" pos="0 0.0493634 0.0285">
+                          <inertial pos="0 0.006 0.011" mass="0.022" diaginertia="1e-06 1e-06 1e-06"/>
+                          <joint name="rh_r2" pos="0 0 0" axis="-1 0 0" range="0 1.13515" actuatorfrcrange="-1000 1000"
+                            damping="0.7" armature="0.1" frictionloss="0.05"/>
+                          <geom type="mesh" mesh="r2" group="3" density="0"/>
+                          <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                            mesh="r2"/>
+                        </body>
+                      </body>
+                      <body name="rh_p12_rn_l1" pos="0 -0.008 0.048">
+                        <inertial pos="0 -0.034 0.004" mass="0.068" diaginertia="1e-06 1e-06 1e-06"/>
+                        <joint name="rh_l1" pos="0 0 0" axis="-1 0 0" range="0 1.13515" actuatorfrcrange="-1000 1000"
+                          damping="0.7" armature="0.1" frictionloss="0.05"/>
+                        <geom type="mesh" mesh="l1" group="3" density="0"/>
+                        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                          mesh="l1"/>
+                        <body name="rh_p12_rn_l2" pos="0 -0.0493634 0.0285">
+                          <inertial pos="0 -0.006 0.011" mass="0.022" diaginertia="1e-06 1e-06 1e-06"/>
+                          <joint name="rh_l2" pos="0 0 0" axis="1 0 0" range="0 1.13515" actuatorfrcrange="-1000 1000"
+                            damping="0.7" armature="0.1" frictionloss="0.05"/>
+                          <geom type="mesh" mesh="l2" group="3" density="0"/>
+                          <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" rgba="0.2 0.2 0.2 1"
+                            mesh="l2"/>
+                        </body>
+                      </body>
+                    </body>
+                    <body name="end_effector_link" pos="0 -0.141 0">
+                      <geom size="0.005 0.005 0.005" type="box" contype="0" conaffinity="0" group="2" density="0"
+                        rgba="1 0 0 1"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="joint1" joint="joint1" class="YM080-230-A099-RH" inheritrange="1"/>
+    <position name="joint2" joint="joint2" class="YM080-230-A099-RH" inheritrange="1"/>
+    <position name="joint3" joint="joint3" class="YM070-210-A099-RH" inheritrange="1"/>
+    <position name="joint4" joint="joint4" class="YM070-210-A099-RH" inheritrange="1"/>
+    <position name="joint5" joint="joint5" class="YM070-210-A099-RH" inheritrange="1"/>
+    <position name="joint6" joint="joint6" class="YM070-210-A099-RH" inheritrange="1"/>
+    <position name="rh_r1_joint" joint="rh_r1_joint" class="RH-P12-RN" inheritrange="1"/>
+  </actuator>
+  <contact>
+    <!-- Adjacent or overlapping internal collision meshes -->
+    <exclude body1="link0" body2="link1"/>
+    <exclude body1="link6" body2="rh_p12_rn_r1"/>
+    <exclude body1="link6" body2="rh_p12_rn_l1"/>
+    <exclude body1="link6" body2="rh_p12_rn_r2"/>
+    <exclude body1="link6" body2="rh_p12_rn_l2"/>
+    <exclude body1="rh_p12_rn_r1" body2="rh_p12_rn_r2"/>
+    <exclude body1="rh_p12_rn_l1" body2="rh_p12_rn_l2"/>
+    <exclude body1="rh_p12_rn_r1" body2="rh_p12_rn_l1"/>
+    <exclude body1="rh_p12_rn_r2" body2="rh_p12_rn_l2"/>
+  </contact>
+  <equality>
+    <!-- Mimic joint constraints. -->
+    <joint joint1="rh_r2" joint2="rh_r1_joint" polycoef="0 1 0 0 0"/>
+    <joint joint1="rh_l1" joint2="rh_r1_joint" polycoef="0 1 0 0 0"/>
+    <joint joint1="rh_l2" joint2="rh_r1_joint" polycoef="0 1 0 0 0"/>
+  </equality>
+  <keyframe>
+    <key name="home" qpos="0 0 0 0 0 0 0 0 0 0" ctrl="0 0 0 0 0 0 0"/>
+  </keyframe>
+</mujoco>

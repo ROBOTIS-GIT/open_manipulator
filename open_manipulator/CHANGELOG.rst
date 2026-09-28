@@ -2,6 +2,28 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.3 (2026-09-18)
+------------------
+* Added OMY, OMX, and OpenMANIPULATOR-X MuJoCo models to open_manipulator_description.
+* Contributors: Kiwoong Park
+
+5.1.2 (2026-09-14)
+------------------
+* Updated Dynamixel SDK in Docker container environment
+* Changed serial buffer reading in the Dynamixel SDK from a busy loop using `read()` to a `poll()`-based approach with a maximum wait time of 1 ms.
+* Contributors: Hyungyu Kim
+
+5.1.1 (2026-08-05)
+------------------
+* Changed Docker build context to use the repository root instead of the docker directory.
+* Contributors: Hyungyu Kim
+
+5.1.0 (2026-08-03)
+------------------
+* Added s6-overlay and s6-agent for cyclo-manager
+* Added pack positions for OMY-F3M follower AI
+* Contributors: Hyungyu Kim
+
 5.0.0 (2026-06-24)
 ------------------
 * Updated dockerfile to use zenoh-cpp

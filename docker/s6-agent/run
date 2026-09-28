@@ -1,0 +1,9 @@
+#!/command/with-contenv sh
+# Agent service run script
+
+set -e
+
+mkdir -p /var/run/agent
+chmod 777 /var/run/agent
+
+exec uvicorn cyclo_manager.agent.s6_agent:app --uds /var/run/agent/s6_agent.sock --log-level info

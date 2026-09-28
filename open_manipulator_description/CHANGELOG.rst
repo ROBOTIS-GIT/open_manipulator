@@ -2,6 +2,24 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.3 (2026-09-18)
+------------------
+* Added and installed OMY, OMX, and OpenMANIPULATOR-X MuJoCo models and scenes.
+* Tuned OMY and OMX simulation joint and gripper dynamics, contact settings, and mimic constraints.
+* Contributors: Kiwoong Park
+
+5.1.2 (2026-09-14)
+------------------
+* None
+
+5.1.1 (2026-08-05)
+------------------
+* None
+
+5.1.0 (2026-08-03)
+------------------
+* None
+
 5.0.0 (2026-06-24)
 ------------------
 * None

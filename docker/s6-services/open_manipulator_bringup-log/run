@@ -1,0 +1,4 @@
+#!/command/with-contenv sh
+# Logging service for open_manipulator_bringup.
+
+exec logutil-service /var/log/open_manipulator_bringup
