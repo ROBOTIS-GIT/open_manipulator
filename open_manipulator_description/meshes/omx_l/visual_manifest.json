@@ -1,0 +1,3743 @@
+{
+  "model": "leader",
+  "units": "metres",
+  "source_glb_sha256": "ef9e467efd7dc85e214ebf156fbf1c5827bfcd812645f624d48e5a03e1bb4674",
+  "source_json_sha256": "f1fbe2df430bf78e7546f2b9bff89f5a283244df826f846809f75dcaed3840ea",
+  "excluded_groups": ">=1000 (all cable assemblies)",
+  "materials": {
+    "printed_charcoal": {
+      "name": "printed_charcoal",
+      "source": "Printed charcoal | provisional finish",
+      "rgba": [
+        0.25983335153921966,
+        0.26901521866799843,
+        0.27784653781682744,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.054901960784313725,
+        0.058823529411764705,
+        0.06274509803921569,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.6200000047683716
+    },
+    "ceramic": {
+      "name": "ceramic",
+      "source": "MLCC | tan ceramic",
+      "rgba": [
+        0.6348780267906077,
+        0.5380651077569231,
+        0.41164515360317827,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.3607843137254902,
+        0.25098039215686274,
+        0.1411764705882353,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.46000000834465027
+    },
+    "black_electronics": {
+      "name": "black_electronics",
+      "source": "Header and IC | black polymer",
+      "rgba": [
+        0.11070205987479767,
+        0.13180380330527966,
+        0.15000520429240002,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.011764705882352941,
+        0.01568627450980392,
+        0.0196078431372549,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.41999998688697815
+    },
+    "nickel_tin": {
+      "name": "nickel_tin",
+      "source": "USB shell and solder | nickel tin",
+      "rgba": [
+        0.7493879723965666,
+        0.7667645442576108,
+        0.7907306609972312,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.5215686274509804,
+        0.5490196078431373,
+        0.5882352941176471,
+        1.0
+      ],
+      "metallic": 1.0,
+      "roughness": 0.25
+    },
+    "gold_contacts": {
+      "name": "gold_contacts",
+      "source": "Contacts | gold plating",
+      "rgba": [
+        0.7860137556679393,
+        0.6410877486540971,
+        0.35247372806771743,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.5803921568627451,
+        0.3686274509803922,
+        0.10196078431372549,
+        1.0
+      ],
+      "metallic": 1.0,
+      "roughness": 0.23999999463558197
+    },
+    "ivory_connectors": {
+      "name": "ivory_connectors",
+      "source": "JST | ivory moulded polymer",
+      "rgba": [
+        0.8864084783526338,
+        0.8964431264151296,
+        0.8700341750296966,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.7607843137254902,
+        0.7803921568627451,
+        0.7294117647058823,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.3799999952316284
+    },
+    "unpowered_led": {
+      "name": "unpowered_led",
+      "source": "Unpowered LED | pale translucent package",
+      "rgba": [
+        0.8205323947160124,
+        0.8381870760887733,
+        0.7667645442576108,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.6392156862745098,
+        0.6705882352941176,
+        0.5490196078431373,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.25
+    },
+    "green_terminal": {
+      "name": "green_terminal",
+      "source": "Power terminal | green polymer",
+      "rgba": [
+        0.2297350975524795,
+        0.5750484309339549,
+        0.38345809257743413,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.043137254901960784,
+        0.2901960784313726,
+        0.12156862745098039,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.4000000059604645
+    },
+    "openrb_top": {
+      "name": "openrb_top",
+      "source": "OpenRB web | top",
+      "rgba": [
+        0.9999999999999999,
+        0.9999999999999999,
+        0.9999999999999999,
+        1.0
+      ],
+      "source_linear_rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "texture": "visual/textures/openrb_top.png"
+    },
+    "openrb_bottom": {
+      "name": "openrb_bottom",
+      "source": "OpenRB web | bottom",
+      "rgba": [
+        0.9999999999999999,
+        0.9999999999999999,
+        0.9999999999999999,
+        1.0
+      ],
+      "source_linear_rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "texture": "visual/textures/openrb_bottom.png"
+    },
+    "blue_pcb": {
+      "name": "blue_pcb",
+      "source": "OpenRB | blue solder mask",
+      "rgba": [
+        0.08494473023989005,
+        0.3025537891868693,
+        0.48452920448170694,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.00784313725490196,
+        0.07450980392156863,
+        0.2,
+        1.0
+      ],
+      "metallic": 0.05000000074505806,
+      "roughness": 0.3100000023841858
+    },
+    "steel_hardware": {
+      "name": "steel_hardware",
+      "source": "Steel hardware",
+      "rgba": [
+        0.7366469419515869,
+        0.7493879723965666,
+        0.7667645442576108,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.5019607843137255,
+        0.5215686274509804,
+        0.5490196078431373,
+        1.0
+      ],
+      "metallic": 1.0,
+      "roughness": 0.2800000011920929
+    },
+    "motor_housing": {
+      "name": "motor_housing",
+      "source": "Moulded motor housing",
+      "rgba": [
+        0.16618571343894922,
+        0.16618571343894922,
+        0.19435316156242727,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.023529411764705882,
+        0.023529411764705882,
+        0.03137254901960784,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.3199999928474426
+    },
+    "white_led_diffuser": {
+      "name": "white_led_diffuser",
+      "source": "DYNAMIXEL | LED cover | milky white diffuser",
+      "rgba": [
+        0.9160799866242674,
+        0.9160799866242674,
+        0.9160799866242674,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.8196078431372549,
+        0.8196078431372549,
+        0.8196078431372549,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.5
+    },
+    "black_fasteners": {
+      "name": "black_fasteners",
+      "source": "Motor fasteners | black oxide steel",
+      "rgba": [
+        0.13180380330527966,
+        0.15000520429240002,
+        0.16618571343894922,
+        1.0
+      ],
+      "source_linear_rgba": [
+        0.01568627450980392,
+        0.0196078431372549,
+        0.023529411764705882,
+        1.0
+      ],
+      "metallic": 0.800000011920929,
+      "roughness": 0.3199999928474426
+    }
+  },
+  "visuals": [
+    {
+      "link": 0,
+      "material": "black_electronics",
+      "file": "visual/link0_black_electronics.obj",
+      "triangles": 6640,
+      "bytes": 790543,
+      "bounds": [
+        [
+          -0.054050009697675705,
+          -0.05175946652889252,
+          0.013037500903010368
+        ],
+        [
+          0.005139002110809088,
+          0.00989999994635582,
+          0.05530000850558281
+        ]
+      ],
+      "sha256": "9aa5f06d5adcf9fd4d89cd5e7fdc372bb70ab0e6c9a1e86b34a7546dc1cae86a"
+    },
+    {
+      "link": 0,
+      "material": "black_fasteners",
+      "file": "visual/link0_black_fasteners.obj",
+      "triangles": 2744,
+      "bytes": 213228,
+      "bounds": [
+        [
+          -0.03390231356024742,
+          -0.009901892393827438,
+          0.04399983584880829
+        ],
+        [
+          -0.003498195903375745,
+          0.009901892393827438,
+          0.06576049327850342
+        ]
+      ],
+      "sha256": "69fba6f350f5761260648a36711acf278d69fd7af3dcccadaf2f43f2323910ef"
+    },
+    {
+      "link": 0,
+      "material": "blue_pcb",
+      "file": "visual/link0_blue_pcb.obj",
+      "triangles": 1234,
+      "bytes": 132547,
+      "bounds": [
+        [
+          -0.0557401105761528,
+          -0.052238572388887405,
+          0.015000000596046448
+        ],
+        [
+          0.010238561779260635,
+          -0.027261434122920036,
+          0.016600001603364944
+        ]
+      ],
+      "sha256": "fc0f699bbf20e268990783a1596d0136a9217fd7e09373b0e5f56f0fe9851bc0"
+    },
+    {
+      "link": 0,
+      "material": "ceramic",
+      "file": "visual/link0_ceramic.obj",
+      "triangles": 1830,
+      "bytes": 249967,
+      "bounds": [
+        [
+          -0.0517750047147274,
+          -0.047679562121629715,
+          0.014150508679449558
+        ],
+        [
+          -0.009113802574574947,
+          -0.031918417662382126,
+          0.017750000581145287
+        ]
+      ],
+      "sha256": "722d47d19950fb732b2d8d6a6574c3203d7425e6af95a8de209a4aae9a38b67b"
+    },
+    {
+      "link": 0,
+      "material": "gold_contacts",
+      "file": "visual/link0_gold_contacts.obj",
+      "triangles": 1848,
+      "bytes": 216479,
+      "bounds": [
+        [
+          -0.030162803828716278,
+          -0.050093501806259155,
+          0.017497826367616653
+        ],
+        [
+          0.004962803330272436,
+          -0.029326489195227623,
+          0.02459520474076271
+        ]
+      ],
+      "sha256": "48de5e903539f95ec54eca6d656f02a2303adeee7c4425c21ba452fab54719d0"
+    },
+    {
+      "link": 0,
+      "material": "green_terminal",
+      "file": "visual/link0_green_terminal.obj",
+      "triangles": 252,
+      "bytes": 29760,
+      "bounds": [
+        [
+          0.0035900003276765347,
+          -0.043209999799728394,
+          0.01665000058710575
+        ],
+        [
+          0.0111243212595582,
+          -0.03564000129699707,
+          0.02493000216782093
+        ]
+      ],
+      "sha256": "b1b1af9db0c0335edc6ef4ad7c2a304e0b83d00b30b68c192eb4d86782eda088"
+    },
+    {
+      "link": 0,
+      "material": "ivory_connectors",
+      "file": "visual/link0_ivory_connectors.obj",
+      "triangles": 208,
+      "bytes": 26775,
+      "bounds": [
+        [
+          -0.04151250422000885,
+          -0.052452314645051956,
+          0.01661219447851181
+        ],
+        [
+          -0.03151250630617142,
+          -0.027067692950367928,
+          0.022225340828299522
+        ]
+      ],
+      "sha256": "7be2ac666e17c9efb5297e70091ce7dadcb4069ef3343ef1b61d9106e5567e40"
+    },
+    {
+      "link": 0,
+      "material": "motor_housing",
+      "file": "visual/link0_motor_housing.obj",
+      "triangles": 3792,
+      "bytes": 399589,
+      "bounds": [
+        [
+          -0.03400000184774399,
+          -0.010000001639127731,
+          0.0429970845580101
+        ],
+        [
+          1.1843391822807803e-09,
+          0.010000004433095455,
+          0.06600002944469452
+        ]
+      ],
+      "sha256": "226b4f5568a53773c2637c84b915092d783703f946ca932f3950adedd25ef781"
+    },
+    {
+      "link": 0,
+      "material": "nickel_tin",
+      "file": "visual/link0_nickel_tin.obj",
+      "triangles": 7806,
+      "bytes": 723867,
+      "bounds": [
+        [
+          -0.0556500069797039,
+          -0.052010003477334976,
+          0.006150000728666782
+        ],
+        [
+          0.008640000596642494,
+          -0.02751000225543976,
+          0.024750003591179848
+        ]
+      ],
+      "sha256": "ef70199d66c787232f1f752216a31f062f16c1f52b1014f344f95e325a04b5e6"
+    },
+    {
+      "link": 0,
+      "material": "openrb_bottom",
+      "file": "visual/link0_openrb_bottom.obj",
+      "triangles": 2280,
+      "bytes": 174385,
+      "bounds": [
+        [
+          -0.05573791265487671,
+          -0.05223791301250458,
+          0.015000000596046448
+        ],
+        [
+          0.010220552794635296,
+          -0.02725660800933838,
+          0.015010000596046447
+        ]
+      ],
+      "sha256": "7388a2435afed0e4c1e9cb24b84096ab3cb74f489cb3a8878765b95e6db2ff95"
+    },
+    {
+      "link": 0,
+      "material": "openrb_top",
+      "file": "visual/link0_openrb_top.obj",
+      "triangles": 2280,
+      "bytes": 174429,
+      "bounds": [
+        [
+          -0.05573791265487671,
+          -0.05223791301250458,
+          0.016590001603364945
+        ],
+        [
+          0.010220552794635296,
+          -0.02725660800933838,
+          0.016600001603364944
+        ]
+      ],
+      "sha256": "8ee4ceca7aa19f82ccf382309da75bbcd7811fb362d0656d6e703f73c765c88f"
+    },
+    {
+      "link": 0,
+      "material": "printed_charcoal",
+      "file": "visual/link0_printed_charcoal.obj",
+      "triangles": 3924,
+      "bytes": 389615,
+      "bounds": [
+        [
+          -0.06000000238418579,
+          -0.07500000298023224,
+          -8.737890272447757e-11
+        ],
+        [
+          0.06000000238418579,
+          0.07500000298023224,
+          0.043000005185604095
+        ]
+      ],
+      "sha256": "43bdbc14d85a7f58535c66d12ddf85f658cc815d99ab6b5a56845a1e6ed0eace"
+    },
+    {
+      "link": 0,
+      "material": "steel_hardware",
+      "file": "visual/link0_steel_hardware.obj",
+      "triangles": 5408,
+      "bytes": 423102,
+      "bounds": [
+        [
+          -0.055251795798540115,
+          -0.05175373703241348,
+          0.010599818080663681
+        ],
+        [
+          0.009754423052072525,
+          0.009753300808370113,
+          0.050500255078077316
+        ]
+      ],
+      "sha256": "334c0c3f6bbd17c0f708455fb4dec99aa7b1559d0e4e2e363ef455d30e14dc73"
+    },
+    {
+      "link": 0,
+      "material": "unpowered_led",
+      "file": "visual/link0_unpowered_led.obj",
+      "triangles": 344,
+      "bytes": 40259,
+      "bounds": [
+        [
+          -0.02775000035762787,
+          -0.03824666514992714,
+          0.0166500024497509
+        ],
+        [
+          -0.022770002484321594,
+          -0.03625333681702614,
+          0.017420001327991486
+        ]
+      ],
+      "sha256": "bbd6196076a8facd3f5236b468f9b4623537b66eff6184f169d96c7676ebc16b"
+    },
+    {
+      "link": 0,
+      "material": "white_led_diffuser",
+      "file": "visual/link0_white_led_diffuser.obj",
+      "triangles": 32,
+      "bytes": 4113,
+      "bounds": [
+        [
+          -0.0020000003278255463,
+          -0.002500000176951289,
+          0.043000005185604095
+        ],
+        [
+          2.5669286141116743e-10,
+          0.002500000176951289,
+          0.04750000685453415
+        ]
+      ],
+      "sha256": "562838522d02363d4ead4200534c7f4c0495973218738eef657b0d434bb6dd44"
+    },
+    {
+      "link": 1,
+      "material": "black_electronics",
+      "file": "visual/link1_black_electronics.obj",
+      "triangles": 96,
+      "bytes": 15803,
+      "bounds": [
+        [
+          -0.009900004297494889,
+          -0.00800000037997961,
+          0.02838750797510147
+        ],
+        [
+          0.009900000106310472,
+          0.0008000002126209438,
+          0.03761251139640808
+        ]
+      ],
+      "sha256": "9889d2c965ae9eda1e855d3ec9bca463acb3100464bb2b08db211ba7a7d65622"
+    },
+    {
+      "link": 1,
+      "material": "black_fasteners",
+      "file": "visual/link1_black_fasteners.obj",
+      "triangles": 4248,
+      "bytes": 326674,
+      "bounds": [
+        [
+          -0.00990177008509636,
+          -0.014268193393945694,
+          0.0048998022377491
+        ],
+        [
+          0.00990189249557443,
+          0.011261189356446266,
+          0.048001168847084046
+        ]
+      ],
+      "sha256": "70ef21b827efcfa9c3d3774ccd0a8eaafc52f791a73657d6b81d377e55173436"
+    },
+    {
+      "link": 1,
+      "material": "motor_housing",
+      "file": "visual/link1_motor_housing.obj",
+      "triangles": 5568,
+      "bytes": 555115,
+      "bounds": [
+        [
+          -0.010000000402331352,
+          -0.014300001785159111,
+          0.008900007784366608
+        ],
+        [
+          0.009999999849125743,
+          0.011500030755996704,
+          0.05149999874830246
+        ]
+      ],
+      "sha256": "7adf46892cb3469f9dd6f0ddbca08bcf5156c5d98ac119e8e84bbf4304c63fe2"
+    },
+    {
+      "link": 1,
+      "material": "printed_charcoal",
+      "file": "visual/link1_printed_charcoal.obj",
+      "triangles": 1798,
+      "bytes": 204051,
+      "bounds": [
+        [
+          -0.010000000402331352,
+          -0.014310271479189396,
+          0.014499998271465302
+        ],
+        [
+          0.009999999849125743,
+          0.014310271479189396,
+          0.021485297560691834
+        ]
+      ],
+      "sha256": "154cc99826446c4ec7e21e06782272ada936ae669d8c001e9729ba6387606669"
+    },
+    {
+      "link": 1,
+      "material": "steel_hardware",
+      "file": "visual/link1_steel_hardware.obj",
+      "triangles": 5408,
+      "bytes": 422809,
+      "bounds": [
+        [
+          -0.00975540715456009,
+          -0.014073542319238186,
+          0.011999851644039154
+        ],
+        [
+          0.009749318749411031,
+          0.014073542319238186,
+          0.02124903964996338
+        ]
+      ],
+      "sha256": "ec18070c5773163c912c9a9f0ea3fa4026d15229f924d2c8190f17000ccf9058"
+    },
+    {
+      "link": 1,
+      "material": "white_led_diffuser",
+      "file": "visual/link1_white_led_diffuser.obj",
+      "triangles": 32,
+      "bytes": 4123,
+      "bounds": [
+        [
+          -0.002500001035630703,
+          -0.011500000953674316,
+          0.04950000214576721
+        ],
+        [
+          0.002499999318271875,
+          -0.007000000681728125,
+          0.05149999874830246
+        ]
+      ],
+      "sha256": "3ba05a422d7618d7c5f337edff4d433425421bd939d3d1062a871d6c744e6ef0"
+    },
+    {
+      "link": 2,
+      "material": "black_electronics",
+      "file": "visual/link2_black_electronics.obj",
+      "triangles": 96,
+      "bytes": 17021,
+      "bounds": [
+        [
+          0.02350000136345625,
+          -0.00800000224262476,
+          0.08010002410411834
+        ],
+        [
+          0.03350000020861626,
+          0.0008000011439435184,
+          0.09990001654624939
+        ]
+      ],
+      "sha256": "3453617e6d55ea59748facb946e4fb5d5ef28986602fd6eebed1feefd8ab95d4"
+    },
+    {
+      "link": 2,
+      "material": "black_fasteners",
+      "file": "visual/link2_black_fasteners.obj",
+      "triangles": 4248,
+      "bytes": 326282,
+      "bounds": [
+        [
+          -0.0027480038553476336,
+          -0.014268194325268269,
+          -0.0027499180436134363
+        ],
+        [
+          0.0434992493391037,
+          0.014466245658695698,
+          0.09990238583087921
+        ]
+      ],
+      "sha256": "8d5f5c3e1e92e720a098264f6e09970157a16c28164f51353866750ed9df30b9"
+    },
+    {
+      "link": 2,
+      "material": "motor_housing",
+      "file": "visual/link2_motor_housing.obj",
+      "triangles": 6338,
+      "bytes": 615391,
+      "bounds": [
+        [
+          -0.008001693218946457,
+          -0.01450017374008894,
+          -0.008015347659587863
+        ],
+        [
+          0.04700000149011612,
+          0.014501615427434444,
+          0.10000003314018249
+        ]
+      ],
+      "sha256": "402a527e775fe99d66db12bb7c1db046f598829b42efd586227d1091537fee9a"
+    },
+    {
+      "link": 2,
+      "material": "printed_charcoal",
+      "file": "visual/link2_printed_charcoal.obj",
+      "triangles": 3684,
+      "bytes": 403867,
+      "bounds": [
+        [
+          -0.010000015303492546,
+          -0.01810000091791153,
+          -0.00803061389923096
+        ],
+        [
+          0.01698324953019619,
+          0.01810000091791153,
+          0.10000003314018249
+        ]
+      ],
+      "sha256": "ee215e22221cd12474f180d57f94ef1c10b3f4ad9c18d3f25baeef759687b1b7"
+    },
+    {
+      "link": 2,
+      "material": "steel_hardware",
+      "file": "visual/link2_steel_hardware.obj",
+      "triangles": 10832,
+      "bytes": 854297,
+      "bounds": [
+        [
+          -0.007748727381229401,
+          -0.01937400922179222,
+          -0.007750524222850802
+        ],
+        [
+          0.016750420283526184,
+          0.01937400922179222,
+          0.09975440239906311
+        ]
+      ],
+      "sha256": "9f774b6ac626de5e4a804886d4d60aa8923d9bc5729e0f9b46baf97856ce3a9a"
+    },
+    {
+      "link": 2,
+      "material": "white_led_diffuser",
+      "file": "visual/link2_white_led_diffuser.obj",
+      "triangles": 32,
+      "bytes": 4101,
+      "bounds": [
+        [
+          0.045000001162290575,
+          -0.011500000953674316,
+          0.08750001525878906
+        ],
+        [
+          0.04700000149011612,
+          -0.007000000681728125,
+          0.09250001049041748
+        ]
+      ],
+      "sha256": "b89669d9d6a43dde47f5ab6229eed44b2772716ce4a011521b58fe8c931c6194"
+    },
+    {
+      "link": 3,
+      "material": "black_electronics",
+      "file": "visual/link3_black_electronics.obj",
+      "triangles": 96,
+      "bytes": 17131,
+      "bounds": [
+        [
+          0.11350002598762512,
+          -0.00800000224262476,
+          -0.009899975895881652
+        ],
+        [
+          0.12350001645088196,
+          0.0008000009693205357,
+          0.00990001654624939
+        ]
+      ],
+      "sha256": "2d9f76fa4daeae90ae822fff50002b033eee9816402e1d5e7aa84c6a68b61797"
+    },
+    {
+      "link": 3,
+      "material": "black_fasteners",
+      "file": "visual/link3_black_fasteners.obj",
+      "triangles": 4248,
+      "bytes": 326886,
+      "bounds": [
+        [
+          -0.0027515786439180345,
+          -0.014266818761825562,
+          -0.00990531051158905
+        ],
+        [
+          0.13349918735027314,
+          0.014466307125985622,
+          0.009902385830879212
+        ]
+      ],
+      "sha256": "87a115cdff17803f7136973d9ba2065c7545c957d6b6baff370c08edf66220a9"
+    },
+    {
+      "link": 3,
+      "material": "motor_housing",
+      "file": "visual/link3_motor_housing.obj",
+      "triangles": 6338,
+      "bytes": 622415,
+      "bounds": [
+        [
+          -0.008001429095864293,
+          -0.014500129967927933,
+          -0.009999992489814757
+        ],
+        [
+          0.13700000655651093,
+          0.014501615427434444,
+          0.010000033140182496
+        ]
+      ],
+      "sha256": "728976e25df3aa3f0bd581b5c68ca3d329f2d619c14425c4fba477d18f9465b1"
+    },
+    {
+      "link": 3,
+      "material": "printed_charcoal",
+      "file": "visual/link3_printed_charcoal.obj",
+      "triangles": 3684,
+      "bytes": 406618,
+      "bounds": [
+        [
+          -0.008057055130600926,
+          -0.01810000091791153,
+          -0.009999992489814757
+        ],
+        [
+          0.10698532772064209,
+          0.01810000278055668,
+          0.010000033140182496
+        ]
+      ],
+      "sha256": "9912fb302c17e7955a33f8132ac72321b5f22a8acdaf790ee298c2cee250f0fb"
+    },
+    {
+      "link": 3,
+      "material": "steel_hardware",
+      "file": "visual/link3_steel_hardware.obj",
+      "triangles": 10832,
+      "bytes": 853811,
+      "bounds": [
+        [
+          -0.007749599471688268,
+          -0.01937400922179222,
+          -0.00975051724910736
+        ],
+        [
+          0.1067528100013733,
+          0.01937400922179222,
+          0.009749738335609437
+        ]
+      ],
+      "sha256": "0b67e9ae77b8b3053ee0dd227888d32c6f9f6ab58c63f6d15d6afa811d6cf014"
+    },
+    {
+      "link": 3,
+      "material": "white_led_diffuser",
+      "file": "visual/link3_white_led_diffuser.obj",
+      "triangles": 32,
+      "bytes": 4125,
+      "bounds": [
+        [
+          0.13500000250339508,
+          -0.011500000953674316,
+          -0.0024999847412109366
+        ],
+        [
+          0.13700000655651093,
+          -0.007000000681728125,
+          0.0025000104904174814
+        ]
+      ],
+      "sha256": "68d62b9e6628589d9df9c6e299650bc163b9b730b522dc7e8fb489f7181be72b"
+    },
+    {
+      "link": 4,
+      "material": "black_electronics",
+      "file": "visual/link4_black_electronics.obj",
+      "triangles": 96,
+      "bytes": 17436,
+      "bounds": [
+        [
+          0.0207000173330307,
+          -0.00989999994635582,
+          0.004000020980834962
+        ],
+        [
+          0.02950000238418579,
+          0.00989999994635582,
+          0.014000011444091798
+        ]
+      ],
+      "sha256": "07f9efa17c68386d6da3d0a661e1cd9e90825220f713d3285118f4bac69caae0"
+    },
+    {
+      "link": 4,
+      "material": "black_fasteners",
+      "file": "visual/link4_black_fasteners.obj",
+      "triangles": 3496,
+      "bytes": 269249,
+      "bounds": [
+        [
+          -0.0027556024789810174,
+          -0.00990151148289442,
+          -0.0059994479417800894
+        ],
+        [
+          0.03996198844909668,
+          0.014466403052210808,
+          0.02439957654476166
+        ]
+      ],
+      "sha256": "ba3feed74967a9e21935cea9a11bb78f580e0a40cc8032a0f828977d9c016e0d"
+    },
+    {
+      "link": 4,
+      "material": "motor_housing",
+      "file": "visual/link4_motor_housing.obj",
+      "triangles": 5772,
+      "bytes": 570739,
+      "bounds": [
+        [
+          -0.008001407265663146,
+          -0.014500183053314686,
+          -0.0094999840259552
+        ],
+        [
+          0.04021669399738312,
+          0.014501616358757019,
+          0.024500010371208192
+        ]
+      ],
+      "sha256": "8698ac23ff25f66d91081d12b828e26f0481d56c4051caa64d45eb845f6aed8c"
+    },
+    {
+      "link": 4,
+      "material": "printed_charcoal",
+      "file": "visual/link4_printed_charcoal.obj",
+      "triangles": 752,
+      "bytes": 76921,
+      "bounds": [
+        [
+          -0.00833486545085907,
+          -0.022530343383550644,
+          -0.0094999840259552
+        ],
+        [
+          0.01720001769065857,
+          0.022530345246195793,
+          0.024500010371208192
+        ]
+      ],
+      "sha256": "aa7e3b517fd42bed2a4614855a9d55b532826eea3754ae43d65350b91089d7f3"
+    },
+    {
+      "link": 4,
+      "material": "steel_hardware",
+      "file": "visual/link4_steel_hardware.obj",
+      "triangles": 8120,
+      "bytes": 634750,
+      "bounds": [
+        [
+          -0.007750665426254272,
+          -0.01927400939166546,
+          -0.009256245732307433
+        ],
+        [
+          0.02420024049282074,
+          0.019274290651082993,
+          0.024252815008163453
+        ]
+      ],
+      "sha256": "e581438020be7b43cd5b6ec13dcdbe60f459f43b10131a1837845d6e45291353"
+    },
+    {
+      "link": 4,
+      "material": "white_led_diffuser",
+      "file": "visual/link4_white_led_diffuser.obj",
+      "triangles": 32,
+      "bytes": 4133,
+      "bounds": [
+        [
+          0.01720001769065857,
+          -0.002500000176951289,
+          -0.0094999840259552
+        ],
+        [
+          0.021700019359588624,
+          0.002500000176951289,
+          -0.007499994874000548
+        ]
+      ],
+      "sha256": "ad6521f17df357195be06a1919921102654cd70da3e99723ca66f27bc512c083"
+    },
+    {
+      "link": 5,
+      "material": "black_electronics",
+      "file": "visual/link5_black_electronics.obj",
+      "triangles": 96,
+      "bytes": 16764,
+      "bounds": [
+        [
+          0.019900012779235837,
+          -0.007800000719726086,
+          0.0037180314064025888
+        ],
+        [
+          0.039700020122528074,
+          0.0009999999310821295,
+          0.013500017881393434
+        ]
+      ],
+      "sha256": "263a3ceacdfcdcafde37c9e4291100e3177ecb487adedbfc5fdd74a76b4bb9fb"
+    },
+    {
+      "link": 5,
+      "material": "black_fasteners",
+      "file": "visual/link5_black_fasteners.obj",
+      "triangles": 4248,
+      "bytes": 326408,
+      "bounds": [
+        [
+          0.0048998184680938695,
+          -0.014068192802369595,
+          -0.006899925112724303
+        ],
+        [
+          0.039698783326148984,
+          0.01146230660378933,
+          0.023499561309814454
+        ]
+      ],
+      "sha256": "401ab0fa5a0b35ba245fab5a494876804b14ef5e7ac05c8f2ef3633100f8464a"
+    },
+    {
+      "link": 5,
+      "material": "motor_housing",
+      "file": "visual/link5_motor_housing.obj",
+      "triangles": 5568,
+      "bytes": 552692,
+      "bounds": [
+        [
+          0.008900035190582273,
+          -0.01410000305622816,
+          -0.007997470140457152
+        ],
+        [
+          0.039800021815299985,
+          0.011717310175299644,
+          0.0270000079870224
+        ]
+      ],
+      "sha256": "dc58711e29efeb79e08ac8d3243dace4d79c37819fe2273791c424778a266824"
+    },
+    {
+      "link": 5,
+      "material": "printed_charcoal",
+      "file": "visual/link5_printed_charcoal.obj",
+      "triangles": 2886,
+      "bytes": 210143,
+      "bounds": [
+        [
+          0.014500010776519773,
+          -0.014500001445412636,
+          -0.04000516438484192
+        ],
+        [
+          0.08898951487541198,
+          0.014500001445412636,
+          0.00900001621246338
+        ]
+      ],
+      "sha256": "cefcc261bf7995dcad9233d2b6c44bb2de46a0e869d084d221a8ccb43e7ea55d"
+    },
+    {
+      "link": 5,
+      "material": "steel_hardware",
+      "file": "visual/link5_steel_hardware.obj",
+      "triangles": 5408,
+      "bytes": 424102,
+      "bounds": [
+        [
+          0.012099791336059568,
+          -0.015773918479681015,
+          -0.007756235241889953
+        ],
+        [
+          0.039552826452255246,
+          0.015774479135870934,
+          0.007752818822860719
+        ]
+      ],
+      "sha256": "90e4410e0314f475b4ddd54a9296917fcdf50a20e9202a646bc13bd5f98ad005"
+    },
+    {
+      "link": 5,
+      "material": "white_led_diffuser",
+      "file": "visual/link5_white_led_diffuser.obj",
+      "triangles": 32,
+      "bytes": 4099,
+      "bounds": [
+        [
+          0.027300018835067746,
+          -0.011300000362098217,
+          0.025000003933906556
+        ],
+        [
+          0.032300014066696164,
+          -0.006799999624490738,
+          0.0270000079870224
+        ]
+      ],
+      "sha256": "0fcdcae6bb226f10d6c25e6191dc3a36f862997c4433d4656c44b12e7ffcd50d"
+    },
+    {
+      "link": 6,
+      "material": "black_fasteners",
+      "file": "visual/link6_black_fasteners.obj",
+      "triangles": 752,
+      "bytes": 52808,
+      "bounds": [
+        [
+          -0.0027469083070754963,
+          0.005099869798868895,
+          -0.00274995350837709
+        ],
+        [
+          0.002742321848869328,
+          0.014667303301393986,
+          0.002751853227615342
+        ]
+      ],
+      "sha256": "c10060ca722387b974dad18285eadc5ab11eb2f8b444661949e5a0e3dfb8edc6"
+    },
+    {
+      "link": 6,
+      "material": "motor_housing",
+      "file": "visual/link6_motor_housing.obj",
+      "triangles": 1980,
+      "bytes": 166244,
+      "bounds": [
+        [
+          -0.008015318155288692,
+          -0.014300186187028885,
+          -0.008001405835151687
+        ],
+        [
+          0.008015380859375004,
+          0.01470161322504282,
+          0.007997509002685532
+        ]
+      ],
+      "sha256": "36444c3337b04643cd28856bd9285d17a72d79b47802152540b9175b88ce76a9"
+    },
+    {
+      "link": 6,
+      "material": "printed_charcoal",
+      "file": "visual/link6_printed_charcoal.obj",
+      "triangles": 3678,
+      "bytes": 259606,
+      "bounds": [
+        [
+          -0.008001415371894832,
+          -0.017801370471715927,
+          -0.014739144682884231
+        ],
+        [
+          0.05918614721298218,
+          0.018200000748038292,
+          0.022235508918762192
+        ]
+      ],
+      "sha256": "8b33dfadfadbed06afdd82fb1eb855c93f848688505455d9159d3a9478718089"
+    },
+    {
+      "link": 6,
+      "material": "steel_hardware",
+      "file": "visual/link6_steel_hardware.obj",
+      "triangles": 5424,
+      "bytes": 423097,
+      "bounds": [
+        [
+          -0.007754443526268001,
+          -0.01907428912818432,
+          -0.007753763437271133
+        ],
+        [
+          0.007740067005157475,
+          0.019474290311336517,
+          0.007753800511360154
+        ]
+      ],
+      "sha256": "7db89f4472534b3601e943d04fad2443ff86939738a359c1a211bacaaf1a986d"
+    }
+  ],
+  "parts": [
+    {
+      "id": 0,
+      "source": "PR33_B02_BASE",
+      "group": 1,
+      "link": 0,
+      "source_triangles": 15700,
+      "triangles": 3924
+    },
+    {
+      "id": 1,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 2,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 3,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 4,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 5,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 6,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 7,
+      "source": "SOLID-3966",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1816,
+      "triangles": 218
+    },
+    {
+      "id": 8,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 9,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 10,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 11,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 12,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 13,
+      "source": "SOLID-12142",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1504,
+      "triangles": 180
+    },
+    {
+      "id": 14,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 15,
+      "source": "COMPOUND-32831_1",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 404,
+      "triangles": 222
+    },
+    {
+      "id": 16,
+      "source": "COMPOUND-32831_2",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 17,
+      "source": "COMPOUND-32831_3",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 18,
+      "source": "COMPOUND-32831_4",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 19,
+      "source": "COMPOUND-32831_5",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 20,
+      "source": "COMPOUND-32831_6",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 21,
+      "source": "COMPOUND-32831_7",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 22,
+      "source": "COMPOUND-32831_8",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 23,
+      "source": "COMPOUND-32831_9",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 24,
+      "source": "COMPOUND-32831_10",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 25,
+      "source": "COMPOUND-32831_11",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 26,
+      "source": "COMPOUND-32831_12",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 27,
+      "source": "COMPOUND-32831_13",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 28,
+      "source": "COMPOUND-32831_14",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 29,
+      "source": "COMPOUND-32831_15",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 30,
+      "source": "SOLID-59459",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 17874,
+      "triangles": 2144
+    },
+    {
+      "id": 31,
+      "source": "SOLID-76963",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 788,
+      "triangles": 94
+    },
+    {
+      "id": 32,
+      "source": "SOLID-80885",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 552,
+      "triangles": 66
+    },
+    {
+      "id": 33,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 34,
+      "source": "SOLID-84115",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 35,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 36,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 37,
+      "source": "COMPOUND-85981_1",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1136,
+      "triangles": 136
+    },
+    {
+      "id": 38,
+      "source": "COMPOUND-85981_2",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 39,
+      "source": "COMPOUND-85981_3",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 40,
+      "source": "COMPOUND-85981_4",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 41,
+      "source": "COMPOUND-85981_5",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 282,
+      "triangles": 48
+    },
+    {
+      "id": 42,
+      "source": "COMPOUND-85981_6",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 282,
+      "triangles": 48
+    },
+    {
+      "id": 43,
+      "source": "SOLID-88451",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 580,
+      "triangles": 104
+    },
+    {
+      "id": 44,
+      "source": "SOLID-96147",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 2058,
+      "triangles": 246
+    },
+    {
+      "id": 45,
+      "source": "SOLID-98003",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1432,
+      "triangles": 172
+    },
+    {
+      "id": 46,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 47,
+      "source": "SOLID-101460",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 2212,
+      "triangles": 264
+    },
+    {
+      "id": 48,
+      "source": "SOLID-109314",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 3448,
+      "triangles": 412
+    },
+    {
+      "id": 49,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 50,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 51,
+      "source": "SOLID-80885",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 552,
+      "triangles": 66
+    },
+    {
+      "id": 52,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 53,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 54,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 55,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 56,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 57,
+      "source": "SOLID-117644",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1192,
+      "triangles": 158
+    },
+    {
+      "id": 58,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 59,
+      "source": "SOLID-126544",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1432,
+      "triangles": 172
+    },
+    {
+      "id": 60,
+      "source": "SOLID-76963",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 788,
+      "triangles": 94
+    },
+    {
+      "id": 61,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 62,
+      "source": "SOLID-3966",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1816,
+      "triangles": 218
+    },
+    {
+      "id": 63,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 64,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 65,
+      "source": "SOLID-88451",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 580,
+      "triangles": 104
+    },
+    {
+      "id": 66,
+      "source": "SOLID-130038",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 204,
+      "triangles": 48
+    },
+    {
+      "id": 67,
+      "source": "SOLID-134095",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1412,
+      "triangles": 168
+    },
+    {
+      "id": 68,
+      "source": "SOLID-141216",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 7516,
+      "triangles": 902
+    },
+    {
+      "id": 69,
+      "source": "SOLID-144743",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 44824,
+      "triangles": 5378
+    },
+    {
+      "id": 70,
+      "source": "SOLID-80885",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 552,
+      "triangles": 66
+    },
+    {
+      "id": 71,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 72,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 73,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 74,
+      "source": "COMPOUND-32831_1",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 404,
+      "triangles": 230
+    },
+    {
+      "id": 75,
+      "source": "COMPOUND-32831_2",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 76,
+      "source": "COMPOUND-32831_3",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 77,
+      "source": "COMPOUND-32831_4",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 78,
+      "source": "COMPOUND-32831_5",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 79,
+      "source": "COMPOUND-32831_6",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 80,
+      "source": "COMPOUND-32831_7",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 81,
+      "source": "COMPOUND-32831_8",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 82,
+      "source": "COMPOUND-32831_9",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 83,
+      "source": "COMPOUND-32831_10",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 84,
+      "source": "COMPOUND-32831_11",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 85,
+      "source": "COMPOUND-32831_12",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 86,
+      "source": "COMPOUND-32831_13",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 87,
+      "source": "COMPOUND-32831_14",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 88,
+      "source": "COMPOUND-32831_15",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 568,
+      "triangles": 84
+    },
+    {
+      "id": 89,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 90,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 91,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 92,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 93,
+      "source": "SOLID-165869",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 564,
+      "triangles": 68
+    },
+    {
+      "id": 94,
+      "source": "SOLID-117644",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1192,
+      "triangles": 158
+    },
+    {
+      "id": 95,
+      "source": "SOLID-76963",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 788,
+      "triangles": 94
+    },
+    {
+      "id": 96,
+      "source": "SOLID-167591",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1154,
+      "triangles": 138
+    },
+    {
+      "id": 97,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 98,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 99,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 100,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 101,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 102,
+      "source": "SOLID-170232",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 220,
+      "triangles": 48
+    },
+    {
+      "id": 103,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 104,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 105,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 106,
+      "source": "SOLID-174555",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 1144,
+      "triangles": 136
+    },
+    {
+      "id": 107,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 108,
+      "source": "COMPOUND-179417_1",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 2226,
+      "triangles": 266
+    },
+    {
+      "id": 109,
+      "source": "COMPOUND-179417_2",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 110,
+      "source": "COMPOUND-179417_3",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 111,
+      "source": "COMPOUND-179417_4",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 112,
+      "source": "COMPOUND-179417_5",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 113,
+      "source": "COMPOUND-179417_6",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 124,
+      "triangles": 48
+    },
+    {
+      "id": 114,
+      "source": "COMPOUND-179417_7",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 28,
+      "triangles": 28
+    },
+    {
+      "id": 115,
+      "source": "COMPOUND-179417_8",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 28,
+      "triangles": 28
+    },
+    {
+      "id": 116,
+      "source": "COMPOUND-179417_9",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 117,
+      "source": "COMPOUND-179417_10",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 92,
+      "triangles": 48
+    },
+    {
+      "id": 118,
+      "source": "COMPOUND-179417_11",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 119,
+      "source": "COMPOUND-179417_12",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 120,
+      "source": "COMPOUND-179417_13",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 316,
+      "triangles": 46
+    },
+    {
+      "id": 121,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 122,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 123,
+      "source": "SOLID-187835",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 12,
+      "triangles": 12
+    },
+    {
+      "id": 124,
+      "source": "SOLID-188148",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 824,
+      "triangles": 98
+    },
+    {
+      "id": 125,
+      "source": "SOLID-189872",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 480,
+      "triangles": 58
+    },
+    {
+      "id": 126,
+      "source": "SOLID-190866",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 40,
+      "triangles": 40
+    },
+    {
+      "id": 127,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 128,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 129,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 130,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 131,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 132,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 133,
+      "source": "SOLID-2234",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 468,
+      "triangles": 56
+    },
+    {
+      "id": 134,
+      "source": "SOLID-10271",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 572,
+      "triangles": 68
+    },
+    {
+      "id": 135,
+      "source": "SOLID-378",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 380,
+      "triangles": 48
+    },
+    {
+      "id": 136,
+      "source": "_AUTOSAVE-BCM17-A01-E001_REV_B_",
+      "group": 2,
+      "link": 0,
+      "source_triangles": 20808,
+      "triangles": 5794
+    },
+    {
+      "id": 137,
+      "source": "PTS2_M2X6",
+      "group": 3,
+      "link": 0,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 138,
+      "source": "PTS2_M2X6",
+      "group": 4,
+      "link": 0,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 139,
+      "source": "PTS2_M2X6",
+      "group": 5,
+      "link": 0,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 140,
+      "source": "PTS2_M2X6",
+      "group": 6,
+      "link": 0,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 141,
+      "source": "DC15_A01_CASE_M_DUMMY_7",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 3388,
+      "triangles": 1186
+    },
+    {
+      "id": 142,
+      "source": "DC15_A01_CASE_F_DUMMY_5",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 5910,
+      "triangles": 708
+    },
+    {
+      "id": 143,
+      "source": "DC15_A01_CASE_B_DUMMY_8",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 5424,
+      "triangles": 1898
+    },
+    {
+      "id": 144,
+      "source": "DC15_A01_HORN_DUMMY_17",
+      "group": 7,
+      "link": 1,
+      "source_triangles": 10092,
+      "triangles": 1210
+    },
+    {
+      "id": 145,
+      "source": "DC15_A01_LED_CAP2_DUMMY_3",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 32,
+      "triangles": 32
+    },
+    {
+      "id": 146,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 147,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 148,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 149,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 150,
+      "source": "BTS2_M2_6X8_5",
+      "group": 7,
+      "link": 1,
+      "source_triangles": 6266,
+      "triangles": 752
+    },
+    {
+      "id": 151,
+      "source": "B3B-EH_2",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 152,
+      "source": "B3B-EH_2",
+      "group": 7,
+      "link": 0,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 153,
+      "source": "PTS2_M2X10",
+      "group": 8,
+      "link": 0,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 154,
+      "source": "PTS2_M2X10",
+      "group": 9,
+      "link": 0,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 155,
+      "source": "PTS2_M2X10",
+      "group": 10,
+      "link": 0,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 156,
+      "source": "PTS2_M2X10",
+      "group": 11,
+      "link": 0,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 157,
+      "source": "DC15_A01_ADAPTOR_1",
+      "group": 12,
+      "link": 1,
+      "source_triangles": 14988,
+      "triangles": 1798
+    },
+    {
+      "id": 158,
+      "source": "PTS2_M2X4",
+      "group": 13,
+      "link": 1,
+      "source_triangles": 5660,
+      "triangles": 678
+    },
+    {
+      "id": 159,
+      "source": "PTS2_M2X4",
+      "group": 14,
+      "link": 1,
+      "source_triangles": 5660,
+      "triangles": 678
+    },
+    {
+      "id": 160,
+      "source": "PTS2_M2X4",
+      "group": 15,
+      "link": 1,
+      "source_triangles": 5660,
+      "triangles": 678
+    },
+    {
+      "id": 161,
+      "source": "PTS2_M2X4",
+      "group": 16,
+      "link": 1,
+      "source_triangles": 5660,
+      "triangles": 678
+    },
+    {
+      "id": 162,
+      "source": "DC15_A01_CASE_M_DUMMY_7",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 3388,
+      "triangles": 1186
+    },
+    {
+      "id": 163,
+      "source": "DC15_A01_CASE_F_DUMMY_5",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 5910,
+      "triangles": 708
+    },
+    {
+      "id": 164,
+      "source": "DC15_A01_CASE_B_DUMMY_8",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 5424,
+      "triangles": 1898
+    },
+    {
+      "id": 165,
+      "source": "DC15_A01_HORN_DUMMY_17",
+      "group": 17,
+      "link": 2,
+      "source_triangles": 10092,
+      "triangles": 1210
+    },
+    {
+      "id": 166,
+      "source": "DC15_A01_LED_CAP2_DUMMY_3",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 32,
+      "triangles": 32
+    },
+    {
+      "id": 167,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 168,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 169,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 170,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 171,
+      "source": "BTS2_M2_6X8_5",
+      "group": 17,
+      "link": 2,
+      "source_triangles": 6266,
+      "triangles": 752
+    },
+    {
+      "id": 172,
+      "source": "B3B-EH_2",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 173,
+      "source": "B3B-EH_2",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 174,
+      "source": "DC15_A01_HORN_IDLE2_DUMMY",
+      "group": 17,
+      "link": 2,
+      "source_triangles": 6416,
+      "triangles": 770
+    },
+    {
+      "id": 175,
+      "source": "DC15_A01_IDLE_CAP_DUMMY",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 4716,
+      "triangles": 566
+    },
+    {
+      "id": 176,
+      "source": "BTS2_M2_6X6",
+      "group": 17,
+      "link": 1,
+      "source_triangles": 6264,
+      "triangles": 752
+    },
+    {
+      "id": 177,
+      "source": "PTS2_M2X10",
+      "group": 18,
+      "link": 1,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 178,
+      "source": "PTS2_M2X10",
+      "group": 19,
+      "link": 1,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 179,
+      "source": "PTS2_M2X10",
+      "group": 20,
+      "link": 1,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 180,
+      "source": "PTS2_M2X10",
+      "group": 21,
+      "link": 1,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 181,
+      "source": "PR33_B02_F2",
+      "group": 22,
+      "link": 2,
+      "source_triangles": 15724,
+      "triangles": 1886
+    },
+    {
+      "id": 182,
+      "source": "PTS2_M2X6",
+      "group": 23,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 183,
+      "source": "PTS2_M2X6",
+      "group": 24,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 184,
+      "source": "PTS2_M2X6",
+      "group": 25,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 185,
+      "source": "PTS2_M2X6",
+      "group": 26,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 186,
+      "source": "PTS2_M2X6",
+      "group": 27,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 187,
+      "source": "PTS2_M2X6",
+      "group": 28,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 188,
+      "source": "PTS2_M2X6",
+      "group": 29,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 189,
+      "source": "PTS2_M2X6",
+      "group": 30,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 190,
+      "source": "DC15_A01_ADAPTOR_1",
+      "group": 31,
+      "link": 2,
+      "source_triangles": 14988,
+      "triangles": 1798
+    },
+    {
+      "id": 191,
+      "source": "PTS2_M2X6",
+      "group": 32,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 192,
+      "source": "PTS2_M2X6",
+      "group": 33,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 193,
+      "source": "PTS2_M2X6",
+      "group": 34,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 194,
+      "source": "PTS2_M2X6",
+      "group": 35,
+      "link": 2,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 195,
+      "source": "DC15_A01_CASE_M_DUMMY_7",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 3388,
+      "triangles": 1186
+    },
+    {
+      "id": 196,
+      "source": "DC15_A01_CASE_F_DUMMY_5",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 5910,
+      "triangles": 708
+    },
+    {
+      "id": 197,
+      "source": "DC15_A01_CASE_B_DUMMY_8",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 5424,
+      "triangles": 1898
+    },
+    {
+      "id": 198,
+      "source": "DC15_A01_HORN_DUMMY_17",
+      "group": 36,
+      "link": 3,
+      "source_triangles": 10092,
+      "triangles": 1210
+    },
+    {
+      "id": 199,
+      "source": "DC15_A01_LED_CAP2_DUMMY_3",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 32,
+      "triangles": 32
+    },
+    {
+      "id": 200,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 201,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 202,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 203,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 204,
+      "source": "BTS2_M2_6X8_5",
+      "group": 36,
+      "link": 3,
+      "source_triangles": 6266,
+      "triangles": 752
+    },
+    {
+      "id": 205,
+      "source": "B3B-EH_2",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 206,
+      "source": "B3B-EH_2",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 207,
+      "source": "DC15_A01_HORN_IDLE2_DUMMY",
+      "group": 36,
+      "link": 3,
+      "source_triangles": 6416,
+      "triangles": 770
+    },
+    {
+      "id": 208,
+      "source": "DC15_A01_IDLE_CAP_DUMMY",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 4716,
+      "triangles": 566
+    },
+    {
+      "id": 209,
+      "source": "BTS2_M2_6X6",
+      "group": 36,
+      "link": 2,
+      "source_triangles": 6264,
+      "triangles": 752
+    },
+    {
+      "id": 210,
+      "source": "PTS2_M2X10",
+      "group": 37,
+      "link": 2,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 211,
+      "source": "PTS2_M2X10",
+      "group": 38,
+      "link": 2,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 212,
+      "source": "PTS2_M2X10",
+      "group": 39,
+      "link": 2,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 213,
+      "source": "PTS2_M2X10",
+      "group": 40,
+      "link": 2,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 214,
+      "source": "PR33_B02_F2",
+      "group": 41,
+      "link": 3,
+      "source_triangles": 15724,
+      "triangles": 1886
+    },
+    {
+      "id": 215,
+      "source": "PTS2_M2X6",
+      "group": 42,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 216,
+      "source": "PTS2_M2X6",
+      "group": 43,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 217,
+      "source": "PTS2_M2X6",
+      "group": 44,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 218,
+      "source": "PTS2_M2X6",
+      "group": 45,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 219,
+      "source": "PTS2_M2X6",
+      "group": 46,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 220,
+      "source": "PTS2_M2X6",
+      "group": 47,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 221,
+      "source": "PTS2_M2X6",
+      "group": 48,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 222,
+      "source": "PTS2_M2X6",
+      "group": 49,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 223,
+      "source": "DC15_A01_ADAPTOR_1",
+      "group": 50,
+      "link": 3,
+      "source_triangles": 14988,
+      "triangles": 1798
+    },
+    {
+      "id": 224,
+      "source": "PTS2_M2X6",
+      "group": 51,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 225,
+      "source": "PTS2_M2X6",
+      "group": 52,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 226,
+      "source": "PTS2_M2X6",
+      "group": 53,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 227,
+      "source": "PTS2_M2X6",
+      "group": 54,
+      "link": 3,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 228,
+      "source": "DC15_A01_CASE_M_DUMMY_7",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 3388,
+      "triangles": 1186
+    },
+    {
+      "id": 229,
+      "source": "DC15_A01_CASE_F_DUMMY_5",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 5910,
+      "triangles": 708
+    },
+    {
+      "id": 230,
+      "source": "DC15_A01_CASE_B_DUMMY_8",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 5424,
+      "triangles": 1898
+    },
+    {
+      "id": 231,
+      "source": "DC15_A01_HORN_DUMMY_17",
+      "group": 55,
+      "link": 4,
+      "source_triangles": 10092,
+      "triangles": 1210
+    },
+    {
+      "id": 232,
+      "source": "DC15_A01_LED_CAP2_DUMMY_3",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 32,
+      "triangles": 32
+    },
+    {
+      "id": 233,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 234,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 235,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 236,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 237,
+      "source": "BTS2_M2_6X8_5",
+      "group": 55,
+      "link": 4,
+      "source_triangles": 6266,
+      "triangles": 752
+    },
+    {
+      "id": 238,
+      "source": "B3B-EH_2",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 239,
+      "source": "B3B-EH_2",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 240,
+      "source": "DC15_A01_HORN_IDLE2_DUMMY",
+      "group": 55,
+      "link": 4,
+      "source_triangles": 6416,
+      "triangles": 770
+    },
+    {
+      "id": 241,
+      "source": "DC15_A01_IDLE_CAP_DUMMY",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 4716,
+      "triangles": 566
+    },
+    {
+      "id": 242,
+      "source": "BTS2_M2_6X6",
+      "group": 55,
+      "link": 3,
+      "source_triangles": 6264,
+      "triangles": 752
+    },
+    {
+      "id": 243,
+      "source": "PTS2_M2X10",
+      "group": 56,
+      "link": 3,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 244,
+      "source": "PTS2_M2X10",
+      "group": 57,
+      "link": 3,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 245,
+      "source": "PTS2_M2X10",
+      "group": 58,
+      "link": 3,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 246,
+      "source": "PTS2_M2X10",
+      "group": 59,
+      "link": 3,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 247,
+      "source": "PR33_C02_F5",
+      "group": 60,
+      "link": 4,
+      "source_triangles": 6272,
+      "triangles": 752
+    },
+    {
+      "id": 248,
+      "source": "PTS2_M2X6",
+      "group": 61,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 249,
+      "source": "PTS2_M2X6",
+      "group": 62,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 250,
+      "source": "PTS2_M2X6",
+      "group": 63,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 251,
+      "source": "PTS2_M2X6",
+      "group": 64,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 252,
+      "source": "PTS2_M2X6",
+      "group": 65,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 253,
+      "source": "PTS2_M2X6",
+      "group": 66,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 254,
+      "source": "PTS2_M2X6",
+      "group": 67,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 255,
+      "source": "PTS2_M2X6",
+      "group": 68,
+      "link": 4,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 256,
+      "source": "DC15_A01_CASE_M_DUMMY_7",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 3388,
+      "triangles": 1186
+    },
+    {
+      "id": 257,
+      "source": "DC15_A01_CASE_F_DUMMY_5",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 5910,
+      "triangles": 708
+    },
+    {
+      "id": 258,
+      "source": "DC15_A01_CASE_B_DUMMY_8",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 5424,
+      "triangles": 1898
+    },
+    {
+      "id": 259,
+      "source": "DC15_A01_HORN_DUMMY_17",
+      "group": 69,
+      "link": 5,
+      "source_triangles": 10092,
+      "triangles": 1210
+    },
+    {
+      "id": 260,
+      "source": "DC15_A01_LED_CAP2_DUMMY_3",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 32,
+      "triangles": 32
+    },
+    {
+      "id": 261,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 262,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 263,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 264,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 265,
+      "source": "BTS2_M2_6X8_5",
+      "group": 69,
+      "link": 5,
+      "source_triangles": 6266,
+      "triangles": 752
+    },
+    {
+      "id": 266,
+      "source": "B3B-EH_2",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 267,
+      "source": "B3B-EH_2",
+      "group": 69,
+      "link": 4,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 268,
+      "source": "PTS2_M2X10",
+      "group": 70,
+      "link": 4,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 269,
+      "source": "PTS2_M2X10",
+      "group": 71,
+      "link": 4,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 270,
+      "source": "PTS2_M2X10",
+      "group": 72,
+      "link": 4,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 271,
+      "source": "PTS2_M2X10",
+      "group": 73,
+      "link": 4,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 272,
+      "source": "PR33_B02_F4",
+      "group": 74,
+      "link": 5,
+      "source_triangles": 24046,
+      "triangles": 2886
+    },
+    {
+      "id": 273,
+      "source": "PTS2_M2X6",
+      "group": 75,
+      "link": 5,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 274,
+      "source": "PTS2_M2X6",
+      "group": 76,
+      "link": 5,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 275,
+      "source": "PTS2_M2X6",
+      "group": 77,
+      "link": 5,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 276,
+      "source": "PTS2_M2X6",
+      "group": 78,
+      "link": 5,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 277,
+      "source": "DC15_A01_CASE_M_DUMMY_7",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 3388,
+      "triangles": 1186
+    },
+    {
+      "id": 278,
+      "source": "DC15_A01_CASE_F_DUMMY_5",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 5910,
+      "triangles": 708
+    },
+    {
+      "id": 279,
+      "source": "DC15_A01_CASE_B_DUMMY_8",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 5424,
+      "triangles": 1898
+    },
+    {
+      "id": 280,
+      "source": "DC15_A01_HORN_DUMMY_17",
+      "group": 79,
+      "link": 6,
+      "source_triangles": 10092,
+      "triangles": 1210
+    },
+    {
+      "id": 281,
+      "source": "DC15_A01_LED_CAP2_DUMMY_3",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 32,
+      "triangles": 32
+    },
+    {
+      "id": 282,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 283,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 284,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 285,
+      "source": "PHS_1_7X20_5_DC10_3",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 5720,
+      "triangles": 686
+    },
+    {
+      "id": 286,
+      "source": "BTS2_M2_6X8_5",
+      "group": 79,
+      "link": 6,
+      "source_triangles": 6266,
+      "triangles": 752
+    },
+    {
+      "id": 287,
+      "source": "B3B-EH_2",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 288,
+      "source": "B3B-EH_2",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 196,
+      "triangles": 48
+    },
+    {
+      "id": 289,
+      "source": "DC15_A01_HORN_IDLE2_DUMMY",
+      "group": 79,
+      "link": 6,
+      "source_triangles": 6416,
+      "triangles": 770
+    },
+    {
+      "id": 290,
+      "source": "DC15_A01_IDLE_CAP_DUMMY",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 4716,
+      "triangles": 566
+    },
+    {
+      "id": 291,
+      "source": "BTS2_M2_6X6",
+      "group": 79,
+      "link": 5,
+      "source_triangles": 6264,
+      "triangles": 752
+    },
+    {
+      "id": 292,
+      "source": "PTS2_M2X10",
+      "group": 80,
+      "link": 5,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 293,
+      "source": "PTS2_M2X10",
+      "group": 81,
+      "link": 5,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 294,
+      "source": "PTS2_M2X10",
+      "group": 82,
+      "link": 5,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 295,
+      "source": "PTS2_M2X10",
+      "group": 83,
+      "link": 5,
+      "source_triangles": 5616,
+      "triangles": 674
+    },
+    {
+      "id": 296,
+      "source": "PR33_B02_F5",
+      "group": 84,
+      "link": 6,
+      "source_triangles": 30662,
+      "triangles": 3678
+    },
+    {
+      "id": 297,
+      "source": "PTS2_M2X6",
+      "group": 85,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 298,
+      "source": "PTS2_M2X6",
+      "group": 86,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 299,
+      "source": "PTS2_M2X6",
+      "group": 87,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 300,
+      "source": "PTS2_M2X6",
+      "group": 88,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 301,
+      "source": "PTS2_M2X6",
+      "group": 89,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 302,
+      "source": "PTS2_M2X6",
+      "group": 90,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 303,
+      "source": "PTS2_M2X6",
+      "group": 91,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    },
+    {
+      "id": 304,
+      "source": "PTS2_M2X6",
+      "group": 92,
+      "link": 6,
+      "source_triangles": 5656,
+      "triangles": 678
+    }
+  ],
+  "collision_policy": "Original STL and references preserved unchanged; not regenerated from render meshes.",
+  "collision": [
+    {
+      "file": "leader_01_base_roll.stl",
+      "sha256": "a6cb18b1f79b5a14477e0c18e2c89a42507133d41c09ed5fa1a51da7aff8d10e",
+      "bytes": 1697384
+    },
+    {
+      "file": "leader_02_base_tilt_revised.stl",
+      "sha256": "88029e91d3d9b06e8f671f1a8155faabe780de4e2cf28c0859c4503083b517bb",
+      "bytes": 501884
+    },
+    {
+      "file": "leader_03_middle_vertical.stl",
+      "sha256": "1dbd9dbe719179d1a0b5d4ba35dff6c153e7de380d6132d1460acd8490e55ef0",
+      "bytes": 640284
+    },
+    {
+      "file": "leader_04_middle_horizontal.stl",
+      "sha256": "54c2afd38643672229333228f3d9e0183a658a6b1c9c8ab1ac6010bf322561c3",
+      "bytes": 610084
+    },
+    {
+      "file": "leader_05_tip_roll.stl",
+      "sha256": "0d9691958a4782ec82836b3bdc01c045c7a2d2ae65361aff9847e5ecda87bbdc",
+      "bytes": 475984
+    },
+    {
+      "file": "leader_06_tip_pan_revised.stl",
+      "sha256": "0a1eb26b5c0978f4bb0ec3e309a601ac14981864c3287a9c1f3fdab7776d49f3",
+      "bytes": 390684
+    },
+    {
+      "file": "leader_07_tip_grip.stl",
+      "sha256": "7f3115787d21a010498909fc77d3311d00b0f3d8931465e049101d1935d9f946",
+      "bytes": 251784
+    }
+  ]
+}

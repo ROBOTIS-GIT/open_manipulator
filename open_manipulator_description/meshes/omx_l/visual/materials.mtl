@@ -1,0 +1,122 @@
+# Classic OBJ materials; MuJoCo uses the matching explicit MJCF materials.
+newmtl black_electronics
+Kd 0.110702 0.131804 0.150005
+Ka 0.110702 0.131804 0.150005
+Ks 0.2500 0.2500 0.2500
+Ns 92.800
+d 1
+illum 2
+
+newmtl black_fasteners
+Kd 0.131804 0.150005 0.166186
+Ka 0.131804 0.150005 0.166186
+Ks 0.6100 0.6100 0.6100
+Ns 108.800
+d 1
+illum 2
+
+newmtl blue_pcb
+Kd 0.084945 0.302554 0.484529
+Ka 0.084945 0.302554 0.484529
+Ks 0.2725 0.2725 0.2725
+Ns 110.400
+d 1
+illum 2
+
+newmtl ceramic
+Kd 0.634878 0.538065 0.411645
+Ka 0.634878 0.538065 0.411645
+Ks 0.2500 0.2500 0.2500
+Ns 86.400
+d 1
+illum 2
+
+newmtl gold_contacts
+Kd 0.786014 0.641088 0.352474
+Ka 0.786014 0.641088 0.352474
+Ks 0.7000 0.7000 0.7000
+Ns 121.600
+d 1
+illum 2
+
+newmtl green_terminal
+Kd 0.229735 0.575048 0.383458
+Ka 0.229735 0.575048 0.383458
+Ks 0.2500 0.2500 0.2500
+Ns 96.000
+d 1
+illum 2
+
+newmtl ivory_connectors
+Kd 0.886408 0.896443 0.870034
+Ka 0.886408 0.896443 0.870034
+Ks 0.2500 0.2500 0.2500
+Ns 99.200
+d 1
+illum 2
+
+newmtl motor_housing
+Kd 0.166186 0.166186 0.194353
+Ka 0.166186 0.166186 0.194353
+Ks 0.2500 0.2500 0.2500
+Ns 108.800
+d 1
+illum 2
+
+newmtl nickel_tin
+Kd 0.749388 0.766765 0.790731
+Ka 0.749388 0.766765 0.790731
+Ks 0.7000 0.7000 0.7000
+Ns 120.000
+d 1
+illum 2
+
+newmtl openrb_bottom
+Kd 1.000000 1.000000 1.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.7000 0.7000 0.7000
+Ns 2.000
+d 1
+illum 2
+map_Kd textures/openrb_bottom.png
+
+newmtl openrb_top
+Kd 1.000000 1.000000 1.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.7000 0.7000 0.7000
+Ns 2.000
+d 1
+illum 2
+map_Kd textures/openrb_top.png
+
+newmtl printed_charcoal
+Kd 0.259833 0.269015 0.277847
+Ka 0.259833 0.269015 0.277847
+Ks 0.2500 0.2500 0.2500
+Ns 60.800
+d 1
+illum 2
+
+newmtl steel_hardware
+Kd 0.736647 0.749388 0.766765
+Ka 0.736647 0.749388 0.766765
+Ks 0.7000 0.7000 0.7000
+Ns 115.200
+d 1
+illum 2
+
+newmtl unpowered_led
+Kd 0.820532 0.838187 0.766765
+Ka 0.820532 0.838187 0.766765
+Ks 0.2500 0.2500 0.2500
+Ns 120.000
+d 1
+illum 2
+
+newmtl white_led_diffuser
+Kd 0.916080 0.916080 0.916080
+Ka 0.916080 0.916080 0.916080
+Ks 0.2500 0.2500 0.2500
+Ns 80.000
+d 1
+illum 2

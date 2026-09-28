@@ -1,0 +1,164 @@
+<mujoco model="omx_l">
+  <compiler angle="radian" meshdir="../../"/>
+  <!-- Passive leader model generated from omx_l_arm.urdf.xacro. No actuator/controller tuning is implied. -->
+  <asset>
+    <mesh name="link0_black_electronics" content_type="model/obj" file="meshes/omx_l/visual/link0_black_electronics.obj"/>
+    <mesh name="link0_black_fasteners" content_type="model/obj" file="meshes/omx_l/visual/link0_black_fasteners.obj"/>
+    <mesh name="link0_blue_pcb" content_type="model/obj" file="meshes/omx_l/visual/link0_blue_pcb.obj"/>
+    <mesh name="link0_ceramic" content_type="model/obj" file="meshes/omx_l/visual/link0_ceramic.obj"/>
+    <mesh name="link0_gold_contacts" content_type="model/obj" file="meshes/omx_l/visual/link0_gold_contacts.obj"/>
+    <mesh name="link0_green_terminal" content_type="model/obj" file="meshes/omx_l/visual/link0_green_terminal.obj"/>
+    <mesh name="link0_ivory_connectors" content_type="model/obj" file="meshes/omx_l/visual/link0_ivory_connectors.obj"/>
+    <mesh name="link0_motor_housing" content_type="model/obj" file="meshes/omx_l/visual/link0_motor_housing.obj"/>
+    <mesh name="link0_nickel_tin" content_type="model/obj" file="meshes/omx_l/visual/link0_nickel_tin.obj"/>
+    <mesh name="link0_openrb_bottom" content_type="model/obj" file="meshes/omx_l/visual/link0_openrb_bottom.obj"/>
+    <mesh name="link0_openrb_top" content_type="model/obj" file="meshes/omx_l/visual/link0_openrb_top.obj"/>
+    <mesh name="link0_printed_charcoal" content_type="model/obj" file="meshes/omx_l/visual/link0_printed_charcoal.obj"/>
+    <mesh name="link0_steel_hardware" content_type="model/obj" file="meshes/omx_l/visual/link0_steel_hardware.obj"/>
+    <mesh name="link0_unpowered_led" content_type="model/obj" file="meshes/omx_l/visual/link0_unpowered_led.obj"/>
+    <mesh name="link0_white_led_diffuser" content_type="model/obj" file="meshes/omx_l/visual/link0_white_led_diffuser.obj"/>
+    <mesh name="leader_01_base_roll" content_type="model/stl" file="meshes/omx_l/leader_01_base_roll.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link1_black_electronics" content_type="model/obj" file="meshes/omx_l/visual/link1_black_electronics.obj"/>
+    <mesh name="link1_black_fasteners" content_type="model/obj" file="meshes/omx_l/visual/link1_black_fasteners.obj"/>
+    <mesh name="link1_motor_housing" content_type="model/obj" file="meshes/omx_l/visual/link1_motor_housing.obj"/>
+    <mesh name="link1_printed_charcoal" content_type="model/obj" file="meshes/omx_l/visual/link1_printed_charcoal.obj"/>
+    <mesh name="link1_steel_hardware" content_type="model/obj" file="meshes/omx_l/visual/link1_steel_hardware.obj"/>
+    <mesh name="link1_white_led_diffuser" content_type="model/obj" file="meshes/omx_l/visual/link1_white_led_diffuser.obj"/>
+    <mesh name="leader_02_base_tilt_revised" content_type="model/stl" file="meshes/omx_l/leader_02_base_tilt_revised.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link2_black_electronics" content_type="model/obj" file="meshes/omx_l/visual/link2_black_electronics.obj"/>
+    <mesh name="link2_black_fasteners" content_type="model/obj" file="meshes/omx_l/visual/link2_black_fasteners.obj"/>
+    <mesh name="link2_motor_housing" content_type="model/obj" file="meshes/omx_l/visual/link2_motor_housing.obj"/>
+    <mesh name="link2_printed_charcoal" content_type="model/obj" file="meshes/omx_l/visual/link2_printed_charcoal.obj"/>
+    <mesh name="link2_steel_hardware" content_type="model/obj" file="meshes/omx_l/visual/link2_steel_hardware.obj"/>
+    <mesh name="link2_white_led_diffuser" content_type="model/obj" file="meshes/omx_l/visual/link2_white_led_diffuser.obj"/>
+    <mesh name="leader_03_middle_vertical" content_type="model/stl" file="meshes/omx_l/leader_03_middle_vertical.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link3_black_electronics" content_type="model/obj" file="meshes/omx_l/visual/link3_black_electronics.obj"/>
+    <mesh name="link3_black_fasteners" content_type="model/obj" file="meshes/omx_l/visual/link3_black_fasteners.obj"/>
+    <mesh name="link3_motor_housing" content_type="model/obj" file="meshes/omx_l/visual/link3_motor_housing.obj"/>
+    <mesh name="link3_printed_charcoal" content_type="model/obj" file="meshes/omx_l/visual/link3_printed_charcoal.obj"/>
+    <mesh name="link3_steel_hardware" content_type="model/obj" file="meshes/omx_l/visual/link3_steel_hardware.obj"/>
+    <mesh name="link3_white_led_diffuser" content_type="model/obj" file="meshes/omx_l/visual/link3_white_led_diffuser.obj"/>
+    <mesh name="leader_04_middle_horizontal" content_type="model/stl" file="meshes/omx_l/leader_04_middle_horizontal.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link4_black_electronics" content_type="model/obj" file="meshes/omx_l/visual/link4_black_electronics.obj"/>
+    <mesh name="link4_black_fasteners" content_type="model/obj" file="meshes/omx_l/visual/link4_black_fasteners.obj"/>
+    <mesh name="link4_motor_housing" content_type="model/obj" file="meshes/omx_l/visual/link4_motor_housing.obj"/>
+    <mesh name="link4_printed_charcoal" content_type="model/obj" file="meshes/omx_l/visual/link4_printed_charcoal.obj"/>
+    <mesh name="link4_steel_hardware" content_type="model/obj" file="meshes/omx_l/visual/link4_steel_hardware.obj"/>
+    <mesh name="link4_white_led_diffuser" content_type="model/obj" file="meshes/omx_l/visual/link4_white_led_diffuser.obj"/>
+    <mesh name="leader_05_tip_roll" content_type="model/stl" file="meshes/omx_l/leader_05_tip_roll.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link5_black_electronics" content_type="model/obj" file="meshes/omx_l/visual/link5_black_electronics.obj"/>
+    <mesh name="link5_black_fasteners" content_type="model/obj" file="meshes/omx_l/visual/link5_black_fasteners.obj"/>
+    <mesh name="link5_motor_housing" content_type="model/obj" file="meshes/omx_l/visual/link5_motor_housing.obj"/>
+    <mesh name="link5_printed_charcoal" content_type="model/obj" file="meshes/omx_l/visual/link5_printed_charcoal.obj"/>
+    <mesh name="link5_steel_hardware" content_type="model/obj" file="meshes/omx_l/visual/link5_steel_hardware.obj"/>
+    <mesh name="link5_white_led_diffuser" content_type="model/obj" file="meshes/omx_l/visual/link5_white_led_diffuser.obj"/>
+    <mesh name="leader_06_tip_pan_revised" content_type="model/stl" file="meshes/omx_l/leader_06_tip_pan_revised.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="link6_black_fasteners" content_type="model/obj" file="meshes/omx_l/visual/link6_black_fasteners.obj"/>
+    <mesh name="link6_motor_housing" content_type="model/obj" file="meshes/omx_l/visual/link6_motor_housing.obj"/>
+    <mesh name="link6_printed_charcoal" content_type="model/obj" file="meshes/omx_l/visual/link6_printed_charcoal.obj"/>
+    <mesh name="link6_steel_hardware" content_type="model/obj" file="meshes/omx_l/visual/link6_steel_hardware.obj"/>
+    <mesh name="leader_07_tip_grip" content_type="model/stl" file="meshes/omx_l/leader_07_tip_grip.stl" scale="0.001 0.001 0.001"/>
+    <material name="omx_printed_charcoal" rgba="0.259833 0.269015 0.277847 1.000000" specular="0.2500" shininess="0.2280"/>
+    <material name="omx_ceramic" rgba="0.634878 0.538065 0.411645 1.000000" specular="0.2500" shininess="0.3240"/>
+    <material name="omx_black_electronics" rgba="0.110702 0.131804 0.150005 1.000000" specular="0.2500" shininess="0.3480"/>
+    <material name="omx_nickel_tin" rgba="0.749388 0.766765 0.790731 1.000000" specular="0.7000" shininess="0.4500"/>
+    <material name="omx_gold_contacts" rgba="0.786014 0.641088 0.352474 1.000000" specular="0.7000" shininess="0.4560"/>
+    <material name="omx_ivory_connectors" rgba="0.886408 0.896443 0.870034 1.000000" specular="0.2500" shininess="0.3720"/>
+    <material name="omx_unpowered_led" rgba="0.820532 0.838187 0.766765 1.000000" specular="0.2500" shininess="0.4500"/>
+    <material name="omx_green_terminal" rgba="0.229735 0.575048 0.383458 1.000000" specular="0.2500" shininess="0.3600"/>
+    <texture name="omx_openrb_top" type="2d" file="../../meshes/omx_l/visual/textures/openrb_top.png"/>
+    <material name="omx_openrb_top" rgba="1.000000 1.000000 1.000000 1.000000" specular="0.7000" shininess="0.0000" texture="omx_openrb_top"/>
+    <texture name="omx_openrb_bottom" type="2d" file="../../meshes/omx_l/visual/textures/openrb_bottom.png"/>
+    <material name="omx_openrb_bottom" rgba="1.000000 1.000000 1.000000 1.000000" specular="0.7000" shininess="0.0000" texture="omx_openrb_bottom"/>
+    <material name="omx_blue_pcb" rgba="0.084945 0.302554 0.484529 1.000000" specular="0.2725" shininess="0.4140"/>
+    <material name="omx_steel_hardware" rgba="0.736647 0.749388 0.766765 1.000000" specular="0.7000" shininess="0.4320"/>
+    <material name="omx_motor_housing" rgba="0.166186 0.166186 0.194353 1.000000" specular="0.2500" shininess="0.4080"/>
+    <material name="omx_white_led_diffuser" rgba="0.916080 0.916080 0.916080 1.000000" specular="0.2500" shininess="0.3000"/>
+    <material name="omx_black_fasteners" rgba="0.131804 0.150005 0.166186 1.000000" specular="0.6100" shininess="0.4080"/>
+  </asset>
+  <worldbody>
+    <body name="link0">
+      <inertial pos="-0.0123863 -0.00544724 0.0174451" quat="0.546251 0.516036 -0.47646 0.456402" mass="0.145108" diaginertia="0.000321438 0.000262113 0.00014746"/>
+      <geom name="link0_black_electronics" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_black_electronics" material="omx_black_electronics"/>
+      <geom name="link0_black_fasteners" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_black_fasteners" material="omx_black_fasteners"/>
+      <geom name="link0_blue_pcb" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_blue_pcb" material="omx_blue_pcb"/>
+      <geom name="link0_ceramic" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_ceramic" material="omx_ceramic"/>
+      <geom name="link0_gold_contacts" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_gold_contacts" material="omx_gold_contacts"/>
+      <geom name="link0_green_terminal" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_green_terminal" material="omx_green_terminal"/>
+      <geom name="link0_ivory_connectors" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_ivory_connectors" material="omx_ivory_connectors"/>
+      <geom name="link0_motor_housing" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_motor_housing" material="omx_motor_housing"/>
+      <geom name="link0_nickel_tin" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_nickel_tin" material="omx_nickel_tin"/>
+      <geom name="link0_openrb_bottom" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_openrb_bottom" material="omx_openrb_bottom"/>
+      <geom name="link0_openrb_top" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_openrb_top" material="omx_openrb_top"/>
+      <geom name="link0_printed_charcoal" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_printed_charcoal" material="omx_printed_charcoal"/>
+      <geom name="link0_steel_hardware" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_steel_hardware" material="omx_steel_hardware"/>
+      <geom name="link0_unpowered_led" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_unpowered_led" material="omx_unpowered_led"/>
+      <geom name="link0_white_led_diffuser" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link0_white_led_diffuser" material="omx_white_led_diffuser"/>
+      <geom name="link0_collision" quat="1 0 0 0" type="mesh" rgba="0.91608 0.91608 0.91608 1" mesh="leader_01_base_roll" group="3"/>
+      <body name="link1" pos="-0.0095 0 0.0545">
+        <inertial pos="2.83504e-05 0.000275113 0.0312809" quat="0.999997 -0.00216306 -0.000542784 -0.000164833" mass="0.025271" diaginertia="4.40774e-06 4.21813e-06 1.868e-06"/>
+        <joint name="joint1" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000" damping="0.05"/>
+        <geom name="link1_black_electronics" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link1_black_electronics" material="omx_black_electronics"/>
+        <geom name="link1_black_fasteners" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link1_black_fasteners" material="omx_black_fasteners"/>
+        <geom name="link1_motor_housing" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link1_motor_housing" material="omx_motor_housing"/>
+        <geom name="link1_printed_charcoal" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link1_printed_charcoal" material="omx_printed_charcoal"/>
+        <geom name="link1_steel_hardware" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link1_steel_hardware" material="omx_steel_hardware"/>
+        <geom name="link1_white_led_diffuser" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link1_white_led_diffuser" material="omx_white_led_diffuser"/>
+        <geom name="link1_collision" type="mesh" rgba="0.91608 0.91608 0.91608 1" mesh="leader_02_base_tilt_revised" group="3"/>
+        <body name="link2" pos="0 0 0.042">
+          <inertial pos="0.0142492 0.000172411 0.0687606" quat="0.693296 0.108195 0.107569 0.704318" mass="0.0477062" diaginertia="6.58166e-05 6.2121e-05 1.19626e-05"/>
+          <joint name="joint2" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000" damping="0.1" axis="0 1 0"/>
+          <geom name="link2_black_electronics" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link2_black_electronics" material="omx_black_electronics"/>
+          <geom name="link2_black_fasteners" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link2_black_fasteners" material="omx_black_fasteners"/>
+          <geom name="link2_motor_housing" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link2_motor_housing" material="omx_motor_housing"/>
+          <geom name="link2_printed_charcoal" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link2_printed_charcoal" material="omx_printed_charcoal"/>
+          <geom name="link2_steel_hardware" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link2_steel_hardware" material="omx_steel_hardware"/>
+          <geom name="link2_white_led_diffuser" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link2_white_led_diffuser" material="omx_white_led_diffuser"/>
+          <geom name="link2_collision" pos="0 0 0" quat="1 0 0 0" type="mesh" rgba="0.91608 0.91608 0.91608 1" mesh="leader_03_middle_vertical" group="3"/>
+          <body name="link3" pos="0.0375 0 0.09">
+            <inertial pos="0.0828274 0.000172415 0.000182392" quat="-0.000316965 0.706928 0.000801832 0.707285" mass="0.0477062" diaginertia="9.72316e-05 9.4567e-05 5.6039e-06"/>
+            <joint name="joint3" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000" damping="0.1" axis="0 1 0"/>
+            <geom name="link3_black_electronics" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link3_black_electronics" material="omx_black_electronics"/>
+            <geom name="link3_black_fasteners" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link3_black_fasteners" material="omx_black_fasteners"/>
+            <geom name="link3_motor_housing" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link3_motor_housing" material="omx_motor_housing"/>
+            <geom name="link3_printed_charcoal" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link3_printed_charcoal" material="omx_printed_charcoal"/>
+            <geom name="link3_steel_hardware" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link3_steel_hardware" material="omx_steel_hardware"/>
+            <geom name="link3_white_led_diffuser" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link3_white_led_diffuser" material="omx_white_led_diffuser"/>
+            <geom name="link3_collision" pos="0 0 0" quat="1 0 0 0" type="mesh" rgba="0.91608 0.91608 0.91608 1" mesh="leader_04_middle_horizontal" group="3"/>
+            <body name="link4" pos="0.1275 0 0">
+              <inertial pos="0.0222628 6.54337e-05 0.00588644" quat="0.610774 0.372714 0.382467 0.584601" mass="0.0304318" diaginertia="7.46512e-06 7.23252e-06 4.78358e-06"/>
+              <joint name="joint4" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000" damping="0.1" axis="0 1 0"/>
+              <geom name="link4_black_electronics" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link4_black_electronics" material="omx_black_electronics"/>
+              <geom name="link4_black_fasteners" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link4_black_fasteners" material="omx_black_fasteners"/>
+              <geom name="link4_motor_housing" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link4_motor_housing" material="omx_motor_housing"/>
+              <geom name="link4_printed_charcoal" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link4_printed_charcoal" material="omx_printed_charcoal"/>
+              <geom name="link4_steel_hardware" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link4_steel_hardware" material="omx_steel_hardware"/>
+              <geom name="link4_white_led_diffuser" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link4_white_led_diffuser" material="omx_white_led_diffuser"/>
+              <geom name="link4_collision" quat="1 0 0 0" type="mesh" rgba="0.91608 0.91608 0.91608 1" mesh="leader_05_tip_roll" group="3"/>
+              <body name="link5" pos="0.0287 0 0">
+                <inertial pos="0.0361242 0.000280933 2.35744e-05" quat="0.334178 0.621672 0.630074 0.323814" mass="0.0396297" diaginertia="2.16991e-05 1.92925e-05 6.42507e-06"/>
+                <joint name="joint5" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000" damping="0.1" axis="1 0 0"/>
+                <geom name="link5_black_electronics" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link5_black_electronics" material="omx_black_electronics"/>
+                <geom name="link5_black_fasteners" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link5_black_fasteners" material="omx_black_fasteners"/>
+                <geom name="link5_motor_housing" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link5_motor_housing" material="omx_motor_housing"/>
+                <geom name="link5_printed_charcoal" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link5_printed_charcoal" material="omx_printed_charcoal"/>
+                <geom name="link5_steel_hardware" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link5_steel_hardware" material="omx_steel_hardware"/>
+                <geom name="link5_white_led_diffuser" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link5_white_led_diffuser" material="omx_white_led_diffuser"/>
+                <geom name="link5_collision" pos="0 0 0" quat="1 0 0 0" type="mesh" rgba="0.91608 0.91608 0.91608 1" mesh="leader_06_tip_pan_revised" group="3"/>
+                <body name="link6" pos="0.0298 0 0.0175">
+                  <inertial pos="0.028486 3.99103e-05 0.000349951" quat="0.00185238 0.695527 -0.0035435 0.718489" mass="0.0196115" diaginertia="1.10325e-05 9.04111e-06 3.3363e-06"/>
+                  <joint name="gripper_joint_1" range="-6.28319 6.28319" actuatorfrcrange="-1000 1000" damping="0.1" axis="0 1 0"/>
+                  <geom name="link6_black_fasteners" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link6_black_fasteners" material="omx_black_fasteners"/>
+                  <geom name="link6_motor_housing" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link6_motor_housing" material="omx_motor_housing"/>
+                  <geom name="link6_printed_charcoal" pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link6_printed_charcoal" material="omx_printed_charcoal"/>
+                  <geom name="link6_steel_hardware" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="2" density="0" mesh="link6_steel_hardware" material="omx_steel_hardware"/>
+                  <geom name="link6_collision" pos="0 0 0" quat="1 0 0 0" type="mesh" rgba="0.736647 0.749388 0.766765 1" mesh="leader_07_tip_grip" group="3"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
