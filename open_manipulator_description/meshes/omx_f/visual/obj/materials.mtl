@@ -1,4 +1,110 @@
 # Classic OBJ materials; MuJoCo uses the matching explicit MJCF materials.
+newmtl bearing_races
+Kd 0.853244 0.870034 0.890440
+Ka 0.853244 0.870034 0.890440
+Ks 0.7000 0.7000 0.7000
+Ns 123.200
+d 1
+illum 2
+
+newmtl bearing_recess
+Kd 0.302554 0.325076 0.352474
+Ka 0.302554 0.325076 0.352474
+Ks 0.7000 0.7000 0.7000
+Ns 92.800
+d 1
+illum 2
+
+newmtl bearing_shields
+Kd 0.720968 0.741778 0.766765
+Ka 0.720968 0.741778 0.766765
+Ks 0.7000 0.7000 0.7000
+Ns 2.000
+d 1
+illum 2
+
+newmtl bic30_rev02_black
+Kd 0.110702 0.131804 0.150005
+Ka 0.110702 0.131804 0.150005
+Ks 0.2500 0.2500 0.2500
+Ns 80.000
+d 1
+illum 2
+
+newmtl bic30_rev02_ceramic
+Kd 0.484529 0.383458 0.294589
+Ka 0.484529 0.383458 0.294589
+Ks 0.2500 0.2500 0.2500
+Ns 67.200
+d 1
+illum 2
+
+newmtl bic30_rev02_ferrite
+Kd 0.383458 0.395030 0.411645
+Ka 0.383458 0.395030 0.411645
+Ks 0.2500 0.2500 0.2500
+Ns 65.600
+d 1
+illum 2
+
+newmtl bic30_rev02_fr4
+Kd 0.352474 0.411645 0.302554
+Ka 0.352474 0.411645 0.302554
+Ks 0.2500 0.2500 0.2500
+Ns 60.800
+d 1
+illum 2
+
+newmtl bic30_rev02_gerber_bottom
+Kd 1.000000 1.000000 1.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.7000 0.7000 0.7000
+Ns 2.000
+d 1
+illum 2
+map_Kd ../textures/bic30_rev02_gerber_bottom.png
+
+newmtl bic30_rev02_gerber_top
+Kd 1.000000 1.000000 1.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.7000 0.7000 0.7000
+Ns 2.000
+d 1
+illum 2
+map_Kd ../textures/bic30_rev02_gerber_top.png
+
+newmtl bic30_rev02_silk
+Kd 0.925693 0.944534 0.916080
+Ka 0.925693 0.944534 0.916080
+Ks 0.2500 0.2500 0.2500
+Ns 75.200
+d 1
+illum 2
+
+newmtl bic30_rev02_substrate
+Kd 0.797738 0.786014 0.688203
+Ka 0.797738 0.786014 0.688203
+Ks 0.2500 0.2500 0.2500
+Ns 59.200
+d 1
+illum 2
+
+newmtl bic30_rev02_tin
+Kd 0.786014 0.809240 0.831624
+Ka 0.786014 0.809240 0.831624
+Ks 0.7000 0.7000 0.7000
+Ns 115.200
+d 1
+illum 2
+
+newmtl bic30_rev02_white
+Kd 0.921864 0.925693 0.906332
+Ka 0.921864 0.925693 0.906332
+Ks 0.2500 0.2500 0.2500
+Ns 104.000
+d 1
+illum 2
+
 newmtl black_electronics
 Kd 0.110702 0.131804 0.150005
 Ka 0.110702 0.131804 0.150005
@@ -78,7 +184,7 @@ Ks 0.7000 0.7000 0.7000
 Ns 2.000
 d 1
 illum 2
-map_Kd textures/openrb_bottom.png
+map_Kd ../textures/openrb_bottom.png
 
 newmtl openrb_top
 Kd 1.000000 1.000000 1.000000
@@ -87,7 +193,7 @@ Ks 0.7000 0.7000 0.7000
 Ns 2.000
 d 1
 illum 2
-map_Kd textures/openrb_top.png
+map_Kd ../textures/openrb_top.png
 
 newmtl printed_charcoal
 Kd 0.259833 0.269015 0.277847

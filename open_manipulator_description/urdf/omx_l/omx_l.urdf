@@ -11,142 +11,9 @@
     <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
   </joint>
   <link name="link0">
-    <visual name="link0_black_electronics">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_black_electronics.obj"/>
-      </geometry>
-      <material name="omx_l_black_electronics">
-        <color rgba="0.110702 0.131804 0.150005 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_black_fasteners">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_black_fasteners.obj"/>
-      </geometry>
-      <material name="omx_l_black_fasteners">
-        <color rgba="0.131804 0.150005 0.166186 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_blue_pcb">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_blue_pcb.obj"/>
-      </geometry>
-      <material name="omx_l_blue_pcb">
-        <color rgba="0.084945 0.302554 0.484529 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_ceramic">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_ceramic.obj"/>
-      </geometry>
-      <material name="omx_l_ceramic">
-        <color rgba="0.634878 0.538065 0.411645 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_gold_contacts">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_gold_contacts.obj"/>
-      </geometry>
-      <material name="omx_l_gold_contacts">
-        <color rgba="0.786014 0.641088 0.352474 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_green_terminal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_green_terminal.obj"/>
-      </geometry>
-      <material name="omx_l_green_terminal">
-        <color rgba="0.229735 0.575048 0.383458 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_ivory_connectors">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_ivory_connectors.obj"/>
-      </geometry>
-      <material name="omx_l_ivory_connectors">
-        <color rgba="0.886408 0.896443 0.870034 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_motor_housing">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_motor_housing.obj"/>
-      </geometry>
-      <material name="omx_l_motor_housing">
-        <color rgba="0.166186 0.166186 0.194353 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_nickel_tin">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_nickel_tin.obj"/>
-      </geometry>
-      <material name="omx_l_nickel_tin">
-        <color rgba="0.749388 0.766765 0.790731 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_openrb_bottom">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_openrb_bottom.obj"/>
-      </geometry>
-      <material name="omx_l_openrb_bottom">
-        <color rgba="1.000000 1.000000 1.000000 1.000000"/>
-        <texture filename="package://open_manipulator_description/meshes/omx_l/visual/textures/openrb_bottom.png"/>
-      </material>
-    </visual>
-    <visual name="link0_openrb_top">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_openrb_top.obj"/>
-      </geometry>
-      <material name="omx_l_openrb_top">
-        <color rgba="1.000000 1.000000 1.000000 1.000000"/>
-        <texture filename="package://open_manipulator_description/meshes/omx_l/visual/textures/openrb_top.png"/>
-      </material>
-    </visual>
-    <visual name="link0_printed_charcoal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_printed_charcoal.obj"/>
-      </geometry>
-      <material name="omx_l_printed_charcoal">
-        <color rgba="0.259833 0.269015 0.277847 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_steel_hardware">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_steel_hardware.obj"/>
-      </geometry>
-      <material name="omx_l_steel_hardware">
-        <color rgba="0.736647 0.749388 0.766765 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_unpowered_led">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_unpowered_led.obj"/>
-      </geometry>
-      <material name="omx_l_unpowered_led">
-        <color rgba="0.820532 0.838187 0.766765 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link0_white_led_diffuser">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link0_white_led_diffuser.obj"/>
-      </geometry>
-      <material name="omx_l_white_led_diffuser">
-        <color rgba="0.916080 0.916080 0.916080 1.000000"/>
-      </material>
+    <visual name="link0_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link0.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -172,59 +39,9 @@
     <dynamics damping="0.05"/>
   </joint>
   <link name="link1">
-    <visual name="link1_black_electronics">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link1_black_electronics.obj"/>
-      </geometry>
-      <material name="omx_l_black_electronics">
-        <color rgba="0.110702 0.131804 0.150005 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link1_black_fasteners">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link1_black_fasteners.obj"/>
-      </geometry>
-      <material name="omx_l_black_fasteners">
-        <color rgba="0.131804 0.150005 0.166186 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link1_motor_housing">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link1_motor_housing.obj"/>
-      </geometry>
-      <material name="omx_l_motor_housing">
-        <color rgba="0.166186 0.166186 0.194353 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link1_printed_charcoal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link1_printed_charcoal.obj"/>
-      </geometry>
-      <material name="omx_l_printed_charcoal">
-        <color rgba="0.259833 0.269015 0.277847 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link1_steel_hardware">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link1_steel_hardware.obj"/>
-      </geometry>
-      <material name="omx_l_steel_hardware">
-        <color rgba="0.736647 0.749388 0.766765 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link1_white_led_diffuser">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link1_white_led_diffuser.obj"/>
-      </geometry>
-      <material name="omx_l_white_led_diffuser">
-        <color rgba="0.916080 0.916080 0.916080 1.000000"/>
-      </material>
+    <visual name="link1_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link1.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -250,59 +67,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link2">
-    <visual name="link2_black_electronics">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link2_black_electronics.obj"/>
-      </geometry>
-      <material name="omx_l_black_electronics">
-        <color rgba="0.110702 0.131804 0.150005 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link2_black_fasteners">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link2_black_fasteners.obj"/>
-      </geometry>
-      <material name="omx_l_black_fasteners">
-        <color rgba="0.131804 0.150005 0.166186 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link2_motor_housing">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link2_motor_housing.obj"/>
-      </geometry>
-      <material name="omx_l_motor_housing">
-        <color rgba="0.166186 0.166186 0.194353 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link2_printed_charcoal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link2_printed_charcoal.obj"/>
-      </geometry>
-      <material name="omx_l_printed_charcoal">
-        <color rgba="0.259833 0.269015 0.277847 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link2_steel_hardware">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link2_steel_hardware.obj"/>
-      </geometry>
-      <material name="omx_l_steel_hardware">
-        <color rgba="0.736647 0.749388 0.766765 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link2_white_led_diffuser">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link2_white_led_diffuser.obj"/>
-      </geometry>
-      <material name="omx_l_white_led_diffuser">
-        <color rgba="0.916080 0.916080 0.916080 1.000000"/>
-      </material>
+    <visual name="link2_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link2.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -328,59 +95,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link3">
-    <visual name="link3_black_electronics">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link3_black_electronics.obj"/>
-      </geometry>
-      <material name="omx_l_black_electronics">
-        <color rgba="0.110702 0.131804 0.150005 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link3_black_fasteners">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link3_black_fasteners.obj"/>
-      </geometry>
-      <material name="omx_l_black_fasteners">
-        <color rgba="0.131804 0.150005 0.166186 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link3_motor_housing">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link3_motor_housing.obj"/>
-      </geometry>
-      <material name="omx_l_motor_housing">
-        <color rgba="0.166186 0.166186 0.194353 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link3_printed_charcoal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link3_printed_charcoal.obj"/>
-      </geometry>
-      <material name="omx_l_printed_charcoal">
-        <color rgba="0.259833 0.269015 0.277847 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link3_steel_hardware">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link3_steel_hardware.obj"/>
-      </geometry>
-      <material name="omx_l_steel_hardware">
-        <color rgba="0.736647 0.749388 0.766765 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link3_white_led_diffuser">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link3_white_led_diffuser.obj"/>
-      </geometry>
-      <material name="omx_l_white_led_diffuser">
-        <color rgba="0.916080 0.916080 0.916080 1.000000"/>
-      </material>
+    <visual name="link3_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link3.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -406,59 +123,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link4">
-    <visual name="link4_black_electronics">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link4_black_electronics.obj"/>
-      </geometry>
-      <material name="omx_l_black_electronics">
-        <color rgba="0.110702 0.131804 0.150005 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link4_black_fasteners">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link4_black_fasteners.obj"/>
-      </geometry>
-      <material name="omx_l_black_fasteners">
-        <color rgba="0.131804 0.150005 0.166186 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link4_motor_housing">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link4_motor_housing.obj"/>
-      </geometry>
-      <material name="omx_l_motor_housing">
-        <color rgba="0.166186 0.166186 0.194353 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link4_printed_charcoal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link4_printed_charcoal.obj"/>
-      </geometry>
-      <material name="omx_l_printed_charcoal">
-        <color rgba="0.259833 0.269015 0.277847 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link4_steel_hardware">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link4_steel_hardware.obj"/>
-      </geometry>
-      <material name="omx_l_steel_hardware">
-        <color rgba="0.736647 0.749388 0.766765 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link4_white_led_diffuser">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link4_white_led_diffuser.obj"/>
-      </geometry>
-      <material name="omx_l_white_led_diffuser">
-        <color rgba="0.916080 0.916080 0.916080 1.000000"/>
-      </material>
+    <visual name="link4_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link4.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -484,59 +151,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link5">
-    <visual name="link5_black_electronics">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link5_black_electronics.obj"/>
-      </geometry>
-      <material name="omx_l_black_electronics">
-        <color rgba="0.110702 0.131804 0.150005 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link5_black_fasteners">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link5_black_fasteners.obj"/>
-      </geometry>
-      <material name="omx_l_black_fasteners">
-        <color rgba="0.131804 0.150005 0.166186 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link5_motor_housing">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link5_motor_housing.obj"/>
-      </geometry>
-      <material name="omx_l_motor_housing">
-        <color rgba="0.166186 0.166186 0.194353 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link5_printed_charcoal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link5_printed_charcoal.obj"/>
-      </geometry>
-      <material name="omx_l_printed_charcoal">
-        <color rgba="0.259833 0.269015 0.277847 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link5_steel_hardware">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link5_steel_hardware.obj"/>
-      </geometry>
-      <material name="omx_l_steel_hardware">
-        <color rgba="0.736647 0.749388 0.766765 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link5_white_led_diffuser">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link5_white_led_diffuser.obj"/>
-      </geometry>
-      <material name="omx_l_white_led_diffuser">
-        <color rgba="0.916080 0.916080 0.916080 1.000000"/>
-      </material>
+    <visual name="link5_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link5.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -562,41 +179,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link6">
-    <visual name="link6_black_fasteners">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link6_black_fasteners.obj"/>
-      </geometry>
-      <material name="omx_l_black_fasteners">
-        <color rgba="0.131804 0.150005 0.166186 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link6_motor_housing">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link6_motor_housing.obj"/>
-      </geometry>
-      <material name="omx_l_motor_housing">
-        <color rgba="0.166186 0.166186 0.194353 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link6_printed_charcoal">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link6_printed_charcoal.obj"/>
-      </geometry>
-      <material name="omx_l_printed_charcoal">
-        <color rgba="0.259833 0.269015 0.277847 1.000000"/>
-      </material>
-    </visual>
-    <visual name="link6_steel_hardware">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_l/visual/link6_steel_hardware.obj"/>
-      </geometry>
-      <material name="omx_l_steel_hardware">
-        <color rgba="0.736647 0.749388 0.766765 1.000000"/>
-      </material>
+    <visual name="link6_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_l/visual/dae/link6.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
