@@ -15,10 +15,27 @@
                <color rgba="0.2 0.2 0.2 1" />
             </material>
          </visual>
+         <!-- Bottom face held 0.2 mm above the mounting plane instead of
+              carrying the margin below it, so a mount modelled flush with
+              z=0 does not read as a collision. FCL collides at any negative
+              separation and not at zero, so sitting on the plane exactly
+              would leave the result to rounding. -->
          <collision>
-            <origin xyz="0 0 0.03" rpy="0 0 0" />
+            <origin xyz="0.0000 0.0000 0.0039" rpy="0.0000 -0.0000 0.0000" />
             <geometry>
-               <cylinder radius="0.08" length="0.05"/>
+               <box size="0.1710 0.1710 0.0074"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="-0.0040 0.0000 0.0475" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.1490 0.1410 0.0798"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 0.0000 0.1010" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <cylinder radius="0.0446" length="0.0271"/>
             </geometry>
          </collision>
          <inertial>
@@ -46,9 +63,29 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 -0.01 -0.035" rpy="0 0 0" />
+            <origin xyz="0.0000 -0.0553 0.0000" rpy="-1.5708 -0.0000 0.0000" />
             <geometry>
-               <cylinder radius="0.055" length="0.1"/>
+               <cylinder radius="0.0440" length="0.0184"/>
+            </geometry>
+         </collision>
+         <!-- Two overlapping boxes = one box chamfered on the -x and
+              +x corners, which URDF cannot express directly. -->
+         <collision>
+            <origin xyz="0.0000 -0.0085 0.0016" rpy="-1.5708 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0780 0.1281 0.0753"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 -0.0085 -0.0004" rpy="-1.5708 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0880 0.1241 0.0753"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="-0.0000 0.0366 -0.0036" rpy="1.5708 0.0000 3.1416" />
+            <geometry>
+               <box size="0.0655 0.1178 0.0148"/>
             </geometry>
          </collision>
          <inertial>
@@ -76,9 +113,21 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="-0.005 -0.02 0.13" rpy="0 0 0" />
+            <origin xyz="0.0000 -0.0016 0.0001" rpy="0.0000 -0.0000 0.0000" />
             <geometry>
-               <cylinder radius="0.046" length="0.28"/>
+               <box size="0.0880 0.1281 0.0882"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 0.0000 0.1210" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <cylinder radius="0.0390" length="0.1535"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="-0.0000 0.0033 0.2419" rpy="0.0000 -0.0000 1.5708" />
+            <geometry>
+               <box size="0.1184 0.0780 0.0882"/>
             </geometry>
          </collision>
          <inertial>
@@ -106,9 +155,21 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 0.125 0.08" rpy="0 0 0" />
+            <origin xyz="0.0000 0.1098 0.0057" rpy="0.0000 -0.0000 0.0000" />
             <geometry>
-               <cylinder radius="0.042" length="0.17"/>
+               <box size="0.0780 0.1065 0.0894"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 0.1240 0.1147" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <cylinder radius="0.0390" length="0.1285"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 0.1207 0.2187" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0780 0.1184 0.0796"/>
             </geometry>
          </collision>
          <inertial>
@@ -136,9 +197,21 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 0 0" rpy="1.57 0 0" />
+            <origin xyz="-0.0000 -0.1453 0.0077" rpy="-1.5708 -0.0000 0.0000" />
             <geometry>
-               <cylinder radius="0.045" length="0.10"/>
+               <box size="0.0585 0.1095 0.0134"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 -0.1062 0.0033" rpy="-1.5708 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0780 0.1184 0.0647"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 -0.0639 0.0000" rpy="-1.5708 -0.0000 0.0000" />
+            <geometry>
+               <cylinder radius="0.0390" length="0.0199"/>
             </geometry>
          </collision>
          <inertial>
@@ -166,9 +239,21 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 0.01 0.005" rpy="0 0 0" />
+            <origin xyz="0.0000 0.0000 0.0664" rpy="0.0000 -0.0000 0.0000" />
             <geometry>
-               <cylinder radius="0.043" length="0.05"/>
+               <cylinder radius="0.0390" length="0.0199"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 -0.0033 0.1087" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0780 0.1184 0.0647"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 -0.0077 0.1478" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0585 0.1095 0.0134"/>
             </geometry>
          </collision>
          <inertial>
@@ -196,9 +281,21 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 -0.1 0" rpy="1.57 0 0" />
+            <origin xyz="-0.0024 -0.0800 -0.0071" rpy="0.0000 -0.0000 0.0000" />
             <geometry>
-               <cylinder radius="0.08" length="0.22"/>
+               <box size="0.0808 0.0470 0.0618"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="-0.0000 -0.0828 0.0309" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0589 0.0415 0.0142"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 -0.0758 0.0712" rpy="0.0000 -0.0000 0.0000" />
+            <geometry>
+               <box size="0.0490 0.0285 0.0665"/>
             </geometry>
          </collision>
          <inertial>
@@ -226,9 +323,21 @@
             </material>
          </visual>
          <collision>
-            <origin xyz="0 0.03 0.04" rpy="0 0 0" />
+            <origin xyz="-0.0195 -0.0058 0.0000" rpy="1.5708 -0.0000 1.5708" />
             <geometry>
-               <cylinder radius="0.035" length="0.12"/>
+               <box size="0.0125 0.0430 0.0101"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0000 -0.0013 0.0000" rpy="1.5708 -0.0000 1.5708" />
+            <geometry>
+               <box size="0.0035 0.0430 0.0288"/>
+            </geometry>
+         </collision>
+         <collision>
+            <origin xyz="0.0195 -0.0058 0.0000" rpy="1.5708 -0.0000 1.5708" />
+            <geometry>
+               <box size="0.0125 0.0430 0.0101"/>
             </geometry>
          </collision>
          <inertial>
