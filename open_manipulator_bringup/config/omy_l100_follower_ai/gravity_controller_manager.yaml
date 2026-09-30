@@ -14,9 +14,6 @@
       spring_actuator_controller:
         type: spring_actuator_controller/SpringActuatorController
 
-      joint_trajectory_command_broadcaster:
-        type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
-
 /**:
   gravity_compensation_controller:
     ros__parameters:
@@ -47,6 +44,14 @@
         - 0.8
         - 1.0
       enable_spring_effect: true
+      # This yaml is used only by the standalone multi-unit bringups
+      # (custom_inverted_omy_l100_gravity / custom_omy_l100_gravity), where
+      # each unit is independent — there is no leader/follower relationship.
+      # Disable both topics to avoid subscribing to the global (un-namespaced)
+      # /joint_states and /collision_flag, which would silently cross-talk
+      # between namespaced units.
+      follower_joint_state_topic: ""
+      collision_flag_topic: ""
 
 /**:
   spring_actuator_controller:
@@ -59,27 +64,3 @@
         - position
         - velocity
       trigger_spring_stiffness: [0.1]
-
-/**:
-  joint_trajectory_command_broadcaster:
-    ros__parameters:
-      joints:
-        - joint1
-        - joint2
-        - joint3
-        - joint4
-        - joint5
-        - joint6
-        - rh_r1_joint
-      interfaces:
-        - position
-      reverse_joints:
-        - rh_r1_joint
-      offsets:
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.0
-        - 0.2

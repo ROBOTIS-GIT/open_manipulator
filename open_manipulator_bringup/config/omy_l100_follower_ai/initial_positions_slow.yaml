@@ -13,7 +13,7 @@
 
     home: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # Initial position
 
-    duration: 10.0
+    duration: 20.0
     epsilon: 0.01
     action_topic: '/arm_controller/follow_joint_trajectory'
     joint_states_topic: '/joint_states'
