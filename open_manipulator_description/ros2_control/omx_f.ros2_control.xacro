@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="omx_f_system" params="name prefix port_name:=^|/dev/ttyACM1 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
+  <xacro:macro name="omx_f_system" params="name prefix port_name:=^|/dev/ttyACM1 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false resource_prefix:='' hardware_namespace:=''">
     <ros2_control name="${name}" type="system" is_async="true">
       <xacro:if value="$(arg use_sim)">
         <hardware>
@@ -23,11 +23,11 @@
             <param name="number_of_joints">6</param>
             <param name="number_of_transmissions">6</param>
             <param name="disable_torque_at_init">true</param>
-            <param name="dynamixel_state_pub_msg_name">dynamixel_hardware_interface/dxl_state</param>
-            <param name="get_dynamixel_data_srv_name">dynamixel_hardware_interface/get_dxl_data</param>
-            <param name="set_dynamixel_data_srv_name">dynamixel_hardware_interface/set_dxl_data</param>
-            <param name="reboot_dxl_srv_name">dynamixel_hardware_interface/reboot_dxl</param>
-            <param name="set_dxl_torque_srv_name">dynamixel_hardware_interface/set_dxl_torque</param>
+            <param name="dynamixel_state_pub_msg_name">${hardware_namespace}dynamixel_hardware_interface/dxl_state</param>
+            <param name="get_dynamixel_data_srv_name">${hardware_namespace}dynamixel_hardware_interface/get_dxl_data</param>
+            <param name="set_dynamixel_data_srv_name">${hardware_namespace}dynamixel_hardware_interface/set_dxl_data</param>
+            <param name="reboot_dxl_srv_name">${hardware_namespace}dynamixel_hardware_interface/reboot_dxl</param>
+            <param name="set_dxl_torque_srv_name">${hardware_namespace}dynamixel_hardware_interface/set_dxl_torque</param>
           </xacro:unless>
         </hardware>
       </xacro:unless>
@@ -72,7 +72,7 @@
         </joint>
       </xacro:if>
 
-      <gpio name="dxl11">
+      <gpio name="${resource_prefix}dxl11">
         <param name="type">dxl</param>
         <param name="ID">11</param>
         <command_interface name="Goal Position"/>
@@ -87,7 +87,7 @@
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
       </gpio>
-      <gpio name="dxl12">
+      <gpio name="${resource_prefix}dxl12">
         <param name="type">dxl</param>
         <param name="ID">12</param>
         <command_interface name="Goal Position"/>
@@ -104,7 +104,7 @@
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
       </gpio>
-      <gpio name="dxl13">
+      <gpio name="${resource_prefix}dxl13">
         <param name="type">dxl</param>
         <param name="ID">13</param>
         <command_interface name="Goal Position"/>
@@ -121,7 +121,7 @@
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
       </gpio>
-      <gpio name="dxl14">
+      <gpio name="${resource_prefix}dxl14">
         <param name="type">dxl</param>
         <param name="ID">14</param>
         <command_interface name="Goal Position"/>
@@ -138,7 +138,7 @@
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
       </gpio>
-      <gpio name="dxl15">
+      <gpio name="${resource_prefix}dxl15">
         <param name="type">dxl</param>
         <param name="ID">15</param>
         <command_interface name="Goal Position"/>
@@ -155,7 +155,7 @@
         <param name="Profile Velocity">50</param>
         <param name="Profile Acceleration">25</param>
       </gpio>
-      <gpio name="dxl16">
+      <gpio name="${resource_prefix}dxl16">
         <param name="type">dxl</param>
         <param name="ID">16</param>
         <command_interface name="Goal Position"/>

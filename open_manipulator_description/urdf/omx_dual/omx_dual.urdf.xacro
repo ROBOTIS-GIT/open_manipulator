@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<robot name="omx_dual_follower" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Compatibility entry point for the previous follower-only model. -->
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omx_dual/omx_dual_follower.urdf.xacro" />
+</robot>

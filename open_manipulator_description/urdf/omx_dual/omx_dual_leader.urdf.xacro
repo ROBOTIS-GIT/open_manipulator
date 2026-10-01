@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="omx_dual_leader" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Display-only default spacing; the physical leader mounting has not been measured. -->
+  <xacro:arg name="left_xyz" default="0 0.184 0" />
+  <xacro:arg name="right_xyz" default="0 -0.184 0" />
+  <xacro:arg name="left_rpy" default="0 0 0" />
+  <xacro:arg name="right_rpy" default="0 0 0" />
+  <xacro:arg name="use_mock_hardware" default="true" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="left_port" default="/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_228BDD7B503059384C2E3120FF0A2B19-if00" />
+  <xacro:arg name="right_port" default="/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_895EBFC8503059384C2E3120FF08031C-if00" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omx_l/omx_l_arm.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omx_l.ros2_control.xacro" />
+  <link name="world" />
+  <link name="workcell_base" />
+  <joint name="world_to_workcell" type="fixed">
+    <parent link="world" /><child link="workcell_base" />
+  </joint>
+  <xacro:macro name="mounted_leader" params="side xyz rpy port">
+    <xacro:omx_l prefix="${side}_" />
+    <joint name="${side}_mount_joint" type="fixed">
+      <parent link="workcell_base" /><child link="${side}_link0" />
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </joint>
+    <xacro:omx_l_system name="${side}_OMXLeader" prefix="${side}_"
+      resource_prefix="${side}_" hardware_namespace="/leader/${side}/"
+      port_name="${port}" use_mock_hardware="$(arg use_mock_hardware)" />
+  </xacro:macro>
+  <xacro:mounted_leader side="left" xyz="$(arg left_xyz)" rpy="$(arg left_rpy)" port="$(arg left_port)" />
+  <xacro:mounted_leader side="right" xyz="$(arg right_xyz)" rpy="$(arg right_rpy)" port="$(arg right_port)" />
+</robot>

@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<robot name="omx_dual_follower" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Directly measured inner-edge gap: 218 mm; stock base width: 150 mm.
+       218 + 150 = 368 mm origin spacing.
+       Support length: 70 + 150 + 218 + 150 + 70 = 658 mm; section: 30 mm.
+       Assumes stock bases, equal mounting heights and both arms facing +X. -->
+  <xacro:arg name="left_xyz" default="0 0.184 0" />
+  <xacro:arg name="left_rpy" default="0 0 0" />
+  <xacro:arg name="right_xyz" default="0 -0.184 0" />
+  <xacro:arg name="right_rpy" default="0 0 0" />
+  <xacro:arg name="use_mock_hardware" default="true" />
+  <xacro:arg name="left_port" default="/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_6D5D4B68503059384C2E3120FF05133E-if00" />
+  <xacro:arg name="right_port" default="/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_23D2E9915157375037202020FF0F2510-if00" />
+  <!-- This model supports mock and real hardware; Gazebo integration is separate. -->
+  <xacro:arg name="use_sim" default="false" />
+
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omx_f/omx_f_arm.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omx_f.ros2_control.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omx_dual/aluminium_profile.urdf.xacro" />
+
+  <link name="world" />
+  <!-- Origin at the midpoint of the two stock base origins, on the profile top plane. -->
+  <link name="workcell_base" />
+  <joint name="world_to_workcell" type="fixed">
+    <parent link="world" />
+    <child link="workcell_base" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <!-- Stock mounting-hole centres: X = -50, -25, 0, 25, 50 mm,
+       Y = +/-62.5 mm. The rear (-50) and middle (0) rows sit on slot centres.
+       All profiles touch the base underside at Z=0; their centres are Z=-15 mm.
+       Side members span X=-95..105 mm: front to rear 90+30+20+30+30 mm.
+       The support remains fixed when custom arm mounting arguments are used. -->
+  <xacro:aluminium_profile name="support_front" parent="workcell_base"
+    length="0.658" xyz="0 0 -0.015" rpy="0 0 ${pi / 2}" />
+  <xacro:aluminium_profile name="support_rear" parent="workcell_base"
+    length="0.658" xyz="-0.050 0 -0.015" rpy="0 0 ${pi / 2}" />
+  <xacro:aluminium_profile name="support_left" parent="workcell_base"
+    length="0.200" xyz="0.005 0.344 -0.015" rpy="0 0 0" />
+  <xacro:aluminium_profile name="support_right" parent="workcell_base"
+    length="0.200" xyz="0.005 -0.344 -0.015" rpy="0 0 0" />
+
+  <xacro:macro name="mounted_omx" params="prefix xyz rpy">
+    <xacro:omx_f prefix="${prefix}" />
+    <joint name="${prefix}mount_joint" type="fixed">
+      <parent link="workcell_base" />
+      <child link="${prefix}link0" />
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </joint>
+    <link name="${prefix}end_effector_link" />
+    <joint name="${prefix}end_effector_joint" type="fixed">
+      <parent link="${prefix}link5" />
+      <child link="${prefix}end_effector_link" />
+      <origin xyz="0.09193 -0.0016 0" rpy="0 0 0" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:mounted_omx prefix="left_" xyz="$(arg left_xyz)" rpy="$(arg left_rpy)" />
+  <xacro:mounted_omx prefix="right_" xyz="$(arg right_xyz)" rpy="$(arg right_rpy)" />
+
+  <!-- IDs 11..16 may be reused because the two TTL buses remain physically separate. -->
+  <xacro:omx_f_system name="LeftOMX" prefix="left_" resource_prefix="left_"
+    hardware_namespace="/follower/left/" port_name="$(arg left_port)"
+    use_mock_hardware="$(arg use_mock_hardware)" />
+  <xacro:omx_f_system name="RightOMX" prefix="right_" resource_prefix="right_"
+    hardware_namespace="/follower/right/" port_name="$(arg right_port)"
+    use_mock_hardware="$(arg use_mock_hardware)" />
+</robot>

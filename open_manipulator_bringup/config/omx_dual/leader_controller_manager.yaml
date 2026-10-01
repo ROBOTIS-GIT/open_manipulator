@@ -1,0 +1,44 @@
+/leader/controller_manager:
+  ros__parameters:
+    update_rate: 100
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    left_trigger_position_controller:
+      type: position_controllers/JointGroupPositionController
+    right_trigger_position_controller:
+      type: position_controllers/JointGroupPositionController
+    left_joint_trajectory_command_broadcaster:
+      type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
+    right_joint_trajectory_command_broadcaster:
+      type: joint_trajectory_command_broadcaster/JointTrajectoryCommandBroadcaster
+
+/leader/joint_state_broadcaster:
+  ros__parameters:
+    joints: [left_joint1, left_joint2, left_joint3, left_joint4, left_joint5,
+             left_gripper_joint_1, right_joint1, right_joint2, right_joint3,
+             right_joint4, right_joint5, right_gripper_joint_1]
+    interfaces: [position, velocity]
+
+/leader/left_trigger_position_controller:
+  ros__parameters:
+    joints: [left_gripper_joint_1]
+
+/leader/right_trigger_position_controller:
+  ros__parameters:
+    joints: [right_gripper_joint_1]
+
+/leader/left_joint_trajectory_command_broadcaster:
+  ros__parameters:
+    use_local_topics: true
+    joints: [left_joint1, left_joint2, left_joint3, left_joint4, left_joint5, left_gripper_joint_1]
+    interfaces: [position]
+    reverse_joints: [left_gripper_joint_1]
+    offsets: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+/leader/right_joint_trajectory_command_broadcaster:
+  ros__parameters:
+    use_local_topics: true
+    joints: [right_joint1, right_joint2, right_joint3, right_joint4, right_joint5, right_gripper_joint_1]
+    interfaces: [position]
+    reverse_joints: [right_gripper_joint_1]
+    offsets: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

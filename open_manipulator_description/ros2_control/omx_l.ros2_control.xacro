@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="omx_l_system" params="name prefix port_name:=^|/dev/ttyACM0 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false">
+  <xacro:macro name="omx_l_system" params="name prefix port_name:=^|/dev/ttyACM0 use_sim:=^|false use_mock_hardware:=^|false mock_sensor_commands:=^|false resource_prefix:='' hardware_namespace:=''">
     <ros2_control name="${name}" type="system">
       <xacro:if value="$(arg use_sim)">
         <hardware>
@@ -23,11 +23,11 @@
             <param name="number_of_joints">6</param>
             <param name="number_of_transmissions">6</param>
             <param name="disable_torque_at_init">true</param>
-            <param name="dynamixel_state_pub_msg_name">omx_l/dxl_state</param>
-            <param name="get_dynamixel_data_srv_name">omx_l/get_dxl_data</param>
-            <param name="set_dynamixel_data_srv_name">omx_l/set_dxl_data</param>
-            <param name="reboot_dxl_srv_name">omx_l/reboot_dxl</param>
-            <param name="set_dxl_torque_srv_name">omx_l/set_dxl_torque</param>
+            <param name="dynamixel_state_pub_msg_name">${hardware_namespace}omx_l/dxl_state</param>
+            <param name="get_dynamixel_data_srv_name">${hardware_namespace}omx_l/get_dxl_data</param>
+            <param name="set_dynamixel_data_srv_name">${hardware_namespace}omx_l/set_dxl_data</param>
+            <param name="reboot_dxl_srv_name">${hardware_namespace}omx_l/reboot_dxl</param>
+            <param name="set_dxl_torque_srv_name">${hardware_namespace}omx_l/set_dxl_torque</param>
           </xacro:unless>
         </hardware>
       </xacro:unless>
@@ -69,7 +69,7 @@
         <!-- <state_interface name="effort"/> -->
       </joint>
 
-      <gpio name="dxl1">
+      <gpio name="${resource_prefix}dxl1">
         <param name="type">dxl</param>
         <param name="ID">1</param>
         <!-- <command_interface name="Goal Current"/> -->
@@ -81,7 +81,7 @@
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
       </gpio>
-      <gpio name="dxl2">
+      <gpio name="${resource_prefix}dxl2">
         <param name="type">dxl</param>
         <param name="ID">2</param>
         <!-- <command_interface name="Goal Current"/> -->
@@ -93,7 +93,7 @@
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
       </gpio>
-      <gpio name="dxl3">
+      <gpio name="${resource_prefix}dxl3">
         <param name="type">dxl</param>
         <param name="ID">3</param>
         <!-- <command_interface name="Goal Current"/> -->
@@ -105,7 +105,7 @@
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
       </gpio>
-      <gpio name="dxl4">
+      <gpio name="${resource_prefix}dxl4">
         <param name="type">dxl</param>
         <param name="ID">4</param>
         <!-- <command_interface name="Goal Current"/> -->
@@ -117,7 +117,7 @@
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
       </gpio>
-      <gpio name="dxl5">
+      <gpio name="${resource_prefix}dxl5">
         <param name="type">dxl</param>
         <param name="ID">5</param>
         <!-- <command_interface name="Goal Current"/> -->
@@ -129,7 +129,7 @@
         <param name="Operating Mode">0</param>
         <param name="Return Delay Time">0</param>
       </gpio>
-      <gpio name="dxl6">
+      <gpio name="${resource_prefix}dxl6">
         <param name="type">dxl</param>
         <param name="ID">6</param>
         <command_interface name="Goal Position"/>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Fixed extrusion, longitudinal axis +X. Dimensions are metres.
+       Visual mesh has open T-slots and a hollow centre. At the nominal 30 mm
+       section, slot mouths are 7 mm. Scaling section scales the slots too.
+       Internal dimensions are illustrative; see meshes/omx_dual/generate_profile.py.
+       Collision uses the full outside envelope. No mass/inertia is assumed. -->
+  <xacro:macro name="aluminium_profile"
+    params="name parent length xyz rpy section:=0.030">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <mesh filename="package://open_manipulator_description/meshes/omx_dual/profile_3030_slot7.stl"
+            scale="${length} ${section / 0.030} ${section / 0.030}" />
+        </geometry>
+        <material name="profile_aluminium">
+          <color rgba="0.72 0.74 0.77 1" />
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${length} ${section} ${section}" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${name}_fixed" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}" />
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </joint>
+  </xacro:macro>
+</robot>

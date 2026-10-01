@@ -19,6 +19,7 @@
 import math
 import sys
 
+from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
 import numpy as np
 import rclpy
@@ -40,6 +41,7 @@ class JointTrajectoryExecutor(Node):
         self.declare_parameter('step_names', [''])  # List of step names
         self.declare_parameter('duration', 10.0)
         self.declare_parameter('epsilon', 0.01)
+        self.declare_parameter('wait_for_result', False)
         self.declare_parameter(
             'action_topic', '/arm_controller/follow_joint_trajectory'
         )
@@ -54,6 +56,7 @@ class JointTrajectoryExecutor(Node):
         )
         self.duration = self.get_parameter('duration').value
         self.epsilon = self.get_parameter('epsilon').value
+        self.wait_for_result = self.get_parameter('wait_for_result').value
         self.action_topic = self.get_parameter('action_topic').value
         self.joint_states_topic = self.get_parameter('joint_states_topic').value
 
@@ -101,6 +104,7 @@ class JointTrajectoryExecutor(Node):
         self.reached_target = False
         self.num_points = 100  # Number of points for smooth trajectory
         self.goal_handle = None
+        self.goal_pending = False
         self.last_status_time = 0.0
         self.status_interval = 1.0  # Log status every second
         self.current_step = 0
@@ -127,12 +131,29 @@ class JointTrajectoryExecutor(Node):
 
     def goal_response_callback(self, future):
         goal_handle = future.result()
+        self.goal_pending = False
         if not goal_handle.accepted:
             self.get_logger().info('Goal rejected :(')
+            if self.wait_for_result:
+                self.shutdown_node(exit_code=1)
             return
 
         self.get_logger().info('Goal accepted :)')
         self.goal_handle = goal_handle
+        if self.wait_for_result:
+            goal_handle.get_result_async().add_done_callback(self.goal_result_callback)
+
+    def goal_result_callback(self, future):
+        response = future.result()
+        if (response.status != GoalStatus.STATUS_SUCCEEDED or
+                response.result.error_code != FollowJointTrajectory.Result.SUCCESSFUL):
+            self.get_logger().error(f'Initial pose failed: {response.result.error_string}')
+            self.goal_handle = None
+            self.shutdown_node(exit_code=1)
+            return
+        self.get_logger().info(f'Step {self.current_step} action succeeded')
+        self.goal_handle = None
+        self.current_step += 1
 
     def joint_state_callback(self, msg):
         if set(self.joint_names).issubset(set(msg.name)):
@@ -142,6 +163,11 @@ class JointTrajectoryExecutor(Node):
             self.current_velocities = [
                 msg.velocity[msg.name.index(j)] for j in self.joint_names
             ]
+
+            # Joint states may arrive before the asynchronous goal is accepted.
+            # Wait for that response before sending or completing another step.
+            if self.goal_pending:
+                return
 
             # Check if current step has reached its target
             if self.goal_handle is None:
@@ -162,19 +188,21 @@ class JointTrajectoryExecutor(Node):
                     goal_msg.goal_time_tolerance.nanosec = 0
 
                     self.get_logger().info('Sending goal...')
+                    self.goal_pending = True
                     self._send_goal_future = self.action_client.send_goal_async(
                         goal_msg, feedback_callback=self.feedback_callback
                     )
                     self._send_goal_future.add_done_callback(
                         self.goal_response_callback
                     )
+                    return
                 else:
                     self.get_logger().info('All steps completed!')
                     self.shutdown_node()
                     return
 
             # Check if current step has reached its target
-            if self.check_step_completion():
+            if not self.wait_for_result and self.check_step_completion():
                 if not self.reached_target:
                     self.reached_target = True
                     self.get_logger().info(f'🎯 Step {self.current_step} completed!')
@@ -182,12 +210,12 @@ class JointTrajectoryExecutor(Node):
                     self.current_step += 1
                     self.reached_target = False
 
-    def shutdown_node(self):
+    def shutdown_node(self, exit_code=0):
         if self.goal_handle:
             self.goal_handle.cancel_goal_async()
         self.destroy_node()
         rclpy.shutdown()
-        sys.exit(0)
+        sys.exit(exit_code)
 
     def angle_to_radian(self, angle):
         return angle * math.pi / 180

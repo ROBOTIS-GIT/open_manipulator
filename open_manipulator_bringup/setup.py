@@ -30,6 +30,8 @@ setup(
             glob('config/open_manipulator_x/*')),
         (os.path.join('share', package_name, 'config/omx_f'),
             glob('config/omx_f/*')),
+        (os.path.join('share', package_name, 'config/omx_dual'),
+            glob('config/omx_dual/*')),
         (os.path.join('share', package_name, 'config/omx_f_follower_ai'),
             glob('config/omx_f_follower_ai/*')),
         (os.path.join('share', package_name, 'config/omx_l_leader_ai'),

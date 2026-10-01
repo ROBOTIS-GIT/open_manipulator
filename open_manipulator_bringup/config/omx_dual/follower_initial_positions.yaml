@@ -1,0 +1,23 @@
+# Stock OMX-F two-step initialization, in radians; grippers are not commanded.
+# Each executor independently follows its own arm controller and joint states.
+/follower/left_init_position:
+  ros__parameters:
+    joint_names: [left_joint1, left_joint2, left_joint3, left_joint4, left_joint5]
+    step_names: [step1, step2]
+    step1: [0.0, 0.0, 0.0, 0.0, 0.0]
+    step2: [0.0, -1.57, 1.57, 1.57, 0.0]
+    duration: 5.0
+    epsilon: 0.15
+    action_topic: left_arm_controller/follow_joint_trajectory
+    joint_states_topic: joint_states
+
+/follower/right_init_position:
+  ros__parameters:
+    joint_names: [right_joint1, right_joint2, right_joint3, right_joint4, right_joint5]
+    step_names: [step1, step2]
+    step1: [0.0, 0.0, 0.0, 0.0, 0.0]
+    step2: [0.0, -1.57, 1.57, 1.57, 0.0]
+    duration: 5.0
+    epsilon: 0.15
+    action_topic: right_arm_controller/follow_joint_trajectory
+    joint_states_topic: joint_states
