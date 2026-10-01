@@ -89,7 +89,7 @@ Leader defaults use these persistent paths under `/dev/serial/by-id/`:
 
 | Leader | Device basename |
 | --- | --- |
-| Left | `usb-ROBOTIS_OpenRB-150_228BDD7B503059384C2E3120FF0A2B19-if00` |
+| Left | `usb-ROBOTIS_OpenRB-150_84BB894D5157375037202020FF102815-if00` |
 | Right | `usb-ROBOTIS_OpenRB-150_895EBFC8503059384C2E3120FF08031C-if00` |
 
 Mock mode remains the default and does not open ports. To use the configured
