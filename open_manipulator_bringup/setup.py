@@ -34,9 +34,12 @@ setup(
             glob('config/omx_f_follower_ai/*')),
         (os.path.join('share', package_name, 'config/omx_l_leader_ai'),
             glob('config/omx_l_leader_ai/*')),
+        (os.path.join('share', package_name, 'config/omx_f_follower_bi_ai'),
+            glob('config/omx_f_follower_bi_ai/*')),
+        (os.path.join('share', package_name, 'config/omx_l_leader_bi_ai'),
+            glob('config/omx_l_leader_bi_ai/*')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
         (os.path.join('share', package_name), ['open-manipulator-cdc.rules']),
-
     ],
     install_requires=['setuptools'],
     zip_safe=True,

@@ -68,7 +68,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'port_name',
-            default_value='/dev/ttyACM0',
+            default_value='/dev/serial/by-id/usb-ROBOTIS_OpenRB-150_6D5D4B68503059384C2E3120FF05133E-if00',
             description='Port name for the hardware interface',
         ),
     ]

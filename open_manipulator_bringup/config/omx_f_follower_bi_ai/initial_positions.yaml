@@ -1,0 +1,27 @@
+joint_trajectory_executor:
+  ros__parameters:
+    joint_names:
+      - left_joint1
+      - left_joint2
+      - left_joint3
+      - left_joint4
+      - left_joint5
+      - left_gripper_joint_1
+      - right_joint1
+      - right_joint2
+      - right_joint3
+      - right_joint4
+      - right_joint5
+      - right_gripper_joint_1
+
+    step_names: [step1, step2]  # Names of the steps
+
+    step1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    step2: [0.0, -1.57, 1.57, 1.57, 0.0, 0.0,
+            0.0, -1.57, 1.57, 1.57, 0.0, 0.0]
+
+    duration: 5.0
+    epsilon: 0.15
+    action_topic: '/arm_controller/follow_joint_trajectory'
+    joint_states_topic: '/joint_states'

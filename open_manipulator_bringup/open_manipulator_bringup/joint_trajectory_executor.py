@@ -101,6 +101,7 @@ class JointTrajectoryExecutor(Node):
         self.reached_target = False
         self.num_points = 100  # Number of points for smooth trajectory
         self.goal_handle = None
+        self.goal_sent = False
         self.last_status_time = 0.0
         self.status_interval = 1.0  # Log status every second
         self.current_step = 0
@@ -129,6 +130,7 @@ class JointTrajectoryExecutor(Node):
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.get_logger().info('Goal rejected :(')
+            self.goal_sent = False
             return
 
         self.get_logger().info('Goal accepted :)')
@@ -144,7 +146,7 @@ class JointTrajectoryExecutor(Node):
             ]
 
             # Check if current step has reached its target
-            if self.goal_handle is None:
+            if not self.goal_sent:
                 if self.current_step < len(self.positions_list):
                     target_positions = self.get_step_target_positions()
                     self.get_logger().info(
@@ -162,6 +164,7 @@ class JointTrajectoryExecutor(Node):
                     goal_msg.goal_time_tolerance.nanosec = 0
 
                     self.get_logger().info('Sending goal...')
+                    self.goal_sent = True
                     self._send_goal_future = self.action_client.send_goal_async(
                         goal_msg, feedback_callback=self.feedback_callback
                     )
@@ -174,11 +177,12 @@ class JointTrajectoryExecutor(Node):
                     return
 
             # Check if current step has reached its target
-            if self.check_step_completion():
+            if self.goal_handle is not None and self.check_step_completion():
                 if not self.reached_target:
                     self.reached_target = True
                     self.get_logger().info(f'🎯 Step {self.current_step} completed!')
                     self.goal_handle = None
+                    self.goal_sent = False
                     self.current_step += 1
                     self.reached_target = False
 

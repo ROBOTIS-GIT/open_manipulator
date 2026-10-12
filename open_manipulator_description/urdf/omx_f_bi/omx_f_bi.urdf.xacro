@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<robot name="omx_f_bi" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
+  <xacro:arg name="config_type" default="omx_f_follower_bi_ai" />
+  <xacro:arg name="left_port_name" default="/dev/ttyACM0" />
+  <xacro:arg name="right_port_name" default="/dev/ttyACM1" />
+  <xacro:arg name="arm_spacing" default="0.36" />
+  <xacro:arg name="camera_x" default="0.24" />
+  <xacro:arg name="camera_y" default="0.0" />
+  <xacro:arg name="camera_z" default="0.53" />
+
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/omx_f.gazebo.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omx_f/omx_f_arm.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omx_f.ros2_control.xacro" />
+
+  <xacro:property name="half_spacing" value="${$(arg arm_spacing) / 2.0}" />
+
+  <xacro:macro name="omx_f_side" params="prefix y port_name system_name">
+    <joint name="${prefix}world_fixed" type="fixed">
+      <parent link="world"/>
+      <child link="${prefix}link0"/>
+      <origin xyz="0.0 ${y} 0.0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="${prefix}end_effector_joint" type="fixed">
+      <parent link="${prefix}link5"/>
+      <child link="${prefix}end_effector_link"/>
+      <origin xyz="0.09193 -0.0016 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${prefix}end_effector_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+        <material name="red">
+          <color rgba="1.0 0.0 0.0 1"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="${prefix}wrist_camera_joint" type="fixed">
+      <parent link="${prefix}link5"/>
+      <child link="${prefix}wrist_camera_link"/>
+      <origin xyz="0.0257 0 0.05386" rpy="0 ${radians(38)} 0"/>
+    </joint>
+
+    <link name="${prefix}wrist_camera_link"/>
+
+    <joint name="${prefix}wrist_camera_optical_joint" type="fixed">
+      <parent link="${prefix}wrist_camera_link"/>
+      <child link="${prefix}wrist_camera_optical_frame"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${prefix}wrist_camera_optical_frame"/>
+
+    <xacro:omx_f prefix="${prefix}" />
+    <xacro:omx_f_gazebo prefix="${prefix}" />
+
+    <xacro:omx_f_system
+      name="${system_name}" prefix="${prefix}" use_sim="$(arg use_sim)"
+      use_mock_hardware="$(arg use_mock_hardware)"
+      mock_sensor_commands="$(arg mock_sensor_commands)"
+      port_name="${port_name}"/>
+  </xacro:macro>
+
+  <link name="world"/>
+
+  <xacro:omx_f_side prefix="left_" y="${half_spacing}"
+    port_name="$(arg left_port_name)" system_name="OMXFLeftSystem"/>
+  <xacro:omx_f_side prefix="right_" y="${-half_spacing}"
+    port_name="$(arg right_port_name)" system_name="OMXFRightSystem"/>
+
+  <!-- RealSense D435 looking straight down. camera_link is the body center (x out of the lens,
+       z up). Sensor offsets follow realsense2_description/_d435.urdf.xacro; the driver must run
+       with publish_tf:=false so these frames are not published twice. -->
+  <joint name="camera_joint" type="fixed">
+    <parent link="world"/>
+    <child link="camera_link"/>
+    <origin xyz="$(arg camera_x) $(arg camera_y) $(arg camera_z)" rpy="0 ${pi/2} 0"/>
+  </joint>
+
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02505 0.090 0.025"/>
+      </geometry>
+      <material name="aluminum">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02505 0.090 0.025"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <xacro:macro name="d435_sensor_frame" params="sensor y">
+    <joint name="camera_${sensor}_joint" type="fixed">
+      <parent link="camera_link"/>
+      <child link="camera_${sensor}_frame"/>
+      <origin xyz="0 ${y} 0" rpy="0 0 0"/>
+    </joint>
+    <link name="camera_${sensor}_frame"/>
+
+    <joint name="camera_${sensor}_optical_joint" type="fixed">
+      <parent link="camera_${sensor}_frame"/>
+      <child link="camera_${sensor}_optical_frame"/>
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+    <link name="camera_${sensor}_optical_frame"/>
+  </xacro:macro>
+
+  <xacro:d435_sensor_frame sensor="depth" y="0.0175"/>
+  <xacro:d435_sensor_frame sensor="infra1" y="0.0175"/>
+  <xacro:d435_sensor_frame sensor="infra2" y="-0.0325"/>
+  <xacro:d435_sensor_frame sensor="color" y="0.0325"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/$(arg config_type)/hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

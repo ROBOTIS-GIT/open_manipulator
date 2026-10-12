@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot name="omx_l_bi" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+  <xacro:arg name="mock_sensor_commands" default="false" />
+  <xacro:arg name="config_type" default="omx_l_leader_bi_ai" />
+  <xacro:arg name="left_port_name" default="/dev/ttyACM2" />
+  <xacro:arg name="right_port_name" default="/dev/ttyACM3" />
+  <xacro:arg name="arm_spacing" default="0.36" />
+
+  <xacro:include filename="$(find open_manipulator_description)/urdf/omx_l/omx_l_arm.urdf.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/gazebo/omx_l.gazebo.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/ros2_control/omx_l.ros2_control.xacro" />
+
+  <xacro:property name="half_spacing" value="${$(arg arm_spacing) / 2.0}" />
+
+  <xacro:macro name="omx_l_side" params="prefix y port_name system_name">
+    <joint name="${prefix}world_fixed" type="fixed">
+      <parent link="world"/>
+      <child link="${prefix}link0"/>
+      <origin xyz="0.0 ${y} 0.0" rpy="0 0 0"/>
+    </joint>
+
+    <xacro:omx_l prefix="${prefix}" />
+    <xacro:omx_l_gazebo prefix="${prefix}" />
+
+    <xacro:omx_l_system
+      name="${system_name}" prefix="${prefix}" use_sim="$(arg use_sim)"
+      use_mock_hardware="$(arg use_mock_hardware)"
+      mock_sensor_commands="$(arg mock_sensor_commands)"
+      port_name="${port_name}"/>
+  </xacro:macro>
+
+  <link name="world"/>
+
+  <xacro:omx_l_side prefix="left_" y="${half_spacing}"
+    port_name="$(arg left_port_name)" system_name="OMXLeaderLeftSystem"/>
+  <xacro:omx_l_side prefix="right_" y="${-half_spacing}"
+    port_name="$(arg right_port_name)" system_name="OMXLeaderRightSystem"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find open_manipulator_bringup)/config/$(arg config_type)/hardware_controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
