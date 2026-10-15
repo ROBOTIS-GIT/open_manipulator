@@ -2,6 +2,14 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.4 (2026-10-15)
+------------------
+* Store OMY and OMX follower and leader service logs in dated directories on logger startup, retaining the latest 30 directories.
+* Preserve the existing current-log path through a symbolic link and provide dated log files for Cyclo Manager history browsing.
+* Write each logger session to a single file without log rotation or additional s6 timestamps.
+* Wait for logger readiness before starting bringup, and capture both stdout and stderr, including startup errors.
+* Contributors: Hyungyu Kim
+
 5.1.3 (2026-09-18)
 ------------------
 * Added OMY, OMX, and OpenMANIPULATOR-X MuJoCo models to open_manipulator_description.

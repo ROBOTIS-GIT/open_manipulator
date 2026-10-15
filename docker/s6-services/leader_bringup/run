@@ -2,8 +2,11 @@
 # Open Manipulator leader bringup service.
 
 set -e
+exec 2>&1
 
 SERVICE_NAME="leader_bringup"
+# Discard a process-group ID left by an interrupted previous run.
+rm -f "/run/${SERVICE_NAME}.pgid"
 COMMON_SCRIPT="/usr/local/lib/s6-services/ros2_service_run.sh"
 ROBOT_TYPE_FILE="/run/leader_type"
 

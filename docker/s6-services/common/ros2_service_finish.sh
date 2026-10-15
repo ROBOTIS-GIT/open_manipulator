@@ -2,6 +2,9 @@
 # Reusable ROS2 service finish script.
 
 set -e
+# A robot service stays stopped after exit, including errors in cleanup.
+trap 'exit 125' EXIT
+exec 2>&1
 
 SERVICE_NAME="${SERVICE_NAME}"
 if [ -z "${SERVICE_NAME}" ]; then
@@ -9,8 +12,9 @@ if [ -z "${SERVICE_NAME}" ]; then
     exit 1
 fi
 
-EXIT_CODE=${1:-unknown}
-echo "[${SERVICE_NAME} finish] Service stopped with exit code $EXIT_CODE"
+EXIT_CODE=${1:-0}
+EXIT_SIGNAL=${2:-0}
+echo "[${SERVICE_NAME} finish] Service stopped with exit code $EXIT_CODE, signal $EXIT_SIGNAL"
 
 PGID_FILE=/run/${SERVICE_NAME}.pgid
 if [ -f "${PGID_FILE}" ]; then
@@ -45,6 +49,9 @@ if [ -f "${PGID_FILE}" ]; then
     fi
 fi
 
-s6-rc -d change "${SERVICE_NAME}-log" 2>/dev/null && echo "[${SERVICE_NAME} finish] ${SERVICE_NAME}-log stopped" || echo "[${SERVICE_NAME} finish] ${SERVICE_NAME}-log not running or already stopped"
+rm -f "${PGID_FILE}"
+# Address the supervisor directly: no nested s6-rc lock or reverse-dependency
+# transaction. This also stops the logger when the producer crashes.
+/command/s6-svc -d "/run/service/${SERVICE_NAME}-log" || true
 
-exit 0
+exit 125
