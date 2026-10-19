@@ -1,4 +1,36 @@
 #!/command/with-contenv sh
-# Logging service for open_manipulator_bringup.
+set -e
 
-exec logutil-service /var/log/open_manipulator_bringup
+LOG_ROOT=/var/log/open_manipulator_bringup
+mkdir -p "$LOG_ROOT"
+# Use local time; add a suffix only when this minute's directory already exists.
+STAMP=$(date +%Y_%m_%d_%H_%M)
+LOG_DIRECTORY="$LOG_ROOT/$STAMP"
+SUFFIX=0
+while [ -e "$LOG_DIRECTORY" ] || [ -L "$LOG_DIRECTORY" ]; do
+    SUFFIX=$((SUFFIX + 1))
+    LOG_DIRECTORY="$LOG_ROOT/${STAMP}_$SUFFIX"
+done
+mkdir "$LOG_DIRECTORY"
+chown nobody: "$LOG_DIRECTORY"
+chmod 755 "$LOG_DIRECTORY"
+
+# Replace the existing current file or link without keeping a legacy backup.
+LINK="$LOG_ROOT/.current-${LOG_DIRECTORY##*/}"
+ln -s "${LOG_DIRECTORY##*/}/current" "$LINK"
+mv -Tf "$LINK" "$LOG_ROOT/current"
+
+# Retain this run and the 29 newest dated directories.
+# Sort by date in the name, treating suffixes numerically (_10 after _2).
+DATED_DIRECTORY='.*/[0-9]{4}(_[0-9]{2}){4}(_[0-9]+)?'
+find "$LOG_ROOT" -regextype posix-extended -mindepth 1 -maxdepth 1 \
+    -type d -regex "$DATED_DIRECTORY" ! -path "$LOG_DIRECTORY" \
+    -print | LC_ALL=C sort -Vr | sed '1,29d' |
+while IFS= read -r OLD_DIRECTORY; do
+    rm -rf -- "$OLD_DIRECTORY" || echo "Could not remove old log directory: $OLD_DIRECTORY" >&2
+done
+
+# Open the file as nobody, then notify s6 when the logger is ready.
+# Forward logs without adding timestamps or rotating.
+exec /command/s6-setuidgid nobody sh -c \
+    'exec /command/s6-log -d 3 1 >> "$1/current"' sh "$LOG_DIRECTORY"
