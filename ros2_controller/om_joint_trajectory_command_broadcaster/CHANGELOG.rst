@@ -2,7 +2,7 @@
 Changelog for package om_joint_trajectory_command_broadcaster
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-5.1.4 (2026-10-15)
+5.1.4 (2026-10-19)
 ------------------
 * None
 

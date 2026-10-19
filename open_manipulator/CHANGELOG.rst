@@ -2,7 +2,7 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-5.1.4 (2026-10-15)
+5.1.4 (2026-10-19)
 ------------------
 * Store OMY and OMX follower and leader service logs in dated directories on logger startup, retaining the latest 30 directories.
 * Preserve the existing current-log path through a symbolic link and provide dated log files for Cyclo Manager history browsing.
