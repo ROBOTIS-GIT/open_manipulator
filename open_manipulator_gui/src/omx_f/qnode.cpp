@@ -189,8 +189,35 @@ bool QNode::isMotionComplete()
 
   std::vector<double> target_joint_positions;
   move_group_->getJointValueTarget(target_joint_positions);
+  
+  // some changes below to allow GUI to move sequentially to the next pose , as threshold was too tight. Dawit Chun
 
-  const double tolerance = 0.03;
+  const double tolerance = 0.05; //+- 0.05 rad to move to the next pose.
+  static auto motion_start_time = std::chrono::steady_clock::now();
+  static std::vector<double> last_target;
+
+  //reset timer if this is a new target
+  if (last_target != target_joint_positions) {
+    motion_start_time = std::chrono::steady_clock::now();
+    last_target = target_joint_positions;
+  }
+
+  auto elapsed = std::chrono::steady_clock::now() - motion_start_time;
+  bool timed_out = elapsed > std::chrono::seconds(4);
+
+  for (size_t i = 0; i < current_joint_positions.size(); ++i) {
+    if (std::abs(current_joint_positions[i] - target_joint_positions[i]) > tolerance) {
+      if (timed_out) {
+        RCLCPP_WARN(node_->get_logger(), "Joint %zu timed out, proceeding anyway", i);
+        return true;
+      }
+      return false;
+    }
+  }	
+ 
+  //end of fixes
+
+
   for (size_t i = 0; i < current_joint_positions.size(); ++i) {
     if (std::abs(current_joint_positions[i] - target_joint_positions[i]) > tolerance) {
       return false;
