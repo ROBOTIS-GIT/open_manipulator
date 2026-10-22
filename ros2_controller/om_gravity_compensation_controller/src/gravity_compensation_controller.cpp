@@ -217,46 +217,50 @@ controller_interface::CallbackReturn GravityCompensationController::on_configure
   joint_name_to_index_.resize(joint_names_.size(), -1);
   tmp_positions_.resize(joint_names_.size(), 0.0);
 
-  follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
-    "/joint_states", rclcpp::QoS(10),
-    [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
-      if (msg->name.size() != msg->position.size()) {
-        RCLCPP_WARN(
-          get_node()->get_logger(),
-          "JointState message has mismatched name/position sizes");
-        return;
-      }
-
-      if (!joint_index_initialized_) {
-        for (size_t i = 0; i < joint_names_.size(); ++i) {
-          auto it = std::find(msg->name.begin(), msg->name.end(), joint_names_[i]);
-          if (it != msg->name.end()) {
-            joint_name_to_index_[i] = static_cast<int>(std::distance(msg->name.begin(), it));
-          } else {
-            RCLCPP_ERROR(
-              get_node()->get_logger(),
-              "Joint name '%s' not found in the first joint state message",
-              joint_names_[i].c_str());
-            return;
-          }
+  if (!params_.follower_joint_state_topic.empty()) {
+    follower_joint_state_sub_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
+      params_.follower_joint_state_topic, rclcpp::QoS(10),
+      [this](const sensor_msgs::msg::JointState::SharedPtr msg) {
+        if (msg->name.size() != msg->position.size()) {
+          RCLCPP_WARN(
+            get_node()->get_logger(),
+            "JointState message has mismatched name/position sizes");
+          return;
         }
-        joint_index_initialized_ = true;
-        RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
-      }
 
-      for (size_t i = 0; i < joint_names_.size(); ++i) {
-        tmp_positions_[i] = msg->position[joint_name_to_index_[i]];
-      }
+        if (!joint_index_initialized_) {
+          for (size_t i = 0; i < joint_names_.size(); ++i) {
+            auto it = std::find(msg->name.begin(), msg->name.end(), joint_names_[i]);
+            if (it != msg->name.end()) {
+              joint_name_to_index_[i] = static_cast<int>(std::distance(msg->name.begin(), it));
+            } else {
+              RCLCPP_ERROR(
+                get_node()->get_logger(),
+                "Joint name '%s' not found in the first joint state message",
+                joint_names_[i].c_str());
+              return;
+            }
+          }
+          joint_index_initialized_ = true;
+          RCLCPP_INFO(get_node()->get_logger(), "Joint index mapping initialized.");
+        }
 
-      follower_joint_positions_buffer_.writeFromNonRT(tmp_positions_);
-      has_follower_data_ = true;
-    });
+        for (size_t i = 0; i < joint_names_.size(); ++i) {
+          tmp_positions_[i] = msg->position[joint_name_to_index_[i]];
+        }
 
-  collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
-    "/collision_flag", rclcpp::QoS(10),
-    [this](const std_msgs::msg::Bool::SharedPtr msg) {
-      collision_flag_buffer_.writeFromNonRT(msg->data);
-    });
+        follower_joint_positions_buffer_.writeFromNonRT(tmp_positions_);
+        has_follower_data_ = true;
+      });
+  }
+
+  if (!params_.collision_flag_topic.empty()) {
+    collision_flag_sub_ = get_node()->create_subscription<std_msgs::msg::Bool>(
+      params_.collision_flag_topic, rclcpp::QoS(10),
+      [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        collision_flag_buffer_.writeFromNonRT(msg->data);
+      });
+  }
 
   if (params_.joints.empty()) {
     // TODO(destogl): is this correct? Can we really move-on if no joint names are not provided?

@@ -1,0 +1,502 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /Status1
+        - /Original1
+        - /Custom1
+        - /CustomInverted1
+        - /Inverted1
+      Splitter Ratio: 0.5
+    Tree Height: 173
+  - Class: rviz_common/Selection
+    Name: Selection
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz_common/Time
+    Experimental: false
+    Name: Time
+    SyncMode: 0
+    SyncSource: ""
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /original/robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        original_link0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        original_link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        original_link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        original_link3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        original_link4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        original_link5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        original_link6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        original_link7:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: Original
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 0.550000011920929
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /custom/robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        custom_link0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_link3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_link4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_link5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_link6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_link7:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: Custom
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 0.699999988079071
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /custom_inverted/robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        custom_inverted_link0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_inverted_link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_inverted_link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_inverted_link3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_inverted_link4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_inverted_link5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_inverted_link6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        custom_inverted_link7:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: CustomInverted
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 0.699999988079071
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /inverted/robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        inverted_link0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inverted_link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inverted_link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inverted_link3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inverted_link4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inverted_link5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inverted_link6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        inverted_link7:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: Inverted
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        custom_link0:
+          Value: true
+        custom_link1:
+          Value: true
+        custom_link2:
+          Value: true
+        custom_link3:
+          Value: true
+        custom_link4:
+          Value: true
+        custom_link5:
+          Value: true
+        custom_link6:
+          Value: true
+        custom_link7:
+          Value: true
+        custom_inverted_link0:
+          Value: true
+        custom_inverted_link1:
+          Value: true
+        custom_inverted_link2:
+          Value: true
+        custom_inverted_link3:
+          Value: true
+        custom_inverted_link4:
+          Value: true
+        custom_inverted_link5:
+          Value: true
+        custom_inverted_link6:
+          Value: true
+        custom_inverted_link7:
+          Value: true
+        inverted_link0:
+          Value: true
+        inverted_link1:
+          Value: true
+        inverted_link2:
+          Value: true
+        inverted_link3:
+          Value: true
+        inverted_link4:
+          Value: true
+        inverted_link5:
+          Value: true
+        inverted_link6:
+          Value: true
+        inverted_link7:
+          Value: true
+        original_link0:
+          Value: true
+        original_link1:
+          Value: true
+        original_link2:
+          Value: true
+        original_link3:
+          Value: true
+        original_link4:
+          Value: true
+        original_link5:
+          Value: true
+        original_link6:
+          Value: true
+        original_link7:
+          Value: true
+        world:
+          Value: true
+      Marker Scale: 0.30000001192092896
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: false
+      Tree:
+        world:
+          custom_link0:
+            custom_link1:
+              custom_link2:
+                custom_link3:
+                  custom_link4:
+                    custom_link5:
+                      custom_link6:
+                        custom_link7:
+                          {}
+          custom_inverted_link0:
+            custom_inverted_link1:
+              custom_inverted_link2:
+                custom_inverted_link3:
+                  custom_inverted_link4:
+                    custom_inverted_link5:
+                      custom_inverted_link6:
+                        custom_inverted_link7:
+                          {}
+          inverted_link0:
+            inverted_link1:
+              inverted_link2:
+                inverted_link3:
+                  inverted_link4:
+                    inverted_link5:
+                      inverted_link6:
+                        inverted_link7:
+                          {}
+          original_link0:
+            original_link1:
+              original_link2:
+                original_link3:
+                  original_link4:
+                    original_link5:
+                      original_link6:
+                        original_link7:
+                          {}
+      Update Interval: 0
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: world
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+      Line color: 128; 128; 0
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 1.7955161333084106
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 0.10000000149011612
+        Y: 0
+        Z: 0.10000000149011612
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.3600000739097595
+      Target Frame: <Fixed Frame>
+      Value: Orbit (rviz)
+      Yaw: 6.254995822906494
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: true
+  Height: 846
+  Hide Left Dock: true
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd000000010000000000000443000002f0fc0200000004fb000000100044006900730070006c006100790073000000003f0000013b000000cc00fffffffb0000001200530065006c0065006300740069006f006e0000000180000000990000005d00fffffffb0000000a00560069006500770073000000021f000000ce000000a900fffffffb0000000800540069006d006500000002f30000003c0000003c00ffffff000004b0000002f000000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: true
+  Time:
+    collapsed: true
+  Views:
+    collapsed: true
+  Width: 1200
+  X: 130
+  Y: 71
