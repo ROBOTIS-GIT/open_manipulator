@@ -27,14 +27,9 @@
     </visual>
   </link>
   <link name="link0">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_01_base.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link0_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link0.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -60,14 +55,9 @@
     <dynamics damping="0.05"/>
   </joint>
   <link name="link1">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_02_base_tilt_Revised.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link1_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link1.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -93,14 +83,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link2">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_03_middle_verticle.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link2_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link2.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -126,14 +111,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link3">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_04_middle_horizontal.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link3_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link3.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -159,14 +139,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link4">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_05_tip.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link4_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link4.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -192,14 +167,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link5">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_06_pan_Revised.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link5_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link5.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -225,14 +195,9 @@
     <dynamics damping="0.1"/>
   </joint>
   <link name="link6">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_07_gripper_motorized.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link6_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link6.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -259,14 +224,9 @@
     <mimic joint="gripper_joint_1" multiplier="-1"/>
   </joint>
   <link name="link7">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://open_manipulator_description/meshes/omx_f/follower_08_gripper_gear.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
+    <visual name="link7_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry><mesh filename="package://open_manipulator_description/meshes/omx_f/visual/dae/link7.dae" /></geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
