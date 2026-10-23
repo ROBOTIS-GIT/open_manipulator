@@ -2,8 +2,8 @@
 Changelog for package open_manipulator_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.1.5 (2026-10-23)
+------------------
 * Updated cable-free OMX Leader and Follower visuals with per-link, multi-material DAE meshes for URDF and material-separated OBJ meshes for MuJoCo, sharing PCB textures.
 * Matched OMX printed frames and motor housings to dark, non-metallic polymer finishes.
 * Updated both Xacro and standalone URDF descriptions while preserving joint interfaces and inertial data.
