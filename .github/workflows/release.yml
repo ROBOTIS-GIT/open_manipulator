@@ -16,3 +16,19 @@ jobs:
     with:
       source_branch: main
       target_branch: jazzy
+
+  docker-publish:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    permissions:
+      contents: read
+    uses: ROBOTIS-GIT/github_workflows/.github/workflows/docker-publish.yml@main
+    with:
+      image: robotis/open-manipulator
+      version: ${{ needs.release.outputs.version }}
+      checkout_ref: jazzy
+      context: .
+      dockerfile: ./docker/Dockerfile
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
