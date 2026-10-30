@@ -12,7 +12,7 @@ jobs:
   release:
     permissions:
       contents: write
-    uses: ROBOTIS-GIT/github-workflows/.github/workflows/release.yml@main
+    uses: ROBOTIS-GIT/github_workflows/.github/workflows/release.yml@main
     with:
       source_branch: main
       target_branch: jazzy
