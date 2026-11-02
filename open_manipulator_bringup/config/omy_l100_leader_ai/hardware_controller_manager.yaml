@@ -58,6 +58,7 @@
       state_interfaces:
         - position
         - velocity
+      trigger_spring_stiffness: [0.1]
 
 /**:
   joint_trajectory_command_broadcaster:
