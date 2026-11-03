@@ -22,7 +22,6 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp_lifecycle
   realtime_tools
   rsl
-  tl_expected
   urdf
   kdl_parser
   orocos_kdl
@@ -60,7 +59,6 @@ target_link_libraries(gravity_compensation_controller PUBLIC
   rclcpp_lifecycle::rclcpp_lifecycle
   realtime_tools::realtime_tools
   ${backward_ros_LIBRARIES}
-  ${tl_expected_LIBRARIES}
   ${urdf_LIBRARIES}
   ${kdl_parser_TARGETS}
   ${orocos_kdl_TARGETS}
