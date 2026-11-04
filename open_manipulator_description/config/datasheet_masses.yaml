@@ -1,0 +1,11 @@
+# Whole-robot weight from the ROBOTIS OpenManipulator-X specification page,
+# Hardware Specification table, row "Weight [kg (lb)]": 0.70 (1.54).
+# The same page, section "Inertia", says "Total Mass : 711.37 gram"; 5 % covers
+# both. Fetched 2026-11-05.
+# https://docs.robotis.com/docs/systems/openmanipulator_x/specification/
+# The page does not say whether the gripper is in the weight; the DOF row counts it.
+tolerance: 0.05
+robots:
+  open_manipulator_x:
+    urdf: urdf/open_manipulator_x/open_manipulator_x.urdf
+    datasheet_kg: 0.70
