@@ -17,6 +17,17 @@ jobs:
       source_branch: main
       target_branch: jazzy
 
+  discord-notify:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    permissions:
+      contents: read
+    uses: ROBOTIS-GIT/github_workflows/.github/workflows/discord-notify.yml@main
+    with:
+      version: ${{ needs.release.outputs.version }}
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
   docker-publish:
     needs: release
     if: needs.release.outputs.published == 'true'
