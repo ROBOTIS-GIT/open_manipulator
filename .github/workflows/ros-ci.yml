@@ -20,6 +20,7 @@ jobs:
           # - humble
           - jazzy
           - kilted
+          - lyrical
         include:
           # ROS 2 Humble Hawksbill
           # - docker_image: ubuntu:jammy
@@ -32,6 +33,10 @@ jobs:
           # ROS 2 Kilted
           - docker_image: ubuntu:noble
             ros_distribution: kilted
+            ros_version: 2
+          # ROS 2 Lyrical
+          - docker_image: ubuntu:resolute
+            ros_distribution: lyrical
             ros_version: 2
     container:
       image: ${{ matrix.docker_image }}
@@ -71,6 +76,8 @@ jobs:
 
         with:
           target-ros2-distro: ${{ matrix.ros_distribution }}
+          colcon-defaults: |
+            {"test": {"python-testing": "pytest"}}
           vcs-repo-file-url: "https://raw.githubusercontent.com/ROBOTIS-GIT/open_manipulator/${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}/open_manipulator_ci.repos"
           package-name: |
             open_manipulator
