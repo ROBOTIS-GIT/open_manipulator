@@ -9,6 +9,9 @@
 *.o
 *.ko
 *.obj
+# Wavefront simulation meshes are assets, not compiled object files.
+!open_manipulator_description/meshes/omx_l/visual/obj/*.obj
+!open_manipulator_description/meshes/omx_f/visual/obj/*.obj
 *.elf
 
 ## Linker output

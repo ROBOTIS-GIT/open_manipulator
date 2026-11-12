@@ -2,6 +2,10 @@
 Changelog for package open_manipulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.5 (2026-10-23)
+------------------
+* None
+
 5.1.4 (2026-10-19)
 ------------------
 * Store OMY and OMX follower and leader service logs in dated directories on logger startup, retaining the latest 30 directories.

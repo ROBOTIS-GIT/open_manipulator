@@ -3,16 +3,11 @@
    <xacro:macro name="omx_l" params="prefix">
    <xacro:property name="meshes_file_direction" value="package://open_manipulator_description/meshes/omx_l" />
       <link name="${prefix}link0" >
-         <visual>
+         <visual name="${prefix}link0_visual">
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-               <mesh filename="${meshes_file_direction}/leader_01_base_roll.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-            <material name="grey">
-               <color rgba="0.2 0.2 0.2 1" />
-            </material>
+            <geometry><mesh filename="${meshes_file_direction}/visual/dae/link0.dae" /></geometry>
          </visual>
-         <collision>
+         <collision name="${prefix}link0_collision">
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                <mesh filename="${meshes_file_direction}/leader_01_base_roll.stl" scale="0.001 0.001 0.001" />
@@ -38,16 +33,11 @@
          <dynamics damping="0.05" />
       </joint>
       <link name="${prefix}link1" >
-         <visual>
+         <visual name="${prefix}link1_visual">
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-               <mesh filename="${meshes_file_direction}/leader_02_base_tilt_revised.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-            <material name="grey">
-               <color rgba="0.2 0.2 0.2 1" />
-            </material>
+            <geometry><mesh filename="${meshes_file_direction}/visual/dae/link1.dae" /></geometry>
          </visual>
-         <collision>
+         <collision name="${prefix}link1_collision">
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                <mesh filename="${meshes_file_direction}/leader_02_base_tilt_revised.stl" scale="0.001 0.001 0.001" />
@@ -73,16 +63,11 @@
          <dynamics damping="0.1" />
       </joint>
       <link name="${prefix}link2" >
-         <visual>
+         <visual name="${prefix}link2_visual">
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-               <mesh filename="${meshes_file_direction}/leader_03_middle_vertical.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-            <material name="grey">
-               <color rgba="0.2 0.2 0.2 1" />
-            </material>
+            <geometry><mesh filename="${meshes_file_direction}/visual/dae/link2.dae" /></geometry>
          </visual>
-         <collision>
+         <collision name="${prefix}link2_collision">
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                <mesh filename="${meshes_file_direction}/leader_03_middle_vertical.stl" scale="0.001 0.001 0.001" />
@@ -108,16 +93,11 @@
          <dynamics damping="0.1" />
       </joint>
       <link name="${prefix}link3" >
-         <visual>
+         <visual name="${prefix}link3_visual">
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-               <mesh filename="${meshes_file_direction}/leader_04_middle_horizontal.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-            <material name="grey">
-               <color rgba="0.2 0.2 0.2 1" />
-            </material>
+            <geometry><mesh filename="${meshes_file_direction}/visual/dae/link3.dae" /></geometry>
          </visual>
-         <collision>
+         <collision name="${prefix}link3_collision">
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                <mesh filename="${meshes_file_direction}/leader_04_middle_horizontal.stl" scale="0.001 0.001 0.001" />
@@ -143,16 +123,11 @@
          <dynamics damping="0.1" />
       </joint>
       <link name="${prefix}link4" >
-         <visual>
+         <visual name="${prefix}link4_visual">
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-               <mesh filename="${meshes_file_direction}/leader_05_tip_roll.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-            <material name="grey">
-               <color rgba="0.2 0.2 0.2 1" />
-            </material>
+            <geometry><mesh filename="${meshes_file_direction}/visual/dae/link4.dae" /></geometry>
          </visual>
-         <collision>
+         <collision name="${prefix}link4_collision">
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                <mesh filename="${meshes_file_direction}/leader_05_tip_roll.stl" scale="0.001 0.001 0.001" />
@@ -178,16 +153,11 @@
          <dynamics damping="0.1" />
       </joint>
       <link name="${prefix}link5" >
-         <visual>
+         <visual name="${prefix}link5_visual">
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-               <mesh filename="${meshes_file_direction}/leader_06_tip_pan_revised.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-            <material name="grey">
-               <color rgba="0.2 0.2 0.2 1" />
-            </material>
+            <geometry><mesh filename="${meshes_file_direction}/visual/dae/link5.dae" /></geometry>
          </visual>
-         <collision>
+         <collision name="${prefix}link5_collision">
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                <mesh filename="${meshes_file_direction}/leader_06_tip_pan_revised.stl" scale="0.001 0.001 0.001" />
@@ -213,16 +183,11 @@
          <dynamics damping="0.1" />
       </joint>
       <link name="${prefix}link6" >
-         <visual>
+         <visual name="${prefix}link6_visual">
             <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-               <mesh filename="${meshes_file_direction}/leader_07_tip_grip.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-            <material name="grey">
-               <color rgba="0.2 0.2 0.2 1" />
-            </material>
+            <geometry><mesh filename="${meshes_file_direction}/visual/dae/link6.dae" /></geometry>
          </visual>
-         <collision>
+         <collision name="${prefix}link6_collision">
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                <mesh filename="${meshes_file_direction}/leader_07_tip_grip.stl" scale="0.001 0.001 0.001" />
