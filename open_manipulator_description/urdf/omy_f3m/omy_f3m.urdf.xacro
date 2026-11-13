@@ -40,17 +40,12 @@
     <origin xyz="0 -0.141 0" rpy="0 0 0"/>
   </joint>
 
-  <link name="$(arg prefix)end_effector_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.01 0.01 0.01" />
-      </geometry>
-      <material name="red">
-        <color rgba="1.0 0.0 0.0 1"/>
-      </material>
-    </visual>
-  </link>
+  <!--
+    Tool centre point: a frame, so no geometry. Do not give it collision
+    geometry to silence MoveIt's visual-without-collision warning - it
+    sits between the fingers and would collide with whatever is grasped.
+  -->
+  <link name="$(arg prefix)end_effector_link"/>
 
   <xacro:omy_f3m prefix="$(arg prefix)" />
   <xacro:omy_f3m_gazebo prefix="$(arg prefix)" />
