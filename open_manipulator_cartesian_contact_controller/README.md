@@ -166,11 +166,8 @@ QP failure latches mode 2 and transitions to a spring–damper hold at the failu
 QP output is not replayed indefinitely. Diagnose the cause and reset explicitly with the
 service above; repeated resets are not a substitute for correcting tuning problems.
 
-## Verification scope
+## Mock operation
 
-Development checks include numerical tests, follower-URDF FK versus KDL, and actual
-ros2_control plugins with GenericSystem, synthetic leader input, and the gripper position
-controller. Test artifacts are kept outside the repository. Both launches provide
-`use_mock_hardware:=true`; a mock harness must open the arm-readiness gate separately.
-Mock/synthetic dynamics do not establish physical contact stability or worst-case 400 Hz
-performance including Raspberry Pi communication.
+Both launches provide `use_mock_hardware:=true`; a mock harness must open the arm-readiness
+gate separately. Mock operation checks software integration, not physical contact stability
+or worst-case 400 Hz performance including Raspberry Pi communication.

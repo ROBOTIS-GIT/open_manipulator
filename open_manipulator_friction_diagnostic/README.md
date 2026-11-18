@@ -186,23 +186,23 @@ The default physical collection trajectory takes **109 minutes 42 seconds**, plu
 homing and calculation. It includes forward/reverse pairs and per-joint reference measurements
 before and after collection. Independent validation motion and dithering selection are off by default.
 
-| Joint | Previous measured speed range | Current collection speed range | Current peak speed |
-|---|---|---|---|
-| J1 | 0.004–2.0 rad/s | 0.004–2.0 rad/s | about 115 deg/s |
-| J2 | 0.004–1.2 rad/s | 0.004–1.3 rad/s | about 74 deg/s |
-| J3 | 0.004–1.5 rad/s | 0.004–2.0 rad/s | about 115 deg/s |
-| J4 | 0.001745–1.5 rad/s | 0.001745–2.0 rad/s | about 115 deg/s |
-| J5 | 0.001745–1.5 rad/s | 0.001745–1.5 rad/s | about 86 deg/s |
-| J6 | 0.004–2.0 rad/s | 0.004–2.0 rad/s | about 115 deg/s |
+| Joint | Collection speed range | Peak speed |
+|---|---|---|
+| J1 | 0.004–2.0 rad/s | about 115 deg/s |
+| J2 | 0.004–1.3 rad/s | about 74 deg/s |
+| J3 | 0.004–2.0 rad/s | about 115 deg/s |
+| J4 | 0.001745–2.0 rad/s | about 115 deg/s |
+| J5 | 0.001745–1.5 rad/s | about 86 deg/s |
+| J6 | 0.004–2.0 rad/s | about 115 deg/s |
 
 Intermediate speed points are retained. Low-speed motions provide sufficient constant-speed
 samples; higher speeds use additional acceleration/deceleration distance. These are trajectory
-coverage limits, not measured actuator maximum capabilities. The J5 1.6 rad/s candidate left
-only 9.0 mm self-clearance, below the current 10 mm path criterion. Another posture would require
-review before extending that range. Insufficient actual speed is reported for the affected
-condition; it is not silently accepted or used to reduce every joint's range.
+coverage limits, not measured actuator maximum capabilities. Extending a range requires
+reviewing the modified motion for self-collision and table clearance. Insufficient actual speed
+is reported for the affected condition; it is not silently accepted or used to reduce every
+joint's range.
 
-J1/J4/J5/J6 retain their selection procedure. J2/J3 share one `loaded_joints.recipe` in
+J1/J4/J5/J6 use the kinetic-friction selection procedure. J2/J3 share one `loaded_joints.recipe` in
 `config/fitting.yaml`: directional speed/load curves, observable nonlinear load correction,
 and a mean-preserving periodic position residual. The algorithm is shared; postures and fitted
 coefficients differ. This handles posture/load-dependent observed residuals, not inertial
@@ -307,24 +307,6 @@ ros2 launch open_manipulator_cartesian_contact_controller cartesian_contact.laun
 Choose one command. They share the unit's `current.yaml` and compensation settings, with separate
 controller gain YAML files. See each package README for target inputs, tuning, and L100 support.
 
-### Legacy standalone joint-impedance node
-
-The temporary Python node remains available separately from the ros2_control controller:
-
-```bash
-# Terminal 1
-ros2 launch open_manipulator_friction_diagnostic bringup.launch.py
-# Terminal 2, after the runtime reports running
-ros2 launch open_manipulator_friction_diagnostic joint_impedance.launch.py
-```
-
-At `Impedance ON`, the node captures current joint angles as its fixed reference and publishes
-`K*(q_start-q)-D*dq`. Configure `config/joint_impedance.yaml` or `gains:=...` (Nm/rad and
-Nm s/rad). Stopping only this node removes its effort input but leaves compensation running.
-State loss over 0.1 s or lost readiness stops its output; restart to capture a new reference.
-The Python ROS timer does not guarantee a real-time 400 Hz rate. Missing-cycle commands are
-not held. Prefer the separate ros2_control impedance package for control-loop integration.
-
 ## Motor/brake startup and shutdown
 
 The runtime initializes the controller and communication in current mode with torque OFF,
@@ -390,9 +372,9 @@ friction data and cannot overwrite a hardware calibration.
 - `calibration/geometry_cache/`: reusable fixed-path geometry reviews.
 - Unit data directory: runtime models, settings, and acquisition checkpoints outside the package.
 
-Development tests, recordings, and analysis/build reports are kept outside the source repository
-and deployment packages. Do not delete acquisition data while it is needed for fitting or resume.
-Mock/simulation results do not establish physical brake behavior or new-unit compensation quality.
+Do not delete acquisition data while it is needed for fitting or resume. Keep unit data and
+recordings outside the source repository. Mock/simulation results do not establish physical
+brake behavior or new-unit compensation quality.
 
 ## Regenerating trajectory assets (developers only)
 

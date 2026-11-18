@@ -25,9 +25,7 @@ HAT power initialization, torque-OFF initialization, mode/unit conversions, and
 ordinary homogeneous SyncWrite are inherited unchanged. A separate stock bringup
 is unnecessary. No upstream package file is replaced.
 
-The grouped path is necessary because previous mixed-length BulkWrite runs lost
-responses even with torque OFF. The original hardware observations justify the
-transport workaround; they do not establish reliability for every bus condition.
+The grouped path uses separate SyncWrite transactions for mixed current/position commands.
 No firmware watchdog, brake timing, or Goal Update Delay is changed here.
 
 `write_alert.patch` separates Protocol 2's Alert bit from an instruction error.
@@ -41,6 +39,3 @@ The read-thread service executor is created once per hardware instance. Service 
 still execute on the bus-owning thread; no parallel SDK access is introduced. The
 end-unit uses the same isolated plugin so its executor setup does not churn at 400 Hz.
 Read-stage latency diagnostics distinguish bus, item service, publication and callback time.
-
-Developer regression tests and their results are archived outside the repository
-on the development computer and are not shipped to the robot.

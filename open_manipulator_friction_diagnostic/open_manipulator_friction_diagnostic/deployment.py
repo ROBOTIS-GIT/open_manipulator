@@ -1,14 +1,13 @@
-"""Hardware hold following the 2026-10-27 uncontrolled-motion incident.
+"""Restrict legacy steady-state profiles to offline analysis and simulation.
 
-There is deliberately no launch override. Offline analysis and isolated mocks
-remain available. Removing this hold requires a reviewed deployment path with
-transient identification and closed-loop evidence, not a smaller prediction RMSE.
+These profiles do not qualify transient or closed-loop compensation behavior.
+There is no hardware launch override for this legacy path.
 """
 
 
 def require_simulation(mock):
     if not mock:
         raise ValueError(
-            'Hardware friction freedrive is disabled after the 2026-10-27 '
-            'J6/J2 uncontrolled-motion incident. Steady-fit profiles are analysis '
-            'artifacts, not qualified compensation controllers. No launch override.')
+            'Legacy steady-state profiles are restricted to offline analysis and '
+            'simulation; transient and closed-loop compensation behavior is not '
+            'qualified. No hardware launch override.')

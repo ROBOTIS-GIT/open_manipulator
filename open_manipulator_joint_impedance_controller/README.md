@@ -70,8 +70,7 @@ effort. The controller_manager instance keeps the name `friction_compensation_co
 for supervisor compatibility; this launch uses plugin type
 `open_manipulator_joint_impedance_controller/JointImpedanceController`.
 
-The plugin inherits the existing compensation library. Tests and result files are not
-included in the deployment package.
+The plugin inherits the existing compensation library.
 
 ## External wrench estimated from measured joint effort
 
