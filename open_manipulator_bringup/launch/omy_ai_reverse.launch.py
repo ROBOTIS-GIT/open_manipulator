@@ -16,90 +16,64 @@
 #
 # Author: Sungho Woo, Woojin Wie
 
-"""Launch file for AI teleoperation of OMY F3M for leader, OMY L100 for follower."""
+"""OMY teleoperation with one launch owner for every child process."""
 
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess
-from launch.actions import LogInfo
-from launch.actions import RegisterEventHandler
+from launch.actions import (DeclareLaunchArgument, EmitEvent, GroupAction,
+                            IncludeLaunchDescription, LogInfo, RegisterEventHandler)
 from launch.event_handlers import OnProcessExit
-from launch.event_handlers import OnProcessStart
-from launch.substitutions import PathJoinSubstitution
+from launch.events import Shutdown
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    """Generate launch description for AI teleoperation."""
-    # Step 1: Start follower launch file
-    start_follower = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'launch',
-            'open_manipulator_bringup',
-            'omy_l100_follower_ai.launch.py',
-        ],
-        output='screen',
-    )
+    package = FindPackageShare('open_manipulator_bringup')
+    # Include both descriptions in this LaunchService. Spawning another `ros2
+    # launch` (especially through a shell) can lose its new children on SIGINT.
+    # Follower exit handlers evaluate launch arguments later; retain their scope.
+    follower = GroupAction(scoped=False, actions=[IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution([
+            package, 'launch', 'omy_l100_follower_ai.launch.py'])),
+        launch_arguments={
+            'use_mock_hardware': LaunchConfiguration('use_mock_hardware'),
+            'start_rviz': LaunchConfiguration('start_rviz'),
+            # Only the executor owned here performs the startup motion.
+            'init_position': 'false',
+        }.items())])
+    leader = GroupAction(actions=[IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution([
+            package, 'launch', 'omy_f3m_leader_ai.launch.py'])),
+        launch_arguments={
+            'use_mock_hardware': LaunchConfiguration('use_mock_hardware'),
+            'use_self_collision_avoidance': LaunchConfiguration('use_self_collision_avoidance'),
+            'ros2_control_type': 'omy_f3m_current',
+        }.items())])
+    executor = Node(
+        package='open_manipulator_bringup', executable='joint_trajectory_executor',
+        parameters=[PathJoinSubstitution([
+            package, 'config', 'omy_l100_follower_ai', 'initial_positions.yaml'])],
+        output='screen')
 
-    # Step 2: Run the joint trajectory executor for the follower
-    trajectory_params_file = PathJoinSubstitution([
-        FindPackageShare('open_manipulator_bringup'),
-        'config',
-        'omy_l100_follower_ai',
-        'initial_positions.yaml',
-    ])
-
-    joint_trajectory_executor = Node(
-        package='open_manipulator_bringup',
-        executable='joint_trajectory_executor',
-        parameters=[trajectory_params_file],
-        output='screen',
-    )
-
-    # Step 3: Start leader launch file
-    start_leader = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'launch',
-            'open_manipulator_bringup',
-            'omy_f3m_leader_ai.launch.py',
-        ],
-        output='screen',
-        shell=True,
-    )
+    def after_initial_pose(event, context):
+        # OnProcessExit also runs on Ctrl+C/failure. Neither may start a leader.
+        if context.is_shutdown:
+            return []
+        if event.returncode != 0:
+            return [LogInfo(msg='Initial pose failed; stopping teleoperation.'),
+                    EmitEvent(event=Shutdown(reason='Initial pose executor failed'))]
+        return [LogInfo(msg='Initial pose completed; starting leader.'), leader]
 
     return LaunchDescription([
-        LogInfo(msg='Starting omy_l100_follower_ai.launch.py...'),
-        start_follower,
-        # Step 2: Ensure joint_trajectory_executor starts after start_follower
-        RegisterEventHandler(
-            OnProcessStart(
-                target_action=start_follower,
-                on_start=[
-                    LogInfo(
-                        msg=(
-                            '✅ omy_l100_follower_ai.launch.py has fully started. '
-                            'Running joint_trajectory_executor...'
-                        )
-                    ),
-                    joint_trajectory_executor,
-                ],
-            )
-        ),
-        # Step 3: Ensure start_leader starts after joint_trajectory_executor
-        RegisterEventHandler(
-            OnProcessExit(
-                target_action=joint_trajectory_executor,
-                on_exit=[
-                    LogInfo(
-                        msg=(
-                            '✅ joint_trajectory_executor has completed. '
-                            'Starting omy_f3m_leader_ai.launch.py...'
-                        )
-                    ),
-                    start_leader,
-                ],
-            )
-        ),
+        DeclareLaunchArgument('use_mock_hardware', default_value='false'),
+        DeclareLaunchArgument('start_rviz', default_value='false'),
+        DeclareLaunchArgument('use_self_collision_avoidance', default_value='true'),
+        RegisterEventHandler(OnProcessExit(target_action=executor, on_exit=after_initial_pose)),
+        LogInfo(msg='Starting follower; waiting for its trajectory action server.'),
+        follower,
+        # The executor waits for the action server; process creation alone is
+        # not interpreted as controller readiness.
+        executor,
     ])

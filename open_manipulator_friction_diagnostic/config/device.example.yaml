@@ -1,0 +1,9 @@
+# Copy with: ros2 run open_manipulator_friction_diagnostic friction_device init
+# These zeros mean unmeasured; they do NOT certify zero sensor delay.
+schema: omy_device_settings_v1
+robot_unit: auto
+sensor_timing:
+  current_filter_time_constant_s: [0, 0, 0, 0, 0, 0]
+  current_measurement_delay_s: [0, 0, 0, 0, 0, 0]
+  sensor_settling_s: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+  sensor_timing_verified: false

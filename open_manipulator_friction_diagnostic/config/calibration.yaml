@@ -1,0 +1,10 @@
+{
+  "schema": "omy_portable_calibration_recipe_v1",
+  "collection_config": "collection.yaml",
+  "conditions": "conditions.yaml",
+  "fitting": "fitting.yaml",
+  "joints": "all",
+  "max_collection_minutes": 180,
+  "collect_dither": false,
+  "validate": false
+}

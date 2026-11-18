@@ -1,0 +1,86 @@
+{
+  "inputs": {
+    "schema": 1,
+    "trajectory": {
+      "t": {
+        "shape": [
+          388221
+        ],
+        "sha256": "478dc07142f9b515f4e3a903b8f9cdd1fa60036491d5ccfa76911a12b2abf464"
+      },
+      "q": {
+        "shape": [
+          388221,
+          6
+        ],
+        "sha256": "9d06653faf4a66eac4cac10f8df0a20d20a0f20f6305875abf8c1c12c08af9cf"
+      },
+      "v": {
+        "shape": [
+          388221,
+          6
+        ],
+        "sha256": "6058ac3d2855daae31df31f5e9d96408c233154112d1daf19344685bf018b5b8"
+      },
+      "a": {
+        "shape": [
+          388221,
+          6
+        ],
+        "sha256": "4db218517920c4c5213c2b37e112507437a9f567f3fff7b24d43e0bd4a70f672"
+      }
+    },
+    "geometry_sha256": "0258746a725c70e9b839a1314cf59f2d075b402f848f649f0cfb20230f41a1ed",
+    "checker_sha256": "de919899cadbc856359dd4018312098aee4be02304a6eb2b9105a51eff639962",
+    "cache_implementation_sha256": "27752b8fcecae0102bba6b8530ed142c247706d37591f50cc6f9594555c56f51",
+    "joint_names": [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6"
+    ],
+    "pinocchio_version": "4.1.0",
+    "coal_version": "3.0.3"
+  },
+  "geometry": {
+    "passed": true,
+    "minimum_distance_m": 0.011551078230580346,
+    "floor_minimum_m": 0.02631949270652892,
+    "table_plane_world_z_m": 0.0,
+    "minimum_table_clearance_m": 0.02,
+    "floor_closest": {
+      "geometry": "link6_0",
+      "q_rad": [
+        0.0,
+        1.6700000000000004,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "minimum_required_distance_m": 0.01,
+    "collision_samples": 0,
+    "samples": 388221,
+    "unique_positions": 207994,
+    "closest": {
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.8749992879082913,
+        0.0
+      ],
+      "links": [
+        "link4_0",
+        "link6_0"
+      ]
+    },
+    "collision_pairs": 50,
+    "exclusions": "Adjacent/fixed assembly, cables, external objects above the table and continuous interpolation"
+  },
+  "geometry_sha256": "814104fb0f9e3c8db923abca4410b52faba2d0a5c47d550c48cd6e107dee91e5"
+}

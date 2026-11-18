@@ -1,0 +1,160 @@
+{
+  "schema": "omy_common_fitting_v1",
+  "loaded_joints": {
+    "joints": [2, 3],
+    "method": "load_table_periodic_v1",
+    "recipe": {
+      "load_knots": 9,
+      "load_smoothing": 0.01,
+      "macro_smoothing": 0.01,
+      "load_width_nm": 3.0,
+      "frequencies": [99.0, 100.0],
+      "orders": [1, 2],
+      "ridge": 0.01,
+      "angular_max_speed": 0.3
+    }
+  },
+  "kinetic_fraction": 0.95,
+  "transition_distance_rad": 0.0008,
+  "transition_stiffness_nm_rad": 10000.0,
+  "transition_decay_per_s": 5.0,
+  "periodic_candidates": [
+    {
+      "frequency": 99.0,
+      "orders": [
+        1
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.04
+    },
+    {
+      "frequency": 99.0,
+      "orders": [
+        1
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.3
+    },
+    {
+      "frequency": 100.0,
+      "orders": [
+        1
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.04
+    },
+    {
+      "frequency": 100.0,
+      "orders": [
+        1
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.3
+    },
+    {
+      "frequency": 99.0,
+      "orders": [
+        1,
+        2
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.04
+    },
+    {
+      "frequency": 99.0,
+      "orders": [
+        1,
+        2
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.3
+    },
+    {
+      "frequency": 99.0,
+      "orders": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.04
+    },
+    {
+      "frequency": 99.0,
+      "orders": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.3
+    },
+    {
+      "frequency": 100.0,
+      "orders": [
+        1,
+        2
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.04
+    },
+    {
+      "frequency": 100.0,
+      "orders": [
+        1,
+        2
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.3
+    },
+    {
+      "frequency": 100.0,
+      "orders": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.04
+    },
+    {
+      "frequency": 100.0,
+      "orders": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ridge": 0.01,
+      "angular_max_speed": 0.3
+    }
+  ],
+  "minimum_positive_resistance_nm": 1e-06,
+  "validation_relative_error": 0.2,
+  "validation_absolute_error_nm": 0.08,
+  "shared_template_load_widths_nm": [
+    0.25,
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0,
+    4.0,
+    6.0,
+    8.0
+  ],
+  "shared_projection_error_nm": 0.02,
+  "development_cv_folds": 3,
+  "macro_smoothing_candidates": [
+    0.0,
+    0.01,
+    0.1
+  ],
+  "fit_objectives": [
+    "absolute",
+    "normalized_cycle_mean"
+  ]
+}

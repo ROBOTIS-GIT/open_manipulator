@@ -1,0 +1,19 @@
+joint_impedance_controller:
+  ros__parameters:
+    wrench.enabled: true
+    wrench.root_link: link0
+    wrench.tip_link: end_effector_link
+    wrench.publish_rate_hz: 50.0
+    wrench.damping_m: 0.005
+    wrench.characteristic_length_m: 0.25
+    wrench.residual_filter_time_s: 0.1
+    wrench.acceleration_filter_time_s: 0.05
+    gravity_compensation_enabled: true
+    friction_compensation_enabled: true
+    # Ordered joint1 ... joint6. Fixed reference is captured on activation.
+    impedance.stiffness: [30.0, 30.0, 30.0, 20.0, 10.0, 5.0]  # Nm/rad
+    impedance.damping: [1.0, 0.8, 0.8, 0.5, 0.25, 0.15]  # Nm*s/rad
+    # Optional steady-error correction. Zero keeps pure PD impedance.
+    impedance.integral_gain: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # Nm/(rad*s)
+    impedance.integral_limit: [0.4, 0.4, 0.4, 0.2, 0.2, 0.2]  # Nm, integral only
+    impedance.integral_leak: 0.0  # 1/s; positive values gradually forget correction

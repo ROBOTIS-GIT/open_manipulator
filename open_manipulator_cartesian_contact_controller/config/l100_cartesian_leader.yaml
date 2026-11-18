@@ -1,0 +1,16 @@
+l100_cartesian_leader:
+  ros__parameters:
+    leader_topic: /leader/joint_trajectory
+    follower_state_topic: /friction_compensation_controller/task_state
+    follower_reference_topic: /friction_compensation_controller/target_pose_state
+    # Epoch-stamped PoseStamped endpoint; keep target_pose for direct user targets.
+    reference_topic: /friction_compensation_controller/leader_target_pose
+    robot_description_topic: /robot_description
+    root_link: link0
+    tip_link: end_effector_link
+    joint_names: [joint1, joint2, joint3, joint4, joint5, joint6]
+    publish_rate_hz: 100.0
+    sync_duration_s: 5.0
+    sync_linear_speed_m_s: 0.04
+    sync_angular_speed_rad_s: 0.2
+    state_timeout_s: 0.3

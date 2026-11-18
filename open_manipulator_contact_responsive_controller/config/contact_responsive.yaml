@@ -1,0 +1,25 @@
+# J1 ... J6. These parameters are read at configure time; restart to apply edits.
+contact_responsive_controller:
+  ros__parameters:
+    gravity_compensation_enabled: true
+    friction_compensation_enabled: true
+    nominal.stiffness: [30.0, 30.0, 30.0, 30.0, 30.0, 30.0] # Nm/rad
+    nominal.damping: [5.0, 5.0, 5.0, 5.0, 5.0, 5.0] # Nm/(rad/s)
+    inner.stiffness: [400.0, 400.0, 400.0, 400.0, 400.0, 400.0]
+    inner.damping: [25.0, 25.0, 25.0, 25.0, 25.0, 25.0]
+    # Contact-response bounds, NOT limits on total actuator torque.
+    # Existing gravity/friction/dither compensation is added separately.
+    contact.task_limit_nm: [3.0, 3.0, 3.0, 1.5, 1.5, 1.5]
+    contact.correction_limit_nm: [6.0, 15.0, 15.0, 3.0, 3.0, 3.0]
+    contact.motion_limit_nm: [8.0, 18.0, 18.0, 4.0, 4.0, 4.0]
+    # Soft nominal-versus-actual error; NOT an absolute joint-position bound.
+    contact.nominal_error_rad: [0.04, 0.04, 0.04, 0.04, 0.04, 0.04]
+    model.root_link: link0
+    model.tip_link: end_effector_link
+    # Nominal diagonal inertia regularization [kg m^2], not identified motor inertia.
+    model.rotor_inertia: [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+    qp.error_slack_weight: 1.0
+    qp.tolerance: 0.00001
+    qp.max_iterations: 400
+    qp.max_period_s: 0.01
+    fallback.ramp_s: 0.25

@@ -1,0 +1,7 @@
+<library path="contact_responsive_controller">
+  <class name="open_manipulator_contact_responsive_controller/ContactResponsiveController"
+    type="omy_contact::ContactResponsiveController"
+    base_class_type="controller_interface::ControllerInterface">
+    <description>QP nominal dynamics and bounded inner-loop correction, with existing OMY compensation.</description>
+  </class>
+</library>

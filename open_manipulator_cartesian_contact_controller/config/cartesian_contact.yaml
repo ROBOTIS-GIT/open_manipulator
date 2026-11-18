@@ -1,0 +1,24 @@
+# Cartesian order: root-frame x,y,z,rx,ry,rz, at tip origin.
+# These are initial settings, not hardware-tuned values. Restart to apply changes.
+cartesian_contact_controller:
+  ros__parameters:
+    gravity_compensation_enabled: true
+    friction_compensation_enabled: true
+    nominal.stiffness: [300.0, 300.0, 300.0, 30.0, 30.0, 30.0] # N/m, Nm/rad
+    nominal.damping: [10.0, 10.0, 10.0, 3.0, 3.0, 3.0] # Ns/m, Nms/rad
+    nominal.mass: [2.0, 2.0, 2.0, 0.1, 0.1, 0.1] # virtual kg, kg m^2
+    inner.stiffness: [1000.0, 1000.0, 1000.0, 100.0, 100.0, 100.0]
+    inner.damping: [60.0, 60.0, 60.0, 8.0, 8.0, 8.0]
+    # Contact-response wrench bounds: N then Nm, excluding existing compensation.
+    contact.task_wrench: [10.0, 10.0, 10.0, 1.0, 1.0, 1.0]
+    contact.correction_wrench: [20.0, 20.0, 20.0, 2.0, 2.0, 2.0]
+    contact.motion_wrench: [30.0, 30.0, 30.0, 3.0, 3.0, 3.0]
+    contact.nominal_error: [0.03, 0.03, 0.03, 0.1, 0.1, 0.1] # soft m/rad
+    task.root_link: link0
+    task.tip_link: end_effector_link
+    task.publish_rate_hz: 50.0
+    qp.error_slack_weight: 1.0
+    qp.tolerance: 0.00001
+    qp.max_iterations: 400
+    qp.max_period_s: 0.01
+    fallback.ramp_s: 0.25

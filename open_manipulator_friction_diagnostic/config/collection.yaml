@@ -1,0 +1,297 @@
+{
+  "schema": 3,
+  "friction_model": "velocity_only",
+  "variant": "omy_f3m",
+  "robot_unit": "auto",
+  "expected_current_units_nm_per_count": {
+    "ym080_230_a099": 0.07692307692,
+    "ym070_210_a099": 0.04
+  },
+  "initial_pose": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "completion_pose": "zero",
+  "transfer_velocity_rad_s": 0.12,
+  "sample_period_s": 0.02,
+  "joint_excursion_rad": [
+    0.8,
+    0.8,
+    0.8,
+    1.7,
+    1.7,
+    0.8
+  ],
+  "sweep_range_scale": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "calibration_centers_rad": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      -1.5707963267948966,
+      1.5707963267948966,
+      0
+    ]
+  ],
+  "validation_centers_rad": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "max_velocity_rad_s": 2.0,
+  "max_acceleration_rad_s2": 3.0,
+  "speeds_rad_s": [
+    0.0017453292519943296,
+    0.002617993877991494,
+    0.004,
+    0.006,
+    0.008,
+    0.012,
+    0.015,
+    0.017453292519943295,
+    0.04,
+    0.08,
+    0.1,
+    0.175,
+    0.3
+  ],
+  "sweep_protocol": "matched_v2",
+  "sweep_strokes_rad": [
+    0.10471975511965978,
+    0.10471975511965978,
+    0.10471975511965978,
+    0.10471975511965978,
+    0.10471975511965978,
+    0.10471975511965978,
+    0.10471975511965978,
+    0.10471975511965978,
+    0.3490658503988659,
+    0.5235987755982988,
+    0.6981317007977318,
+    1.0471975511965976,
+    1.5707963267948966
+  ],
+  "posture_speed_scope": "listed_speeds_only",
+  "ramp_s": 1.0,
+  "plateau_s": 3.0,
+  "dwell_s": 1.5,
+  "startup_dwell_s": 1.5,
+  "minimum_sweep_speed_rad_s": 0.001,
+  "fit_angle_half_width_rad": 0.008726646259971648,
+  "matched_load_absolute_nm": 0.25,
+  "matched_load_relative": 0.1,
+  "settling_guard": {
+    "window_s": 0.2,
+    "cancel_margin_s": 0.15,
+    "position_span_rad": 0.0003,
+    "slope_rad_s": 0.0015
+  },
+  "passes": 2,
+  "posture_validation": [
+    {
+      "name": "follower_ready",
+      "pose": "follower_ready",
+      "sweep_sides": [
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "working",
+      "pose": [
+        0,
+        -1.05,
+        1.9,
+        -0.85,
+        1.5708,
+        0
+      ]
+    }
+  ],
+  "posture_validation_speeds_rad_s": [
+    0.0017453292519943296,
+    0.002617993877991494,
+    0.004,
+    0.006,
+    0.008,
+    0.012,
+    0.015,
+    0.017453292519943295,
+    0.04,
+    0.08,
+    0.1
+  ],
+  "posture_validation_limits_rad": [
+    0.3,
+    2.0,
+    3.0,
+    1.7,
+    1.9,
+    0.3
+  ],
+  "sensor_settling_s": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+  ],
+  "current_filter_time_constant_s": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "current_measurement_delay_s": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "sensor_timing_verified": false,
+  "current_abort_policy": "firmware_only",
+  "measured_torque_abort_nm": null,
+  "max_compensation_nm": [
+    1.3,
+    1.3,
+    0.73,
+    0.73,
+    0.73,
+    0.73
+  ],
+  "compensation_gain": 0.5,
+  "slew_rate_nm_s": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "velocity_deadband_rad_s": 0.002,
+  "validation_relative_error": 0.2,
+  "validation_absolute_error_nm": 0.08,
+  "max_pair_spread_nm": 0.15,
+  "homing_ready_tolerance_rad": 0.1,
+  "homing_max_displacement_rad": 0.3,
+  "common_friction_identification": true,
+  "automatic_minimum_settled_travel_rad": 0.022,
+  "automatic_speeds_rad_s": [
+    0.004,
+    0.012,
+    0.04,
+    0.1,
+    0.3
+  ],
+  "kinetic_review_fraction": 0.95,
+  "automatic_sparse_collection": true,
+  "automatic_minimum_plateau_s": 1.5,
+  "kinetic_spatial_bins": 96,
+  "automatic_reposition_velocity_rad_s": 0.6,
+  "automatic_repeats": 1
+}

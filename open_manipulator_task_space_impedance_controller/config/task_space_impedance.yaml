@@ -1,0 +1,13 @@
+# Read at controller configuration; restart the launch to apply changes.
+task_space_impedance_controller:
+  ros__parameters:
+    gravity_compensation_enabled: true
+    friction_compensation_enabled: true
+    # Root-frame axes: translation x/y/z, rotation x/y/z.
+    # Translation: N/m; rotation: Nm/rad.
+    task.stiffness: [300.0, 300.0, 300.0, 30.0, 30.0, 30.0]
+    # Translation: N*s/m; rotation: Nm*s/rad.
+    task.damping: [10.0, 10.0, 10.0, 3.0, 3.0, 3.0]
+    task.root_link: link0
+    task.tip_link: end_effector_link
+    task.publish_rate_hz: 50.0

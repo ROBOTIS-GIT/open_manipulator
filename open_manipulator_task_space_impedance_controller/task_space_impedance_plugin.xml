@@ -1,0 +1,7 @@
+<library path="task_space_impedance_controller">
+  <class name="open_manipulator_task_space_impedance_controller/TaskSpaceImpedanceController"
+         type="omy_task::TaskSpaceImpedanceController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Jacobian-transpose task-space impedance with OMY gravity and friction compensation.</description>
+  </class>
+</library>

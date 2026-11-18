@@ -1,5 +1,7 @@
 # ROBOTIS OpenMANIPULATOR ROS 2 Packages
 
+OMY automatic friction calibration and torque-based controllers: [installation and usage](open_manipulator_friction_diagnostic/README.md).
+
 This repository contains the official ROS 2 packages for the ROBOTIS OpenMANIPULATOR platform. These packages provide the necessary interfaces and tools to control the robot, integrate with its sensors, and develop physical AI applications, including those utilizing frameworks like LeRobot. For detailed usage instructions, please refer to the documentation below.
   - [Documentation for OMY](https://ai.robotis.com/omy/introduction_omy.html)
   - [Documentation for OpenMANIPULATOR-X](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/)

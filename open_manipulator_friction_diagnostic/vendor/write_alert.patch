@@ -1,0 +1,74 @@
+--- a/src/dynamixel/dynamixel.cpp
++++ b/src/dynamixel/dynamixel.cpp
+@@ -736,7 +736,9 @@
+       if (i == MAX_COMM_RETRIES - 1) {
+         return DxlError::ITEM_WRITE_FAIL;
+       }
+-    } else if (dxl_error != 0) {
++    // Protocol 2 bit 7 is a hardware ALERT, not an instruction rejection.
++    // Keep the device error visible in cyclic readback; allow OFF acknowledgements.
++    } else if ((dxl_error & 0x7f) != 0) {
+       fprintf(
+         stderr,
+         "[WriteItem][ID:%03d][comm_id:%03d] RX_PACKET_ERROR : %s\n",
+@@ -776,14 +778,20 @@
+ 
+ DxlError Dynamixel::WriteItemBuf()
+ {
+-  for (auto it_write_item : write_item_buf_) {
++  // Attempt each queued operation once. The supervisor confirms actual drive
++  // state and owns OFF retries; replaying an old failed ON is not permitted.
++  auto pending = std::move(write_item_buf_);
++  write_item_buf_.clear();
++  DxlError result = DxlError::OK;
++  for (auto it_write_item : pending) {
+     // set torque state variable (ON or OFF)
+     if (strcmp(it_write_item.control_item.item_name.c_str(), "Torque Enable") == 0) {
+       if (WriteItem(
+           it_write_item.comm_id, it_write_item.id, it_write_item.control_item.address,
+           it_write_item.control_item.size, it_write_item.data) < 0)
+       {
+-        return DxlError::ITEM_WRITE_FAIL;
++        result = DxlError::ITEM_WRITE_FAIL;
++        continue;
+       }
+ 
+       torque_state_[{it_write_item.comm_id, it_write_item.id}] = it_write_item.data;
+@@ -801,7 +809,8 @@
+             stderr,
+             "[comm_id:%03d][ID:%03d] Cannot write \"Torque Off\" command! Cannot write a Item.\n",
+             it_write_item.comm_id, it_write_item.id);
+-          return DxlError::ITEM_WRITE_FAIL;
++          result = DxlError::ITEM_WRITE_FAIL;
++        continue;
+         }
+         torque_state_[{it_write_item.comm_id, it_write_item.id}] = TORQUE_OFF;
+       }
+@@ -810,12 +819,12 @@
+           it_write_item.comm_id, it_write_item.id, it_write_item.control_item.address,
+           it_write_item.control_item.size, it_write_item.data) < 0)
+       {
+-        return DxlError::ITEM_WRITE_FAIL;
+-      }
+-    }
+-  }
+-  write_item_buf_.clear();
+-  return DxlError::OK;
++        result = DxlError::ITEM_WRITE_FAIL;
++        continue;
++      }
++    }
++  }
++  return result;
+ }
+ 
+ DxlError Dynamixel::ReadItem(uint8_t comm_id, uint8_t id, std::string item_name, uint32_t & data)
+@@ -867,7 +876,7 @@
+         return DxlError::ITEM_READ_FAIL;
+       }
+     } else if (dxl_error != 0) {
+-      bool is_alert = dxl_error & 0x80;
++      bool is_alert = dxl_error == 0x80;
+       if (is_alert) {
+         fprintf(
+           stderr,

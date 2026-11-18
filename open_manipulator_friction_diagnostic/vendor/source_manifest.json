@@ -1,0 +1,56 @@
+{
+  "upstream_repository": "https://github.com/ROBOTIS-GIT/dynamixel_hardware_interface",
+  "upstream_commit": "6bb5f93ecad1fe3c231e3ece580344e8f0a6efc3",
+  "upstream_worktree_clean": true,
+  "modifications": [
+    "grouped SyncWrite transport (mixed probes only)",
+    "isolated namespace/include path and plugin registration",
+    "synchronous item read service on hardware thread, avoiding queued-read deadlock",
+    "Protocol 2 alert-only write acknowledgment; independent one-attempt queued writes with observed OFF confirmation",
+    "persistent bus-thread ROS service executor and read-stage latency diagnostics"
+  ],
+  "model_tables_package": "dynamixel_hardware_interface",
+  "files": {
+    "src/dynamixel/dynamixel.cpp": {
+      "upstream_sha256": "15f36f4df5d93a2246d8fcc3e1b98c2c1d5caa2114441da32b27913ac8023adb",
+      "vendored_path": "src/dynamixel/dynamixel.cpp",
+      "vendored_sha256": "74970bfb2c3225f708bafd1cf579e26241d12d86d2b1d51359807a3dedd01e25"
+    },
+    "src/dynamixel/dynamixel_info.cpp": {
+      "upstream_sha256": "5fdf042ae1220c60101a6da674de9b1288845f9c1916e5cadd36959246d12d3c",
+      "vendored_path": "src/dynamixel/dynamixel_info.cpp",
+      "vendored_sha256": "ba356fa4b4bebaf4e11a362640b0a1842fd436e9330549a5b03b02245a7ad30d"
+    },
+    "src/dynamixel_hardware_interface.cpp": {
+      "upstream_sha256": "25b4124e7897c6f2bee6587af431436e67960af5b60730037a9f4f48c0e75cf9",
+      "vendored_path": "src/dynamixel_hardware_interface.cpp",
+      "vendored_sha256": "453fa3fd436ed81f3f7ba5ebbecab3b7a917f61688eff29b0b291589a1ed0daa"
+    },
+    "include/dynamixel_hardware_interface/dynamixel/dynamixel.hpp": {
+      "upstream_sha256": "1d7c7e44e538742ba2603094be2a86b77bf97152be139102e8123422f975752a",
+      "vendored_path": "include/friction_dynamixel_hardware_interface/dynamixel/dynamixel.hpp",
+      "vendored_sha256": "8fc45ba975bcd2ec12e5ec1b85df23e028e93d10849ef8e73709fe54ed3ee314"
+    },
+    "include/dynamixel_hardware_interface/dynamixel/dynamixel_info.hpp": {
+      "upstream_sha256": "9cd45e099cb8dd7fd54dffb35893987b5e5f40860dc4c0facb86767bea34ea91",
+      "vendored_path": "include/friction_dynamixel_hardware_interface/dynamixel/dynamixel_info.hpp",
+      "vendored_sha256": "0c204240d2573adbf62cd265c02c6e2815e433ffcbd7b3c14ee19b2e44905e7c"
+    },
+    "include/dynamixel_hardware_interface/dynamixel_hardware_interface.hpp": {
+      "upstream_sha256": "e6a4449aa881e3e8bf14f82ec9f9a9c24d95cb2850e038319f29d3f983687131",
+      "vendored_path": "include/friction_dynamixel_hardware_interface/friction_dynamixel_hardware_interface.hpp",
+      "vendored_sha256": "f2673aea4279d922b207651584f22f02c67c2ecbef5b17ae47046efec5568d11"
+    },
+    "include/dynamixel_hardware_interface/visibility_control.h": {
+      "upstream_sha256": "12e665873dd102680e44bdcec2a81708514e4e45b1849754f10c27b9670e2160",
+      "vendored_path": "include/friction_dynamixel_hardware_interface/visibility_control.h",
+      "vendored_sha256": "a39aa3265839e59951e43918604e4a2f4d2bf913248fabbb1c1075ce4fddc7c4"
+    },
+    "LICENSE": {
+      "upstream_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "vendored_path": "LICENSE",
+      "vendored_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  },
+  "transport_patch_sha256": "94221ea150c9de423d57c5642c7ecfc079d0b53b066ad5be65cff53e7b3b7022"
+}

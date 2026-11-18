@@ -1,0 +1,1 @@
+<library path="cartesian_contact_controller"><class name="open_manipulator_cartesian_contact_controller/CartesianContactController" type="omy_cartesian::CartesianContactController" base_class_type="controller_interface::ControllerInterface"><description>Cartesian nominal-body QP plus high-gain correction, mapped through J transpose.</description></class></library>

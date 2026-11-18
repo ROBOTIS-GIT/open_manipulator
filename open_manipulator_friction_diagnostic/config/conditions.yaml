@@ -1,0 +1,802 @@
+{
+  "schema": "omy_sparse_conditions_v1",
+  "conditions": [
+    {
+      "name": "j1_speed_curve",
+      "joint": 0,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.012,
+        0.04,
+        0.1,
+        0.3,
+        0.6,
+        1.0,
+        1.5,
+        2.0
+      ],
+      "settled_travel_rad": 0.022,
+      "role": "development"
+    },
+    {
+      "name": "j1_upright_angular",
+      "joint": 0,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j1_ready_angular",
+      "joint": 0,
+      "q_rad": [
+        0.0,
+        -1.5708,
+        2.6529,
+        -1.0821,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j1_wrist_angular",
+      "joint": 0,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.8,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "validation_j1_held_configuration",
+      "joint": 0,
+      "q_rad": [
+        0.0,
+        -1.05,
+        1.9,
+        -0.85,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "fresh_final_validation"
+    },
+    {
+      "name": "j2_speed_curve",
+      "joint": 1,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.012,
+        0.04,
+        0.1,
+        0.2,
+        0.25,
+        0.3,
+        0.6,
+        1.2,
+        1.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j2_upright_angular",
+      "joint": 1,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j2_positive_elbow",
+      "joint": 1,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.2,
+        -0.2,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j2_negative_elbow",
+      "joint": 1,
+      "q_rad": [
+        0.0,
+        0.0,
+        -0.2,
+        0.2,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j2_wide_load",
+      "joint": 1,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.1
+      ],
+      "settled_travel_rad": 3.14,
+      "role": "development"
+    },
+    {
+      "name": "validation_j2_held_configuration",
+      "joint": 1,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.3,
+        -0.6,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "fresh_final_validation"
+    },
+    {
+      "name": "j3_speed_curve",
+      "joint": 2,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.012,
+        0.04,
+        0.1,
+        0.3,
+        0.6,
+        1.0,
+        1.5,
+        2.0
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j3_upright_angular",
+      "joint": 2,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j3_positive_load",
+      "joint": 2,
+      "q_rad": [
+        0.0,
+        -1.05,
+        0.0,
+        -0.85,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j3_negative_load",
+      "joint": 2,
+      "q_rad": [
+        0.0,
+        0.25,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "validation_j3_held_configuration",
+      "joint": 2,
+      "q_rad": [
+        0.0,
+        -0.25,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "fresh_final_validation"
+    },
+    {
+      "name": "j4_speed_curve",
+      "joint": 3,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.0017453292519943296,
+        0.002617993877991494,
+        0.004,
+        0.006,
+        0.008,
+        0.012,
+        0.015,
+        0.017453292519943295,
+        0.04,
+        0.08,
+        0.1,
+        0.175,
+        0.3,
+        0.6,
+        1.0,
+        1.5,
+        2.0
+      ],
+      "settled_travel_rad": 0.022,
+      "role": "development"
+    },
+    {
+      "name": "j4_upright_angular",
+      "joint": 3,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j4_positive_load",
+      "joint": 3,
+      "q_rad": [
+        0.249,
+        -1.389,
+        -0.3297,
+        -0.27225,
+        1.5576,
+        -0.2252
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.1
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j4_negative_load",
+      "joint": 3,
+      "q_rad": [
+        0.0,
+        -0.8,
+        1.9,
+        0.0,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.1
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "validation_j4_held_configuration",
+      "joint": 3,
+      "q_rad": [
+        0.0,
+        -1.05,
+        1.9,
+        -0.85,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "fresh_final_validation"
+    },
+    {
+      "name": "j5_speed_curve",
+      "joint": 4,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.0017453292519943296,
+        0.002617993877991494,
+        0.004,
+        0.006,
+        0.008,
+        0.012,
+        0.015,
+        0.017453292519943295,
+        0.04,
+        0.08,
+        0.1,
+        0.175,
+        0.3,
+        0.6,
+        1.0,
+        1.5
+      ],
+      "settled_travel_rad": 0.022,
+      "role": "development"
+    },
+    {
+      "name": "j5_upright_angular",
+      "joint": 4,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j5_ready_angular",
+      "joint": 4,
+      "q_rad": [
+        0.0,
+        -1.5708,
+        2.6529,
+        -1.0821,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j5_working_angular",
+      "joint": 4,
+      "q_rad": [
+        0.0,
+        -1.05,
+        1.9,
+        -0.85,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "validation_j5_held_configuration",
+      "joint": 4,
+      "q_rad": [
+        0.0,
+        -0.25,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "fresh_final_validation"
+    },
+    {
+      "name": "j6_speed_curve",
+      "joint": 5,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.012,
+        0.04,
+        0.1,
+        0.3,
+        0.6,
+        1.0,
+        1.5,
+        2.0
+      ],
+      "settled_travel_rad": 0.022,
+      "role": "development"
+    },
+    {
+      "name": "j6_upright_angular",
+      "joint": 5,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j6_ready_angular",
+      "joint": 5,
+      "q_rad": [
+        0.0,
+        -1.5708,
+        2.6529,
+        -1.0821,
+        1.5708,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "j6_side_angular",
+      "joint": 5,
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        -1.5707963267948966,
+        1.5707963267948966,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "development"
+    },
+    {
+      "name": "validation_j6_held_configuration",
+      "joint": 5,
+      "q_rad": [
+        0.0,
+        -0.25,
+        0.0,
+        -1.5707963267948966,
+        1.5707963267948966,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.04,
+        0.3
+      ],
+      "settled_travel_rad": 0.13,
+      "role": "fresh_final_validation"
+    },
+    {
+      "name": "j3_wide_load",
+      "joint": 2,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.1
+      ],
+      "settled_travel_rad": 3.16
+    },
+    {
+      "name": "j6_wide_load",
+      "joint": 5,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.1
+      ],
+      "settled_travel_rad": 1.4
+    },
+    {
+      "name": "j2_nonlinear_load_mid",
+      "joint": 1,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.2,
+        0.25,
+        0.3
+      ],
+      "settled_travel_rad": 2.4
+    },
+    {
+      "name": "j2_load_positive_mid",
+      "joint": 1,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.0,
+        0.4,
+        -0.8,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.3
+      ],
+      "settled_travel_rad": 2.4
+    },
+    {
+      "name": "j2_load_positive_fast",
+      "joint": 1,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.0,
+        0.4,
+        -0.8,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.6
+      ],
+      "settled_travel_rad": 1.8
+    },
+    {
+      "name": "j2_load_negative_mid",
+      "joint": 1,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.0,
+        -0.4,
+        0.8,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.3
+      ],
+      "settled_travel_rad": 2.4
+    },
+    {
+      "name": "j2_load_negative_fast",
+      "joint": 1,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.0,
+        -0.4,
+        0.8,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.6
+      ],
+      "settled_travel_rad": 1.8
+    },
+    {
+      "name": "j3_loaded_positive",
+      "joint": 2,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        -0.4,
+        -0.6,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.012,
+        0.04,
+        0.1,
+        0.3,
+        0.6,
+        1.0,
+        1.5
+      ],
+      "settled_travel_rad": 0.13
+    },
+    {
+      "name": "j3_loaded_negative",
+      "joint": 2,
+      "role": "development",
+      "q_rad": [
+        0.0,
+        0.4,
+        0.6,
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "speeds_rad_s": [
+        0.004,
+        0.012,
+        0.04,
+        0.1,
+        0.3,
+        0.6,
+        1.0,
+        1.5
+      ],
+      "settled_travel_rad": 0.13
+    }
+  ],
+  "scope": "All prior speed coordinates at upright; representative loads and resolved low-speed angular sweeps. Load coverage is computed from new measurements, never assumed rectangular."
+}

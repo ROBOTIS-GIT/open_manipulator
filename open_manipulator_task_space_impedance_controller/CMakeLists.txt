@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.16)
+project(open_manipulator_task_space_impedance_controller LANGUAGES CXX)
+find_package(ament_cmake REQUIRED)
+find_package(open_manipulator_friction_diagnostic REQUIRED)
+find_package(controller_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(Eigen3 REQUIRED)
+
+add_library(task_space_impedance_controller SHARED src/task_space_impedance_controller.cpp)
+target_compile_features(task_space_impedance_controller PUBLIC cxx_std_17)
+target_compile_options(task_space_impedance_controller PRIVATE -Wall -Wextra -Wpedantic)
+target_include_directories(task_space_impedance_controller PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+ament_target_dependencies(task_space_impedance_controller PUBLIC rcl_interfaces geometry_msgs)
+target_link_libraries(task_space_impedance_controller PUBLIC Eigen3::Eigen
+  open_manipulator_friction_diagnostic::friction_compensation_controller)
+pluginlib_export_plugin_description_file(controller_interface task_space_impedance_plugin.xml)
+install(TARGETS task_space_impedance_controller LIBRARY DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
+ament_package()

@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.16)
+project(open_manipulator_contact_responsive_controller LANGUAGES CXX)
+find_package(ament_cmake REQUIRED)
+find_package(open_manipulator_friction_diagnostic REQUIRED)
+find_package(controller_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(osqp_vendor REQUIRED)
+find_package(osqp REQUIRED CONFIG)
+
+add_library(contact_law SHARED src/contact_law.cpp)
+target_compile_features(contact_law PUBLIC cxx_std_17)
+target_compile_options(contact_law PRIVATE -Wall -Wextra -Wpedantic)
+target_include_directories(contact_law PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(contact_law PUBLIC Eigen3::Eigen PRIVATE osqp::osqp)
+
+add_library(contact_responsive_controller SHARED src/contact_responsive_controller.cpp)
+target_compile_features(contact_responsive_controller PUBLIC cxx_std_17)
+target_compile_options(contact_responsive_controller PRIVATE -Wall -Wextra -Wpedantic)
+ament_target_dependencies(contact_responsive_controller PUBLIC rcl_interfaces)
+target_link_libraries(contact_responsive_controller PUBLIC contact_law
+  open_manipulator_friction_diagnostic::friction_compensation_controller)
+pluginlib_export_plugin_description_file(controller_interface contact_responsive_plugin.xml)
+install(TARGETS contact_law contact_responsive_controller LIBRARY DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
+ament_package()

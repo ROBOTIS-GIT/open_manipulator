@@ -1,0 +1,57 @@
+--- a/src/dynamixel_hardware_interface.cpp
++++ b/src/dynamixel_hardware_interface.cpp
+@@ -1472,32 +1472,30 @@
+   const std::shared_ptr<dynamixel_interfaces::srv::GetDataFromDxl::Request> request,
+   std::shared_ptr<dynamixel_interfaces::srv::GetDataFromDxl::Response> response)
+ {
+-  uint8_t id = static_cast<uint8_t>(request->id);
+-  std::string name = request->item_name;
+-
+-  if (dxl_comm_->InsertReadItemBuf(id, name) != DxlError::OK) {
+-    RCLCPP_ERROR_STREAM(logger_, "get_dxl_data_srv_callback InsertReadItemBuf");
+-
+-    response->result = false;
++  response->result = false;
++  response->item_data = 0;
++  // read() calls spin_some() after ReadItemBuf(). Waiting for the next read()
++  // here blocks that same hardware thread. Read on the existing bus owner
++  // instead; the SDK bounds transport retries. Startup uses this with torque OFF.
++  for (const auto & gpio : info_.gpios) {
++    if (std::stoi(gpio.parameters.at("ID")) != request->id) {
++      continue;
++    }
++    const uint8_t id = static_cast<uint8_t>(request->id);
++    const uint8_t comm_id = gpio.parameters.count("comm_id") ?
++      static_cast<uint8_t>(std::stoi(gpio.parameters.at("comm_id"))) : id;
++    uint32_t data = 0;
++    const auto result = dxl_comm_->ReadItem(comm_id, id, request->item_name, data);
++    if (result == DxlError::OK) {
++      response->item_data = data;
++      response->result = true;
++    } else {
++      RCLCPP_ERROR_STREAM(logger_, "Direct item read failed: ID " << request->id <<
++        " item " << request->item_name);
++    }
+     return;
+   }
+-  double timeout_sec = request->timeout_sec;
+-  if (timeout_sec == 0.0) {
+-    timeout_sec = 1.0;
+-  }
+-  rclcpp::Time t_start = rclcpp::Clock().now();
+-  while (dxl_comm_->CheckReadItemBuf(id, name) == false) {
+-    if ((rclcpp::Clock().now() - t_start).seconds() > timeout_sec) {
+-      RCLCPP_ERROR_STREAM(
+-        logger_,
+-        "get_dxl_data_srv_callback Timeout : " << (rclcpp::Clock().now() - t_start).seconds() );
+-      response->result = false;
+-      return;
+-    }
+-  }
+-
+-  response->item_data = dxl_comm_->GetReadItemDataBuf(id, name);
+-  response->result = true;
++  RCLCPP_ERROR_STREAM(logger_, "Direct item read requested unknown ID " << request->id);
+ }
+ 
+ void DynamixelHardware::set_dxl_data_srv_callback(

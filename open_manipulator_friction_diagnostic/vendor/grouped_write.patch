@@ -1,0 +1,173 @@
+--- a/src/dynamixel/dynamixel.cpp
++++ b/src/dynamixel/dynamixel.cpp
+@@ -23,6 +23,7 @@
+ #include <functional>
+ #include <thread>
+ #include <chrono>
++#include <cmath>
+ 
+ namespace dynamixel_hardware_interface
+ {
+@@ -46,6 +47,7 @@
+ 
+ Dynamixel::~Dynamixel()
+ {
++  grouped_sync_writes_.clear();
+   fprintf(stderr, "Dynamixel destructor start\n");
+   if (group_sync_read_) {
+     delete group_sync_read_;
+@@ -393,6 +395,7 @@
+ 
+ void Dynamixel::RWDataReset()
+ {
++  grouped_sync_writes_.clear();
+   read_data_list_.clear();
+   write_data_list_.clear();
+ }
+@@ -610,7 +613,9 @@
+   if (write_type_ == SYNC) {
+     return SetSyncWriteItemAndHandler();
+   } else {
+-    return SetBulkWriteItemAndHandler();
++    const auto result = SetBulkWriteItemAndHandler();
++    if (result != DxlError::OK || !use_grouped_sync_write_) {return result;}
++    return SetupGroupedSyncWrite();
+   }
+ }
+ 
+@@ -1054,6 +1059,7 @@
+   if (write_type_ == SYNC) {
+     return SetDxlValueToSyncWrite();
+   } else {
++    if (use_grouped_sync_write_) {return SetDxlValueToGroupedSyncWrite();}
+     return SetDxlValueToBulkWrite();
+   }
+ }
+@@ -2260,6 +2266,92 @@
+   return DxlError::OK;
+ }
+ 
++DxlError Dynamixel::SetupGroupedSyncWrite()
++{
++  grouped_sync_writes_.clear();
++  for (const auto & item : write_data_list_) {
++    const auto & table = direct_info_write_.count(item.comm_id) ?
++      direct_info_write_ : indirect_info_write_;
++    const auto found = table.find(item.comm_id);
++    if (found == table.end() || found->second.size == 0) {
++      grouped_sync_writes_.clear();
++      return DxlError::SET_BULK_WRITE_FAIL;
++    }
++    const auto key = std::make_pair(
++      static_cast<uint16_t>(found->second.indirect_data_addr),
++      static_cast<uint16_t>(found->second.size));
++    if (!grouped_sync_writes_.count(key)) {
++      grouped_sync_writes_.emplace(key, std::unique_ptr<dynamixel::GroupSyncWrite>(
++          new dynamixel::GroupSyncWrite(port_handler_, packet_handler_, key.first, key.second)));
++    }
++  }
++  fprintf(stderr, "Grouped SyncWrite enabled: %zu address/length groups\n",
++    grouped_sync_writes_.size());
++  return DxlError::OK;
++}
++
++DxlError Dynamixel::SetDxlValueToGroupedSyncWrite()
++{
++  const auto clear = [this]() {
++      for (auto & group : grouped_sync_writes_) {group.second->clearParam();}
++    };
++  clear();
++  // Construct every group's payload before transmitting any group. Preserve
++  // the existing per-item units/signs and indirect mapping; only framing changes.
++  for (const auto & item : write_data_list_) {
++    const auto & table = direct_info_write_.count(item.comm_id) ?
++      direct_info_write_ : indirect_info_write_;
++    const auto found = table.find(item.comm_id);
++    if (found == table.end()) {clear(); return DxlError::BULK_WRITE_FAIL;}
++    const auto & info = found->second;
++    const auto key = std::make_pair(static_cast<uint16_t>(info.indirect_data_addr),
++        static_cast<uint16_t>(info.size));
++    const auto group = grouped_sync_writes_.find(key);
++    if (group == grouped_sync_writes_.end() || info.cnt != item.item_data_ptr_vec.size() ||
++      info.cnt != item.id_arr.size() || info.cnt != info.item_name.size() ||
++      info.cnt != info.item_size.size())
++    {clear(); return DxlError::BULK_WRITE_FAIL;}
++    std::vector<uint8_t> data(info.size, 0);
++    size_t offset = 0;
++    for (size_t i = 0; i < info.cnt; ++i) {
++      const auto size = info.item_size.at(i);
++      if (!item.item_data_ptr_vec.at(i) || (size != 1 && size != 2 && size != 4) ||
++        offset + size > data.size() || offset > 255)
++      {clear(); return DxlError::BULK_WRITE_FAIL;}
++      const double value = *item.item_data_ptr_vec.at(i);
++      if (!std::isfinite(value)) {clear(); return DxlError::BULK_WRITE_FAIL;}
++      const auto id = item.id_arr.at(i);
++      const auto & name = info.item_name.at(i);
++      double unit;
++      bool signed_value;
++      uint32_t raw;
++      if (dxl_info_.GetDxlUnitValue(item.comm_id, id, name, unit) &&
++        dxl_info_.GetDxlSignType(item.comm_id, id, name, signed_value))
++      {
++        raw = ConvertUnitValueToRawValue(item.comm_id, id, name, value, size, signed_value);
++      } else if (name == "Goal Position") {
++        raw = static_cast<uint32_t>(dxl_info_.ConvertRadianToValue(item.comm_id, id, value));
++      } else {
++        raw = static_cast<uint32_t>(value);
++      }
++      WriteValueToBuffer(data.data(), static_cast<uint8_t>(offset), raw, size);
++      offset += size;
++    }
++    if (offset != data.size() || !group->second->addParam(item.comm_id, data.data())) {
++      clear(); return DxlError::BULK_WRITE_FAIL;
++    }
++  }
++  for (auto & group : grouped_sync_writes_) {
++    const int result = group.second->txPacket();
++    if (result != COMM_SUCCESS) {
++      fprintf(stderr, "Grouped SyncWrite failed: %s\n", packet_handler_->getTxRxResult(result));
++      clear(); return DxlError::BULK_WRITE_FAIL;
++    }
++  }
++  clear();
++  return DxlError::OK;
++}
++
+ DxlError Dynamixel::SetDxlValueToBulkWrite()
+ {
+   for (auto it_write_data : write_data_list_) {
+--- a/include/dynamixel_hardware_interface/dynamixel/dynamixel.hpp
++++ b/include/dynamixel_hardware_interface/dynamixel/dynamixel.hpp
+@@ -233,6 +233,10 @@
+ 
+   // bulk write
+   dynamixel::GroupBulkWrite * group_bulk_write_ = nullptr;
++  // Opt-in diagnostic transport: one SyncWrite per address/length group.
++  bool use_grouped_sync_write_ = false;
++  std::map<std::pair<uint16_t, uint16_t>, std::unique_ptr<dynamixel::GroupSyncWrite>>
++    grouped_sync_writes_;
+   // direct inform for bulk write
+   std::map<uint8_t /*id*/, IndirectInfo> direct_info_write_;
+ 
+@@ -257,6 +261,9 @@
+     uint8_t comm_id, uint8_t id, std::vector<std::string> item_names,
+     std::vector<std::shared_ptr<double>> data_vec_ptr);
+   DxlError SetMultiDxlWrite();
++  void SetGroupedSyncWrite(bool enabled) {use_grouped_sync_write_ = enabled;}
++  DxlError SetupGroupedSyncWrite();
++  DxlError SetDxlValueToGroupedSyncWrite();
+ 
+   // Read Item (sync or bulk)
+   DxlError ReadMultiDxlData(double period_ms);
+--- a/src/dynamixel_hardware_interface.cpp
++++ b/src/dynamixel_hardware_interface.cpp
+@@ -143,6 +143,9 @@
+     new Dynamixel(
+       (ament_index_cpp::get_package_share_directory("dynamixel_hardware_interface") +
+       dxl_model_folder).c_str()));
++  dxl_comm_->SetGroupedSyncWrite(
++    info_.hardware_parameters.count("use_grouped_sync_write") &&
++    info_.hardware_parameters.at("use_grouped_sync_write") == "true");
+ 
+   RCLCPP_INFO_STREAM(logger_, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+   RCLCPP_INFO_STREAM(logger_, "$$$$$ Init Dxl Comm Port");

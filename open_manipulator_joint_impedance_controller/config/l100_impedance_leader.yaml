@@ -1,0 +1,13 @@
+l100_impedance_leader:
+  ros__parameters:
+    # Topic names can be changed for a namespaced/remote follower.
+    leader_topic: /leader/joint_trajectory
+    follower_state_topic: /friction_compensation_controller/impedance_state
+    reference_topic: /friction_compensation_controller/reference
+    # Six leader arm joint names in follower joint1..joint6 order. Gripper excluded.
+    joint_names: [joint1, joint2, joint3, joint4, joint5, joint6]
+    publish_rate_hz: 100.0
+    sync_duration_s: 5.0
+    # Startup duration sizing for a stationary leader, not a hardware velocity limit.
+    sync_reference_speed_rad_s: 0.2
+    state_timeout_s: 0.3

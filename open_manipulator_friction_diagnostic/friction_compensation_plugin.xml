@@ -1,0 +1,8 @@
+<library path="friction_compensation_controller">
+  <class name="open_manipulator_friction_diagnostic/FrictionCompensationController" type="friction_compensation_controller::FrictionCompensationController" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    Gravity and identified joint friction compensation with additive external effort input.
+  </description>
+  </class>
+  <class name="friction_compensation_controller/CurrentProbeController" type="friction_compensation_controller::CurrentProbeController" base_class_type="controller_interface::ControllerInterface"><description>Selected-axis current response and independent dither measurement with the other axes held in position.</description></class>
+</library>

@@ -1,0 +1,7 @@
+<library path="joint_impedance_controller">
+  <class name="open_manipulator_joint_impedance_controller/JointImpedanceController"
+         type="omy_joint_impedance::JointImpedanceController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Activation-pose joint impedance plus the original OMY gravity/friction compensation in one update.</description>
+  </class>
+</library>

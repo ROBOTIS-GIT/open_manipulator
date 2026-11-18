@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.16)
+project(open_manipulator_joint_impedance_controller LANGUAGES CXX)
+find_package(ament_cmake REQUIRED)
+find_package(open_manipulator_friction_diagnostic REQUIRED)
+find_package(controller_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
+add_library(joint_impedance_controller SHARED src/joint_impedance_controller.cpp)
+target_compile_features(joint_impedance_controller PUBLIC cxx_std_17)
+ament_target_dependencies(joint_impedance_controller PUBLIC rcl_interfaces geometry_msgs)
+target_compile_options(joint_impedance_controller PRIVATE -Wall -Wextra -Wpedantic -Werror=return-type)
+target_include_directories(joint_impedance_controller PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(joint_impedance_controller PUBLIC
+  open_manipulator_friction_diagnostic::friction_compensation_controller)
+pluginlib_export_plugin_description_file(controller_interface joint_impedance_plugin.xml)
+install(TARGETS joint_impedance_controller LIBRARY DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
+install(PROGRAMS scripts/l100_impedance_leader.py scripts/l100_gripper_bridge.py DESTINATION lib/${PROJECT_NAME})
+ament_package()

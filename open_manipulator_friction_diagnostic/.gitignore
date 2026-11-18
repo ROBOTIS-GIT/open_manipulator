@@ -1,0 +1,4 @@
+# Device measurements and coefficients live outside source/install trees.
+/calibration/current.yaml
+/calibration/current.yaml.*
+/config/device.yaml

@@ -1,0 +1,451 @@
+friction_compensation_controller:
+  require_motor_ready:
+    type: bool
+    default_value: true
+    description: "Hardware supervisor opens the input gate after real motor ready readback."
+    read_only: true
+  joints: {
+    type: string_array,
+    default_value: [],
+    description: "Joint names to control and listen to",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }
+  command_interfaces: {
+    type: string_array,
+    default_value: [],
+    description: "Command interfaces provided by the hardware interface for all joints",
+    read_only: true,
+  }
+  state_interfaces: {
+    type: string_array,
+    default_value: [],
+    description: "State interfaces provided by the hardware for all joints.",
+    read_only: true,
+  }
+  command_joints: {
+    type: string_array,
+    default_value: [],
+    description: "Joint names to control. This parameters is used if JTC is used in a controller chain where command and state interfaces don't have same names.",
+    read_only: true,
+    validation: {
+      unique<>: null,
+    }
+  }
+  unloaded_effort_offsets: {
+    type: double_array,
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    description: "Effort offsets added to actuator control commands when below threshold"
+  }
+  unloaded_effort_thresholds: {
+    type: double_array,
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    description: "Threshold values below which unloaded_effort_offsets are added to control commands"
+  }
+  kinetic_friction_scalars: {
+    type: double_array,
+    default_value: [0.4, 0.8, 0.8, 0.1, 0.1, 0.1],
+    description: "Scaling factors for kinetic friction"
+  }
+  stateful_dither_j6_only:
+    type: bool
+    default_value: false
+    description: "Isolated J6 near-rest dither experiment; replaces elastic/kinetic assistance. Starts OFF."
+    read_only: true
+  stateful_dither_with_elastic:
+    type: bool
+    default_value: false
+    description: "J6 rest dither plus directional elastic/Coulomb compensation; no velocity-rate extrapolation."
+    read_only: true
+  stateful_dither_amplitude_nm:
+    type: double
+    default_value: 0.0
+    description: "Absolute sinusoidal command amplitude in Nm; explicit nonzero selection required."
+    read_only: true
+  stateful_dither_frequency_hz:
+    type: double
+    default_value: 10.0
+    description: "Dither frequency in real seconds, independent of controller update rate."
+    read_only: true
+  stateful_dither_full_velocity:
+    type: double
+    default_value: 0.003
+    description: "Full dither below this speed, rad/s. Waveform scheduling, not a motion limit."
+    read_only: true
+  stateful_dither_zero_velocity:
+    type: double
+    default_value: 0.02
+    description: "Dither fades to zero at this speed, rad/s. Robot/controller continue running."
+    read_only: true
+  stateful_dither_ramp_seconds:
+    type: double
+    default_value: 0.5
+    description: "Minimum waveform envelope rise time after enable or return to rest."
+    read_only: true
+  static_friction_scalars: {
+    type: double_array,
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    description: "Scaling factors for static friction compensation (dithering)"
+  }
+  static_friction_velocity_thresholds: {
+    type: double_array,
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    description: "Velocity thresholds for static friction compensation"
+  }
+  torque_scaling_factors: {
+    type: double_array,
+    default_value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    description: "Scaling factors for calculated torques"
+  }
+  kinetic_friction_torque_scalars: {
+    type: double_array,
+    default_value: [3.0, 3.0, 3.0, 3.0, 3.0, 3.0],
+    description: "Scaling factors for kinetic friction based on torque magnitude"
+  }
+  friction_compensation_velocity_thresholds: {
+    type: double_array,
+    default_value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    description: "Velocity thresholds for kinetic friction compensation"
+  }
+  input_velocity_scaling_factors: {
+    type: double_array,
+    default_value: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
+    description: "Scaling factors for input joint velocities"
+  }
+  input_acceleration_scaling_factors: {
+    type: double_array,
+    default_value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    description: "Scaling factors for input joint accelerations"
+  }
+  enable_spring_effect: {
+    type: bool,
+    default_value: false,
+    description: "Enable additional spring effect on joint 2"
+  }
+  calibrated_friction_enabled:
+    type: bool
+    default_value: false
+    description: "Use the validated friction profile instead of legacy empirical friction."
+    read_only: true
+  stateful_bank_enabled:
+    type: bool
+    default_value: false
+    description: "Independent common kinetic laws and rest waveforms per selected axis."
+    read_only: true
+  stateful_friction_enabled:
+    type: bool
+    default_value: false
+    description: "Experimental position-state assistance. Mutually exclusive with the old calibrated law; starts OFF."
+    read_only: true
+  stateful_joint_mask:
+    type: int_array
+    default_value: [0, 0, 0, 0, 0, 0]
+    description: "Explicit per-joint participation: 1 enables the selected candidate, 0 keeps original gravity only."
+    read_only: true
+  stateful_positive_yield:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Unscaled positive directional Coulomb residual in the original effort units."
+    read_only: true
+  stateful_negative_yield:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Unscaled negative directional Coulomb residual magnitude."
+    read_only: true
+  stateful_positive_viscous:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Unscaled positive directional viscous coefficient."
+    read_only: true
+  stateful_negative_viscous:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Unscaled negative directional viscous coefficient."
+    read_only: true
+  stateful_stiffness:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Elastoplastic controller stiffness; a design value, not a fitted rigid-body parameter."
+    read_only: true
+  stateful_decay:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Elastoplastic relaxation rate in 1/s."
+    read_only: true
+  stateful_damping:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Separate hand-guiding damping; logged independently of the fitted friction."
+    read_only: true
+  stateful_maximum_velocity:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Optional host speed/position-increment trip in rad/s. Zero disables both; firmware limits remain independent."
+    read_only: true
+  stateful_observer_window:
+    type: double
+    default_value: 0.02
+    description: "Trailing position observer window in seconds; its delay is reported."
+    read_only: true
+  stateful_load_joint:
+    type: int
+    default_value: 0
+    description: "Single selected joint, 1..6; zero disables the load-dependent stateful experiment."
+    read_only: true
+  stateful_load_smooth_width_nm:
+    type: double
+    default_value: 0.0
+    description: "Positive selects the common analytic smooth-load law; zero preserves existing models."
+    read_only: true
+  stateful_load_transition_distance:
+    type: double
+    default_value: 0.0
+    description: "Optional load-local transition design distance; zero preserves existing controller stiffness. Not an identified physical presliding parameter."
+    read_only: true
+  stateful_load_feature_scale_nm:
+    type: double
+    default_value: 1.0
+    description: "Fixed identification normalization of signed nominal gravity."
+    read_only: true
+  stateful_load_periodic_frequency:
+    type: double
+    default_value: 0.0
+    description: "Positive selects the experimental nonnegative angular load basis. Zero keeps existing models."
+    read_only: true
+  stateful_load_periodic_orders:
+    type: int_array
+    default_value: [1, 2]
+    description: "Increasing positive harmonic orders for the declared periodic experiment."
+    read_only: true
+  stateful_load_hat_mean_extension:
+    type: bool
+    default_value: false
+    description: "Explicit signed-load periodic model: extend its period mean with the frozen macro slope. False preserves archived laws."
+    read_only: true
+  stateful_load_smooth_positive:
+    type: double_array
+    default_value: [0.0]
+    description: "Three nonnegative coefficient curves, coefficient-major speed order."
+    read_only: true
+  stateful_load_smooth_negative:
+    type: double_array
+    default_value: [0.0]
+    description: "Negative-direction smooth-load coefficient curves."
+    read_only: true
+  stateful_load_gravity_knots:
+    type: double_array
+    default_value: [0.0]
+    description: "Signed nominal gravity knots; multiple knots select the measured load map."
+    read_only: true
+  stateful_load_speed_knots:
+    type: double_array
+    default_value: [0.0]
+    description: "Measured speed knots; constant extension outside measured speeds."
+    read_only: true
+  stateful_load_positive_table:
+    type: double_array
+    default_value: [0.0]
+    description: "Positive current-equivalent loss map, gravity-major order."
+    read_only: true
+  stateful_load_negative_table:
+    type: double_array
+    default_value: [0.0]
+    description: "Negative current-equivalent loss map, gravity-major order."
+    read_only: true
+  stateful_load_positive:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0]
+    description: "Positive C, B, low-speed positive/negative load gains; optional two high-speed load gains. Current-equivalent units."
+    read_only: true
+  stateful_load_speed_endpoint:
+    type: double
+    default_value: 0.0
+    description: "Constant rate-term extension above the measured speed; zero retains linear extrapolation. Does not stop motion."
+    read_only: true
+  stateful_load_negative:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0]
+    description: "Negative C, B, low-speed positive/negative load gains; optional two high-speed load gains."
+    read_only: true
+  stateful_curve_j6_enabled:
+    type: bool
+    default_value: false
+    description: "Supervised J6 kinetic-curve experiment; zero separate damping; starts OFF."
+    read_only: true
+  stateful_curve_speed:
+    type: double_array
+    default_value: [0.0]
+    description: "Strictly increasing measured absolute-speed knots in rad/s."
+    read_only: true
+  stateful_curve_hold_endpoint:
+    type: bool
+    default_value: false
+    description: "Constant magnitude beyond the last selected speed knot; model extension, not a robot speed trip. Required with rest dither."
+    read_only: true
+  stateful_curve_positive:
+    type: double_array
+    default_value: [0.0]
+    description: "Unscaled directional kinetic magnitude knots, original effort units."
+    read_only: true
+  stateful_curve_negative:
+    type: double_array
+    default_value: [0.0]
+    description: "Unscaled negative-direction kinetic magnitude knots."
+    read_only: true
+  stateful_curve_output_scale:
+    type: double
+    default_value: 1.0
+    description: "Explicit experimental output fraction; never modifies stored identification knots."
+    read_only: true
+  calibrated_gain:
+    type: double
+    default_value: 0.5
+    description: "Legacy bounded mode fraction; unscaled mode requires exactly 1.0."
+    read_only: true
+  calibrated_unscaled:
+    type: bool
+    default_value: false
+    description: "Explicit research mode: identified output without gain/cap/slew/fades. No passivity claim."
+    read_only: true
+  friction_diagnostics_rate:
+    type: double
+    default_value: 50.0
+    description: "Read-only command diagnostics rate in Hz, 0 disables; at most 400."
+    read_only: true
+  calibrated_deadband:
+    type: double
+    default_value: 0.002
+    description: "No assistance below this measured velocity, rad/s."
+    read_only: true
+  calibrated_min_velocity:
+    type: double
+    default_value: 0.004
+    description: "Minimum measured calibration velocity, rad/s."
+    read_only: true
+  calibrated_max_velocity:
+    type: double
+    default_value: 0.1
+    description: "Maximum measured calibration velocity, rad/s."
+    read_only: true
+  calibrated_fc:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Six joint coefficients/limits from the validated calibration profile."
+    read_only: true
+  calibrated_fs:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Six joint coefficients/limits from the validated calibration profile."
+    read_only: true
+  calibrated_vs:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Six joint coefficients/limits from the validated calibration profile."
+    read_only: true
+  calibrated_viscous:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Six joint coefficients/limits from the validated calibration profile."
+    read_only: true
+  calibrated_max_torque:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Six joint coefficients/limits from the validated calibration profile."
+    read_only: true
+  calibrated_slew_rate:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Six joint coefficients/limits from the validated calibration profile."
+    read_only: true
+  calibrated_enforce_load_bounds:
+    type: bool
+    default_value: true
+    description: "Load model requires validated load bounds; velocity-only profiles disable this gate."
+    read_only: true
+  calibrated_load_gain:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Nonnegative joint torque-load friction coefficients."
+    read_only: true
+  calibrated_load_min:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Minimum validated absolute gravity load, Nm."
+    read_only: true
+  calibrated_load_peak:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Identified load-dependent Stribeck amplitude; unscaled research mode only."
+    read_only: true
+  calibrated_load_vs:
+    type: double_array
+    default_value: [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+    description: "Identified load-dependent transition velocity, rad/s."
+    read_only: true
+  calibrated_position_peak:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Empirical periodic position-dependent Stribeck amplitude; unscaled only."
+    read_only: true
+  calibrated_position_order:
+    type: double_array
+    default_value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    description: "Order of sin(order*q+phase)^2 in the identified model."
+    read_only: true
+  calibrated_position_phase:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Phase of the empirical position term, rad."
+    read_only: true
+  calibrated_load_max:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Maximum validated absolute gravity load, Nm."
+    read_only: true
+  calibrated_context_peak:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Identified configuration/load Stribeck amplitude; unscaled only."
+    read_only: true
+  calibrated_context_vs:
+    type: double_array
+    default_value: [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+    description: "Configuration/load transition velocity in rad/s."
+    read_only: true
+  calibrated_context_joint_1based:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Context joint index, 1 through 6; zero disables context."
+    read_only: true
+  calibrated_context_power:
+    type: double_array
+    default_value: [2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
+    description: "Identified even power (2,4,6) of sin(context angle)."
+    read_only: true
+  calibrated_lugre:
+    type: bool
+    default_value: false
+    description: "Research LuGre state model. Not hardware-qualified; eq.12 is not a robot passivity certificate."
+    read_only: true
+  calibrated_sigma0:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Identified bristle stiffness. Zero deliberately prevents LuGre activation."
+    read_only: true
+  calibrated_sigma1:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Identified bristle damping before the patent eq.12 bound."
+    read_only: true
+  calibrated_smoothing_k:
+    type: double_array
+    default_value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    description: "Verified smoothing coefficient; never fabricated from steady means."
+    read_only: true
+  calibrated_max_acceleration:
+    type: double
+    default_value: 0.0
+    description: "LuGre simulation assistance trip in rad/s^2. Does not enforce robot acceleration."
+    read_only: true

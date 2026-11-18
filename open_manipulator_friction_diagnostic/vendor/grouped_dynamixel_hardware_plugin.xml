@@ -1,0 +1,7 @@
+<library path="grouped_dynamixel_hardware">
+  <class name="open_manipulator_friction_diagnostic/GroupedDynamixelHardware"
+         type="friction_dynamixel_hardware_interface::DynamixelHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>Isolated DYNAMIXEL driver with synchronous item reads and optional grouped SyncWrite for mixed probes.</description>
+  </class>
+</library>
