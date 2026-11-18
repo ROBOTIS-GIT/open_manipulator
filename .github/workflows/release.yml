@@ -43,3 +43,22 @@ jobs:
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  bloom-release:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    permissions:
+      contents: read
+    uses: ROBOTIS-GIT/github_workflows/.github/workflows/bloom-release.yml@main
+    with:
+      repository: open_manipulator
+      release_repository: ros2-gbp/open_manipulator-release
+      version: ${{ needs.release.outputs.version }}
+      distros: jazzy kilted
+      git_user_name: ${{ vars.BLOOM_GIT_NAME }}
+      git_user_email: ${{ vars.BLOOM_GIT_EMAIL }}
+      signing_key_fingerprint: ${{ vars.BLOOM_GPG_FINGERPRINT }}
+    secrets:
+      BLOOM_GITHUB_TOKEN: ${{ secrets.BLOOM_GITHUB_TOKEN }}
+      BLOOM_GPG_PRIVATE_KEY: ${{ secrets.BLOOM_GPG_PRIVATE_KEY }}
+      BLOOM_GPG_PASSPHRASE: ${{ secrets.BLOOM_GPG_PASSPHRASE }}
