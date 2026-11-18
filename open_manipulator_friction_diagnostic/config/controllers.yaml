@@ -1,5 +1,5 @@
 # J1 ... J6. Ratios do not modify the identified coefficients.
 friction_compensation_controller:
   ros__parameters:
-    compensation_ratios: [0.9, 0.80, 0.80, 0.95, 0.95, 0.95]
+    compensation_ratios: [0.80, 0.80, 0.80, 0.95, 0.95, 0.95]
     dithering_enabled: [true, true, true, true, true, true]
