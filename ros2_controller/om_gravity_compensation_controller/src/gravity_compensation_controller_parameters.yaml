@@ -84,3 +84,13 @@ gravity_compensation_controller:
     default_value: false,
     description: "Enable additional spring effect on joint 2"
   }
+  follower_joint_state_topic: {
+    type: string,
+    default_value: "/joint_states",
+    description: "Topic to subscribe to for a follower robot's joint states (leader-follower gravity-comp sync). Defaults to the historical hardcoded absolute topic for backward compatibility. Set to empty string to disable the subscription entirely — required for standalone multi-unit setups with no leader/follower relationship, since the absolute default otherwise silently cross-talks between independently-namespaced units."
+  }
+  collision_flag_topic: {
+    type: string,
+    default_value: "/collision_flag",
+    description: "Topic to subscribe to for the external collision flag gating leader-follower sync. Set to empty string to disable, or to a namespace-relative topic (no leading '/') to scope it to this unit."
+  }

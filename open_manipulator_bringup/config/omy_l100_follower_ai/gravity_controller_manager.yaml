@@ -1,0 +1,66 @@
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 300  # Hz
+      thread_priority: 20
+      cpu_affinity: [1, 2, 3]
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      gravity_compensation_controller:
+        type: gravity_compensation_controller/GravityCompensationController
+
+      spring_actuator_controller:
+        type: spring_actuator_controller/SpringActuatorController
+
+/**:
+  gravity_compensation_controller:
+    ros__parameters:
+      joints:
+        - joint1
+        - joint2
+        - joint3
+        - joint4
+        - joint5
+        - joint6
+      command_interfaces:
+        - effort
+      state_interfaces:
+        - position
+        - velocity
+      kinetic_friction_scalars:
+        - 0.8
+        - 0.8
+        - 0.8
+        - 0.1
+        - 0.1
+        - 0.1
+      torque_scaling_factors:
+        - 1.0
+        - 1.0
+        - 1.0
+        - 0.8
+        - 0.8
+        - 1.0
+      enable_spring_effect: true
+      # This yaml is used only by the standalone multi-unit bringups
+      # (custom_inverted_omy_l100_gravity / custom_omy_l100_gravity), where
+      # each unit is independent — there is no leader/follower relationship.
+      # Disable both topics to avoid subscribing to the global (un-namespaced)
+      # /joint_states and /collision_flag, which would silently cross-talk
+      # between namespaced units.
+      follower_joint_state_topic: ""
+      collision_flag_topic: ""
+
+/**:
+  spring_actuator_controller:
+    ros__parameters:
+      joints:
+        - rh_r1_joint
+      command_interfaces:
+        - effort
+      state_interfaces:
+        - position
+        - velocity
+      trigger_spring_stiffness: [0.1]
